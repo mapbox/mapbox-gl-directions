@@ -1,12 +1,8 @@
 'use strict';
 
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
-module.exports = React.createClass({
-
-  propTypes: {
-    options: React.PropTypes.object
-  },
+export default class Inputs extends Component {
 
   render() {
     return (
@@ -69,5 +65,8 @@ module.exports = React.createClass({
       </form>
     );
   }
+}
 
-});
+Inputs.propTypes = {
+  options: PropTypes.object
+};

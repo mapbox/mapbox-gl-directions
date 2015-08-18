@@ -1,18 +1,18 @@
 'use strict';
 
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
-module.exports = React.createClass({
-
-  propTypes: {
-    options: React.PropTypes.object
-  },
+export default class Routes extends Component {
 
   render() {
     return (
       <div className='mapbox-directions-component'>
+        Routes
       </div>
     );
   }
+}
 
-});
+Routes.propTypes = {
+  options: PropTypes.object
+};

@@ -1,12 +1,8 @@
 'use strict';
 
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
-module.exports = React.createClass({
-
-  propTypes: {
-    options: React.PropTypes.object
-  },
+export default class Errors extends Component {
 
   render() {
     return (
@@ -15,5 +11,8 @@ module.exports = React.createClass({
       </div>
     );
   }
+}
 
-});
+Errors.propTypes = {
+  options: PropTypes.object
+};

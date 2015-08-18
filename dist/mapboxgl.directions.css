@@ -86,7 +86,7 @@
   .directions-close:hover {
     opacity:.75;
     }
-  input:not(:valid) + .directions-close {
+  .mapbox-directions-inputs input:not(:valid) + .directions-close {
     display:none;
     }
 

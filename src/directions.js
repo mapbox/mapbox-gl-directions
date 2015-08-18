@@ -20,6 +20,7 @@ export default class Directions extends mapboxgl.Control {
     };
 
     mapboxgl.util.setOptions(this, opts);
+    console.log(mapboxgl.util.setOptions(this, opts));
   }
 
   onAdd() {}
