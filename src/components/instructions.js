@@ -4,10 +4,13 @@ import React from 'react';
 
 module.exports = React.createClass({
 
-  render: function() {
+  propTypes: {
+    options: React.PropTypes.object
+  },
+
+  render() {
     return (
-      <div>
-        Instructions controller
+      <div className='mapbox-directions-instructions'>
       </div>
     );
   }

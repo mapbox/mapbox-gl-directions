@@ -15,14 +15,14 @@ export default class Directions extends mapboxgl.Control {
     // Call functions on an object's parent
     super();
 
-    this.options = {};
+    this.options = {
+      units: 'imperial'
+    };
 
     mapboxgl.util.setOptions(this, opts);
   }
 
-  onAdd(map) {
-    console.log('onAdd called', map);
-  }
+  onAdd() {}
 
   /**
    * Adds a directions component to the document
