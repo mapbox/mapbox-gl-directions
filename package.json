@@ -1,0 +1,46 @@
+{
+  "name": "gl-directions",
+  "version": "1.0.0",
+  "description": "A mapboxgl plugin for the Mapbox Directions API",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo index.js --serve=dist/mapboxgl.directions.js --live -d | bistre",
+    "build": "NODE_ENV=production browserify index.js | uglifyjs -c -m > dist/mapboxgl.directions.js",
+    "test": "eslint index.js src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mapbox/gl-directions.js.git"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "keywords": [
+    "directions",
+    "routing",
+    "osm",
+    "gl"
+  ],
+  "author": "Mapbox",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mapbox/gl-directions.js/issues"
+  },
+  "homepage": "https://github.com/mapbox/gl-directions.js#readme",
+  "devDependencies": {
+    "babel-eslint": "^4.0.10",
+    "babelify": "^6.1.3",
+    "bistre": "^1.0.1",
+    "browserify": "^11.0.1",
+    "budo": "^4.1.0",
+    "eslint": "^1.1.0",
+    "eslint-plugin-react": "^3.2.3",
+    "uglify-js": "^2.4.24"
+  },
+  "dependencies": {
+    "mapbox-gl": "^0.9.0",
+    "react": "^0.13.3"
+  }
+}
