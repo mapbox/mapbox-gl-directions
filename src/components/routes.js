@@ -10,8 +10,7 @@ module.exports = React.createClass({
 
   render() {
     return (
-      <div className='mapbox-directions-routes'>
-        Routes controller
+      <div className='mapbox-directions-component'>
       </div>
     );
   }

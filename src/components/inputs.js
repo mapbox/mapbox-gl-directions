@@ -10,32 +10,34 @@ module.exports = React.createClass({
 
   render() {
     return (
-      <form className='mapbox-directions-inputs'>
+      <form className='mapbox-directions-component mapbox-directions-inputs'>
 
         <div className='mapbox-directions-origin'>
           <label className='mapbox-form-label'>
-            <span className='mapbox-directions-icon mapbox-depart-icon'></span>
+            <span className='directions-icon directions-icon-depart'></span>
           </label>
           <input
             type='text'
-            required='required'
             placeholder='Start'
           />
-          <div className='mapbox-directions-icon mapbox-close-icon' title='Clear value'></div>
+          <div
+            className='directions-icon directions-icon-close directions-close'
+            title='Clear value'></div>
         </div>
 
-        <span className='mapbox-directions-icon mapbox-reverse-icon mapbox-directions-reverse-input' title='Reverse origin &amp; destination'></span>
+        <span className='directions-icon directions-icon-reverse directions-reverse' title='Reverse origin &amp; destination'></span>
 
         <div className='mapbox-directions-destination'>
           <label className='mapbox-form-label'>
-            <span className='mapbox-directions-icon mapbox-arrive-icon'></span>
+            <span className='directions-icon directions-icon-arrive'></span>
           </label>
           <input
             type='text'
-            required='required'
             placeholder='End'
           />
-          <div className='mapbox-directions-icon mapbox-close-icon' title='Clear value'></div>
+          <div
+            className='directions-icon directions-icon-close directions-close'
+            title='Clear value'></div>
         </div>
 
         <div className='mapbox-directions-profile'>
