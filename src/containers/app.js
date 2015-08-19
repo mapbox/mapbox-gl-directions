@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
-import configureStore from '../store/configure_store';
+import rootReducer from '../reducers';
 
 // Containers
 import Inputs from './inputs';
@@ -8,7 +9,7 @@ import Errors from './errors';
 import Routes from './routes';
 import Instructions from './instructions';
 
-const store = configureStore();
+const store = createStore(rootReducer);
 
 export default class App extends Component {
   render() {

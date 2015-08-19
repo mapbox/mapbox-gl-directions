@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import { ADD_ORIGIN, ADD_DESTINATION } from '../actions';
 
-export default function inputs(state = {
+function inputs(state = {
   origin: false,
   destination: false
 }, action) {
@@ -17,6 +17,7 @@ export default function inputs(state = {
   }
 }
 
+// One for now `inputs` ... will add more.
 const rootReducer = combineReducers({
   inputs
 });

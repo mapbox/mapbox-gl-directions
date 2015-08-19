@@ -1,6 +1,6 @@
 'use strict';
 
-import fetch from 'isomorphic-fetch';
+// import fetch from 'isomorphic-fetch';
 
 export const ADD_ORIGIN = 'ADD_ORIGIN';
 export const ADD_DESTINATION = 'ADD_DESTINATION';

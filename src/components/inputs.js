@@ -5,6 +5,9 @@ import React, { Component, PropTypes } from 'react';
 export default class Inputs extends Component {
 
   render() {
+
+    console.log(this.props);
+
     return (
       <form className='mapbox-directions-component mapbox-directions-inputs'>
 

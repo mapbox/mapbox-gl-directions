@@ -21,8 +21,7 @@ class Routes extends Component {
 
 function select(state) {
   return {
-    origin: state.origin,
-    destination: state.destination
+    inputs: state.inputs
   };
 }
 
