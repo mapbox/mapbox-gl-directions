@@ -2,8 +2,8 @@ import { combineReducers } from 'redux';
 import { ADD_ORIGIN, ADD_DESTINATION } from '../actions';
 
 function inputs(state = {
-  origin: false,
-  destination: false
+  origin: '',
+  destination: ''
 }, action) {
   switch (action.type) {
   case ADD_ORIGIN:

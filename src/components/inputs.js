@@ -4,12 +4,27 @@ import React, { Component, PropTypes } from 'react';
 
 export default class Inputs extends Component {
 
+  constructor() {
+    super();
+  }
+
+  query() {
+    // console.log(e);
+  }
+
+  clearQuery(e) {
+    var ref = e.target.getAttribute('data-ref');
+    var target = this.refs[ref].getDOMNode();
+    target.value = '';
+    target.focus();
+  }
+
   render() {
 
     console.log(this.props);
 
     return (
-      <form className='mapbox-directions-component mapbox-directions-inputs'>
+      <div className='mapbox-directions-component mapbox-directions-inputs'>
 
         <div className='mapbox-directions-origin'>
           <label className='mapbox-form-label'>
@@ -18,10 +33,14 @@ export default class Inputs extends Component {
           <input
             type='text'
             placeholder='Start'
+            ref='origin'
+            onChange={this.query}
           />
-          <div
+          <button
+            onClick={this.clearQuery.bind(this)}
+            data-ref='origin'
             className='directions-icon directions-icon-close directions-close'
-            title='Clear value'></div>
+            title='Clear value'></button>
         </div>
 
         <span className='directions-icon directions-icon-reverse directions-reverse' title='Reverse origin &amp; destination'></span>
@@ -33,13 +52,17 @@ export default class Inputs extends Component {
           <input
             type='text'
             placeholder='End'
+            ref='destination'
+            onChange={this.query.bind(this)}
           />
-          <div
+          <button
+            onClick={this.clearQuery}
+            data-ref='destination'
             className='directions-icon directions-icon-close directions-close'
-            title='Clear value'></div>
+            title='Clear value'></button>
         </div>
 
-        <div className='mapbox-directions-profile'>
+        {this.props.results && <div className='mapbox-directions-profile'>
           <span>
             <input
               type='radio'
@@ -64,12 +87,13 @@ export default class Inputs extends Component {
             />
             <label htmlFor='mapbox-directions-profile-cycling'>Cycling</label>
           </span>
-        </div>
-      </form>
+        </div>}
+      </div>
     );
   }
 }
 
 Inputs.propTypes = {
-  options: PropTypes.object
+  actions: PropTypes.object.isRequired,
+  inputs: PropTypes.object.isRequired
 };
