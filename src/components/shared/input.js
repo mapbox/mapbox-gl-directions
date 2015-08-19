@@ -4,17 +4,22 @@ import React, { Component, PropTypes } from 'react';
 
 export default class Input extends Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    this.state = {
+      text: this.props.text || ''
+    };
   }
 
-  query() {
-    // console.log(e);
+  onChange(e) {
+    var text = e.target.value;
+    this.setState({ text: text });
+    this.props.onChange(text.trim());
   }
 
   clearQuery() {
+    this.setState({ text: '' });
     var target = this.refs.input.getDOMNode();
-    target.value = '';
     target.focus();
   }
 
@@ -29,7 +34,8 @@ export default class Input extends Component {
           type='text'
           placeholder={options.placeholder}
           ref='input'
-          onChange={this.query}
+          value={this.state.text}
+          onChange={this.onChange.bind(this)}
         />
         <button
           onClick={this.clearQuery.bind(this)}
@@ -41,5 +47,7 @@ export default class Input extends Component {
 }
 
 Input.propTypes = {
+  text: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
   options: PropTypes.object.isRequired
 };
