@@ -1,5 +1,3 @@
-'use strict';
-
 import Directions from './src/directions';
 
 function exportFn(options) {

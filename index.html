@@ -4,8 +4,47 @@
     <title>Mapbox</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <link href='https://mapbox.s3.amazonaws.com/mapbox-gl-js/master/mapbox-gl.css' rel='stylesheet' />
-    <link href='site.css' rel='stylesheet' />
     <link href='../dist/mapboxgl.directions.css' rel='stylesheet' />
+    <style>
+      .map {
+        position:absolute;
+        width:100%;
+        height:100%;
+        top:0;
+        right:0;
+        }
+
+      .directions-control {
+        position:absolute;
+        width:33.3333%;
+        max-width:300px;
+        min-width:200px;
+        z-index:1;
+        }
+
+      #inputs {
+        top:10px;
+        left:10px;
+        }
+
+      #directions {
+        background:rgba(0,0,0,.8);
+        top:0;
+        right:0;
+        bottom:0;
+        overflow:auto;
+        }
+        #directions:empty { display:none; }
+
+      #errors {
+        opacity:0;
+        padding:10px;
+        border-radius:0 0 3px 3px;
+        background:rgba(0,0,0,.25);
+        top:90px;
+        left:10px;
+        }
+    </style>
   </head>
   <body>
 
@@ -19,7 +58,7 @@
     </div>
 
     <script src='https://mapbox.s3.amazonaws.com/mapbox-gl-js/master/mapbox-gl-dev.js'></script>
-    <script src='mapboxgl.directions.js'></script>
+    <script src='./dist/mapboxgl.directions.js'></script>
     <script>
       mapboxgl.accessToken = 'pk.eyJ1IjoidHJpc3RlbiIsImEiOiJiUzBYOEJzIn0.VyXs9qNWgTfABLzSI3YcrQ';
 

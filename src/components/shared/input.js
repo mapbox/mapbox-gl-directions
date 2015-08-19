@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { Component, PropTypes } from 'react';
 
 export default class Input extends Component {
@@ -24,7 +22,7 @@ export default class Input extends Component {
   }
 
   render() {
-    var options = this.props.options;
+    var { options }  = this.props;
     return (
       <div className={`mapbox-directions-${options.mode}`}>
         <label className='mapbox-form-label'>

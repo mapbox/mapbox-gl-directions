@@ -7,6 +7,9 @@ function inputs(state = {
 }, action) {
   switch (action.type) {
   case ADD_ORIGIN:
+
+    console.log('ORIGIN SHOULD BE ADDED!!!');
+
     return state;
 
   case ADD_DESTINATION:

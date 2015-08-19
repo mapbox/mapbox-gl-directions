@@ -1,8 +1,7 @@
-'use strict';
-
 import React, { Component, PropTypes } from 'react';
 import debounce from 'debounce';
 import Input from './shared/input';
+import Geocoder from 'react-geocoder';
 
 export default class Inputs extends Component {
 
@@ -18,11 +17,17 @@ export default class Inputs extends Component {
     console.log(value);
   }
 
+  query() {
+    console.log('result from geocoder', arguments);
+  }
+
   render() {
+    const { actions } = this.props;
+
     return (
       <div className='mapbox-directions-component mapbox-directions-inputs'>
-
         <Input
+          {...actions}
           onChange={this.onInputChange}
           options={{
             mode:'origin',
@@ -32,6 +37,7 @@ export default class Inputs extends Component {
         />
         <span className='directions-icon directions-icon-reverse directions-reverse' title='Reverse origin &amp; destination'></span>
         <Input
+          {...actions}
           onChange={this.onInputChange}
           options={{
             mode:'destination',

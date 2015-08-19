@@ -1,20 +1,16 @@
-'use strict';
-
-// import fetch from 'isomorphic-fetch';
-
-export const ADD_ORIGIN = 'ADD_ORIGIN';
-export const ADD_DESTINATION = 'ADD_DESTINATION';
+import fetch from 'isomorphic-fetch';
+import * as types from '../constants/action_types';
 
 export function addOrigin(input) {
   return {
-    type: ADD_ORIGIN,
+    type: types.ADD_ORIGIN,
     input
   };
 }
 
 export function addDestination(input) {
   return {
-    type: ADD_DESTINATION,
+    type: types.ADD_DESTINATION,
     input
   };
 }
