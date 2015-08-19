@@ -28,22 +28,15 @@
   }
 
 .mapbox-form-label {
-  cursor:pointer;
   position:absolute;
-  left:0;
-  top:0;
-  background:#444;
+  top:0;left:0;
+  background:#8a8acb;
   color:#fff;
-  font-weight:bold;
-  text-align:center;
   padding:10px;
-  line-height:20px;
-  font-size:12px;
   }
-
-.mapbox-directions-origin .mapbox-form-label {
-  background-color:#3bb2d0;
-  }
+  .mapbox-directions-origin .mapbox-form-label {
+    background-color:#3bb2d0;
+    }
 
 .mapbox-directions-inputs input {
   font-size:12px;

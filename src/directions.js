@@ -1,12 +1,7 @@
 'use strict';
 
 import React from 'react';
-
-// Controllers
-import InputsControl from './components/inputs';
-import ErrorsControl from './components/errors';
-import RoutesControl from './components/routes';
-import InstructionsControl from './components/instructions';
+import App from './containers/app';
 
 export default class Directions extends mapboxgl.Control {
 
@@ -20,7 +15,6 @@ export default class Directions extends mapboxgl.Control {
     };
 
     mapboxgl.util.setOptions(this, opts);
-    console.log(mapboxgl.util.setOptions(this, opts));
   }
 
   onAdd() {}
@@ -37,21 +31,7 @@ export default class Directions extends mapboxgl.Control {
    * directions.addControl('inputs', document.getElementById('inputs'));
    */
   addControl(name, el, opts) {
-
-    switch (name) {
-      case 'inputs':
-      React.render(<InputsControl options={opts} />, el);
-      break;
-      case 'errors':
-      React.render(<ErrorsControl options={opts} />, el);
-      break;
-      case 'routes':
-      React.render(<RoutesControl options={opts} />, el);
-      break;
-      case 'instructions':
-      React.render(<InstructionsControl options={opts} />, el);
-      break;
-    }
+    React.render(<App control={name} options={opts} />, el);
   }
 
 }

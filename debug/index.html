@@ -19,13 +19,13 @@
     </div>
 
     <script src='https://mapbox.s3.amazonaws.com/mapbox-gl-js/master/mapbox-gl-dev.js'></script>
-    <script src='../dist/mapboxgl.directions.js'></script>
+    <script src='mapboxgl.directions.js'></script>
     <script>
       mapboxgl.accessToken = 'pk.eyJ1IjoidHJpc3RlbiIsImEiOiJiUzBYOEJzIn0.VyXs9qNWgTfABLzSI3YcrQ';
 
       var map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://mapbox.streets-v8',
+        style: 'mapbox://styles/mapbox/streets-v8',
         center: [-74.50, 40],
         zoom: 9
       });
