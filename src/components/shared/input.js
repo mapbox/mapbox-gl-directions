@@ -37,10 +37,11 @@ export default class Input extends Component {
           value={this.state.text}
           onChange={this.onChange.bind(this)}
         />
-        <button
+        {this.state.text && <button
           onClick={this.clearQuery.bind(this)}
           className='directions-icon directions-icon-close directions-close'
-          title='Clear value'></button>
+          title='Clear value'>
+        </button>}
       </div>
     );
   }
