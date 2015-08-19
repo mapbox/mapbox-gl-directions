@@ -1,6 +1,7 @@
 'use strict';
 
 import React, { Component, PropTypes } from 'react';
+import Input from './shared/input';
 
 export default class Inputs extends Component {
 
@@ -20,47 +21,24 @@ export default class Inputs extends Component {
   }
 
   render() {
-
-    console.log(this.props);
-
     return (
       <div className='mapbox-directions-component mapbox-directions-inputs'>
 
-        <div className='mapbox-directions-origin'>
-          <label className='mapbox-form-label'>
-            <span className='directions-icon directions-icon-depart'></span>
-          </label>
-          <input
-            type='text'
-            placeholder='Start'
-            ref='origin'
-            onChange={this.query}
-          />
-          <button
-            onClick={this.clearQuery.bind(this)}
-            data-ref='origin'
-            className='directions-icon directions-icon-close directions-close'
-            title='Clear value'></button>
-        </div>
-
+        <Input
+          options={{
+            mode:'origin',
+            placeholder:'start',
+            icon:'depart'
+          }}
+        />
         <span className='directions-icon directions-icon-reverse directions-reverse' title='Reverse origin &amp; destination'></span>
-
-        <div className='mapbox-directions-destination'>
-          <label className='mapbox-form-label'>
-            <span className='directions-icon directions-icon-arrive'></span>
-          </label>
-          <input
-            type='text'
-            placeholder='End'
-            ref='destination'
-            onChange={this.query.bind(this)}
-          />
-          <button
-            onClick={this.clearQuery}
-            data-ref='destination'
-            className='directions-icon directions-icon-close directions-close'
-            title='Clear value'></button>
-        </div>
+        <Input
+          options={{
+            mode:'destination',
+            placeholder:'end',
+            icon:'arrive'
+          }}
+        />
 
         {this.props.results && <div className='mapbox-directions-profile'>
           <span>
