@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 import rootReducer from '../reducers';
 
 // Containers
@@ -9,14 +10,14 @@ import Errors from './errors';
 import Routes from './routes';
 import Instructions from './instructions';
 
-const store = createStore(rootReducer);
+const storeWithMiddleware = applyMiddleware(thunk)(createStore);
 
 export default class App extends Component {
   render() {
     const { control, options } = this.props;
 
     return (
-      <Provider store={store}>
+      <Provider store={storeWithMiddleware(rootReducer)}>
         {() =>
           <div>
             {control === 'inputs' && <Inputs options={options} />}

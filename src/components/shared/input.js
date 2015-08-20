@@ -8,7 +8,7 @@ export default class Input extends Component {
   }
 
   onChange(text) {
-    this.props.onChange(text.trim());
+    if (text) this.props.onChange(text.trim());
   }
 
   clearQuery() {
@@ -18,13 +18,15 @@ export default class Input extends Component {
   }
 
   getSuggestions(input, cb) {
-    cb(null, ['foo','bar','bat']);
+    cb(null, this.props.results.reduce((memo, d) => {
+      memo.push(d.place_name);
+      return memo;
+    }, []));
   }
 
   render() {
     const { options, results } = this.props;
 
-    console.log('Results', results);
     const inputAttributes = {
       placeholder: options.placeholder,
       onChange: this.onChange.bind(this)

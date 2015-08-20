@@ -252,17 +252,15 @@
   }
 .mapbox-directions-inputs .react-autosuggest__suggestions {
   position:absolute;
-  top:51px;
-  width:280px;
+  top:40px;
+  width:100%;
   margin:0;
   padding:0;
   list-style-type:none;
-  border:1px solid #aaaaaa;
+  border:1px solid rgba(0, 0, 0, 0.20);
   background-color:#fff;
-  font-size:18px;
-  border-bottom-left-radius:4px;
-  border-bottom-right-radius:4px;
-  z-index:2;
+  font-size:12px;
+  z-index:10;
   }
 .mapbox-directions-inputs .react-autosuggest__suggestions-section:first-child .react-autosuggest__suggestions-section-name {
   border-top:0;
@@ -281,8 +279,9 @@
   }
 .mapbox-directions-inputs .react-autosuggest__suggestion {
   cursor:pointer;
-  padding:10px 20px;
+  padding:10px;
+  border-bottom:1px solid rgba(0, 0, 0, 0.05);
   }
 .mapbox-directions-inputs .react-autosuggest__suggestion--focused {
-  background-color:#ddd;
+  background-color:#eee;
   }

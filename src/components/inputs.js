@@ -7,9 +7,16 @@ export default class Inputs extends Component {
     super();
   }
 
-  onInputChange(value) {
-    var { queryOrigin } = this.props;
-    queryOrigin(value);
+  onOriginChange(v) {
+    this.props.queryOrigin(v);
+  }
+
+  onDestinationChange(v) {
+    this.props.queryDestination(v);
+  }
+
+  onInputChange(v) {
+    this.props.queryGeocoder(v);
   }
 
   render() {
