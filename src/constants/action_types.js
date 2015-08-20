@@ -1,3 +1,2 @@
-export const ADD_ORIGIN = 'ADD_ORIGIN';
-export const ADD_DESTINATION = 'ADD_DESTINATION';
-
+export const QUERY_ORIGIN = 'QUERY_ORIGIN';
+export const QUERY_DESTINATION = 'QUERY_DESTINATION';

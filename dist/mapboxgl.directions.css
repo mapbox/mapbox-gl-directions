@@ -245,3 +245,44 @@
 .mapbox-marker-drag-icon-step {
   background-color:#3BB2D0;
   }
+
+/* Auto suggestions */
+.mapbox-directions-inputs .react-autosuggest {
+  position:relative;
+  }
+.mapbox-directions-inputs .react-autosuggest__suggestions {
+  position:absolute;
+  top:51px;
+  width:280px;
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  border:1px solid #aaaaaa;
+  background-color:#fff;
+  font-size:18px;
+  border-bottom-left-radius:4px;
+  border-bottom-right-radius:4px;
+  z-index:2;
+  }
+.mapbox-directions-inputs .react-autosuggest__suggestions-section:first-child .react-autosuggest__suggestions-section-name {
+  border-top:0;
+  }
+.mapbox-directions-inputs .react-autosuggest__suggestions-section-name {
+  padding:10px 0 0 10px;
+  font-size:12px;
+  text-transform:uppercase;
+  color:#777;
+  border-top:1px dashed #ccc;
+  }
+.mapbox-directions-inputs .react-autosuggest__suggestions-section-suggestions {
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  }
+.mapbox-directions-inputs .react-autosuggest__suggestion {
+  cursor:pointer;
+  padding:10px 20px;
+  }
+.mapbox-directions-inputs .react-autosuggest__suggestion--focused {
+  background-color:#ddd;
+  }

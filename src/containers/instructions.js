@@ -1,14 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { addOrigin, addDestination } from '../actions';
+import * as routingActions from '../actions';
 
 import InstructionsControl from '../components/instructions';
 
 class Instructions extends Component {
   render() {
     const { inputs, dispatch } = this.props;
-    const actions = bindActionCreators(addOrigin, addDestination, dispatch);
+    const actions = bindActionCreators(routingActions, dispatch);
 
     return (
       <InstructionsControl

@@ -1,16 +1,16 @@
 import fetch from 'isomorphic-fetch';
 import * as types from '../constants/action_types';
 
-export function addOrigin(input) {
+export function queryOrigin(input) {
   return {
-    type: types.ADD_ORIGIN,
+    type: types.QUERY_ORIGIN,
     input
   };
 }
 
-export function addDestination(input) {
+export function queryDestination(input) {
   return {
-    type: types.ADD_DESTINATION,
+    type: types.QUERY_DESTINATION,
     input
   };
 }

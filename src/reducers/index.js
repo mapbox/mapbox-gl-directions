@@ -1,18 +1,23 @@
 import { combineReducers } from 'redux';
-import { ADD_ORIGIN, ADD_DESTINATION } from '../actions';
+import { QUERY_ORIGIN, QUERY_DESTINATION } from '../actions';
 
-function inputs(state = {
+const initialState = {
   origin: '',
-  destination: ''
-}, action) {
-  switch (action.type) {
-  case ADD_ORIGIN:
+  destination: '',
+  results: []
+};
 
-    console.log('ORIGIN SHOULD BE ADDED!!!');
+
+function inputs(state = initialState, action) {
+  switch (action.type) {
+  case QUERY_ORIGIN:
+
+    console.log('ORIGIN SHOULD BE ADDED!!!', action);
 
     return state;
 
-  case ADD_DESTINATION:
+  case QUERY_DESTINATION:
+    console.log('DESTINATION SHOULD BE ADDED!!!', action);
     return state;
 
   default:

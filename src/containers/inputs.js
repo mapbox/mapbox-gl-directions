@@ -1,19 +1,24 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as routingActions from '../actions';
+import * as RoutingActions from '../actions';
 
 import InputsControl from '../components/inputs';
 
 class Inputs extends Component {
   render() {
     const { inputs, dispatch } = this.props;
-    const actions = bindActionCreators(routingActions, dispatch);
 
+    console.log('actions', RoutingActions);
+    console.log('dispatch', dispatch);
+
+    const actions = bindActionCreators(RoutingActions, dispatch);
+
+    console.log('hmm', dispatch(actions.queryOrigin('foo')));
     return (
       <InputsControl
+        {...actions}
         inputs={inputs}
-        actions={actions}
       />
     );
   }

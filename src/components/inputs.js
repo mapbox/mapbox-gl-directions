@@ -1,7 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import debounce from 'debounce';
 import Input from './shared/input';
-import Geocoder from 'react-geocoder';
 
 export default class Inputs extends Component {
 
@@ -9,40 +7,36 @@ export default class Inputs extends Component {
     super();
   }
 
-  componentWillMount() {
-    this.onInputChange = debounce(this.onInputChange, 100);
-  }
-
   onInputChange(value) {
-    console.log(value);
-  }
-
-  query() {
-    console.log('result from geocoder', arguments);
+    var { queryOrigin } = this.props;
+    console.log('from the input', value);
+    queryOrigin(value);
   }
 
   render() {
-    const { actions } = this.props;
+    const { inputs } = this.props;
 
     return (
       <div className='mapbox-directions-component mapbox-directions-inputs'>
         <Input
-          {...actions}
-          onChange={this.onInputChange}
+          onChange={this.onInputChange.bind(this)}
+          results={inputs.results}
           options={{
-            mode:'origin',
-            placeholder:'start',
-            icon:'depart'
+            mode: 'origin',
+            placeholder: 'start',
+            value: inputs.origin,
+            icon: 'depart'
           }}
         />
         <span className='directions-icon directions-icon-reverse directions-reverse' title='Reverse origin &amp; destination'></span>
         <Input
-          {...actions}
-          onChange={this.onInputChange}
+          onChange={this.onInputChange.bind(this)}
+          results={inputs.results}
           options={{
-            mode:'destination',
-            placeholder:'end',
-            icon:'arrive'
+            mode: 'destination',
+            placeholder: 'end',
+            value:  inputs.destination,
+            icon: 'arrive'
           }}
         />
 
@@ -78,6 +72,7 @@ export default class Inputs extends Component {
 }
 
 Inputs.propTypes = {
-  actions: PropTypes.object.isRequired,
+  queryOrigin: PropTypes.func.isRequired,
+  queryDestination: PropTypes.func.isRequired,
   inputs: PropTypes.object.isRequired
 };

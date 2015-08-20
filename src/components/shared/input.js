@@ -1,17 +1,13 @@
 import React, { Component, PropTypes } from 'react';
+import AutoSuggest from 'react-autosuggest';
 
 export default class Input extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      text: this.props.text || ''
-    };
   }
 
-  onChange(e) {
-    var text = e.target.value;
-    this.setState({ text: text });
+  onChange(text) {
     this.props.onChange(text.trim());
   }
 
@@ -21,21 +17,31 @@ export default class Input extends Component {
     target.focus();
   }
 
+  getSuggestions() {
+    console.log('get suggestions', arguments);
+  }
+
   render() {
-    var { options }  = this.props;
+    const { options, results } = this.props;
+
+    console.log('Results', results);
+    const inputAttributes = {
+      placeholder: options.placeholder,
+      onChange: this.onChange.bind(this)
+    };
+
     return (
       <div className={`mapbox-directions-${options.mode}`}>
         <label className='mapbox-form-label'>
           <span className={`directions-icon directions-icon-${options.icon}`}></span>
         </label>
-        <input
-          type='text'
-          placeholder={options.placeholder}
-          ref='input'
-          value={this.state.text}
-          onChange={this.onChange.bind(this)}
+
+        <AutoSuggest
+          inputAttributes={inputAttributes}
+          suggestions={this.getSuggestions.bind(this)}
         />
-        {this.state.text && <button
+
+        {this.props.text && <button
           onClick={this.clearQuery.bind(this)}
           className='directions-icon directions-icon-close directions-close'
           title='Clear value'>
@@ -48,5 +54,6 @@ export default class Input extends Component {
 Input.propTypes = {
   text: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  results: PropTypes.array.isRequired,
   options: PropTypes.object.isRequired
 };
