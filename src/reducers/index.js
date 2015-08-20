@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { QUERY_ORIGIN, QUERY_DESTINATION } from '../actions';
+import { QUERY_ORIGIN, QUERY_DESTINATION } from '../constants/action_types.js';
 
 const initialState = {
   origin: '',
@@ -10,13 +10,9 @@ const initialState = {
 function inputs(state = initialState, action) {
   switch (action.type) {
   case QUERY_ORIGIN:
-
-    console.log('ORIGIN SHOULD BE ADDED!!!', action);
-
     return state;
 
   case QUERY_DESTINATION:
-    console.log('DESTINATION SHOULD BE ADDED!!!', action);
     return state;
 
   default:

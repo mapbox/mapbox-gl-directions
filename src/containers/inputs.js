@@ -1,9 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import * as RoutingActions from '../actions';
-
 import InputsControl from '../components/inputs';
+import * as RoutingActions from '../actions';
 
 class Inputs extends Component {
   render() {
