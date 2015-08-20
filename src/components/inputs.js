@@ -9,7 +9,6 @@ export default class Inputs extends Component {
 
   onInputChange(value) {
     var { queryOrigin } = this.props;
-    console.log('from the input', value);
     queryOrigin(value);
   }
 

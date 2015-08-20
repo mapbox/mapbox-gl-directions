@@ -17,8 +17,8 @@ export default class Input extends Component {
     target.focus();
   }
 
-  getSuggestions() {
-    console.log('get suggestions', arguments);
+  getSuggestions(input, cb) {
+    cb(null, ['foo','bar','bat']);
   }
 
   render() {

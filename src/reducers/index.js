@@ -7,7 +7,6 @@ const initialState = {
   results: []
 };
 
-
 function inputs(state = initialState, action) {
   switch (action.type) {
   case QUERY_ORIGIN:
