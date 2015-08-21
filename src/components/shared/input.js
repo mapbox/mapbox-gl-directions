@@ -8,12 +8,12 @@ export default class Input extends Component {
   }
 
   onChange(text) {
-    console.log('onChange event fired', text);
     if (text) this.props.onChange(text);
   }
 
   clearQuery() {
-    this.props.onClear();
+    // TODO Clear the state of the input before calling props.
+    // this.props.onClear();
   }
 
   getSuggestions(input, cb) {
