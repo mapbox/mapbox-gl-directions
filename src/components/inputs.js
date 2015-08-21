@@ -30,7 +30,6 @@ export default class Inputs extends Component {
           options={{
             mode: 'origin',
             placeholder: 'start',
-            value: inputs.origin,
             icon: 'depart'
           }}
         />
@@ -41,7 +40,6 @@ export default class Inputs extends Component {
           options={{
             mode: 'destination',
             placeholder: 'end',
-            value:  inputs.destination,
             icon: 'arrive'
           }}
         />

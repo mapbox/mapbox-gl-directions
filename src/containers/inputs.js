@@ -25,3 +25,8 @@ function select(state) {
 }
 
 export default connect(select)(Inputs);
+
+Inputs.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  inputs: PropTypes.object.isRequired
+};
