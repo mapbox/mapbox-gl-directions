@@ -8,7 +8,45 @@ import InputsControl from '../components/inputs';
 import RoutesControl from '../components/routes';
 import InstructionsControl from '../components/instructions';
 
+import directionsStyle from '../directions_style';
+
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    var map = this.props.map;
+
+    map.on('style.load', () => {
+
+      // Add and set data theme layer/style
+      map.addSource('directions', {
+        type: 'geojson',
+        data: {
+          type: 'featureCollection',
+          features: []
+        }
+      });
+
+      directionsStyle.forEach((style) => {
+        map.addLayer(style);
+      });
+
+      // Map event handlers
+      map.on('click', (e) => {
+        console.log(e);
+      });
+
+    });
+  }
+
+  componentWillReceiveProps() {
+    // TODO manage any map updating here.
+    console.log('Map updating happens here', this.props);
+  }
+
   render() {
     const { inputs, dispatch } = this.props;
     const actions = bindActionCreators(RoutingActions, dispatch);

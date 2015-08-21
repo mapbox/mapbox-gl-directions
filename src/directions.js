@@ -16,10 +16,6 @@ export default class Directions extends mapboxgl.Control {
   }
 
   onAdd(map) {
-    map.on('directions.inputs', (d) => {
-      console.log('From directions.inputs!', d);
-    });
-
     var id = this.options.container;
     var container = typeof id === 'string' ?
       document.getElementById(id) : id;

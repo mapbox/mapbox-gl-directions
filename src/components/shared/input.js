@@ -23,8 +23,12 @@ export default class Input extends Component {
     }, []));
   }
 
-  setActiveSuggestion() {
-    console.log('hai');
+  setResult(v) {
+    var result = this.props.results.filter((d) => {
+      return v === d.place_name;
+    })[0];
+
+    console.log('Selected result', result);
   }
 
   render() {
@@ -43,10 +47,10 @@ export default class Input extends Component {
 
         <AutoSuggest
           ref='autosuggest'
-          value={options.value}
           inputAttributes={inputAttributes}
+          value={null}
           suggestions={this.getSuggestions.bind(this)}
-          onSuggestionSelected={this.setActiveSuggestion.bind(this)}
+          onSuggestionSelected={this.setResult.bind(this)}
         />
 
         {options.value && <button
