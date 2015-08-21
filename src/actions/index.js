@@ -4,7 +4,7 @@ import { ACCESS_TOKEN, GEOCODER_URL } from '../config';
 
 function originResults(query, results) {
   return {
-    type: types.ORIGIN_RESULTS,
+    type: types.ORIGIN_INPUT,
     query,
     results
   };
@@ -12,20 +12,37 @@ function originResults(query, results) {
 
 function destinationResults(query, results) {
   return {
-    type: types.DESTINATION_RESULTS,
+    type: types.DESTINATION_INPUT,
     query,
     results
   };
 }
 
 function geocode(query, mode) {
-  console.log('query', query);
   return dispatch => {
-    return fetch(`${GEOCODER_URL}/v4/geocode/mapbox.places/${query}.json?access_token=${ACCESS_TOKEN}`)
+    return fetch(`${GEOCODER_URL}/v4/geocode/mapbox.places/${query.trim()}.json?access_token=${ACCESS_TOKEN}`)
       .then(req => req.json())
       .then(json => dispatch((mode === 'origin') ?
         originResults(query, json.features) :
         destinationResults(query, json.features)));
+  };
+}
+
+export function reverseInputs() {
+  return {
+    type: types.REVERSE_INPUTS
+  };
+}
+
+export function clearOrigin() {
+  return {
+    type: types.ORIGIN_CLEAR
+  };
+}
+
+export function clearDestination() {
+  return {
+    type: types.DESTINATION_CLEAR
   };
 }
 

@@ -15,6 +15,18 @@ export default class Inputs extends Component {
     this.props.queryDestination(v);
   }
 
+  onDestinationClear() {
+    this.props.clearDestination();
+  }
+
+  onOriginClear() {
+    this.props.clearOrigin();
+  }
+
+  reverseInputs() {
+    this.props.reverseInputs();
+  }
+
   render() {
     const { inputs } = this.props;
 
@@ -22,20 +34,30 @@ export default class Inputs extends Component {
       <div className='mapbox-directions-component mapbox-directions-inputs'>
         <Input
           onChange={this.onOriginChange.bind(this)}
+          onClear={this.onOriginClear.bind(this)}
           results={inputs.originResults}
           options={{
             mode: 'origin',
             placeholder: 'start',
+            value: inputs.originQuery,
             icon: 'depart'
           }}
         />
-        <span className='directions-icon directions-icon-reverse directions-reverse' title='Reverse origin &amp; destination'></span>
+
+        <button
+          className='directions-icon directions-icon-reverse directions-reverse'
+          title='Reverse origin &amp; destination'
+          onClick={this.reverseInputs.bind(this)}>
+        </button>
+
         <Input
           onChange={this.onDestinationChange.bind(this)}
+          onClear={this.onDestinationClear.bind(this)}
           results={inputs.destinationResults}
           options={{
             mode: 'destination',
             placeholder: 'end',
+            value: inputs.destinationQuery,
             icon: 'arrive'
           }}
         />
@@ -74,5 +96,8 @@ export default class Inputs extends Component {
 Inputs.propTypes = {
   queryOrigin: PropTypes.func.isRequired,
   queryDestination: PropTypes.func.isRequired,
+  clearOrigin: PropTypes.func.isRequired,
+  clearDestination: PropTypes.func.isRequired,
+  reverseInputs: PropTypes.func.isRequired,
   inputs: PropTypes.object.isRequired
 };

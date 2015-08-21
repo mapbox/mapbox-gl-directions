@@ -8,13 +8,12 @@ export default class Input extends Component {
   }
 
   onChange(text) {
-    if (text) this.props.onChange(text.trim());
+    console.log('onChange event fired', text);
+    if (text) this.props.onChange(text);
   }
 
   clearQuery() {
-    this.setState({ text: '' });
-    var target = this.refs.input.getDOMNode();
-    target.focus();
+    this.props.onClear();
   }
 
   getSuggestions(input, cb) {
@@ -24,8 +23,12 @@ export default class Input extends Component {
     }, []));
   }
 
+  setActiveSuggestion() {
+    console.log('hai');
+  }
+
   render() {
-    const { options, results } = this.props;
+    const { options } = this.props;
 
     const inputAttributes = {
       placeholder: options.placeholder,
@@ -39,11 +42,14 @@ export default class Input extends Component {
         </label>
 
         <AutoSuggest
+          ref='autosuggest'
+          value={options.value}
           inputAttributes={inputAttributes}
           suggestions={this.getSuggestions.bind(this)}
+          onSuggestionSelected={this.setActiveSuggestion.bind(this)}
         />
 
-        {this.props.text && <button
+        {options.value && <button
           onClick={this.clearQuery.bind(this)}
           className='directions-icon directions-icon-close directions-close'
           title='Clear value'>
@@ -56,6 +62,7 @@ export default class Input extends Component {
 Input.propTypes = {
   text: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  onClear: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   options: PropTypes.object.isRequired
 };
