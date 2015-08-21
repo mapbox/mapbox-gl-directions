@@ -15,18 +15,14 @@ export default class Inputs extends Component {
     this.props.queryDestination(v);
   }
 
-  onInputChange(v) {
-    this.props.queryGeocoder(v);
-  }
-
   render() {
     const { inputs } = this.props;
 
     return (
       <div className='mapbox-directions-component mapbox-directions-inputs'>
         <Input
-          onChange={this.onInputChange.bind(this)}
-          results={inputs.results}
+          onChange={this.onOriginChange.bind(this)}
+          results={inputs.originResults}
           options={{
             mode: 'origin',
             placeholder: 'start',
@@ -35,8 +31,8 @@ export default class Inputs extends Component {
         />
         <span className='directions-icon directions-icon-reverse directions-reverse' title='Reverse origin &amp; destination'></span>
         <Input
-          onChange={this.onInputChange.bind(this)}
-          results={inputs.results}
+          onChange={this.onDestinationChange.bind(this)}
+          results={inputs.destinationResults}
           options={{
             mode: 'destination',
             placeholder: 'end',

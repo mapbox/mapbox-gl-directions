@@ -1,15 +1,23 @@
 import { combineReducers } from 'redux';
-import { QUERY_RESULTS } from '../constants/action_types.js';
+import { ORIGIN_RESULTS, DESTINATION_RESULTS } from '../constants/action_types.js';
 
 const initialState = {
-  results: []
+  originResults: [],
+  destinationResults: []
 };
 
 function inputs(state = initialState, action) {
   switch (action.type) {
-  case QUERY_RESULTS:
+  case ORIGIN_RESULTS:
     return {
-      results: action.results
+      originResults: action.results,
+      destinationResults: state.destinationResults
+    };
+
+  case DESTINATION_RESULTS:
+    return {
+      originResults: state.originResults,
+      destinationResults: action.results
     };
 
   default:
