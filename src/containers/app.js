@@ -1,37 +1,50 @@
 import React, { Component, PropTypes } from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import rootReducer from '../reducers';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as RoutingActions from '../actions';
 
-// Containers
-import Inputs from './inputs';
-import Errors from './errors';
-import Routes from './routes';
-import Instructions from './instructions';
+// Components
+import InputsControl from '../components/inputs';
+import RoutesControl from '../components/routes';
+import InstructionsControl from '../components/instructions';
 
-const storeWithMiddleware = applyMiddleware(thunk)(createStore);
-
-export default class App extends Component {
+class App extends Component {
   render() {
-    const { control, options } = this.props;
+    const { inputs, dispatch } = this.props;
+    const actions = bindActionCreators(RoutingActions, dispatch);
 
     return (
-      <Provider store={storeWithMiddleware(rootReducer)}>
-        {() =>
-          <div>
-            {control === 'inputs' && <Inputs options={options} />}
-            {control === 'routes' && <Routes options={options} />}
-            {control === 'errors' && <Errors options={options} />}
-            {control === 'instructions' && <Instructions options={options} />}
-          </div>
-        }
-      </Provider>
+      <div>
+        <div className='directions-control directions-control-inputs'>
+          <InputsControl
+            {...actions}
+            inputs={inputs}
+          />
+        </div>
+        <div className='directions-control directions-control-directions'>
+          <RoutesControl
+            inputs={inputs}
+          />
+          <InstructionsControl
+            inputs={inputs}
+          />
+        </div>
+      </div>
     );
   }
 }
 
+function select(state) {
+  return {
+    inputs: state.inputs
+  };
+}
+
+export default connect(select)(App);
+
 App.propTypes = {
-  options: PropTypes.object,
-  control: PropTypes.string.isRequired
+  inputs: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  map: PropTypes.object.isRequired,
+  options: PropTypes.object.isRequired
 };

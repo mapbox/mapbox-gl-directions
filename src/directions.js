@@ -1,9 +1,9 @@
 import React from 'react';
-import App from './containers/app';
+import App from './containers';
 
 export default class Directions extends mapboxgl.Control {
 
-  constructor(opts) {
+  constructor(options) {
 
     // Call functions on an object's parent
     super();
@@ -12,24 +12,18 @@ export default class Directions extends mapboxgl.Control {
       units: 'imperial'
     };
 
-    mapboxgl.util.setOptions(this, opts);
+    mapboxgl.util.setOptions(this, options);
   }
 
-  onAdd() {}
+  onAdd(map) {
+    map.on('directions.inputs', (d) => {
+      console.log('From directions.inputs!', d);
+    });
 
-  /**
-   * Adds a directions component to the document
-   *
-   * @param {String} name Controller name. Options are `inputs`, `errors`, `routes`, & `instructions`.
-   * @param {Object} el DOM object controller should mount to.
-   * @example
-   * var directions = mapboxgl.Directions();
-   * map.addControl(directions);
-   *
-   * directions.addControl('inputs', document.getElementById('inputs'));
-   */
-  addControl(name, el, opts) {
-    React.render(<App control={name} options={opts} />, el);
+    var id = this.options.container;
+    var container = typeof id === 'string' ?
+      document.getElementById(id) : id;
+
+    React.render(<App options={this.options} map={map} />, container);
   }
-
 }

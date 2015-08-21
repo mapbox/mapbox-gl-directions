@@ -20,6 +20,25 @@
           box-sizing:border-box;
   }
 
+/* Layout containers */
+.directions-control {
+  position:absolute;
+  width:33.3333%;
+  max-width:300px;
+  min-width:200px;
+  z-index:1;
+  }
+  .directions-control.directions-control-directions {
+    top:0;
+    right:0;
+    bottom:0;
+    overflow:auto;
+    }
+  .directions-control.directions-control-inputs {
+    top:10px;
+    left:10px;
+    }
+
 /* Inputs */
 .mapbox-directions-origin,
 .mapbox-directions-destination {
