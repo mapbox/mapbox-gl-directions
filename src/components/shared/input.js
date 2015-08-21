@@ -48,7 +48,6 @@ export default class Input extends Component {
         <AutoSuggest
           ref='autosuggest'
           inputAttributes={inputAttributes}
-          value={null}
           suggestions={this.getSuggestions.bind(this)}
           onSuggestionSelected={this.setResult.bind(this)}
         />
