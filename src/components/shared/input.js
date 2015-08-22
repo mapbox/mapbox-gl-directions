@@ -33,7 +33,6 @@ export default class Input extends Component {
 
   render() {
     const { options } = this.props;
-
     const inputAttributes = {
       placeholder: options.placeholder,
       onChange: this.onChange.bind(this)

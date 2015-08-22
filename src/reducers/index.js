@@ -11,44 +11,36 @@ const initialState = {
 function inputs(state = initialState, action) {
   switch (action.type) {
   case types.ORIGIN_INPUT:
-    return {
+    return Object.assign({}, state, {
       originQuery: action.query,
-      originResults: action.results,
-      destinationResults: state.destinationResults,
-      destinationQuery: state.destinationQuery
-    };
+      originResults: action.results
+    });
 
   case types.DESTINATION_INPUT:
-    return {
-      originQuery: state.originQuery,
-      originResults: state.originResults,
+    return Object.assign({}, state, {
       destinationQuery: action.query,
       destinationResults: action.results
-    };
+    });
 
   case types.ORIGIN_CLEAR:
-    return {
+    return Object.assign({}, state, {
       originQuery: '',
-      originResults: [],
-      destinationResults: state.destinationResults,
-      destinationQuery: state.destinationQuery
-    };
+      originResults: []
+    });
 
   case types.DESTINATION_CLEAR:
-    return {
-      originQuery: state.originQuery,
-      originResults: state.originResults,
+    return Object.assign({}, state, {
       destinationQuery: '',
       destinationResults: []
-    };
+    });
 
   case types.REVERSE_INPUTS:
-    return {
+    return Object.assign({}, state, {
       originResults: state.destinationResults,
       originQuery: state.destinationQuery,
       destinationResults: state.originResults,
       destinationQuery: state.originQuery
-    };
+    });
 
   default:
     return state;
