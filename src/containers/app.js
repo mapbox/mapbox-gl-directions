@@ -43,12 +43,12 @@ class App extends Component {
   }
 
   componentWillReceiveProps() {
-    // TODO manage any map updating here.
-    console.log('Map updating happens here', this.props);
+    var map = this.props.map;
+    // this._map.getSource('directions').setData(e.geojson);
   }
 
   render() {
-    const { inputs, dispatch } = this.props;
+    const { data, dispatch } = this.props;
     const actions = bindActionCreators(RoutingActions, dispatch);
 
     return (
@@ -56,17 +56,17 @@ class App extends Component {
         <div className='directions-control directions-control-inputs'>
           <InputsControl
             {...actions}
-            inputs={inputs}
+            data={data}
           />
         </div>
-        <div className='directions-control directions-control-directions'>
+        {data.directions.length !== 0 && <div className='directions-control directions-control-directions'>
           <RoutesControl
-            inputs={inputs}
+            data={data}
           />
           <InstructionsControl
-            inputs={inputs}
+            data={data}
           />
-        </div>
+        </div>}
       </div>
     );
   }
@@ -74,14 +74,14 @@ class App extends Component {
 
 function select(state) {
   return {
-    inputs: state.inputs
+    data: state.data
   };
 }
 
 export default connect(select)(App);
 
 App.propTypes = {
-  inputs: PropTypes.object.isRequired,
+  data: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
   map: PropTypes.object.isRequired,
   options: PropTypes.object.isRequired

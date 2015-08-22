@@ -36,7 +36,7 @@ export default class Inputs extends Component {
   }
 
   render() {
-    const { inputs } = this.props;
+    const { data } = this.props;
 
     return (
       <div className='mapbox-directions-component mapbox-directions-inputs'>
@@ -44,11 +44,11 @@ export default class Inputs extends Component {
           onChange={this.onOriginChange.bind(this)}
           onClear={this.onOriginClear.bind(this)}
           onAdd={this.onOriginAdd.bind(this)}
-          results={inputs.originResults}
+          results={data.originResults}
           options={{
             mode: 'origin',
-            placeholder: 'start',
-            value: inputs.originQuery,
+            placeholder: 'Choose a starting place or click on the map',
+            value: data.originQuery,
             icon: 'depart'
           }}
         />
@@ -63,41 +63,38 @@ export default class Inputs extends Component {
           onChange={this.onDestinationChange.bind(this)}
           onClear={this.onDestinationClear.bind(this)}
           onAdd={this.onDestinationAdd.bind(this)}
-          results={inputs.destinationResults}
+          results={data.destinationResults}
           options={{
             mode: 'destination',
-            placeholder: 'end',
-            value: inputs.destinationQuery,
+            placeholder: 'Choose destination',
+            value: data.destinationQuery,
             icon: 'arrive'
           }}
         />
 
-        {false && <div className='mapbox-directions-profile'>
-          <span>
+        <div className='mapbox-directions-profile'>
             <input
               type='radio'
               name='profile'
+              checked={data.mode === 'driving'}
               id='mapbox-directions-profile-driving'
             />
             <label htmlFor='mapbox-directions-profile-driving'>Driving</label>
-          </span>
-          <span>
             <input
               type='radio'
               name='profile'
+              checked={data.mode === 'walking'}
               id='mapbox-directions-profile-walking'
             />
             <label htmlFor='mapbox-directions-profile-walking'>Walking</label>
-          </span>
-          <span>
             <input
               type='radio'
               name='profile'
+              checked={data.mode === 'cycling'}
               id='mapbox-directions-profile-cycling'
             />
             <label htmlFor='mapbox-directions-profile-cycling'>Cycling</label>
-          </span>
-        </div>}
+        </div>
       </div>
     );
   }
@@ -111,5 +108,5 @@ Inputs.propTypes = {
   addOrigin: PropTypes.func.isRequired,
   addDestination: PropTypes.func.isRequired,
   reverseInputs: PropTypes.func.isRequired,
-  inputs: PropTypes.object.isRequired
+  data: PropTypes.object.isRequired
 };

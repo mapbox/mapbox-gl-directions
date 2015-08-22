@@ -1,9 +1,9 @@
 @font-face {
   font-family:'mapboxgl-directions';
-    src:url('font/mapboxgl-directions.eot?v=2');
-    src:url('font/mapboxgl-directions.eot?v=2#iefix') format('embedded-opentype'),
-        url('font/mapboxgl-directions.woff2?v=2') format('woff2'),
-        url('font/mapboxgl-directions.woff?v=2') format('woff');
+    src:url('font/mapboxgl-directions.eot');
+    src:url('font/mapboxgl-directions.eot#iefix') format('embedded-opentype'),
+        url('font/mapboxgl-directions.woff2') format('woff2'),
+        url('font/mapboxgl-directions.woff') format('woff');
   font-weight:normal;
   font-style:normal;
   }
@@ -28,11 +28,13 @@
   min-width:200px;
   z-index:1;
   }
+  .directions-control:empty { display:none; }
   .directions-control.directions-control-directions {
     top:0;
     right:0;
     bottom:0;
     overflow:auto;
+    max-width:360px;
     }
   .directions-control.directions-control-inputs {
     top:10px;
@@ -102,7 +104,7 @@
   }
 
 .mapbox-directions-profile {
-  background:rgba(0,0,0,.1);
+  background:#fff;
   margin:5px 0;
   padding:2px;
   border-radius:15px;
@@ -115,17 +117,21 @@
     border-radius:16px;
     padding:3px 5px;
     font-size:12px;
-    color:rgba(0,0,0,0.5);
+    color:rgba(0,0,0,.5);
     line-height:20px;
     text-align:center;
     width:33.33%;
     }
+    .mapbox-directions-profile label:hover {
+      color:rgba(0,0,0,.75);
+      }
   .mapbox-directions-profile input[type=radio] {
     display:none;
     }
+  .mapbox-directions-profile input[type=radio]:checked + label:hover,
   .mapbox-directions-profile input[type=radio]:checked + label {
-    background:white;
-    color:rgba(0,0,0,.5);
+    background:#eee;
+    color:rgba(0,0,0,.75);
     }
 
 /* Errors */

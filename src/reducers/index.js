@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import * as types from '../constants/action_types.js';
 
 const initialState = {
+  mode: 'driving',
 
   // Original input user entered
   originQuery: '',
@@ -15,10 +16,13 @@ const initialState = {
   destinationCoordinates: [], // [Lng, Lat]
 
   // Directions data
-  directions: []
+  directions: [],
+
+  // Features drawn on the map
+  geojson: []
 };
 
-function inputs(state = initialState, action) {
+function data(state = initialState, action) {
   switch (action.type) {
   case types.ORIGIN_INPUT:
     return Object.assign({}, state, {
@@ -62,14 +66,19 @@ function inputs(state = initialState, action) {
       destinationCoordinates: action.coords
     });
 
+  case types.DIRECTIONS:
+    return state;
+
+  case types.GEOJSON:
+    return state;
+
   default:
     return state;
   }
 }
 
-// One for now `inputs` ... will add more.
 const rootReducer = combineReducers({
-  inputs
+  data
 });
 
 export default rootReducer;
