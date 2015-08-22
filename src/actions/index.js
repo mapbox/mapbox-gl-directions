@@ -57,3 +57,17 @@ export function queryDestination(query) {
     return dispatch(geocode(query, 'destination'));
   };
 }
+
+export function addOrigin(coords) {
+  return {
+    type: types.ORIGIN_COORDINATES,
+    coords
+  };
+}
+
+export function addDestination(coords) {
+  return {
+    type: types.DESTINATION_COORDINATES,
+    coords
+  };
+}

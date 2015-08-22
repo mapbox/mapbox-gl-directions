@@ -2,10 +2,20 @@ import { combineReducers } from 'redux';
 import * as types from '../constants/action_types.js';
 
 const initialState = {
+
+  // Original input user entered
   originQuery: '',
-  originResults: [],
   destinationQuery: '',
-  destinationResults: []
+
+  // Arrays returned from geocode result.
+  originResults: [],
+  destinationResults: [],
+
+  originCoordinates: [], // [Lng, Lat]
+  destinationCoordinates: [], // [Lng, Lat]
+
+  // Directions data
+  directions: []
 };
 
 function inputs(state = initialState, action) {
@@ -40,6 +50,16 @@ function inputs(state = initialState, action) {
       originQuery: state.destinationQuery,
       destinationResults: state.originResults,
       destinationQuery: state.originQuery
+    });
+
+  case types.ORIGIN_COORDINATES:
+    return Object.assign({}, state, {
+      originCoordinates: action.coords
+    });
+
+  case types.DESTINATION_COORDINATES:
+    return Object.assign({}, state, {
+      destinationCoordinates: action.coords
     });
 
   default:

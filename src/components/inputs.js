@@ -27,6 +27,14 @@ export default class Inputs extends Component {
     this.props.reverseInputs();
   }
 
+  onOriginAdd(coords) {
+    this.props.addOrigin(coords);
+  }
+
+  onDestinationAdd(coords) {
+    this.props.addDestination(coords);
+  }
+
   render() {
     const { inputs } = this.props;
 
@@ -35,6 +43,7 @@ export default class Inputs extends Component {
         <Input
           onChange={this.onOriginChange.bind(this)}
           onClear={this.onOriginClear.bind(this)}
+          onAdd={this.onOriginAdd.bind(this)}
           results={inputs.originResults}
           options={{
             mode: 'origin',
@@ -53,6 +62,7 @@ export default class Inputs extends Component {
         <Input
           onChange={this.onDestinationChange.bind(this)}
           onClear={this.onDestinationClear.bind(this)}
+          onAdd={this.onDestinationAdd.bind(this)}
           results={inputs.destinationResults}
           options={{
             mode: 'destination',
@@ -62,7 +72,7 @@ export default class Inputs extends Component {
           }}
         />
 
-        {this.props.results && <div className='mapbox-directions-profile'>
+        {false && <div className='mapbox-directions-profile'>
           <span>
             <input
               type='radio'
@@ -98,6 +108,8 @@ Inputs.propTypes = {
   queryDestination: PropTypes.func.isRequired,
   clearOrigin: PropTypes.func.isRequired,
   clearDestination: PropTypes.func.isRequired,
+  addOrigin: PropTypes.func.isRequired,
+  addDestination: PropTypes.func.isRequired,
   reverseInputs: PropTypes.func.isRequired,
   inputs: PropTypes.object.isRequired
 };

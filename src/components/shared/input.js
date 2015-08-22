@@ -28,7 +28,7 @@ export default class Input extends Component {
       return v === d.place_name;
     })[0];
 
-    console.log('Selected result', result);
+    if (result) this.props.onAdd(result.center);
   }
 
   render() {
@@ -65,6 +65,7 @@ Input.propTypes = {
   text: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   onClear: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   options: PropTypes.object.isRequired
 };
