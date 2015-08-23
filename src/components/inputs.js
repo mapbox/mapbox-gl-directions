@@ -35,6 +35,11 @@ export default class Inputs extends Component {
     this.props.addDestination(coords);
   }
 
+  changeMode(e) {
+    var mode = e.target.id.split('-').pop();
+    this.props.directionsMode(mode);
+  }
+
   render() {
     const { data } = this.props;
 
@@ -73,27 +78,30 @@ export default class Inputs extends Component {
         />
 
         <div className='mapbox-directions-profile'>
-            <input
-              type='radio'
-              name='profile'
-              checked={data.mode === 'driving'}
-              id='mapbox-directions-profile-driving'
-            />
-            <label htmlFor='mapbox-directions-profile-driving'>Driving</label>
-            <input
-              type='radio'
-              name='profile'
-              checked={data.mode === 'walking'}
-              id='mapbox-directions-profile-walking'
-            />
-            <label htmlFor='mapbox-directions-profile-walking'>Walking</label>
-            <input
-              type='radio'
-              name='profile'
-              checked={data.mode === 'cycling'}
-              id='mapbox-directions-profile-cycling'
-            />
-            <label htmlFor='mapbox-directions-profile-cycling'>Cycling</label>
+          <input
+            type='radio'
+            name='profile'
+            checked={data.mode === 'driving'}
+            onChange={this.changeMode.bind(this)}
+            id='mapbox-directions-profile-driving'
+          />
+          <label htmlFor='mapbox-directions-profile-driving'>Driving</label>
+          <input
+            type='radio'
+            name='profile'
+            checked={data.mode === 'walking'}
+            onChange={this.changeMode.bind(this)}
+            id='mapbox-directions-profile-walking'
+          />
+          <label htmlFor='mapbox-directions-profile-walking'>Walking</label>
+          <input
+            type='radio'
+            name='profile'
+            checked={data.mode === 'cycling'}
+            onChange={this.changeMode.bind(this)}
+            id='mapbox-directions-profile-cycling'
+          />
+          <label htmlFor='mapbox-directions-profile-cycling'>Cycling</label>
         </div>
       </div>
     );
@@ -101,12 +109,13 @@ export default class Inputs extends Component {
 }
 
 Inputs.propTypes = {
-  queryOrigin: PropTypes.func.isRequired,
-  queryDestination: PropTypes.func.isRequired,
-  clearOrigin: PropTypes.func.isRequired,
-  clearDestination: PropTypes.func.isRequired,
-  addOrigin: PropTypes.func.isRequired,
   addDestination: PropTypes.func.isRequired,
-  reverseInputs: PropTypes.func.isRequired,
-  data: PropTypes.object.isRequired
+  addOrigin: PropTypes.func.isRequired,
+  clearDestination: PropTypes.func.isRequired,
+  clearOrigin: PropTypes.func.isRequired,
+  data: PropTypes.object.isRequired,
+  directionsMode: PropTypes.func.isRequired,
+  queryDestination: PropTypes.func.isRequired,
+  queryOrigin: PropTypes.func.isRequired,
+  reverseInputs: PropTypes.func.isRequired
 };

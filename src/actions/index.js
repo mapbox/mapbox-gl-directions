@@ -71,3 +71,10 @@ export function addDestination(coords) {
     coords
   };
 }
+
+export function directionsMode(mode) {
+  return {
+    type: types.DIRECTIONS_MODE,
+    mode
+  };
+}

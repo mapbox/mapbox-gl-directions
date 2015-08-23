@@ -66,6 +66,11 @@ function data(state = initialState, action) {
       destinationCoordinates: action.coords
     });
 
+  case types.DIRECTIONS_MODE:
+    return Object.assign({}, state, {
+      mode: action.mode
+    });
+
   case types.DIRECTIONS:
     return state;
 
