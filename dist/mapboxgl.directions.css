@@ -34,11 +34,11 @@
     right:0;
     bottom:0;
     overflow:auto;
-    max-width:360px;
     }
   .directions-control.directions-control-inputs {
     top:10px;
     left:10px;
+    max-width:360px;
     }
 
 /* Inputs */

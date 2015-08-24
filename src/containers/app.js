@@ -42,17 +42,16 @@ class App extends Component {
 
   componentWillReceiveProps() {
     const { map, data } = this.props;
+    const { features } = data.geojson;
 
-    if (data.geojson.features.length) {
-
-      const geojson = new mapboxgl.GeoJSONSource({
-        data: data.geojson
-      });
-
-      map.getSource('directions').setData(geojson);
-
-      console.log('geojson', data.geojson);
-      // map.fitBounds[[minLat, minLng], [maxLat, maxLng]]
+    if (features.length) {
+      map.getSource('directions').setData(data.geojson);
+      if (features.length === 1) {
+        const { coordinates } = features[0].geometry;
+        // console.log(coordinates);
+        // map.fitBounds(coordinates, coordinates);
+        map.flyTo({center: coordinates});
+      }
     }
   }
 

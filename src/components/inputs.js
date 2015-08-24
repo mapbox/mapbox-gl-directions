@@ -31,6 +31,36 @@ export default class Inputs extends Component {
     this.props.addFeature(obj);
   }
 
+  onOriginFeature(coords) {
+    const feature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: coords
+      },
+      properties: {
+        'marker-symbol': 'A'
+      }
+    };
+
+    this.props.addFeature(feature);
+  }
+
+  onDestinationFeature(coords) {
+    const feature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: coords
+      },
+      properties: {
+        'marker-symbol': 'B'
+      }
+    };
+
+    this.props.addFeature(feature);
+  }
+
   changeMode(e) {
     var mode = e.target.id.split('-').pop();
     this.props.directionsMode(mode);
@@ -41,18 +71,20 @@ export default class Inputs extends Component {
 
     return (
       <div className='mapbox-directions-component mapbox-directions-inputs'>
-        <Input
-          onChange={this.onOriginChange.bind(this)}
-          onClear={this.onOriginClear.bind(this)}
-          onFeature={this.onFeature.bind(this)}
-          results={data.originResults}
-          options={{
-            mode: 'origin',
-            placeholder: 'Choose a starting place or click on the map',
-            value: data.originQuery,
-            icon: 'depart'
-          }}
-        />
+
+        <div className='mapbox-directions-origin'>
+          <label className='mapbox-form-label'>
+            <span className='directions-icon directions-icon-depart'></span>
+          </label>
+          <Input
+            onChange={this.onOriginChange.bind(this)}
+            onClear={this.onOriginClear.bind(this)}
+            onFeature={this.onOriginFeature.bind(this)}
+            results={data.originResults}
+            value={data.destinationQuery}
+            placeholder='Choose a starting place or click on the map'
+          />
+        </div>
 
         <button
           className='directions-icon directions-icon-reverse directions-reverse'
@@ -60,18 +92,19 @@ export default class Inputs extends Component {
           onClick={this.reverseInputs.bind(this)}>
         </button>
 
-        <Input
-          onChange={this.onDestinationChange.bind(this)}
-          onClear={this.onDestinationClear.bind(this)}
-          onFeature={this.onFeature.bind(this)}
-          results={data.destinationResults}
-          options={{
-            mode: 'destination',
-            placeholder: 'Choose destination',
-            value: data.destinationQuery,
-            icon: 'arrive'
-          }}
-        />
+        <div className='mapbox-directions-destination'>
+          <label className='mapbox-form-label'>
+            <span className='directions-icon directions-icon-arrive'></span>
+          </label>
+          <Input
+            onChange={this.onDestinationChange.bind(this)}
+            onClear={this.onDestinationClear.bind(this)}
+            onFeature={this.onDestinationFeature.bind(this)}
+            results={data.destinationResults}
+            placeholder='Choose destination'
+            value={data.destinationQuery}
+          />
+        </div>
 
         <div className='mapbox-directions-profile'>
           <input

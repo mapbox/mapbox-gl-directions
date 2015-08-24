@@ -12,17 +12,12 @@ const style = [{
   'interactive': true
 }, {
   'id': 'marker',
-  'type': 'symbol',
+  'type': 'circle',
   'source': 'directions',
   'filter': ['all', ['==', '$type', 'Point']],
-  'layout': {
-    'icon-image': 'circle.sdf',
-    'text-anchor': 'top',
-    'icon-allow-overlap': true
-  },
   'paint': {
-    'icon-color': '#ff00ff',
-    'icon-size': 1
+    'circle-radius': 5,
+    'circle-color': '#f0f'
   },
   'interactive': true
 }];

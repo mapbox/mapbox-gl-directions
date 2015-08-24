@@ -25,25 +25,13 @@ export default class Input extends Component {
   }
 
   setResult(result) {
-    const { options, onFeature } = this.props;
-
-    onFeature({
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: result.center
-      },
-      properties: {
-        id: options.mode,
-        'marker-symbol': (options.mode === 'origin') ? 'A' : 'B'
-      }
-    });
+    this.props.onFeature(result.center);
   }
 
   render() {
-    const { options } = this.props;
+    const { placeholder, value } = this.props;
     const inputAttributes = {
-      placeholder: options.placeholder,
+      placeholder: placeholder,
       onChange: this.onChange.bind(this)
     };
 
@@ -56,11 +44,7 @@ export default class Input extends Component {
     };
 
     return (
-      <div className={`mapbox-directions-${options.mode}`}>
-        <label className='mapbox-form-label'>
-          <span className={`directions-icon directions-icon-${options.icon}`}></span>
-        </label>
-
+      <div>
         <AutoSuggest
           ref='autosuggest'
           inputAttributes={inputAttributes}
@@ -70,7 +54,7 @@ export default class Input extends Component {
           onSuggestionSelected={this.setResult.bind(this)}
         />
 
-        {options.value && <button
+        {value && <button
           onClick={this.clearQuery.bind(this)}
           className='directions-icon directions-icon-close directions-close'
           title='Clear value'>
@@ -86,5 +70,6 @@ Input.propTypes = {
   onClear: PropTypes.func.isRequired,
   onFeature: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
-  options: PropTypes.object.isRequired
+  value: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired
 };
