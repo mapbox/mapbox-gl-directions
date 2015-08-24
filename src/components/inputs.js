@@ -27,12 +27,8 @@ export default class Inputs extends Component {
     this.props.reverseInputs();
   }
 
-  onFeature(obj) {
-    this.props.addFeature(obj);
-  }
-
   onOriginFeature(coords) {
-    const feature = {
+    this.props.addOrigin({
       type: 'Feature',
       geometry: {
         type: 'Point',
@@ -41,13 +37,11 @@ export default class Inputs extends Component {
       properties: {
         'marker-symbol': 'A'
       }
-    };
-
-    this.props.addFeature(feature);
+    });
   }
 
   onDestinationFeature(coords) {
-    const feature = {
+    this.props.addDestination({
       type: 'Feature',
       geometry: {
         type: 'Point',
@@ -56,9 +50,7 @@ export default class Inputs extends Component {
       properties: {
         'marker-symbol': 'B'
       }
-    };
-
-    this.props.addFeature(feature);
+    });
   }
 
   changeMode(e) {
@@ -138,7 +130,8 @@ export default class Inputs extends Component {
 }
 
 Inputs.propTypes = {
-  addFeature: PropTypes.func.isRequired,
+  addOrigin: PropTypes.func.isRequired,
+  addDestination: PropTypes.func.isRequired,
   clearDestination: PropTypes.func.isRequired,
   clearOrigin: PropTypes.func.isRequired,
   data: PropTypes.object.isRequired,

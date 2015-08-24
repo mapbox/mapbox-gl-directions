@@ -1,3 +1,6 @@
+export const ORIGIN = 'ORIGIN';
+export const DESTINATION = 'DESTINATION';
+
 export const ORIGIN_INPUT = 'ORIGIN_INPUT';
 export const DESTINATION_INPUT = 'DESTINATION_INPUT';
 

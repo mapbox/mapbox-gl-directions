@@ -3,8 +3,7 @@ import React, { Component, PropTypes } from 'react';
 export default class Routes extends Component {
 
   render() {
-
-    console.log('From route', this.props);
+    const { routes } = this.props;
 
     return (
       <div className='mapbox-directions-component'>

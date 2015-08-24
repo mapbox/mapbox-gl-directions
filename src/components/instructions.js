@@ -1,16 +1,50 @@
 import React, { Component, PropTypes } from 'react';
+import format from '../format';
 
 export default class Instructions extends Component {
 
+  _mouseOver() {}
+
+  _mouseOut() {}
+
+  _click() {}
+
   render() {
+    const { data, unit } = this.props;
+    const steps = data[0].steps;
+
+    const renderSteps = function(d) {
+      var icon = d.maneuver.type.replace(/\s+/g, '-').toLowerCase();
+      var distance = (d.distance) ? format[unit](d.distance) : false;
+
+      return (
+        <li
+          onMouseOver={this._mouseOver}
+          onMouseOut={this._mouseOut}
+          click={this._onClick}
+          className='mapbox-directions-step'>
+          <span className={`directions-icon directions-icon-${icon}`}></span>
+          <div className={`mapbox-directions-step-maneuver`}>
+            {d.maneuver.instruction}
+          </div>
+          {distance && <div className={`mapbox-directions-step-distance`}>
+            {distance}
+          </div>}
+        </li>
+      );
+    }.bind(this);
+
     return (
-      <div className='mapbox-directions-component'>
-        Instructions
+      <div className='mapbox-directions-instructions'>
+        <ol className='mapbox-directions-steps'>
+          {steps.map(renderSteps)}
+        </ol>
       </div>
     );
   }
 }
 
 Instructions.propTypes = {
-  options: PropTypes.object
+  unit: PropTypes.string.isRequired,
+  data: PropTypes.array.isRequired
 };

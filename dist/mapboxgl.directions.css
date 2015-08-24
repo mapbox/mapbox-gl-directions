@@ -28,8 +28,8 @@
   min-width:200px;
   z-index:1;
   }
-  .directions-control:empty { display:none; }
   .directions-control.directions-control-directions {
+    background:rgba(0,0,0,0.75);
     top:0;
     right:0;
     bottom:0;

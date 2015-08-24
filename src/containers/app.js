@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as RoutingActions from '../actions';
+import { decode } from 'polyline';
 
 // Components
 import InputsControl from '../components/inputs';
@@ -17,12 +18,15 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { map, data } = this.props;
+    const { map } = this.props;
 
     map.on('style.load', () => {
 
       const geojson = new mapboxgl.GeoJSONSource({
-        data: data.geojson
+        data: {
+          type: 'FeatureCollection',
+          features: []
+        }
       });
 
       // Add and set data theme layer/style
@@ -42,15 +46,31 @@ class App extends Component {
 
   componentWillReceiveProps() {
     const { map, data } = this.props;
-    const { features } = data.geojson;
+    const geojson = {
+      type: 'FeatureCollection',
+      features: [data.origin, data.destination].filter((d) => {
+        return d.geometry;
+      })
+    };
 
-    if (features.length) {
-      map.getSource('directions').setData(data.geojson);
-      if (features.length === 1) {
-        const { coordinates } = features[0].geometry;
-        // console.log(coordinates);
-        // map.fitBounds(coordinates, coordinates);
-        map.flyTo({center: coordinates});
+    if (data.directions.length) {
+
+      geojson.features.push({
+        geometry: {
+          type: 'LineString',
+          coordinates: decode(data.directions[0].geometry)
+        }
+      });
+    }
+
+    // TODO fitBounds to geojson?
+    if (geojson.features.length) {
+      map.getSource('directions').setData(geojson);
+
+      if (!data.origin.geometry) {
+        map.flyTo({ center: data.destination.geometry.coordinates });
+      } else if (!data.destination.geometry) {
+        map.flyTo({ center: data.origin.geometry.coordinates });
       }
     }
   }
@@ -69,10 +89,12 @@ class App extends Component {
         </div>
         {data.directions.length !== 0 && <div className='directions-control directions-control-directions'>
           <RoutesControl
-            data={data}
+            unit={data.unit}
+            data={data.directions}
           />
           <InstructionsControl
-            data={data}
+            unit={data.unit}
+            data={data.directions}
           />
         </div>}
       </div>

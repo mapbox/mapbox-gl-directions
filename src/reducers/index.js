@@ -4,6 +4,13 @@ import * as types from '../constants/action_types.js';
 const initialState = {
   mode: 'driving',
 
+  unit: 'imperial',
+
+  // `origin` & `destination` represented as
+  // geojson objects on the map.
+  origin: {},
+  destination: {},
+
   // Original input user entered
   originQuery: '',
   destinationQuery: '',
@@ -27,6 +34,16 @@ const initialState = {
 
 function data(state = initialState, action) {
   switch (action.type) {
+  case types.ORIGIN:
+    return Object.assign({}, state, {
+      origin: action.origin
+    });
+
+  case types.DESTINATION:
+    return Object.assign({}, state, {
+      destination: action.destination
+    });
+
   case types.ORIGIN_INPUT:
     return Object.assign({}, state, {
       originQuery: action.query,
@@ -65,7 +82,9 @@ function data(state = initialState, action) {
     });
 
   case types.DIRECTIONS:
-    return state;
+    return Object.assign({}, state, {
+      directions: action.directions
+    });
 
   case types.GEOJSON:
     const { feature } = action;
