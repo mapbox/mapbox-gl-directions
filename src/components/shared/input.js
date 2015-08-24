@@ -30,10 +30,6 @@ export default class Input extends Component {
 
   render() {
     const { placeholder, value } = this.props;
-    const inputAttributes = {
-      placeholder: placeholder,
-      onChange: this.onChange.bind(this)
-    };
 
     const suggestions = function(suggestion) {
       return (
@@ -46,8 +42,10 @@ export default class Input extends Component {
     return (
       <div>
         <AutoSuggest
-          ref='autosuggest'
-          inputAttributes={inputAttributes}
+          inputAttributes={{
+            placeholder: placeholder,
+            onChange: this.onChange.bind(this)
+          }}
           suggestions={this.getSuggestions.bind(this)}
           suggestionRenderer={suggestions}
           suggestionValue={this.suggestionValue.bind(this)}
@@ -67,7 +65,7 @@ export default class Input extends Component {
 Input.propTypes = {
   text: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  onClear: PropTypes.func.isRequired,
+  onClear: PropTypes.func,
   onFeature: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   value: PropTypes.string.isRequired,
