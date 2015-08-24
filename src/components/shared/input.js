@@ -16,19 +16,28 @@ export default class Input extends Component {
     // this.props.onClear();
   }
 
-  getSuggestions(input, cb) {
-    cb(null, this.props.results.reduce((memo, d) => {
-      memo.push(d.place_name);
-      return memo;
-    }, []));
+  suggestionValue(result) {
+    return result.place_name;
   }
 
-  setResult(v) {
-    var result = this.props.results.filter((d) => {
-      return v === d.place_name;
-    })[0];
+  getSuggestions(input, cb) {
+    cb(null, this.props.results);
+  }
 
-    if (result) this.props.onAdd(result.center);
+  setResult(result) {
+    const { options, onFeature } = this.props;
+
+    onFeature({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: result.center
+      },
+      properties: {
+        id: options.mode,
+        'marker-symbol': (options.mode === 'origin') ? 'A' : 'B'
+      }
+    });
   }
 
   render() {
@@ -36,6 +45,14 @@ export default class Input extends Component {
     const inputAttributes = {
       placeholder: options.placeholder,
       onChange: this.onChange.bind(this)
+    };
+
+    const suggestions = function(suggestion) {
+      return (
+        <div>
+          {suggestion.place_name}
+        </div>
+      );
     };
 
     return (
@@ -48,6 +65,8 @@ export default class Input extends Component {
           ref='autosuggest'
           inputAttributes={inputAttributes}
           suggestions={this.getSuggestions.bind(this)}
+          suggestionRenderer={suggestions}
+          suggestionValue={this.suggestionValue.bind(this)}
           onSuggestionSelected={this.setResult.bind(this)}
         />
 
@@ -65,7 +84,7 @@ Input.propTypes = {
   text: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   onClear: PropTypes.func.isRequired,
-  onAdd: PropTypes.func.isRequired,
+  onFeature: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
   options: PropTypes.object.isRequired
 };

@@ -17,18 +17,16 @@ class App extends Component {
   }
 
   componentDidMount() {
-    var map = this.props.map;
+    const { map, data } = this.props;
 
     map.on('style.load', () => {
 
-      // Add and set data theme layer/style
-      map.addSource('directions', {
-        type: 'geojson',
-        data: {
-          type: 'featureCollection',
-          features: []
-        }
+      const geojson = new mapboxgl.GeoJSONSource({
+        data: data.geojson
       });
+
+      // Add and set data theme layer/style
+      map.addSource('directions', geojson);
 
       directionsStyle.forEach((style) => {
         map.addLayer(style);
@@ -43,8 +41,19 @@ class App extends Component {
   }
 
   componentWillReceiveProps() {
-    var map = this.props.map;
-    // this._map.getSource('directions').setData(e.geojson);
+    const { map, data } = this.props;
+
+    if (data.geojson.features.length) {
+
+      const geojson = new mapboxgl.GeoJSONSource({
+        data: data.geojson
+      });
+
+      map.getSource('directions').setData(geojson);
+
+      console.log('geojson', data.geojson);
+      // map.fitBounds[[minLat, minLng], [maxLat, maxLng]]
+    }
   }
 
   render() {

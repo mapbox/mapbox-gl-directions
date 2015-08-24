@@ -58,17 +58,10 @@ export function queryDestination(query) {
   };
 }
 
-export function addOrigin(coords) {
+export function addFeature(feature) {
   return {
-    type: types.ORIGIN_COORDINATES,
-    coords
-  };
-}
-
-export function addDestination(coords) {
-  return {
-    type: types.DESTINATION_COORDINATES,
-    coords
+    type: types.GEOJSON,
+    feature
   };
 }
 

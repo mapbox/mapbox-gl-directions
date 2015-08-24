@@ -27,12 +27,8 @@ export default class Inputs extends Component {
     this.props.reverseInputs();
   }
 
-  onOriginAdd(coords) {
-    this.props.addOrigin(coords);
-  }
-
-  onDestinationAdd(coords) {
-    this.props.addDestination(coords);
+  onFeature(obj) {
+    this.props.addFeature(obj);
   }
 
   changeMode(e) {
@@ -48,7 +44,7 @@ export default class Inputs extends Component {
         <Input
           onChange={this.onOriginChange.bind(this)}
           onClear={this.onOriginClear.bind(this)}
-          onAdd={this.onOriginAdd.bind(this)}
+          onFeature={this.onFeature.bind(this)}
           results={data.originResults}
           options={{
             mode: 'origin',
@@ -67,7 +63,7 @@ export default class Inputs extends Component {
         <Input
           onChange={this.onDestinationChange.bind(this)}
           onClear={this.onDestinationClear.bind(this)}
-          onAdd={this.onDestinationAdd.bind(this)}
+          onFeature={this.onFeature.bind(this)}
           results={data.destinationResults}
           options={{
             mode: 'destination',
@@ -109,8 +105,7 @@ export default class Inputs extends Component {
 }
 
 Inputs.propTypes = {
-  addDestination: PropTypes.func.isRequired,
-  addOrigin: PropTypes.func.isRequired,
+  addFeature: PropTypes.func.isRequired,
   clearDestination: PropTypes.func.isRequired,
   clearOrigin: PropTypes.func.isRequired,
   data: PropTypes.object.isRequired,

@@ -19,7 +19,10 @@ const initialState = {
   directions: [],
 
   // Features drawn on the map
-  geojson: []
+  geojson: {
+    type: 'FeatureCollection',
+    features: []
+  }
 };
 
 function data(state = initialState, action) {
@@ -56,16 +59,6 @@ function data(state = initialState, action) {
       destinationQuery: state.originQuery
     });
 
-  case types.ORIGIN_COORDINATES:
-    return Object.assign({}, state, {
-      originCoordinates: action.coords
-    });
-
-  case types.DESTINATION_COORDINATES:
-    return Object.assign({}, state, {
-      destinationCoordinates: action.coords
-    });
-
   case types.DIRECTIONS_MODE:
     return Object.assign({}, state, {
       mode: action.mode
@@ -75,7 +68,21 @@ function data(state = initialState, action) {
     return state;
 
   case types.GEOJSON:
-    return state;
+    const { feature } = action;
+    const { geojson } = state;
+
+    const features = geojson.features.filter((d) => {
+      return d.properties.id !== feature.properties.id;
+    });
+
+    // Add the new incoming feature.
+    features.push(action.feature);
+
+    return Object.assign({}, state, {
+      geojson: Object.assign({}, geojson, {
+        features: features
+      })
+    });
 
   default:
     return state;
