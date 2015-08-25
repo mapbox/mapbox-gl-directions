@@ -24,9 +24,9 @@ export default class Instructions extends Component {
           click={this._onClick}
           className='mapbox-directions-step'>
           <span className={`directions-icon directions-icon-${icon}`}></span>
-          <div className={`mapbox-directions-step-maneuver`}>
-            {d.maneuver.instruction}
-          </div>
+          <div
+            dangerouslySetInnerHTML={{__html: d.maneuver.instruction}}
+            className={`mapbox-directions-step-maneuver`} />
           {distance && <div className={`mapbox-directions-step-distance`}>
             {distance}
           </div>}

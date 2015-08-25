@@ -9,7 +9,7 @@
   }
 
 /* Basics */
-.mapbox-directions-component {
+.directions-control {
   font:15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
   }
 
@@ -134,13 +134,6 @@
     color:rgba(0,0,0,.75);
     }
 
-/* Errors */
-.mapbox-directions-error {
-  color:white;
-  display:inline-block;
-  padding:0 5px;
-  }
-
 /* Routes */
 .mapbox-directions-routes ul {
   list-style:none;
@@ -184,6 +177,16 @@
   }
 
 /* Instructions */
+.mapbox-directions-instructions .directions-icon {
+  position:absolute;
+  left:10px;
+  top:25px;
+  margin:auto;
+  }
+  .mapbox-directions-instructions .directions-icon:before {
+    vertical-align:top;
+    }
+
 .mapbox-directions-steps {
   position:relative;
   list-style:none;
@@ -245,7 +248,7 @@
   -moz-osx-font-smoothing:grayscale;
   }
   .directions-icon-arrive:before            { content:'\e600'; }
-  .directions-icon-bear-left:before         { content:'\e601'; }
+  .directions-icon-bear-thisleft:before         { content:'\e601'; }
   .directions-icon-bear-right:before        { content:'\e602'; }
   .directions-icon-close:before             { content:'\e603'; }
   .directions-icon-continue:before          { content:'\e604'; }
