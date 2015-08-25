@@ -23,6 +23,14 @@ module.exports = {
       loaders: ['react-hot', 'babel'],
       exclude: /node_modules/,
       include: __dirname
+    }, {
+      test: /\.css?$/,
+      loaders: ['style', 'raw'],
+      include: __dirname
+    }, {
+      test: /\.(woff|woff2|eot)$/,
+      loader: 'url',
+      include: __dirname
     }]
   }
 };

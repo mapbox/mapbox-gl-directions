@@ -1,9 +1,9 @@
 @font-face {
   font-family:'mapboxgl-directions';
-    src:url('font/mapboxgl-directions.eot');
-    src:url('font/mapboxgl-directions.eot#iefix') format('embedded-opentype'),
-        url('font/mapboxgl-directions.woff2') format('woff2'),
-        url('font/mapboxgl-directions.woff') format('woff');
+    src:url('../dist/font/mapboxgl-directions.eot');
+    src:url('../dist/font/mapboxgl-directions.eot#iefix') format('embedded-opentype'),
+        url('../dist/font/mapboxgl-directions.woff2') format('woff2'),
+        url('../dist/font/mapboxgl-directions.woff') format('woff');
   font-weight:normal;
   font-style:normal;
   }
