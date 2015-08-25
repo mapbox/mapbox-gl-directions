@@ -13,12 +13,13 @@ export default class Instructions extends Component {
     const { data, unit } = this.props;
     const steps = data[0].steps;
 
-    const renderSteps = function(d) {
+    const renderSteps = function(d, i) {
       var icon = d.maneuver.type.replace(/\s+/g, '-').toLowerCase();
       var distance = (d.distance) ? format[unit](d.distance) : false;
 
       return (
         <li
+          key={i}
           onMouseOver={this._mouseOver}
           onMouseOut={this._mouseOut}
           click={this._onClick}

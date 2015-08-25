@@ -1,17 +1,14 @@
 const style = [{
-  'id': 'line',
+  'id': 'directions-line',
   'type': 'line',
   'source': 'directions',
   'filter': ['all', ['==', '$type', 'LineString']],
-  'layout': {
-    'icon-image': '{marker-symbol}-12'
-  },
   'paint': {
-    'text-size': 12
-  },
-  'interactive': true
+    'line-color': '#f0f',
+    'line-width': 1
+  }
 }, {
-  'id': 'marker',
+  'id': 'directions-point',
   'type': 'circle',
   'source': 'directions',
   'filter': ['all', ['==', '$type', 'Point']],

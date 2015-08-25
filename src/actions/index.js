@@ -60,10 +60,10 @@ function setDestination(feature) {
 export function addOrigin(feature) {
   return (dispatch, getState) => {
     const { data } = getState();
-    const { origin, destination, mode } = data;
+    const { destination, mode } = data;
 
-    if (origin.geometry && destination.geometry) {
-      let query = origin.geometry.coordinates.join(',');
+    if (destination.geometry) {
+      let query = feature.geometry.coordinates.join(',');
       query += ';' + destination.geometry.coordinates.join(',');
       dispatch(fetchDirections(query, mode));
     }
@@ -75,11 +75,11 @@ export function addOrigin(feature) {
 export function addDestination(feature) {
   return (dispatch, getState) => {
     const { data } = getState();
-    const { origin, destination, mode } = data;
+    const { origin, mode } = data;
 
-    if (origin.geometry && destination.geometry) {
+    if (origin.geometry) {
       let query = origin.geometry.coordinates.join(',');
-      query += ';' + destination.geometry.coordinates.join(',');
+      query += ';' + feature.geometry.coordinates.join(',');
       dispatch(fetchDirections(query, mode));
     }
 
