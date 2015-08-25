@@ -5,7 +5,7 @@ const style = [{
   'filter': ['all', ['==', '$type', 'LineString']],
   'paint': {
     'line-color': '#f0f',
-    'line-width': 1
+    'line-width': 2
   }
 }, {
   'id': 'directions-point',

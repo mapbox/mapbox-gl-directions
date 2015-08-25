@@ -248,7 +248,7 @@
   -moz-osx-font-smoothing:grayscale;
   }
   .directions-icon-arrive:before            { content:'\e600'; }
-  .directions-icon-bear-thisleft:before         { content:'\e601'; }
+  .directions-icon-bear-thisleft:before     { content:'\e601'; }
   .directions-icon-bear-right:before        { content:'\e602'; }
   .directions-icon-close:before             { content:'\e603'; }
   .directions-icon-continue:before          { content:'\e604'; }
@@ -258,8 +258,8 @@
   .directions-icon-reverse:before           { content:'\e608'; }
   .directions-icon-sharp-left:before        { content:'\e609'; }
   .directions-icon-sharp-right:before       { content:'\e610'; }
-  .directions-icon-turn-left:before         { content:'\e611'; }
-  .directions-icon-turn-right:before        { content:'\e612'; }
+  .directions-icon-turn-left:before         { content:'\e60b'; }
+  .directions-icon-turn-right:before        { content:'\e60c'; }
   .directions-icon-u-turn:before            { content:'\e613'; }
 
 .mapbox-marker-drag-icon {
