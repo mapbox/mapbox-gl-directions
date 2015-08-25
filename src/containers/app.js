@@ -57,7 +57,9 @@ class App extends Component {
       geojson.features.push({
         geometry: {
           type: 'LineString',
-          coordinates: decode(data.directions[0].geometry)
+          coordinates: decode(data.directions[0].geometry, 6).map((c) => {
+            return c.reverse();
+          })
         }
       });
     }

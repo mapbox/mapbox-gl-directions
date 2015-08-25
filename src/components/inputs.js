@@ -74,7 +74,7 @@ export default class Inputs extends Component {
             onFeature={this.onOriginFeature.bind(this)}
             results={data.originResults}
             value={data.destinationQuery}
-            placeholder='Choose a starting place or click on the map'
+            placeholder='Choose a starting place'
           />
         </div>
 
