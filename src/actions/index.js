@@ -113,6 +113,22 @@ export function directionsMode(mode) {
 }
 
 export function reverseInputs() {
+  return (dispatch, getState) => {
+    const { data } = getState();
+    const { origin, destination, mode } = data;
+
+    if (origin.geometry && destination.geometry) {
+      let query = destination.geometry.coordinates.join(',');
+      query += ';' + origin.geometry.coordinates.join(',');
+
+      dispatch(fetchDirections(query, mode));
+    }
+
+    dispatch(reverseOriginDestination());
+  };
+}
+
+export function reverseOriginDestination() {
   return {
     type: types.REVERSE_INPUTS
   };

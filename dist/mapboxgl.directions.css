@@ -248,7 +248,7 @@
   -moz-osx-font-smoothing:grayscale;
   }
   .directions-icon-arrive:before            { content:'\e600'; }
-  .directions-icon-bear-thisleft:before     { content:'\e601'; }
+  .directions-icon-bear-left:before         { content:'\e601'; }
   .directions-icon-bear-right:before        { content:'\e602'; }
   .directions-icon-close:before             { content:'\e603'; }
   .directions-icon-continue:before          { content:'\e604'; }
