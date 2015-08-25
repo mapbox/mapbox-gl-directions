@@ -57,6 +57,13 @@ function setDestination(feature) {
   };
 }
 
+function setMode(mode) {
+  return {
+    type: types.DIRECTIONS_MODE,
+    mode
+  };
+}
+
 export function addOrigin(feature) {
   return (dispatch, getState) => {
     const { data } = getState();
@@ -65,6 +72,7 @@ export function addOrigin(feature) {
     if (destination.geometry) {
       let query = feature.geometry.coordinates.join(',');
       query += ';' + destination.geometry.coordinates.join(',');
+
       dispatch(fetchDirections(query, mode));
     }
 
@@ -80,6 +88,7 @@ export function addDestination(feature) {
     if (origin.geometry) {
       let query = origin.geometry.coordinates.join(',');
       query += ';' + feature.geometry.coordinates.join(',');
+
       dispatch(fetchDirections(query, mode));
     }
 
@@ -87,9 +96,19 @@ export function addDestination(feature) {
   };
 }
 
-export function getDirections(query, mode) {
-  return (dispatch) => {
-    return dispatch(directions(query, mode));
+export function directionsMode(mode) {
+  return (dispatch, getState) => {
+    const { data } = getState();
+    const { origin, destination } = data;
+
+    if (origin.geometry && destination.geometry) {
+      let query = origin.geometry.coordinates.join(',');
+      query += ';' + destination.geometry.coordinates.join(',');
+
+      dispatch(fetchDirections(query, mode));
+    }
+
+    dispatch(setMode(mode));
   };
 }
 
@@ -120,12 +139,5 @@ export function queryOrigin(query) {
 export function queryDestination(query) {
   return (dispatch) => {
     return dispatch(geocode(query, 'destination'));
-  };
-}
-
-export function directionsMode(mode) {
-  return {
-    type: types.DIRECTIONS_MODE,
-    mode
   };
 }
