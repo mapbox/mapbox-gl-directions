@@ -44,8 +44,8 @@ class App extends Component {
     });
   }
 
-  componentWillReceiveProps() {
-    const { map, data } = this.props;
+  componentWillReceiveProps(props) {
+    const { map, data } = props;
     const geojson = {
       type: 'FeatureCollection',
       features: [data.origin, data.destination].filter((d) => {
@@ -54,7 +54,6 @@ class App extends Component {
     };
 
     if (data.directions.length) {
-
       geojson.features.push({
         geometry: {
           type: 'LineString',
