@@ -3,7 +3,6 @@ import * as types from '../constants/action_types.js';
 
 const initialState = {
   mode: 'driving',
-
   unit: 'imperial',
 
   // `origin` & `destination` represented as
@@ -23,13 +22,7 @@ const initialState = {
   destinationCoordinates: [], // [Lng, Lat]
 
   // Directions data
-  directions: [],
-
-  // Features drawn on the map
-  geojson: {
-    type: 'FeatureCollection',
-    features: []
-  }
+  directions: []
 };
 
 function data(state = initialState, action) {
@@ -84,23 +77,6 @@ function data(state = initialState, action) {
   case types.DIRECTIONS:
     return Object.assign({}, state, {
       directions: action.directions
-    });
-
-  case types.GEOJSON:
-    const { feature } = action;
-    const { geojson } = state;
-
-    const features = geojson.features.filter((d) => {
-      return d.properties.id !== feature.properties.id;
-    });
-
-    // Add the new incoming feature.
-    features.push(action.feature);
-
-    return Object.assign({}, state, {
-      geojson: Object.assign({}, geojson, {
-        features: features
-      })
     });
 
   default:
