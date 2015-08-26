@@ -140,6 +140,12 @@ export function clearOrigin() {
   };
 }
 
+export function clearRefresh() {
+  return {
+    type: types.REFRESH_CLEAR
+  };
+}
+
 export function clearDestination() {
   return {
     type: types.DESTINATION_CLEAR

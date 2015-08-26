@@ -53,6 +53,12 @@ export default class Inputs extends Component {
     });
   }
 
+  shouldRefresh(refresh) {
+    // Using setTimeout to wait on existing state dispatch.
+    if (refresh) window.setTimeout(() => { this.props.clearRefresh(); }, 0);
+    return refresh;
+  }
+
   changeMode(e) {
     var mode = e.target.id.split('-').pop();
     this.props.directionsMode(mode);
@@ -72,6 +78,7 @@ export default class Inputs extends Component {
             onChange={this.onOriginChange.bind(this)}
             onClear={this.onOriginClear.bind(this)}
             onFeature={this.onOriginFeature.bind(this)}
+            refreshValue={this.shouldRefresh(data.refresh)}
             value={data.originQuery}
             results={data.originResults}
             placeholder='Choose a starting place'
@@ -92,8 +99,9 @@ export default class Inputs extends Component {
             onChange={this.onDestinationChange.bind(this)}
             onClear={this.onDestinationClear.bind(this)}
             onFeature={this.onDestinationFeature.bind(this)}
-            results={data.destinationResults}
+            refreshValue={this.shouldRefresh(data.refresh)}
             value={data.destinationQuery}
+            results={data.destinationResults}
             placeholder='Choose destination'
           />
         </div>
@@ -134,6 +142,7 @@ Inputs.propTypes = {
   addDestination: PropTypes.func.isRequired,
   clearDestination: PropTypes.func.isRequired,
   clearOrigin: PropTypes.func.isRequired,
+  clearRefresh: PropTypes.func.isRequired,
   data: PropTypes.object.isRequired,
   directionsMode: PropTypes.func.isRequired,
   queryDestination: PropTypes.func.isRequired,

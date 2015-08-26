@@ -22,7 +22,8 @@ const initialState = {
   destinationCoordinates: [], // [Lng, Lat]
 
   // Directions data
-  directions: []
+  directions: [],
+  refresh: false
 };
 
 function data(state = initialState, action) {
@@ -70,7 +71,8 @@ function data(state = initialState, action) {
       originResults: state.destinationResults,
       originQuery: state.destinationQuery,
       destinationResults: state.originResults,
-      destinationQuery: state.originQuery
+      destinationQuery: state.originQuery,
+      refresh: true
     });
 
   case types.DIRECTIONS_MODE:
@@ -81,6 +83,11 @@ function data(state = initialState, action) {
   case types.DIRECTIONS:
     return Object.assign({}, state, {
       directions: action.directions
+    });
+
+  case types.REFRESH_CLEAR:
+    return Object.assign({}, state, {
+      refresh: false
     });
 
   default:

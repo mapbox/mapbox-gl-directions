@@ -15,6 +15,14 @@ export default class Input extends Component {
     if (text) this.props.onChange(text);
   }
 
+  componentWillReceiveProps(props) {
+    if (props.refreshValue) {
+
+      console.log('gets here', props.refreshValue);
+      this.setState({ activeSuggestion: props.value });
+    }
+  }
+
   clearQuery() {
     this.setState({ activeSuggestion: '' });
     React.findDOMNode(this.refs.autosuggest.refs.input).focus();
@@ -73,6 +81,7 @@ export default class Input extends Component {
 Input.propTypes = {
   text: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  refreshValue: PropTypes.bool,
   onClear: PropTypes.func,
   onFeature: PropTypes.func.isRequired,
   results: PropTypes.array.isRequired,
