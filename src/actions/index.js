@@ -25,13 +25,11 @@ function directionsResults(directions) {
   };
 }
 
-function geocode(query, mode) {
+function geocode(query, callback) {
   return dispatch => {
     return fetch(`${GEOCODER_URL}/v4/geocode/mapbox.places/${query.trim()}.json?access_token=${ACCESS_TOKEN}`)
       .then(req => req.json())
-      .then(json => dispatch((mode === 'origin') ?
-        originResults(query, json.features) :
-        destinationResults(query, json.features)));
+      .then(json => dispatch(callback(json.features)));
   };
 }
 
@@ -172,12 +170,35 @@ export function clearDestination() {
 
 export function queryOrigin(query) {
   return (dispatch) => {
-    return dispatch(geocode(query, 'origin'));
+    return dispatch(geocode(query, (results) => {
+      return dispatch(originResults(query, results));
+    }));
   };
 }
 
 export function queryDestination(query) {
   return (dispatch) => {
-    return dispatch(geocode(query, 'destination'));
+    return dispatch(geocode(query, (results) => {
+      return dispatch(destinationResults(query, results));
+    }));
+  };
+}
+
+export function queryPointFromMap(coordinates, mode) {
+  return (dispatch) => {
+    return dispatch(geocode(coordinates.lng + ',' + coordinates.lat, (results) => {
+
+      if (results.length && mode === 'origin') {
+        dispatch(addOrigin([coordinates.lng, coordinates.lat]));
+        dispatch(originResults(results[0].place_name, results));
+      } else if (results.length && mode === 'destination') {
+        dispatch(addDestination([coordinates.lng, coordinates.lat]));
+        dispatch(destinationResults(results[0].place_name, results));
+      }
+
+      return {
+        type: types.RESULT_FROM_MAP
+      };
+    }));
   };
 }

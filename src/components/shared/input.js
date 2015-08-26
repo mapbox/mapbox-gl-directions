@@ -66,7 +66,7 @@ export default class Input extends Component {
           onSuggestionSelected={this.setResult.bind(this)}
         />
 
-        {value && <button
+        {this.state.activeSuggestion && <button
           onClick={this.clearQuery.bind(this)}
           className='directions-icon directions-icon-close directions-close'
           title='Clear value'>

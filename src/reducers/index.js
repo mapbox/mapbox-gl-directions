@@ -90,6 +90,11 @@ function data(state = initialState, action) {
       refresh: false
     });
 
+  case types.RESULT_FROM_MAP:
+    return Object.assign({}, state, {
+      refresh: true
+    });
+
   default:
     return state;
   }

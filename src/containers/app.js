@@ -38,14 +38,17 @@ class App extends Component {
 
       // Map event handlers
       map.on('click', (e) => {
-        console.log(e);
-      });
+        const { data, dispatch } = this.props;
+        const mode = (data.origin.geometry) ? 'destination' : 'origin';
+        dispatch(RoutingActions.queryPointFromMap(e.lngLat, mode));
+      }.bind(this));
 
     });
   }
 
   componentWillReceiveProps(props) {
     const { map, data } = props;
+
     const geojson = {
       type: 'FeatureCollection',
       features: [data.origin, data.destination].filter((d) => {
