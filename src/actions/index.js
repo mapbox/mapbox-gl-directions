@@ -140,13 +140,27 @@ export function reverseInputs() {
       dispatch(fetchDirections(query, mode));
     }
 
-    dispatch(reverseOriginDestination());
+    const originReversed = Object.assign({}, origin, {
+      geometry: Object.assign({}, origin.geometry, {
+        coordinates: destination.geometry.coordinates
+      })
+    });
+
+    const destinationReversed = Object.assign({}, destination, {
+      geometry: Object.assign({}, destination.geometry, {
+        coordinates: origin.geometry.coordinates
+      })
+    });
+
+    dispatch(reverseOriginDestination(originReversed, destinationReversed));
   };
 }
 
-export function reverseOriginDestination() {
+export function reverseOriginDestination(origin, destination) {
   return {
-    type: types.REVERSE_INPUTS
+    type: types.REVERSE_INPUTS,
+    origin,
+    destination
   };
 }
 

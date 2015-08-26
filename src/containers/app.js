@@ -48,7 +48,6 @@ class App extends Component {
 
   componentWillReceiveProps(props) {
     const { map, data } = props;
-
     const geojson = {
       type: 'FeatureCollection',
       features: [data.origin, data.destination].filter((d) => {
