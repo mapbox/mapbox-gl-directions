@@ -17,8 +17,6 @@ export default class Input extends Component {
 
   componentWillReceiveProps(props) {
     if (props.refreshValue) {
-
-      console.log('gets here', props.refreshValue);
       this.setState({ activeSuggestion: props.value });
     }
   }
