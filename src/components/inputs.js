@@ -7,52 +7,6 @@ export default class Inputs extends Component {
     super();
   }
 
-  onOriginChange(v) {
-    this.props.queryOrigin(v);
-  }
-
-  onDestinationChange(v) {
-    this.props.queryDestination(v);
-  }
-
-  onDestinationClear() {
-    this.props.clearDestination();
-  }
-
-  onOriginClear() {
-    this.props.clearOrigin();
-  }
-
-  reverseInputs() {
-    this.props.reverseInputs();
-  }
-
-  onOriginFeature(coords) {
-    this.props.addOrigin({
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: coords
-      },
-      properties: {
-        'marker-symbol': 'A'
-      }
-    });
-  }
-
-  onDestinationFeature(coords) {
-    this.props.addDestination({
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: coords
-      },
-      properties: {
-        'marker-symbol': 'B'
-      }
-    });
-  }
-
   shouldRefresh(refresh) {
     // Using setTimeout to wait on existing state dispatch.
     if (refresh) window.setTimeout(() => { this.props.clearRefresh(); }, 0);
@@ -75,9 +29,9 @@ export default class Inputs extends Component {
             <span className='directions-icon directions-icon-depart'></span>
           </label>
           <Input
-            onChange={this.onOriginChange.bind(this)}
-            onClear={this.onOriginClear.bind(this)}
-            onFeature={this.onOriginFeature.bind(this)}
+            onChange={this.props.queryOrigin}
+            onClear={this.props.clearOrigin}
+            onFeature={this.props.addOrigin}
             refreshValue={this.shouldRefresh(data.refresh)}
             value={data.originQuery}
             results={data.originResults}
@@ -88,7 +42,7 @@ export default class Inputs extends Component {
         <button
           className='directions-icon directions-icon-reverse directions-reverse'
           title='Reverse origin &amp; destination'
-          onClick={this.reverseInputs.bind(this)}>
+          onClick={this.props.reverseInputs}>
         </button>
 
         <div className='mapbox-directions-destination'>
@@ -96,9 +50,9 @@ export default class Inputs extends Component {
             <span className='directions-icon directions-icon-arrive'></span>
           </label>
           <Input
-            onChange={this.onDestinationChange.bind(this)}
-            onClear={this.onDestinationClear.bind(this)}
-            onFeature={this.onDestinationFeature.bind(this)}
+            onChange={this.props.queryDestination}
+            onClear={this.props.clearDestination}
+            onFeature={this.props.addDestination}
             refreshValue={this.shouldRefresh(data.refresh)}
             value={data.destinationQuery}
             results={data.destinationResults}

@@ -64,35 +64,53 @@ function setMode(mode) {
   };
 }
 
-export function addOrigin(feature) {
+export function addOrigin(coordinates) {
   return (dispatch, getState) => {
     const { data } = getState();
     const { destination, mode } = data;
 
     if (destination.geometry) {
-      let query = feature.geometry.coordinates.join(',');
+      let query = coordinates.join(',');
       query += ';' + destination.geometry.coordinates.join(',');
 
       dispatch(fetchDirections(query, mode));
     }
 
-    dispatch(setOrigin(feature));
+    dispatch(setOrigin({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: coordinates
+      },
+      properties: {
+        'marker-symbol': 'A'
+      }
+    }));
   };
 }
 
-export function addDestination(feature) {
+export function addDestination(coordinates) {
   return (dispatch, getState) => {
     const { data } = getState();
     const { origin, mode } = data;
 
     if (origin.geometry) {
       let query = origin.geometry.coordinates.join(',');
-      query += ';' + feature.geometry.coordinates.join(',');
+      query += ';' + coordinates.join(',');
 
       dispatch(fetchDirections(query, mode));
     }
 
-    dispatch(setDestination(feature));
+    dispatch(setDestination({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: coordinates
+      },
+      properties: {
+        'marker-symbol': 'B'
+      }
+    }));
   };
 }
 
