@@ -5,18 +5,24 @@ export default class Input extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      activeSuggestion: props.value
+    };
   }
 
   onChange(text) {
+    this.setState({ activeSuggestion: text });
     if (text) this.props.onChange(text);
   }
 
   clearQuery() {
-    // TODO Clear the state of the input before calling props.
-    // this.props.onClear();
+    this.setState({ activeSuggestion: '' });
+    React.findDOMNode(this.refs.autosuggest.refs.input).focus();
+    this.props.onClear();
   }
 
   suggestionValue(result) {
+    this.setState({ activeSuggestion: result.place_name });
     return result.place_name;
   }
 
@@ -46,9 +52,11 @@ export default class Input extends Component {
             placeholder: placeholder,
             onChange: this.onChange.bind(this)
           }}
+          ref='autosuggest'
           suggestions={this.getSuggestions.bind(this)}
           suggestionRenderer={suggestions}
           suggestionValue={this.suggestionValue.bind(this)}
+          value={this.state.activeSuggestion}
           onSuggestionSelected={this.setResult.bind(this)}
         />
 

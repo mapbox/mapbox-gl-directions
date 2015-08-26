@@ -72,8 +72,8 @@ export default class Inputs extends Component {
             onChange={this.onOriginChange.bind(this)}
             onClear={this.onOriginClear.bind(this)}
             onFeature={this.onOriginFeature.bind(this)}
+            value={data.originQuery}
             results={data.originResults}
-            value={data.destinationQuery}
             placeholder='Choose a starting place'
           />
         </div>
@@ -93,8 +93,8 @@ export default class Inputs extends Component {
             onClear={this.onDestinationClear.bind(this)}
             onFeature={this.onDestinationFeature.bind(this)}
             results={data.destinationResults}
-            placeholder='Choose destination'
             value={data.destinationQuery}
+            placeholder='Choose destination'
           />
         </div>
 
