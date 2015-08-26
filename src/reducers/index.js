@@ -51,14 +51,18 @@ function data(state = initialState, action) {
 
   case types.ORIGIN_CLEAR:
     return Object.assign({}, state, {
+      origin: {},
       originQuery: '',
-      originResults: []
+      originResults: [],
+      directions: []
     });
 
   case types.DESTINATION_CLEAR:
     return Object.assign({}, state, {
+      destination: {},
       destinationQuery: '',
-      destinationResults: []
+      destinationResults: [],
+      directions: []
     });
 
   case types.REVERSE_INPUTS:
