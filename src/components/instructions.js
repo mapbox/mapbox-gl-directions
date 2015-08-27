@@ -10,7 +10,7 @@ export default class Instructions extends Component {
   _click() {}
 
   render() {
-    const { data, unit } = this.props;
+    const { data, unit, routeIndex } = this.props;
     const steps = data[0].steps;
 
     const renderSteps = function(d, i) {
@@ -47,5 +47,6 @@ export default class Instructions extends Component {
 
 Instructions.propTypes = {
   unit: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired
+  data: PropTypes.array.isRequired,
+  routeIndex: PropTypes.number.isRequired
 };

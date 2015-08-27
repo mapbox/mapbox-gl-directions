@@ -18,3 +18,5 @@ export const DIRECTIONS_MODE = 'DIRECTIONS_MODE';
 export const REFRESH_CLEAR = 'REFRESH_CLEAR';
 
 export const RESULT_FROM_MAP = 'RESULT_FROM_MAP';
+
+export const ROUTE_INDEX = 'ROUTE_INDEX';

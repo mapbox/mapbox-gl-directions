@@ -32,7 +32,8 @@ const style = [{
     'line-color': '#aaa',
     'line-opacity': 0.75,
     'line-width': 4
-  }
+  },
+  'interactive': true
 }, {
   'id': 'directions-origin-point',
   'type': 'circle',

@@ -6,7 +6,7 @@ import { decode } from 'polyline';
 
 // Components
 import InputsControl from '../components/inputs';
-import RoutesControl from '../components/routes';
+import RouteSummaryControl from '../components/route_summary';
 import InstructionsControl from '../components/instructions';
 
 import directionsStyle from '../directions_style';
@@ -152,13 +152,15 @@ class App extends Component {
           />
         </div>
         {data.directions.length !== 0 && <div className='directions-control directions-control-directions'>
-          <RoutesControl
+          <RouteSummaryControl
             unit={data.unit}
             data={data.directions}
+            routeIndex={data.routeIndex}
           />
           <InstructionsControl
             unit={data.unit}
             data={data.directions}
+            routeIndex={data.routeIndex}
           />
         </div>}
       </div>

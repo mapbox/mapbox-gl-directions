@@ -23,6 +23,7 @@ const initialState = {
 
   // Directions data
   directions: [],
+  routeIndex: 0,
   refresh: false
 };
 
@@ -95,6 +96,11 @@ function data(state = initialState, action) {
   case types.RESULT_FROM_MAP:
     return Object.assign({}, state, {
       refresh: true
+    });
+
+  case types.ROUTE_INDEX:
+    return Object.assign({}, state, {
+      routeIndex: action.routeIndex
     });
 
   default:
