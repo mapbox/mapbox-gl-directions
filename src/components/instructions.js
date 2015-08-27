@@ -4,14 +4,15 @@ import format from '../format';
 export default class Instructions extends Component {
 
   _mouseOver(e) {
-    var coordinates = e.target.getAttribute('data-coordinates');
-    if (coordinates) {
-      // console.log(coordinates);
-    }
+    const { hoverMarker } = this.props;
+    const coordinates = e.target.getAttribute('data-coordinates');
+    if (coordinates) hoverMarker(JSON.parse(coordinates));
   }
 
-  _mouseOut() {
-    // Remove the route point marker.
+  _mouseOut(e) {
+    const { hoverMarker } = this.props;
+    const coordinates = e.target.getAttribute('data-coordinates');
+    if (coordinates) hoverMarker(null);
   }
 
   _click() {
@@ -30,10 +31,10 @@ export default class Instructions extends Component {
       return (
         <li
           key={i}
-          onMouseOver={this._mouseOver}
-          onMouseOut={this._mouseOut}
+          onMouseOver={this._mouseOver.bind(this)}
+          onMouseOut={this._mouseOut.bind(this)}
           click={this._onClick}
-          data-coordinates={coordinates}
+          data-coordinates={JSON.stringify(coordinates)}
           className='mapbox-directions-step'>
           <span className={`directions-icon directions-icon-${icon}`}></span>
           <div
@@ -59,5 +60,6 @@ export default class Instructions extends Component {
 Instructions.propTypes = {
   unit: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
-  routeIndex: PropTypes.number.isRequired
+  routeIndex: PropTypes.number.isRequired,
+  hoverMarker: PropTypes.func.isRequired
 };

@@ -120,7 +120,11 @@ class App extends Component {
     const { map, data } = props;
     const geojson = {
       type: 'FeatureCollection',
-      features: [data.origin, data.destination].filter((d) => {
+      features: [
+        data.origin,
+        data.destination,
+        data.hoverMarker
+      ].filter((d) => {
         return d.geometry;
       })
     };
@@ -176,6 +180,7 @@ class App extends Component {
             unit={data.unit}
             data={data.directions}
             routeIndex={data.routeIndex}
+            hoverMarker={actions.hoverMarker}
           />
         </div>}
       </div>

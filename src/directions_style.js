@@ -12,8 +12,8 @@ const style = [{
     'line-join': 'round'
   },
   'paint': {
-    'line-color': '#aaa',
-    'line-width': 5
+    'line-color': '#bbb',
+    'line-width': 4
   },
   'interactive': true
 }, {
@@ -32,7 +32,20 @@ const style = [{
   'paint': {
     'line-color': '#3bb2d0',
     'line-dasharray': [0,1.5],
-    'line-width': 6
+    'line-width': 5
+  }
+}, {
+  'id': 'directions-hover-point',
+  'type': 'circle',
+  'source': 'directions',
+  'filter': [
+    'all',
+    ['in', '$type', 'Point'],
+    ['in', 'id', 'hover']
+  ],
+  'paint': {
+    'circle-radius': 5,
+    'circle-color': '#3bb2d0'
   }
 }, {
   'id': 'directions-origin-point',

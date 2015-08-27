@@ -222,6 +222,7 @@
   font-size:20px;
   line-height:25px;
   }
+  .mapbox-directions-step * { pointer-events:none; }
 
 .mapbox-directions-step-distance {
   color:rgba(255,255,255,.5);

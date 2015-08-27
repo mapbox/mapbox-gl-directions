@@ -65,6 +65,30 @@ function setMode(mode) {
   };
 }
 
+function setHoverMarker(feature) {
+  return {
+    type: types.HOVER_MARKER,
+    hoverMarker: feature
+  };
+}
+
+export function hoverMarker(coordinates) {
+  return (dispatch) => {
+    const feature = (coordinates) ? {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: coordinates
+      },
+      properties: {
+        id: 'hover'
+      }
+    } : {};
+
+    dispatch(setHoverMarker(feature));
+  };
+}
+
 export function setRouteIndex(routeIndex) {
   return {
     type: types.ROUTE_INDEX,

@@ -5,10 +5,10 @@ const initialState = {
   mode: 'driving',
   unit: 'imperial',
 
-  // `origin` & `destination` represented as
-  // geojson objects on the map.
+  // Marker feature drawn on the map at any point.
   origin: {},
   destination: {},
+  hoverMarker: {},
 
   // Original input user entered
   originQuery: '',
@@ -37,6 +37,11 @@ function data(state = initialState, action) {
   case types.DESTINATION:
     return Object.assign({}, state, {
       destination: action.destination
+    });
+
+  case types.HOVER_MARKER:
+    return Object.assign({}, state, {
+      hoverMarker: action.hoverMarker
     });
 
   case types.ORIGIN_INPUT:
