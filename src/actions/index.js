@@ -81,6 +81,7 @@ export function addOrigin(coordinates) {
         coordinates: coordinates
       },
       properties: {
+        id: 'origin',
         'marker-symbol': 'A'
       }
     }));
@@ -106,6 +107,7 @@ export function addDestination(coordinates) {
         coordinates: coordinates
       },
       properties: {
+        id: 'destination',
         'marker-symbol': 'B'
       }
     }));

@@ -15,6 +15,53 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+
+    this.map = props.map;
+    this.onMouseDown = this._onMouseDown.bind(this);
+    this.onMouseMove = this._onMouseMove.bind(this);
+    this.onMouseUp = this._onMouseUp.bind(this);
+  }
+
+  mousePos(e) {
+    const el = this.map.getContainer();
+    const rect = el.getBoundingClientRect();
+    return new mapboxgl.Point(
+      e.clientX - rect.left - el.clientLeft,
+      e.clientY - rect.top - el.clientTop
+    );
+  }
+
+  _onMouseDown(e) {
+    this.map.featuresAt(this.mousePos(e), {
+      radius: 10,
+      includeGeometry: true,
+      layer: [
+        'directions-origin-point',
+        'directions-destination-point'
+      ]
+    }, (err, features) => {
+      if (err) throw err;
+      if (features.length) {
+        this.dragging = features[0];
+      }
+    });
+  }
+
+  _onMouseMove(e) {
+    if (this.dragging) {
+
+      // Disable map dragging.
+      e.stopPropagation();
+      e.preventDefault();
+
+      const lngLat = this.map.unproject(this.mousePos(e));
+      const mode = this.dragging.properties.id;
+      this.props.dispatch(RoutingActions.queryPointFromMap(lngLat, mode));
+    }
+  }
+
+  _onMouseUp() {
+    this.dragging = false;
   }
 
   componentDidMount() {
@@ -36,13 +83,9 @@ class App extends Component {
         map.addLayer(style);
       });
 
-      map.getContainer().addEventListener('mousedown', () => {
-        this.drag = true;
-      }.bind(this));
-
-      map.getContainer().addEventListener('mouseup', () => {
-        this.drag = false;
-      }.bind(this));
+      map.getContainer().addEventListener('mousedown', this.onMouseDown);
+      map.getContainer().addEventListener('mousemove', this.onMouseMove, true);
+      map.getContainer().addEventListener('mouseup', this.onMouseUp);
 
       // Map event handlers
       map.on('click', (e) => {
@@ -57,15 +100,7 @@ class App extends Component {
           ]
         }, (err, features) => {
           if (err) throw err;
-
-          if (features.length) {
-            console.log('is dragging', this.drag);
-            if (this.drag) {
-              // Marker click hit a feature so drag it.
-              console.log('features', features);
-            }
-
-          } else {
+          if (!features.length) {
             const mode = (data.origin.geometry) ? 'destination' : 'origin';
             dispatch(RoutingActions.queryPointFromMap(e.lngLat, mode));
           }
