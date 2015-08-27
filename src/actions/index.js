@@ -140,17 +140,42 @@ export function reverseInputs() {
       dispatch(fetchDirections(query, mode));
     }
 
-    const originReversed = Object.assign({}, origin, {
-      geometry: Object.assign({}, origin.geometry, {
-        coordinates: destination.geometry.coordinates
-      })
-    });
+    let originReversed = {};
+    let destinationReversed = {};
 
-    const destinationReversed = Object.assign({}, destination, {
-      geometry: Object.assign({}, destination.geometry, {
-        coordinates: origin.geometry.coordinates
-      })
-    });
+    if (!destination.geometry || !origin.geometry) {
+
+      if (!destination.geometry && origin.geometry) {
+        // Origin remains empty
+        // Destination gets origin
+        destinationReversed = Object.assign({}, origin, {
+          properties: Object.assign({}, origin.properties, {
+            'marker-symbol': 'B'
+          })
+        });
+      } else if (!origin.geometry && destination.geometry) {
+        // Destination remains empty
+        // Origin gets destination
+        originReversed = Object.assign({}, destination, {
+          properties: Object.assign({}, destination.properties, {
+            'marker-symbol': 'A'
+          })
+        });
+      }
+
+    } else {
+      originReversed = Object.assign({}, origin, {
+        geometry: Object.assign({}, origin.geometry, {
+          coordinates: destination.geometry.coordinates
+        })
+      });
+
+      destinationReversed = Object.assign({}, destination, {
+        geometry: Object.assign({}, destination.geometry, {
+          coordinates: origin.geometry.coordinates
+        })
+      });
+    }
 
     dispatch(reverseOriginDestination(originReversed, destinationReversed));
   };
@@ -170,15 +195,15 @@ export function clearOrigin() {
   };
 }
 
-export function clearRefresh() {
-  return {
-    type: types.REFRESH_CLEAR
-  };
-}
-
 export function clearDestination() {
   return {
     type: types.DESTINATION_CLEAR
+  };
+}
+
+export function clearRefresh() {
+  return {
+    type: types.REFRESH_CLEAR
   };
 }
 

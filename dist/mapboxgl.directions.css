@@ -257,10 +257,10 @@
   .directions-icon-error:before             { content:'\e607'; }
   .directions-icon-reverse:before           { content:'\e608'; }
   .directions-icon-sharp-left:before        { content:'\e609'; }
-  .directions-icon-sharp-right:before       { content:'\e610'; }
+  .directions-icon-sharp-right:before       { content:'\e60a'; }
   .directions-icon-turn-left:before         { content:'\e60b'; }
   .directions-icon-turn-right:before        { content:'\e60c'; }
-  .directions-icon-u-turn:before            { content:'\e613'; }
+  .directions-icon-u-turn:before            { content:'\e60d'; }
 
 .mapbox-marker-drag-icon {
   display:block;

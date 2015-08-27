@@ -6,9 +6,14 @@ const style = [{
     'all',
     ['in', '$type', 'LineString']
   ],
+  'layout': {
+    'line-cap': 'round',
+    'line-join': 'round'
+  },
   'paint': {
-    'line-color': '#f0f',
-    'line-width': 2
+    'line-color': '#3bb2d0',
+    'line-opacity': 0.75,
+    'line-width': 4
   }
 }, {
   'id': 'directions-line-alt',
@@ -19,9 +24,14 @@ const style = [{
     ['in', '$type', 'Point'],
     ['in', 'route', 'alternate']
   ],
+  'layout': {
+    'line-cap': 'round',
+    'line-join': 'round'
+  },
   'paint': {
     'line-color': '#aaa',
-    'line-width': 2
+    'line-opacity': 0.75,
+    'line-width': 4
   }
 }, {
   'id': 'directions-origin-point',
@@ -33,7 +43,7 @@ const style = [{
     ['in', 'marker-symbol', 'A']
   ],
   'paint': {
-    'circle-radius': 6,
+    'circle-radius': 7,
     'circle-color': '#3bb2d0'
   },
   'interactive': true
@@ -47,7 +57,7 @@ const style = [{
     ['in', 'marker-symbol', 'B']
   ],
   'paint': {
-    'circle-radius': 6,
+    'circle-radius': 7,
     'circle-color': '#8a8bc9'
   },
   'interactive': true

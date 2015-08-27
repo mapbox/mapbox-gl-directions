@@ -36,11 +36,40 @@ class App extends Component {
         map.addLayer(style);
       });
 
+      map.getContainer().addEventListener('mousedown', () => {
+        this.drag = true;
+      }.bind(this));
+
+      map.getContainer().addEventListener('mouseup', () => {
+        this.drag = false;
+      }.bind(this));
+
       // Map event handlers
       map.on('click', (e) => {
         const { data, dispatch } = this.props;
-        const mode = (data.origin.geometry) ? 'destination' : 'origin';
-        dispatch(RoutingActions.queryPointFromMap(e.lngLat, mode));
+
+        map.featuresAt(e.point, {
+          radius: 10,
+          includeGeometry: true,
+          layer: [
+            'directions-origin-point',
+            'directions-destination-point'
+          ]
+        }, (err, features) => {
+          if (err) throw err;
+
+          if (features.length) {
+            console.log('is dragging', this.drag);
+            if (this.drag) {
+              // Marker click hit a feature so drag it.
+              console.log('features', features);
+            }
+
+          } else {
+            const mode = (data.origin.geometry) ? 'destination' : 'origin';
+            dispatch(RoutingActions.queryPointFromMap(e.lngLat, mode));
+          }
+        });
       }.bind(this));
 
     });
@@ -66,15 +95,12 @@ class App extends Component {
       });
     }
 
-    // TODO fitBounds to geojson?
-    if (geojson.features.length) {
-      map.getSource('directions').setData(geojson);
+    map.getSource('directions').setData(geojson);
 
-      if (!data.origin.geometry) {
-        map.flyTo({ center: data.destination.geometry.coordinates });
-      } else if (!data.destination.geometry) {
-        map.flyTo({ center: data.origin.geometry.coordinates });
-      }
+    if (!data.origin.geometry && data.destination.geometry) {
+      map.flyTo({ center: data.destination.geometry.coordinates });
+    } else if (!data.destination.geometry && data.origin.geometry) {
+      map.flyTo({ center: data.origin.geometry.coordinates });
     }
   }
 
