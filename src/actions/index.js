@@ -37,7 +37,10 @@ function fetchDirections(query, mode) {
   return dispatch => {
     return fetch(`${DIRECTIONS_URL}/v4/directions/mapbox.${mode}/${query}.json?instructions=html&geometry=polyline&access_token=${ACCESS_TOKEN}`)
       .then(req => req.json())
-      .then(json => dispatch(directionsResults(json.routes)));
+      .then(json => {
+        dispatch(setRouteIndex(0));
+        dispatch(directionsResults(json.routes));
+      });
   };
 }
 
@@ -59,6 +62,13 @@ function setMode(mode) {
   return {
     type: types.DIRECTIONS_MODE,
     mode
+  };
+}
+
+export function setRouteIndex(routeIndex) {
+  return {
+    type: types.ROUTE_INDEX,
+    routeIndex
   };
 }
 

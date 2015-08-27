@@ -96,10 +96,16 @@ class App extends Component {
           includeGeometry: true,
           layer: [
             'directions-origin-point',
-            'directions-destination-point'
+            'directions-destination-point',
+            'directions-route-line-alt'
           ]
         }, (err, features) => {
           if (err) throw err;
+          if (features.length && features[0].properties.route === 'alternate') {
+            const index = features[0].properties['route-index'];
+            dispatch(RoutingActions.setRouteIndex(index));
+          }
+
           if (!features.length) {
             const mode = (data.origin.geometry) ? 'destination' : 'origin';
             dispatch(RoutingActions.queryPointFromMap(e.lngLat, mode));
@@ -120,13 +126,22 @@ class App extends Component {
     };
 
     if (data.directions.length) {
-      geojson.features.push({
-        geometry: {
-          type: 'LineString',
-          coordinates: decode(data.directions[0].geometry, 6).map((c) => {
-            return c.reverse();
-          })
-        }
+      data.directions.forEach((feature, index) => {
+
+        feature = {
+          geometry: {
+            type: 'LineString',
+            coordinates: decode(feature.geometry, 6).map((c) => {
+              return c.reverse();
+            })
+          },
+          properties: {
+            'route-index': index,
+            route: (index === data.routeIndex) ? 'selected' : 'alternate'
+          }
+        };
+
+        geojson.features.push(feature);
       });
     }
 

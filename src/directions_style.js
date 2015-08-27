@@ -1,27 +1,10 @@
 const style = [{
-  'id': 'directions-line',
+  'id': 'directions-route-line-alt',
   'type': 'line',
   'source': 'directions',
   'filter': [
     'all',
-    ['in', '$type', 'LineString']
-  ],
-  'layout': {
-    'line-cap': 'round',
-    'line-join': 'round'
-  },
-  'paint': {
-    'line-color': '#3bb2d0',
-    'line-opacity': 0.75,
-    'line-width': 4
-  }
-}, {
-  'id': 'directions-line-alt',
-  'type': 'line',
-  'source': 'directions',
-  'filter': [
-    'all',
-    ['in', '$type', 'Point'],
+    ['in', '$type', 'LineString'],
     ['in', 'route', 'alternate']
   ],
   'layout': {
@@ -30,10 +13,27 @@ const style = [{
   },
   'paint': {
     'line-color': '#aaa',
-    'line-opacity': 0.75,
-    'line-width': 4
+    'line-width': 5
   },
   'interactive': true
+}, {
+  'id': 'directions-route-line',
+  'type': 'line',
+  'source': 'directions',
+  'filter': [
+    'all',
+    ['in', '$type', 'LineString'],
+    ['in', 'route', 'selected']
+  ],
+  'layout': {
+    'line-cap': 'round',
+    'line-join': 'round'
+  },
+  'paint': {
+    'line-color': '#3bb2d0',
+    'line-dasharray': [0,1.5],
+    'line-width': 6
+  }
 }, {
   'id': 'directions-origin-point',
   'type': 'circle',

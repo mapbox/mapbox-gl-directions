@@ -168,15 +168,15 @@
   position:fixed;
   z-index:1;
   width:100%;
-  height:80px;
+  min-height:75px;
   background-color:rgba(0,0,0,0.75);
   color:#fff;
   }
   .mapbox-directions-route-summary > div {
-    padding:10px;
+    padding:10px 20px;
     }
   .mapbox-directions-route-summary h1 {
-    font-size:28px;
+    font-size:20px;
     line-height:20px;
     font-weight:500;
     margin:0;
@@ -195,7 +195,7 @@
 
 /* Instructions */
 .mapbox-directions-instructions {
-  padding-top:80px; /* Matches the height of summary */
+  padding-top:75px; /* Matches the height of summary */
   }
 .mapbox-directions-instructions .directions-icon {
   position:absolute;

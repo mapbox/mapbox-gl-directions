@@ -3,19 +3,29 @@ import format from '../format';
 
 export default class Instructions extends Component {
 
-  _mouseOver() {}
+  _mouseOver(e) {
+    var coordinates = e.target.getAttribute('data-coordinates');
+    if (coordinates) {
+      // console.log(coordinates);
+    }
+  }
 
-  _mouseOut() {}
+  _mouseOut() {
+    // Remove the route point marker.
+  }
 
-  _click() {}
+  _click() {
+    // Zoom to point on map
+  }
 
   render() {
     const { data, unit, routeIndex } = this.props;
-    const steps = data[0].steps;
+    const steps = data[routeIndex].steps;
 
     const renderSteps = function(d, i) {
-      var icon = d.maneuver.type.replace(/\s+/g, '-').toLowerCase();
-      var distance = (d.distance) ? format[unit](d.distance) : false;
+      const icon = d.maneuver.type.replace(/\s+/g, '-').toLowerCase();
+      const distance = (d.distance) ? format[unit](d.distance) : false;
+      const coordinates = d.maneuver.location.coordinates;
 
       return (
         <li
@@ -23,6 +33,7 @@ export default class Instructions extends Component {
           onMouseOver={this._mouseOver}
           onMouseOut={this._mouseOut}
           click={this._onClick}
+          data-coordinates={coordinates}
           className='mapbox-directions-step'>
           <span className={`directions-icon directions-icon-${icon}`}></span>
           <div
