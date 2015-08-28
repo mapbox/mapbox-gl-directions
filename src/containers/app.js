@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as RoutingActions from '../actions';
 import { decode } from 'polyline';
+import debounce from 'debounce';
 
 // Components
 import InputsControl from '../components/inputs';
@@ -57,7 +58,8 @@ class App extends Component {
       this.map.getContainer().classList.add('directions-drag');
       const lngLat = this.map.unproject(this.mousePos(e));
       const mode = this.dragging.properties.id;
-      this.props.dispatch(RoutingActions.queryPointFromMap(lngLat, mode));
+
+      debounce(this.props.dispatch(RoutingActions.queryPointFromMap(lngLat, mode)), 100);
     }
   }
 
@@ -170,10 +172,13 @@ class App extends Component {
 
     map.getSource('directions').setData(geojson);
 
-    if (!data.origin.geometry && data.destination.geometry) {
-      map.flyTo({ center: data.destination.geometry.coordinates });
-    } else if (!data.destination.geometry && data.origin.geometry) {
-      map.flyTo({ center: data.origin.geometry.coordinates });
+    if (!this.dragging) {
+      // TODO Redo this. Use TURF for bounds?
+      if (!data.origin.geometry && data.destination.geometry) {
+        map.flyTo({ center: data.destination.geometry.coordinates });
+      } else if (!data.destination.geometry && data.origin.geometry) {
+        map.flyTo({ center: data.origin.geometry.coordinates });
+      }
     }
   }
 
