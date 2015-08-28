@@ -92,7 +92,7 @@ class App extends Component {
   componentDidMount() {
     const { map } = this.props;
 
-    map.on('style.load', () => {
+    map.on('load', () => {
 
       const geojson = new mapboxgl.GeoJSONSource({
         data: {
@@ -153,25 +153,28 @@ class App extends Component {
         const { data, dispatch } = this.props;
         const coords = [e.lngLat.lng, e.lngLat.lat];
 
-        map.featuresAt(e.point, {
-          radius: 10,
-          layer: [
-            'directions-origin-point',
-            'directions-destination-point',
-            'directions-route-line-alt'
-          ]
-        }, (err, features) => {
-          if (err) throw err;
-          if (features.length && features[0].properties.route === 'alternate') {
-            const index = features[0].properties['route-index'];
-            dispatch(RoutingActions.setRouteIndex(index));
-          }
+        if (!data.origin.geometry) {
+          dispatch(RoutingActions.queryPointFromMap(coords, 'origin'));
+        } else {
+          map.featuresAt(e.point, {
+            radius: 10,
+            layer: [
+              'directions-origin-point',
+              'directions-destination-point',
+              'directions-route-line-alt'
+            ]
+          }, (err, features) => {
+            if (err) throw err;
+            if (features.length && features[0].properties.route === 'alternate') {
+              const index = features[0].properties['route-index'];
+              dispatch(RoutingActions.setRouteIndex(index));
+            }
 
-          if (!features.length) {
-            const mode = (data.origin.geometry) ? 'destination' : 'origin';
-            dispatch(RoutingActions.queryPointFromMap(coords, mode));
-          }
-        });
+            if (!features.length) {
+              dispatch(RoutingActions.queryPointFromMap(coords, 'destination'));
+            }
+          });
+        }
       }.bind(this));
 
     });

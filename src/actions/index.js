@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import * as types from '../constants/action_types';
 import { ACCESS_TOKEN, GEOCODER_URL, DIRECTIONS_URL } from '../config';
+import travelingBrute from '../utils/map.js';
 
 function originResults(query, results) {
   return {
@@ -132,8 +133,8 @@ function buildDirectionsQuery(origin, destination, wayPoints) {
 
   // Add any waypoints.
   if (wayPoints.length) {
-    wayPoints.forEach((wayPoint) => {
-      query += ';' + wayPoint.geometry.coordinates.join(',');
+    travelingBrute(wayPoints).forEach((wayPoint) => {
+      query += ';' + wayPoint.join(',');
     });
   }
 
