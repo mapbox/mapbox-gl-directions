@@ -229,7 +229,7 @@ class App extends Component {
   }
 
   render() {
-    const { data, dispatch } = this.props;
+    const { data, map, dispatch } = this.props;
     const actions = bindActionCreators(RoutingActions, dispatch);
 
     return (
@@ -251,6 +251,7 @@ class App extends Component {
             data={data.directions}
             routeIndex={data.routeIndex}
             hoverMarker={actions.hoverMarker}
+            map={map}
           />
         </div>}
       </div>

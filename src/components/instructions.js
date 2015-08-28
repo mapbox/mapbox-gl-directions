@@ -15,10 +15,11 @@ export default class Instructions extends Component {
     if (coordinates) hoverMarker(null);
   }
 
-  _click() {
+  _onClick(e) {
     // Zoom to point on map
-    // const coordinates = e.target.getAttribute('data-coordinates');
-    // panToCoordinates(JSON.parse(coordinates));
+    const { map } = this.props;
+    const coordinates = e.target.getAttribute('data-coordinates');
+    map.flyTo({ center: JSON.parse(coordinates) });
   }
 
   render() {
@@ -35,7 +36,7 @@ export default class Instructions extends Component {
           key={i}
           onMouseOver={this._mouseOver.bind(this)}
           onMouseOut={this._mouseOut.bind(this)}
-          click={this._onClick}
+          onClick={this._onClick.bind(this)}
           data-coordinates={JSON.stringify(coordinates)}
           className='mapbox-directions-step'>
           <span className={`directions-icon directions-icon-${icon}`}></span>
@@ -60,6 +61,7 @@ export default class Instructions extends Component {
 }
 
 Instructions.propTypes = {
+  map: PropTypes.object.isRequired,
   unit: PropTypes.string.isRequired,
   data: PropTypes.array.isRequired,
   routeIndex: PropTypes.number.isRequired,
