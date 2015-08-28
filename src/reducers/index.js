@@ -79,6 +79,7 @@ function data(state = initialState, action) {
       origin: {},
       originQuery: '',
       originResults: [],
+      wayPoints: [],
       directions: []
     });
 
@@ -87,6 +88,7 @@ function data(state = initialState, action) {
       destination: {},
       destinationQuery: '',
       destinationResults: [],
+      wayPoints: [],
       directions: []
     });
 

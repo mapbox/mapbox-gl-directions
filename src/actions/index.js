@@ -141,23 +141,10 @@ function buildDirectionsQuery(origin, destination, wayPoints) {
   return query;
 }
 
-export function addWayPoint(coordinates) {
+export function addWayPoint(wayPoint) {
   return (dispatch, getState) => {
     const { data } = getState();
     const { origin, destination, wayPoints, mode} = data;
-    const wayPoint = {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: [
-          coordinates.lng,
-          coordinates.lat
-        ]
-      },
-      properties: {
-        id: 'waypoint'
-      }
-    };
 
     if (destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, [wayPoint, ...wayPoints]);

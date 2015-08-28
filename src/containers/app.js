@@ -77,11 +77,10 @@ class App extends Component {
   _onMouseUp() {
     const {dispatch, data} = this.props;
 
-    if (this.dragging) {
+    if (this.dragging && data.hoverWayPoint.geometry) {
       switch (this.dragging.layer.id) {
         case 'directions-waypoint-point':
-          console.log(data.hoverWayPoint);
-          // dispatch(RoutingActions.addWayPoint(lngLat));
+          dispatch(RoutingActions.addWayPoint(data.hoverWayPoint));
         break;
       }
     }
