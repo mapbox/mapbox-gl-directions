@@ -21,3 +21,6 @@ export const RESULT_FROM_MAP = 'RESULT_FROM_MAP';
 export const HOVER_MARKER = 'HOVER_MARKER';
 
 export const ROUTE_INDEX = 'ROUTE_INDEX';
+
+export const HOVER_WAYPOINT = 'HOVER_WAYPOINT';
+export const WAYPOINTS = 'WAYPOINTS';

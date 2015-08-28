@@ -17,6 +17,8 @@ export default class Instructions extends Component {
 
   _click() {
     // Zoom to point on map
+    // const coordinates = e.target.getAttribute('data-coordinates');
+    // panToCoordinates(JSON.parse(coordinates));
   }
 
   render() {
