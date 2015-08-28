@@ -54,6 +54,7 @@ class App extends Component {
       e.stopPropagation();
       e.preventDefault();
 
+      this.map.getContainer().classList.add('directions-drag');
       const lngLat = this.map.unproject(this.mousePos(e));
       const mode = this.dragging.properties.id;
       this.props.dispatch(RoutingActions.queryPointFromMap(lngLat, mode));
@@ -62,6 +63,7 @@ class App extends Component {
 
   _onMouseUp() {
     this.dragging = false;
+    this.map.getContainer().classList.remove('directions-drag');
   }
 
   componentDidMount() {
@@ -86,6 +88,23 @@ class App extends Component {
       map.getContainer().addEventListener('mousedown', this.onMouseDown);
       map.getContainer().addEventListener('mousemove', this.onMouseMove, true);
       map.getContainer().addEventListener('mouseup', this.onMouseUp);
+
+      map.on('mousemove', (e) => {
+        map.featuresAt(e.point, {
+          radius: 10,
+          includeGeometry: true,
+          layer: [
+            'directions-route-line-alt'
+          ]
+        }, (err, features) => {
+          if (err) throw err;
+          if (features.length) {
+            map.getContainer().classList.add('directions-select');
+          } else {
+            map.getContainer().classList.remove('directions-select');
+          }
+        });
+      });
 
       // Map event handlers
       map.on('click', (e) => {

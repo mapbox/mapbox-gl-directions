@@ -74,10 +74,10 @@ function data(state = initialState, action) {
 
   case types.REVERSE_INPUTS:
     return Object.assign({}, state, {
-      origin: action.destination,
+      origin: action.origin,
       originResults: state.destinationResults,
       originQuery: state.destinationQuery,
-      destination: action.origin,
+      destination: action.destination,
       destinationResults: state.originResults,
       destinationQuery: state.originQuery,
       refresh: true

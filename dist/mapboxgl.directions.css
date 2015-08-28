@@ -9,6 +9,15 @@
   }
 
 /* Basics */
+.directions-select .mapboxgl-canvas-container.mapboxgl-interactive {
+  cursor:pointer;
+  }
+.directions-drag .mapboxgl-canvas-container.mapboxgl-interactive {
+  cursor:-webkit-grabbing;
+  cursor:-moz-grabbing;
+  cursor:grabbing;
+  }
+
 .directions-control {
   font:15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
   }

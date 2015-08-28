@@ -186,6 +186,7 @@ export function reverseInputs() {
         // Destination gets origin
         destinationReversed = Object.assign({}, origin, {
           properties: Object.assign({}, origin.properties, {
+            id: 'destination',
             'marker-symbol': 'B'
           })
         });
@@ -194,6 +195,7 @@ export function reverseInputs() {
         // Origin gets destination
         originReversed = Object.assign({}, destination, {
           properties: Object.assign({}, destination.properties, {
+            id: 'origin',
             'marker-symbol': 'A'
           })
         });
