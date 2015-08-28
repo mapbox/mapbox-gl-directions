@@ -291,6 +291,7 @@
   .directions-icon-turn-left:before         { content:'\e60b'; }
   .directions-icon-turn-right:before        { content:'\e60c'; }
   .directions-icon-u-turn:before            { content:'\e60d'; }
+  .directions-icon-waypoint:before          { content:'\e60e'; }
 
 .mapbox-marker-drag-icon {
   display:block;
