@@ -31,9 +31,9 @@ const style = [{
   },
   'paint': {
     'line-color': '#3bb2d0',
-    'line-dasharray': [0,1.5],
-    'line-width': 5
-  }
+    'line-width': 4
+  },
+  'interactive': true
 }, {
   'id': 'directions-hover-point',
   'type': 'circle',
@@ -47,6 +47,20 @@ const style = [{
     'circle-radius': 5,
     'circle-color': '#3bb2d0'
   }
+}, {
+  'id': 'directions-waypoint-point',
+  'type': 'circle',
+  'source': 'directions',
+  'filter': [
+    'all',
+    ['in', '$type', 'Point'],
+    ['in', 'id', 'waypoint']
+  ],
+  'paint': {
+    'circle-radius': 5,
+    'circle-color': '#8a8bc9'
+  },
+  'interactive': true
 }, {
   'id': 'directions-origin-point',
   'type': 'circle',

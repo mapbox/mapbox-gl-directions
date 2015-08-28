@@ -9,6 +9,7 @@ const initialState = {
   origin: {},
   destination: {},
   hoverMarker: {},
+  hoverWayPoint: {},
 
   // Original input user entered
   originQuery: '',
@@ -23,6 +24,10 @@ const initialState = {
 
   // Directions data
   directions: [],
+
+  // Any waypoints
+  wayPoints: [],
+
   routeIndex: 0,
   refresh: false
 };
@@ -44,6 +49,19 @@ function data(state = initialState, action) {
       hoverMarker: action.hoverMarker
     });
 
+  case types.HOVER_WAYPOINT:
+    return Object.assign({}, state, {
+      hoverWayPoint: action.hoverWayPoint
+    });
+
+  case types.WAYPOINTS:
+    return Object.assign({}, state, {
+      wayPoints: [
+        action.wayPoint,
+        ...state.wayPoints
+      ]
+    });
+
   case types.ORIGIN_INPUT:
     return Object.assign({}, state, {
       originQuery: action.query,
@@ -61,6 +79,7 @@ function data(state = initialState, action) {
       origin: {},
       originQuery: '',
       originResults: [],
+      wayPoints: [],
       directions: []
     });
 
@@ -69,6 +88,7 @@ function data(state = initialState, action) {
       destination: {},
       destinationQuery: '',
       destinationResults: [],
+      wayPoints: [],
       directions: []
     });
 
@@ -100,6 +120,7 @@ function data(state = initialState, action) {
 
   case types.RESULT_FROM_MAP:
     return Object.assign({}, state, {
+      hoverWayPoint: {},
       refresh: true
     });
 

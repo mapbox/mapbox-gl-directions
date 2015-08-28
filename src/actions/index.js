@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch';
 import * as types from '../constants/action_types';
 import { ACCESS_TOKEN, GEOCODER_URL, DIRECTIONS_URL } from '../config';
+import travelingBrute from '../utils/map.js';
 
 function originResults(query, results) {
   return {
@@ -58,6 +59,13 @@ function setDestination(feature) {
   };
 }
 
+function setWayPoint(feature) {
+  return {
+    type: types.WAYPOINTS,
+    wayPoint: feature
+  };
+}
+
 function setMode(mode) {
   return {
     type: types.DIRECTIONS_MODE,
@@ -69,6 +77,30 @@ function setHoverMarker(feature) {
   return {
     type: types.HOVER_MARKER,
     hoverMarker: feature
+  };
+}
+
+function setHoverWayPoint(feature) {
+  return {
+    type: types.HOVER_WAYPOINT,
+    hoverWayPoint: feature
+  };
+}
+
+export function hoverWayPoint(coordinates) {
+  return (dispatch) => {
+    const feature = (coordinates) ? {
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: coordinates
+      },
+      properties: {
+        id: 'waypoint'
+      }
+    } : {};
+
+    dispatch(setHoverWayPoint(feature));
   };
 }
 
@@ -96,19 +128,39 @@ export function setRouteIndex(routeIndex) {
   };
 }
 
-export function addOrigin(coordinates) {
+function buildDirectionsQuery(origin, destination, wayPoints) {
+  let query = origin.geometry.coordinates.join(',');
+
+  // Add any waypoints.
+  if (wayPoints.length) {
+    travelingBrute(wayPoints).forEach((wayPoint) => {
+      query += ';' + wayPoint.join(',');
+    });
+  }
+
+  query += ';' + destination.geometry.coordinates.join(',');
+  return query;
+}
+
+export function addWayPoint(wayPoint) {
   return (dispatch, getState) => {
     const { data } = getState();
-    const { destination, mode } = data;
+    const { origin, destination, wayPoints, mode} = data;
 
     if (destination.geometry) {
-      let query = coordinates.join(',');
-      query += ';' + destination.geometry.coordinates.join(',');
-
+      const query = buildDirectionsQuery(origin, destination, [wayPoint, ...wayPoints]);
       dispatch(fetchDirections(query, mode));
     }
 
-    dispatch(setOrigin({
+    dispatch(setWayPoint(wayPoint));
+  };
+}
+
+export function addOrigin(coordinates) {
+  return (dispatch, getState) => {
+    const { data } = getState();
+    const { destination, mode, wayPoints } = data;
+    const origin = {
       type: 'Feature',
       geometry: {
         type: 'Point',
@@ -118,23 +170,22 @@ export function addOrigin(coordinates) {
         id: 'origin',
         'marker-symbol': 'A'
       }
-    }));
+    };
+
+    if (destination.geometry) {
+      const query = buildDirectionsQuery(origin, destination, wayPoints);
+      dispatch(fetchDirections(query, mode));
+    }
+
+    dispatch(setOrigin(origin));
   };
 }
 
 export function addDestination(coordinates) {
   return (dispatch, getState) => {
     const { data } = getState();
-    const { origin, mode } = data;
-
-    if (origin.geometry) {
-      let query = origin.geometry.coordinates.join(',');
-      query += ';' + coordinates.join(',');
-
-      dispatch(fetchDirections(query, mode));
-    }
-
-    dispatch(setDestination({
+    const { origin, mode, wayPoints } = data;
+    const destination = {
       type: 'Feature',
       geometry: {
         type: 'Point',
@@ -144,19 +195,24 @@ export function addDestination(coordinates) {
         id: 'destination',
         'marker-symbol': 'B'
       }
-    }));
+    };
+
+    if (destination.geometry) {
+      const query = buildDirectionsQuery(origin, destination, wayPoints);
+      dispatch(fetchDirections(query, mode));
+    }
+
+    dispatch(setDestination(destination));
   };
 }
 
 export function directionsMode(mode) {
   return (dispatch, getState) => {
     const { data } = getState();
-    const { origin, destination } = data;
+    const { origin, destination, wayPoints } = data;
 
     if (origin.geometry && destination.geometry) {
-      let query = origin.geometry.coordinates.join(',');
-      query += ';' + destination.geometry.coordinates.join(',');
-
+      const query = buildDirectionsQuery(origin, destination, wayPoints);
       dispatch(fetchDirections(query, mode));
     }
 
@@ -167,12 +223,10 @@ export function directionsMode(mode) {
 export function reverseInputs() {
   return (dispatch, getState) => {
     const { data } = getState();
-    const { origin, destination, mode } = data;
+    const { origin, destination, wayPoints, mode } = data;
 
     if (origin.geometry && destination.geometry) {
-      let query = destination.geometry.coordinates.join(',');
-      query += ';' + origin.geometry.coordinates.join(',');
-
+      const query = buildDirectionsQuery(origin, destination, wayPoints);
       dispatch(fetchDirections(query, mode));
     }
 
@@ -182,8 +236,7 @@ export function reverseInputs() {
     if (!destination.geometry || !origin.geometry) {
 
       if (!destination.geometry && origin.geometry) {
-        // Origin remains empty
-        // Destination gets origin
+        // If Origin is empty Destination gets origin
         destinationReversed = Object.assign({}, origin, {
           properties: Object.assign({}, origin.properties, {
             id: 'destination',
@@ -191,8 +244,7 @@ export function reverseInputs() {
           })
         });
       } else if (!origin.geometry && destination.geometry) {
-        // Destination remains empty
-        // Origin gets destination
+        // If Destination is empty Origin gets destination
         originReversed = Object.assign({}, destination, {
           properties: Object.assign({}, destination.properties, {
             id: 'origin',
@@ -263,13 +315,13 @@ export function queryDestination(query) {
 
 export function queryPointFromMap(coordinates, mode) {
   return (dispatch) => {
-    return dispatch(geocode(coordinates.lng + ',' + coordinates.lat, (results) => {
+    return dispatch(geocode(coordinates.join(','), (results) => {
 
       if (results.length && mode === 'origin') {
-        dispatch(addOrigin([coordinates.lng, coordinates.lat]));
+        dispatch(addOrigin(coordinates));
         dispatch(originResults(results[0].place_name, results));
       } else if (results.length && mode === 'destination') {
-        dispatch(addDestination([coordinates.lng, coordinates.lat]));
+        dispatch(addDestination(coordinates));
         dispatch(destinationResults(results[0].place_name, results));
       }
 
