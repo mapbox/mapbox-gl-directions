@@ -62,6 +62,14 @@ function data(state = initialState, action) {
       ]
     });
 
+  case types.REDUCE_WAYPOINTS:
+    return Object.assign({}, state, {
+      wayPoints: state.wayPoints.filter((way) => {
+        return way[0] !== action.wayPoint[0] &&
+               way[1] !== action.wayPoint[1];
+      })
+    });
+
   case types.ORIGIN_INPUT:
     return Object.assign({}, state, {
       originQuery: action.query,

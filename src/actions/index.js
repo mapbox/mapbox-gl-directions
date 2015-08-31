@@ -96,7 +96,7 @@ export function hoverWayPoint(coordinates) {
         coordinates: coordinates
       },
       properties: {
-        id: 'waypoint'
+        id: 'hover'
       }
     } : {};
 
@@ -140,20 +140,6 @@ function buildDirectionsQuery(origin, destination, wayPoints) {
 
   query += ';' + destination.geometry.coordinates.join(',');
   return query;
-}
-
-export function addWayPoint(wayPoint) {
-  return (dispatch, getState) => {
-    const { data } = getState();
-    const { origin, destination, wayPoints, mode} = data;
-
-    if (destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, [wayPoint, ...wayPoints]);
-      dispatch(fetchDirections(query, mode));
-    }
-
-    dispatch(setWayPoint(wayPoint));
-  };
 }
 
 export function addOrigin(coordinates) {
@@ -331,3 +317,25 @@ export function queryPointFromMap(coordinates, mode) {
     }));
   };
 }
+
+export function addWayPoint(coords) {
+  return (dispatch, getState) => {
+    const { data } = getState();
+    const { origin, destination, wayPoints, mode} = data;
+
+    if (destination.geometry) {
+      const query = buildDirectionsQuery(origin, destination, [coords, ...wayPoints]);
+      dispatch(fetchDirections(query, mode));
+    }
+
+    dispatch(setWayPoint(coords));
+  };
+}
+
+export function filterWayPoint(coords) {
+  return {
+    type: types.REDUCE_WAYPOINTS,
+    wayPoint: coords
+  };
+}
+
