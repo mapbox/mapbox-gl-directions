@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as RoutingActions from '../actions';
 import { decode } from 'polyline';
 import debounce from 'debounce';
+import extent from 'turf-extent';
 
 // Components
 import InputsControl from '../components/inputs';
@@ -113,7 +114,7 @@ class App extends Component {
       map.getContainer().addEventListener('mouseup', this.onMouseUp);
 
       map.on('mousemove', (e) => {
-        const { dispatch } = this.props;
+        const { dispatch, data } = this.props;
 
         // Adjust cursor state on routes
         map.featuresAt(e.point, {
@@ -141,7 +142,7 @@ class App extends Component {
           if (features.length) {
             var coords = e.lngLat;
             dispatch(RoutingActions.hoverWayPoint([coords.lng, coords.lat]));
-          } else {
+          } else if (data.hoverWayPoint.geometry) {
             dispatch(RoutingActions.hoverWayPoint(null));
           }
         });
@@ -155,6 +156,7 @@ class App extends Component {
 
         if (!data.origin.geometry) {
           dispatch(RoutingActions.queryPointFromMap(coords, 'origin'));
+          map.flyTo({ center: coords });
         } else {
           map.featuresAt(e.point, {
             radius: 10,
@@ -172,6 +174,18 @@ class App extends Component {
 
             if (!features.length) {
               dispatch(RoutingActions.queryPointFromMap(coords, 'destination'));
+              var bbox = extent({
+                type: 'FeatureCollection',
+                features: [data.origin, {
+                  type: 'feature',
+                  geometry: {
+                    type: 'Point',
+                    coordinates: coords
+                  }
+                }]});
+                map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
+                padding: 40
+              });
             }
           });
         }
@@ -181,8 +195,7 @@ class App extends Component {
   }
 
   componentWillReceiveProps(props) {
-    const { map, data } = props;
-
+    const { data, map } = props;
     const geojson = {
       type: 'FeatureCollection',
       features: [
@@ -217,15 +230,6 @@ class App extends Component {
     }
 
     map.getSource('directions').setData(geojson);
-
-    // TODO Redo this. Use TURF for bounds?
-    if (!this.dragging) {
-      if (!data.origin.geometry && data.destination.geometry) {
-        map.flyTo({ center: data.destination.geometry.coordinates });
-      } else if (!data.destination.geometry && data.origin.geometry) {
-        map.flyTo({ center: data.origin.geometry.coordinates });
-      }
-    }
   }
 
   render() {
