@@ -96,7 +96,7 @@ export function hoverWayPoint(coordinates) {
         coordinates: coordinates
       },
       properties: {
-        id: 'hover'
+        id: 'waypoint'
       }
     } : {};
 

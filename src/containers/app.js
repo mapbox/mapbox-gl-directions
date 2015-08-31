@@ -34,8 +34,11 @@ class App extends Component {
   }
 
   _onMouseDown(e) {
+    const { dispatch } = this.props;
+
     this.map.featuresAt(this.mousePos(e), {
       radius: 10,
+      includeGeometry: true,
       layer: [
         'directions-origin-point',
         'directions-destination-point',
@@ -45,6 +48,11 @@ class App extends Component {
       if (err) throw err;
       if (features.length) {
         this.dragging = features[0];
+
+        // Remove any existing waypoints from the same location
+        if (this.dragging.layer.id === 'directions-waypoint-point') {
+          dispatch(RoutingActions.filterWayPoint(this.dragging.geometry.coordinates));
+        }
       }
     });
   }
