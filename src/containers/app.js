@@ -81,7 +81,7 @@ class App extends Component {
     if (this.dragging && data.hoverWayPoint.geometry) {
       switch (this.dragging.layer.id) {
         case 'directions-waypoint-point':
-          dispatch(RoutingActions.addWayPoint(data.hoverWayPoint));
+          dispatch(RoutingActions.addWayPoint(data.hoverWayPoint.geometry.coordinates));
         break;
       }
     }
@@ -202,8 +202,7 @@ class App extends Component {
         data.origin,
         data.destination,
         data.hoverMarker,
-        data.hoverWayPoint,
-        ...data.wayPoints
+        data.hoverWayPoint
       ].filter((d) => {
         return d.geometry;
       })
@@ -212,7 +211,7 @@ class App extends Component {
     if (data.directions.length) {
       data.directions.forEach((feature, index) => {
 
-        feature = {
+        const lineString = {
           geometry: {
             type: 'LineString',
             coordinates: decode(feature.geometry, 6).map((c) => {
@@ -225,7 +224,23 @@ class App extends Component {
           }
         };
 
-        geojson.features.push(feature);
+        geojson.features.push(lineString);
+
+        if (index === data.routeIndex) {
+          // Collect any possible waypoints from steps
+          feature.steps.forEach((d) => {
+            if (d.maneuver.type === 'waypoint') {
+              geojson.features.push({
+                type: 'Feature',
+                geometry: d.maneuver.location,
+                properties: {
+                  id: 'waypoint'
+                }
+              });
+            }
+          });
+        }
+
       });
     }
 

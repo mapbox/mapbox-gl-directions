@@ -1,20 +1,14 @@
 import turfLineString from 'turf-linestring';
 import turfLineDistance from 'turf-line-distance';
 
-/* Given an array of features, return
- * an array of their coordinates
- * ordered by the shortest path that visits
+/* Given an array of [lng, lat], return
+ * the array ordered by shortest path that visits
  * all points (AKA Travelling Salesman algorithm)
  *
  * @param {Object} feature An array of marker objects
  * @returns {Array} An array of array coordinates
  */
-export default function travelingBrute(features) {
-
-  const coords = features.map((feature) => {
-    return feature.geometry.coordinates;
-  });
-
+export default function travelingBrute(coords) {
   const permutations = permutator(coords);
   let min = turfLineString([], { distance: Infinity });
 

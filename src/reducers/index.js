@@ -57,8 +57,8 @@ function data(state = initialState, action) {
   case types.WAYPOINTS:
     return Object.assign({}, state, {
       wayPoints: [
-        action.wayPoint,
-        ...state.wayPoints
+        ...state.wayPoints,
+        action.wayPoint
       ]
     });
 
