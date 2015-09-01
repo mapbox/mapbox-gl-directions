@@ -2,6 +2,9 @@ import fetch from 'isomorphic-fetch';
 import * as types from '../constants/action_types';
 import { ACCESS_TOKEN, GEOCODER_URL, DIRECTIONS_URL } from '../config';
 import travelingBrute from '../utils/map.js';
+import MapboxClient from 'mapbox';
+
+const mapbox = new MapboxClient(ACCESS_TOKEN);
 
 function originResults(query, results) {
   return {
@@ -36,12 +39,14 @@ function geocode(query, callback) {
 
 function fetchDirections(query, mode) {
   return dispatch => {
-    return fetch(`${DIRECTIONS_URL}/v4/directions/mapbox.${mode}/${query}.json?geometry=polyline&access_token=${ACCESS_TOKEN}`)
-      .then(req => req.json())
-      .then(json => {
-        dispatch(setRouteIndex(0));
-        dispatch(directionsResults(json.routes));
-      });
+    return mapbox.getDirections(query, {
+      profile: 'mapbox.' + mode,
+      geometry: 'polyline'
+    }, (err, res) => {
+      if (err) throw err;
+      dispatch(setRouteIndex(0));
+      dispatch(directionsResults(res.routes));
+    });
   };
 }
 
@@ -129,16 +134,26 @@ export function setRouteIndex(routeIndex) {
 }
 
 function buildDirectionsQuery(origin, destination, wayPoints) {
-  let query = origin.geometry.coordinates.join(',');
+  let query = [{
+    longitude: origin.geometry.coordinates[0],
+    latitude: origin.geometry.coordinates[1]
+  }];
 
   // Add any waypoints.
   if (wayPoints.length) {
-    travelingBrute(wayPoints).forEach((wayPoint) => {
-      query += ';' + wayPoint.join(',');
+    wayPoints.forEach((wayPoint) => {
+      query.push({
+        longitude: wayPoint[0],
+        latitude: wayPoint[1]
+      });
     });
   }
 
-  query += ';' + destination.geometry.coordinates.join(',');
+  query.push({
+    longitude: origin.geometry.coordinates[0],
+    latitude: origin.geometry.coordinates[1]
+  });
+
   return query;
 }
 
@@ -338,4 +353,3 @@ export function filterWayPoint(coords) {
     wayPoint: coords
   };
 }
-

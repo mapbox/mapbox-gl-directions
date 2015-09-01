@@ -48,6 +48,7 @@
   "dependencies": {
     "debounce": "^1.0.0",
     "isomorphic-fetch": "^2.1.1",
+    "mapbox": "^0.7.0",
     "polyline": "^0.2.0",
     "react": "^0.13.3",
     "react-autosuggest": "moroshko/react-autosuggest#2.0",
