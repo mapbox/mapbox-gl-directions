@@ -1,5 +1,4 @@
 import Directions from './src/directions';
-import './dist/mapboxgl.directions.css';
 
 function exportFn(options) {
   return new Directions(options);
