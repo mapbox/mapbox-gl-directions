@@ -1,10 +1,7 @@
-import fetch from 'isomorphic-fetch';
 import * as types from '../constants/action_types';
-import { ACCESS_TOKEN, GEOCODER_URL, DIRECTIONS_URL } from '../config';
-import travelingBrute from '../utils/map.js';
 import MapboxClient from 'mapbox';
 
-const mapbox = new MapboxClient(ACCESS_TOKEN);
+const mapbox = new MapboxClient(mapboxgl.accessToken);
 
 function originResults(query, results) {
   return {
