@@ -23,33 +23,30 @@ export default class Instructions extends Component {
     const { data, unit, routeIndex } = this.props;
     const steps = data[routeIndex].steps;
 
-    const renderSteps = function(d, i) {
-      const icon = d.maneuver.type.replace(/\s+/g, '-').toLowerCase();
-      const distance = (d.distance) ? format[unit](d.distance) : false;
-      const coordinates = d.maneuver.location.coordinates;
-
-      return (
-        <li
-          key={i}
-          onMouseOver={this._mouseOver.bind(this, coordinates)}
-          onMouseOut={this._mouseOut.bind(this, coordinates)}
-          onClick={this._onClick.bind(this, coordinates)}
-          className='mapbox-directions-step'>
-          <span className={`directions-icon directions-icon-${icon}`}></span>
-          <div className={`mapbox-directions-step-maneuver`}>
-            {d.maneuver.instruction}
-          </div>
-          {distance && <div className={`mapbox-directions-step-distance`}>
-            {distance}
-          </div>}
-        </li>
-      );
-    }.bind(this);
-
     return (
       <div className='mapbox-directions-instructions'>
         <ol className='mapbox-directions-steps'>
-          {steps.map(renderSteps)}
+          {steps.map((d, i) => {
+            const icon = d.maneuver.type.replace(/\s+/g, '-').toLowerCase();
+            const distance = (d.distance) ? format[unit](d.distance) : false;
+            const coordinates = d.maneuver.location.coordinates;
+            return (
+              <li
+                key={i}
+                onMouseOver={this._mouseOver.bind(this, coordinates)}
+                onMouseOut={this._mouseOut.bind(this, coordinates)}
+                onClick={this._onClick.bind(this, coordinates)}
+                className='mapbox-directions-step'>
+                <span className={`directions-icon directions-icon-${icon}`}></span>
+                <div className={`mapbox-directions-step-maneuver`}>
+                  {d.maneuver.instruction}
+                </div>
+                {distance && <div className={`mapbox-directions-step-distance`}>
+                  {distance}
+                </div>}
+              </li>
+            );
+          })}
         </ol>
       </div>
     );
