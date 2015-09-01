@@ -3,23 +3,20 @@ import format from '../format';
 
 export default class Instructions extends Component {
 
-  _mouseOver(e) {
+  _mouseOver(coordinates) {
     const { hoverMarker } = this.props;
-    const coordinates = e.target.getAttribute('data-coordinates');
-    if (coordinates) hoverMarker(JSON.parse(coordinates));
+    if (coordinates) hoverMarker(coordinates);
   }
 
-  _mouseOut(e) {
+  _mouseOut(coordinates) {
     const { hoverMarker } = this.props;
-    const coordinates = e.target.getAttribute('data-coordinates');
     if (coordinates) hoverMarker(null);
   }
 
-  _onClick(e) {
+  _onClick(coordinates) {
     // Zoom to point on map
     const { map } = this.props;
-    const coordinates = e.target.getAttribute('data-coordinates');
-    map.flyTo({ center: JSON.parse(coordinates) });
+    map.flyTo({ center: coordinates });
   }
 
   render() {
@@ -34,10 +31,9 @@ export default class Instructions extends Component {
       return (
         <li
           key={i}
-          onMouseOver={this._mouseOver.bind(this)}
-          onMouseOut={this._mouseOut.bind(this)}
-          onClick={this._onClick.bind(this)}
-          data-coordinates={JSON.stringify(coordinates)}
+          onMouseOver={this._mouseOver.bind(this, coordinates)}
+          onMouseOut={this._mouseOut.bind(this, coordinates)}
+          onClick={this._onClick.bind(this, coordinates)}
           className='mapbox-directions-step'>
           <span className={`directions-icon directions-icon-${icon}`}></span>
           <div className={`mapbox-directions-step-maneuver`}>
