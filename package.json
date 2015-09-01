@@ -54,8 +54,6 @@
     "react-redux": "^0.9.0",
     "redux": "^1.0.1",
     "redux-thunk": "^0.1.0",
-    "turf-extent": "^1.0.4",
-    "turf-line-distance": "^1.0.2",
-    "turf-linestring": "^1.0.2"
+    "turf-extent": "^1.0.4"
   }
 }
