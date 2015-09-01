@@ -87,6 +87,13 @@ function setHoverWayPoint(feature) {
   };
 }
 
+export function setOptions(options) {
+  return {
+    type: types.SET_OPTIONS,
+    options: options
+  };
+}
+
 export function hoverWayPoint(coordinates) {
   return (dispatch) => {
     const feature = (coordinates) ? {
