@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "build": "NODE_ENV=production browserify index.js | uglifyjs -c -m > dist/mapboxgl.directions.js",
     "test": "eslint index.js src"
   },
   "repository": {
