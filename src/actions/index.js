@@ -36,7 +36,7 @@ function geocode(query, callback) {
 
 function fetchDirections(query, mode) {
   return dispatch => {
-    return fetch(`${DIRECTIONS_URL}/v4/directions/mapbox.${mode}/${query}.json?instructions=html&geometry=polyline&access_token=${ACCESS_TOKEN}`)
+    return fetch(`${DIRECTIONS_URL}/v4/directions/mapbox.${mode}/${query}.json?geometry=polyline&access_token=${ACCESS_TOKEN}`)
       .then(req => req.json())
       .then(json => {
         dispatch(setRouteIndex(0));

@@ -40,9 +40,9 @@ export default class Instructions extends Component {
           data-coordinates={JSON.stringify(coordinates)}
           className='mapbox-directions-step'>
           <span className={`directions-icon directions-icon-${icon}`}></span>
-          <div
-            dangerouslySetInnerHTML={{__html: d.maneuver.instruction}}
-            className={`mapbox-directions-step-maneuver`} />
+          <div className={`mapbox-directions-step-maneuver`}>
+            {d.maneuver.instruction}
+          </div>
           {distance && <div className={`mapbox-directions-step-distance`}>
             {distance}
           </div>}
