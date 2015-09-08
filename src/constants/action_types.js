@@ -1,3 +1,5 @@
+export const SET_OPTIONS = 'SET_OPTIONS';
+
 export const ORIGIN = 'ORIGIN';
 export const DESTINATION = 'DESTINATION';
 

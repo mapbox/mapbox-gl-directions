@@ -17,8 +17,9 @@ class App extends Component {
 
   constructor(props) {
     super(props);
+    const { map } = props;
 
-    this.map = props.map;
+    this.map = map;
     this.onMouseDown = this._onMouseDown.bind(this);
     this.onMouseMove = this._onMouseMove.bind(this);
     this.onMouseUp = this._onMouseUp.bind(this);
@@ -99,7 +100,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { map } = this.props;
+    const { map, } = this.props;
 
     map.on('load', () => {
 
@@ -199,6 +200,8 @@ class App extends Component {
         }
       }.bind(this));
 
+      // Set options.
+      this.props.dispatch(RoutingActions.setOptions(this.props.options));
     });
   }
 

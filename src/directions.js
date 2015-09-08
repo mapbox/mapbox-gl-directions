@@ -4,12 +4,11 @@ import App from './containers';
 export default class Directions extends mapboxgl.Control {
 
   constructor(options) {
-
-    // Call functions on an object's parent
     super();
 
     this.options = {
-      units: 'imperial'
+      mode: 'driving',
+      unit: 'imperial'
     };
 
     mapboxgl.util.setOptions(this, options);

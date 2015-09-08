@@ -2,8 +2,6 @@ import { combineReducers } from 'redux';
 import * as types from '../constants/action_types.js';
 
 const initialState = {
-  mode: 'driving',
-  unit: 'imperial',
 
   // Marker feature drawn on the map at any point.
   origin: {},
@@ -34,6 +32,14 @@ const initialState = {
 
 function data(state = initialState, action) {
   switch (action.type) {
+  case types.SET_OPTIONS:
+    return Object.assign({}, state, action.options);
+
+  case types.DIRECTIONS_MODE:
+    return Object.assign({}, state, {
+      mode: action.mode
+    });
+
   case types.ORIGIN:
     return Object.assign({}, state, {
       origin: action.origin
@@ -109,11 +115,6 @@ function data(state = initialState, action) {
       destinationResults: state.originResults,
       destinationQuery: state.originQuery,
       refresh: true
-    });
-
-  case types.DIRECTIONS_MODE:
-    return Object.assign({}, state, {
-      mode: action.mode
     });
 
   case types.DIRECTIONS:
