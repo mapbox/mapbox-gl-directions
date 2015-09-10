@@ -1,7 +1,6 @@
 import * as types from '../constants/action_types';
 import MapboxClient from 'mapbox';
-
-const mapbox = new MapboxClient(mapboxgl.accessToken);
+let mapbox;
 
 function originResults(query, results) {
   return {
@@ -28,9 +27,10 @@ function directionsResults(directions) {
 
 function geocode(query, callback) {
   return dispatch => {
-    return fetch(`${GEOCODER_URL}/v4/geocode/mapbox.places/${query.trim()}.json?access_token=${ACCESS_TOKEN}`)
-      .then(req => req.json())
-      .then(json => dispatch(callback(json.features)));
+    return mapbox.geocodeForward(query.trim(), (err, res) => {
+      if (err) throw err;
+      dispatch(callback(res.features));
+    });
   };
 }
 
@@ -90,6 +90,10 @@ function setHoverWayPoint(feature) {
 }
 
 export function setOptions(options) {
+  if (options.accessToken) {
+    mapbox = new MapboxClient(options.accessToken);
+  }
+
   return {
     type: types.SET_OPTIONS,
     options: options
