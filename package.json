@@ -51,15 +51,13 @@
   },
   "dependencies": {
     "debounce": "^1.0.0",
-    "isomorphic-fetch": "^2.1.1",
+    "mapbox": "^0.9.0",
     "polyline": "^0.2.0",
     "react": "^0.13.3",
     "react-autosuggest": "moroshko/react-autosuggest#2.0",
     "react-redux": "^0.9.0",
     "redux": "^1.0.1",
     "redux-thunk": "^0.1.0",
-    "turf-extent": "^1.0.4",
-    "turf-line-distance": "^1.0.2",
-    "turf-linestring": "^1.0.2"
+    "turf-extent": "^1.0.4"
   }
 }
