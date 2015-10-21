@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as RoutingActions from '../actions';
+import { decode } from 'polyline';
 import debounce from 'debounce';
 import extent from 'turf-extent';
 
@@ -224,7 +225,7 @@ class App extends Component {
         const lineString = {
           geometry: {
             type: 'LineString',
-            coordinates: feature.geometry.coordinates.map((c) => {
+            coordinates: decode(feature.geometry, 6).map((c) => {
               return c.reverse();
             })
           },
