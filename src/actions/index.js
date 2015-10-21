@@ -158,8 +158,8 @@ function buildDirectionsQuery(origin, destination, wayPoints) {
   }
 
   query.push({
-    longitude: origin.geometry.coordinates[0],
-    latitude: origin.geometry.coordinates[1]
+    longitude: destination.geometry.coordinates[0],
+    latitude: destination.geometry.coordinates[1]
   });
 
   return query;
