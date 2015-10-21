@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "build": "NODE_ENV=production browserify index.js | uglifyjs -c -m > dist/mapboxgl.directions.js",
-    "test": "npm run lint && browserify test/test.js | tap-closer | smokestack -b firefox",
+    "test": "npm run lint && browserify test/test.js | smokestack -b firefox | tap-status",
     "lint": "eslint --no-eslintrc -c .eslintrc index.js src"
   },
   "repository": {
@@ -42,7 +42,7 @@
     "eslint-plugin-react": "^3.2.3",
     "react-hot-loader": "^1.2.8",
     "smokestack": "^3.3.1",
-    "tap-closer": "^1.0.0",
+    "tap-status": "^1.0.1",
     "tape": "^4.2.0",
     "uglify-js": "^2.4.24",
     "url-loader": "^0.5.6",
