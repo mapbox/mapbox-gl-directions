@@ -1,3 +1,13 @@
+/**
+ * A directions component using Mapbox Directions APi
+ * @class mapboxgl.Directions
+ *
+ * @param {Object} options
+ * @param {String} [options.mode="driving"]
+ * @param {String} [options.unit="imperial"]
+ *
+ * @return {Directions} `this`
+ */
 import Directions from './src/directions';
 
 function exportFn(options) {
