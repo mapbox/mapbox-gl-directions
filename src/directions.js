@@ -1,19 +1,19 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import reducers from '../reducers';
 import debounce from 'lodash.debounce';
 import extent from 'turf-extent';
 import { decode } from 'polyline';
 
 // State object management via redux
-import * as actions from '../actions';
-import directionsStyle from '../directions_style';
+import * as actions from './actions';
+import reducers from './reducers';
+import directionsStyle from './directions_style';
 const storeWithMiddleware = applyMiddleware(thunk)(createStore);
 
 // Controls
-import Inputs from '../controls/inputs';
-import Summary from '../controls/summary';
-import Instructions from '../controls/instructions';
+import Inputs from './controls/inputs';
+import Summary from './controls/summary';
+import Instructions from './controls/instructions';
 
 export default class Directions extends mapboxgl.Control {
 
