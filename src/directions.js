@@ -1,5 +1,4 @@
-import React from 'react';
-import App from './containers';
+// import App from './containers';
 
 export default class Directions extends mapboxgl.Control {
 
@@ -19,6 +18,6 @@ export default class Directions extends mapboxgl.Control {
     var container = typeof id === 'string' ?
       document.getElementById(id) : id;
 
-    React.render(<App options={this.options} map={map} />, container);
+    // React.render(<App options={this.options} map={map} />, container);
   }
 }

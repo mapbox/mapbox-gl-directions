@@ -1,8 +1,5 @@
 {
   "parser": "babel-eslint",
-  "plugins": [
-    "react"
-  ],
   "env": {
     "node": true,
     "browser": true
@@ -25,11 +22,6 @@
     "no-underscore-dangle": [0],
     "comma-spacing": [0],
     "key-spacing": [0],
-    "no-use-before-define": [0],
-    "react/jsx-uses-react": 2,
-    "react/jsx-uses-vars": 2,
-    "react/react-in-jsx-scope": 2,
-    "react/no-multi-comp": 2,
-    "react/prop-types": 2
+    "no-use-before-define": [0]
   }
 }
