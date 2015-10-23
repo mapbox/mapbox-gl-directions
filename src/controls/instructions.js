@@ -1,7 +1,8 @@
 import format from '../format';
 import template from 'lodash.template';
 
-const instructionsTemplate = fs.readFileSync(__dirname + '../templates/summary.html', 'utf8');
+let fs = require('fs'); // substack/brfs#39
+let instructionsTemplate = fs.readFileSync(__dirname + '/../templates/instructions.html', 'utf8');
 
 /**
  * Summary controller
