@@ -16,8 +16,6 @@ let instructionsTemplate = fs.readFileSync(__dirname + '/../templates/instructio
  * @private
  */
 export default class Instructions {
-
   constructor(el, data) {
-    console.log('TEMPLATE IS', instructionsTemplate);
   }
 }

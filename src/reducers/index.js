@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import * as types from '../constants/action_types.js';
 
 const initialState = {
@@ -143,8 +142,4 @@ function data(state = initialState, action) {
   }
 }
 
-const rootReducer = combineReducers({
-  data
-});
-
-export default rootReducer;
+export default data;

@@ -8,7 +8,7 @@ import { decode } from 'polyline';
 import * as actions from './actions';
 import reducers from './reducers';
 import directionsStyle from './directions_style';
-const storeWithMiddleware = applyMiddleware(thunk)(createStore);
+let storeWithMiddleware = applyMiddleware(thunk)(createStore);
 
 // Controls
 import Inputs from './controls/inputs';
@@ -44,8 +44,8 @@ export default class Directions extends mapboxgl.Control {
     const directionsEl = document.createElement('div');
     directionsEl.className = 'directions-control directions-control-directions';
 
-    container.appendElement(inputEl);
-    container.appendElement(directionsEl);
+    container.appendChild(inputEl);
+    container.appendChild(directionsEl);
 
     // Set up elements to the map
     // Add controllers to the page

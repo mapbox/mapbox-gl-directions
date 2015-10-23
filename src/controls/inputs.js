@@ -14,6 +14,5 @@ let inputTemplate = fs.readFileSync(__dirname + '/../templates/shared/input.html
  */
 export default class Inputs {
   constructor(el, data, actions) {
-    console.log('TEMPLATE IS', inputsTemplate);
   }
 }

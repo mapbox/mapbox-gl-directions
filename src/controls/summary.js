@@ -17,6 +17,5 @@ let summaryTemplate = fs.readFileSync(__dirname + '/../templates/summary.html', 
 export default class Summary {
 
   constructor(el, data) {
-    console.log('TEMPLATE IS', summaryTemplate);
   }
 }
