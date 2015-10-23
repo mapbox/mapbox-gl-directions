@@ -5,15 +5,15 @@
   "main": "index.js",
   "browserify": {
     "transform": [
+      "envify",
       "babelify",
-      "brfs",
-      "envify"
+      "brfs"
     ]
   },
   "scripts": {
-    "start": "budo index.js --serve=dist/mapboxgl.directions.js --live -d | bistre",
+    "start": "budo example/index.js --serve=example/bundle.js --live -d | bistre",
     "build": "NODE_ENV=production browserify index.js | uglifyjs -c -m > dist/mapboxgl.directions.js",
-    "test": "npm run lint && browserify test/test.js | smokestack -b firefox | tap-status",
+    "test": "npm run lint && browserify test/test.js -t envify | smokestack -b firefox | tap-status",
     "lint": "eslint --no-eslintrc -c .eslintrc index.js src"
   },
   "repository": {
