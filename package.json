@@ -6,7 +6,8 @@
   "browserify": {
     "transform": [
       "babelify",
-      "brfs"
+      "brfs",
+      "envify"
     ]
   },
   "scripts": {
@@ -39,11 +40,15 @@
     "brfs": "^1.4.1",
     "browserify": "^11.2.0",
     "budo": "^5.1.5",
+    "envify": "^3.4.0",
     "eslint": "^1.1.0",
     "smokestack": "^3.3.1",
     "tap-status": "^1.0.1",
     "tape": "^4.2.0",
     "uglify-js": "^2.4.24"
+  },
+  "peerDependencies": {
+    "mapbox-gl": "^0.11.1"
   },
   "dependencies": {
     "lodash.debounce": "^3.1.1",

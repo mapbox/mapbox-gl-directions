@@ -31,8 +31,7 @@
         zoom: 9
       });
 
-      var directions = mapboxgl.Directions({
-        container: 'directions',
+      var directions = mapboxgl.Directions(document.getElementById('directions'), {
         unit: 'metric',
         accessToken: mapboxgl.accessToken
       });

@@ -9,6 +9,14 @@
   }
 
 /* Basics */
+.mapbox-directions-component,
+.mapbox-directions-component *,
+.mapbox-directions-component *:after,
+.mapbox-directions-component *:before {
+  -webkit-box-sizing:border-box;
+     -moz-box-sizing:border-box;
+          box-sizing:border-box;
+  }
 .directions-select .mapboxgl-canvas-container.mapboxgl-interactive {
   cursor:pointer;
   }
@@ -20,13 +28,6 @@
 
 .directions-control {
   font:15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-  }
-
-.mapbox-directions-component,
-.mapbox-directions-component * {
-  -webkit-box-sizing:border-box;
-     -moz-box-sizing:border-box;
-          box-sizing:border-box;
   }
 
 /* Layout containers */
@@ -108,7 +109,7 @@
 .mapbox-directions-inputs .directions-close {
   z-index:2;
   position:absolute;
-  right:5px;
+  right:10px;
   top:10px;
   }
 

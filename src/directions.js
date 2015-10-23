@@ -1,4 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
+import mapboxgl from 'mapbox-gl';
 import thunk from 'redux-thunk';
 import debounce from 'lodash.debounce';
 import extent from 'turf-extent';
@@ -16,16 +17,11 @@ import Instructions from './controls/instructions';
 
 export default class Directions extends mapboxgl.Control {
 
-  constructor(options) {
+  constructor(el, options) {
     super();
 
-    this.options = {
-      mode: 'driving',
-      unit: 'imperial'
-    };
-
-    Object.assign(this, options);
-
+    this.container = el;
+    this.options = options;
     this.store = storeWithMiddleware(reducers);
 
     this.onMouseDown = this._onMouseDown.bind(this);
@@ -35,19 +31,17 @@ export default class Directions extends mapboxgl.Control {
 
   onAdd(map) {
     this.map = map;
-    const container = this.map.getContainer();
     const data = this.store.getState();
 
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';
-
-    container.appendChild(inputEl);
+    this.container.appendChild(inputEl);
 
     // Set up elements to the map
     // Add controllers to the page
     new Inputs(inputEl, data, actions, this.store);
 
-    new Instructions(container, {
+    new Instructions(this.container, {
       unit: data.unit,
       directions: data.directions,
       activeRoute: data.routeIndex
