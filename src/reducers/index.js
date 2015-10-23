@@ -1,6 +1,7 @@
 import * as types from '../constants/action_types.js';
 
 const initialState = {
+  mode: 'driving',
 
   // Marker feature drawn on the map at any point.
   origin: {},

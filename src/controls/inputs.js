@@ -1,8 +1,7 @@
 import template from 'lodash.template';
 let fs = require('fs'); // substack/brfs#39
 
-let inputsTemplate = fs.readFileSync(__dirname + '/../templates/inputs.html', 'utf8');
-let inputTemplate = fs.readFileSync(__dirname + '/../templates/shared/input.html', 'utf8');
+let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'utf8'));
 
 /**
  * Inputs controller
@@ -14,5 +13,13 @@ let inputTemplate = fs.readFileSync(__dirname + '/../templates/shared/input.html
  */
 export default class Inputs {
   constructor(el, data, actions) {
+
+    const { originQuery, destinationQuery, mode } = data;
+
+    el.innerHTML = tmpl({
+      originQuery,
+      destinationQuery,
+      mode
+    });
   }
 }

@@ -2,10 +2,10 @@ import format from '../format';
 import template from 'lodash.template';
 
 let fs = require('fs'); // substack/brfs#39
-let instructionsTemplate = fs.readFileSync(__dirname + '/../templates/instructions.html', 'utf8');
+let tmpl = fs.readFileSync(__dirname + '/../templates/instructions.html', 'utf8');
 
 /**
- * Summary controller
+ * Summary/Instructions controller
  *
  * @param {HTMLElement} el Summary parent container
  * @param {Object} data Data passed from store
@@ -16,6 +16,9 @@ let instructionsTemplate = fs.readFileSync(__dirname + '/../templates/instructio
  * @private
  */
 export default class Instructions {
-  constructor(el, data) {
+  constructor(el, data, actions, store) {
+    store.subscribe(() => {
+      console.log('Ran from instructions controller', store.getState());
+    });
   }
 }

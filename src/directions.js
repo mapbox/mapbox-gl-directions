@@ -12,7 +12,6 @@ let storeWithMiddleware = applyMiddleware(thunk)(createStore);
 
 // Controls
 import Inputs from './controls/inputs';
-import Summary from './controls/summary';
 import Instructions from './controls/instructions';
 
 export default class Directions extends mapboxgl.Control {
@@ -41,29 +40,20 @@ export default class Directions extends mapboxgl.Control {
 
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';
-    const directionsEl = document.createElement('div');
-    directionsEl.className = 'directions-control directions-control-directions';
 
     container.appendChild(inputEl);
-    container.appendChild(directionsEl);
 
     // Set up elements to the map
     // Add controllers to the page
-    new Inputs(inputEl, data, actions);
+    new Inputs(inputEl, data, actions, this.store);
 
-    new Summary(directionsEl, {
-      unit: data.unit,
-      directions: data.directions,
-      activeRoute: data.routeIndex
-    });
-
-    new Instructions(directionsEl, {
+    new Instructions(container, {
       unit: data.unit,
       directions: data.directions,
       activeRoute: data.routeIndex
     }, {
       hoverMarker: actions.hoverMarker
-    });
+    }, this.store);
 
     this.mapState();
     this.subscribedActions();
@@ -178,6 +168,9 @@ export default class Directions extends mapboxgl.Control {
   subscribedActions() {
     this.store.subscribe(() => {
       const data = this.store.getState();
+
+      console.log(this.store.getState());
+
       const geojson = {
         type: 'FeatureCollection',
         features: [
