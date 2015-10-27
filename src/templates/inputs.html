@@ -5,6 +5,7 @@
     </label>
     <div>
       <input
+        type='text'
         value='<%- originQuery %>'
         placeholder='Choose a starting place'
       />
@@ -18,7 +19,7 @@
   <button
     class='directions-icon directions-icon-reverse directions-reverse'
     title='Reverse origin &amp; destination'
-    onClick={this.props.reverseInputs}>
+    onClick=<% reverseInputs %>>
   </button>
 
   <div class='mapbox-directions-destination'>
@@ -27,6 +28,7 @@
     </label>
     <div>
       <input
+        type='text'
         value='<%- destinationQuery %>'
         placeholder='Choose destination'
       />
@@ -41,23 +43,23 @@
     <input
       type='radio'
       name='profile'
-      checked='<% mode === "driving" %>'
+      <% if (mode === "driving") { %>checked<% } %>
       id='mapbox-directions-profile-driving'
     />
-    <label htmlFor='mapbox-directions-profile-driving'>Driving</label>
+    <label for='mapbox-directions-profile-driving'>Driving</label>
     <input
       type='radio'
       name='profile'
-      checked='<% mode === "walking" %>'
+      <% if (mode === "walking") { %>checked<% } %>
       id='mapbox-directions-profile-walking'
     />
-    <label htmlFor='mapbox-directions-profile-walking'>Walking</label>
+    <label for='mapbox-directions-profile-walking'>Walking</label>
     <input
       type='radio'
       name='profile'
-      checked='<% mode === "cycling" %>'
+      <% if (mode === "cycling") { %>checked<% } %>
       id='mapbox-directions-profile-cycling'
     />
-    <label htmlFor='mapbox-directions-profile-cycling'>Cycling</label>
+    <label for='mapbox-directions-profile-cycling'>Cycling</label>
   </div>
 </div>
