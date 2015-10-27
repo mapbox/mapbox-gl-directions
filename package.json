@@ -59,6 +59,6 @@
     "redux": "^1.0.1",
     "redux-thunk": "^1.0.0",
     "turf-extent": "^1.0.4",
-    "typeahead": "^0.2.0"
+    "type-ahead": "^2.1.0"
   }
 }

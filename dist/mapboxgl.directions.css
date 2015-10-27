@@ -313,41 +313,35 @@
   }
 
 /* Auto suggestions */
-.mapbox-directions-inputs .react-autosuggest {
+.directions-control-inputs {
   position:relative;
   }
-.mapbox-directions-inputs .react-autosuggest__suggestions {
-  position:absolute;
-  top:40px;
-  width:100%;
-  margin:0;
-  padding:0;
-  list-style-type:none;
-  border:1px solid rgba(0, 0, 0, 0.20);
-  background-color:#fff;
-  font-size:12px;
-  z-index:10;
-  }
-.mapbox-directions-inputs .react-autosuggest__suggestions-section:first-child .react-autosuggest__suggestions-section-name {
-  border-top:0;
-  }
-.mapbox-directions-inputs .react-autosuggest__suggestions-section-name {
-  padding:10px 0 0 10px;
-  font-size:12px;
-  text-transform:uppercase;
-  color:#777;
-  border-top:1px dashed #ccc;
-  }
-.mapbox-directions-inputs .react-autosuggest__suggestions-section-suggestions {
-  margin:0;
-  padding:0;
-  list-style-type:none;
-  }
-.mapbox-directions-inputs .react-autosuggest__suggestion {
-  cursor:pointer;
-  padding:10px;
-  border-bottom:1px solid rgba(0, 0, 0, 0.05);
-  }
-.mapbox-directions-inputs .react-autosuggest__suggestion--focused {
-  background-color:#eee;
-  }
+  .directions-control-inputs ul {
+    background-color:#fff;
+    left:0;
+    list-style:none;
+    margin:0;
+    padding:0;
+    position:absolute;
+    width:100%;
+    top:100%;
+    z-index:1000;
+    overflow:hidden;
+    font-size:12px;
+    }
+    .mapbox-directions-inputs ul > li > a {
+      clear:both;
+      cursor:default;
+      display:block;
+      padding:5px 10px;
+      white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+      }
+      .mapbox-directions-inputs ul > li.active > a,
+      .mapbox-directions-inputs ul > li > a:hover {
+        background-color:#eee;
+        text-decoration:none;
+        cursor:pointer;
+        }
