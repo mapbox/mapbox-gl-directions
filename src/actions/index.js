@@ -68,7 +68,7 @@ function setWayPoint(feature) {
   };
 }
 
-function setMode(mode) {
+function _setMode(mode) {
   return {
     type: types.DIRECTIONS_MODE,
     mode
@@ -167,8 +167,7 @@ function buildDirectionsQuery(origin, destination, wayPoints) {
 
 export function addOrigin(coordinates) {
   return (dispatch, getState) => {
-    const { data } = getState();
-    const { destination, mode, wayPoints } = data;
+    const { destination, mode, wayPoints } = getState();
     const origin = {
       type: 'Feature',
       geometry: {
@@ -192,8 +191,7 @@ export function addOrigin(coordinates) {
 
 export function addDestination(coordinates) {
   return (dispatch, getState) => {
-    const { data } = getState();
-    const { origin, mode, wayPoints } = data;
+    const { origin, mode, wayPoints } = getState();
     const destination = {
       type: 'Feature',
       geometry: {
@@ -215,24 +213,22 @@ export function addDestination(coordinates) {
   };
 }
 
-export function directionsMode(mode) {
+export function setMode(mode) {
   return (dispatch, getState) => {
-    const { data } = getState();
-    const { origin, destination, wayPoints } = data;
+    const { origin, destination, wayPoints } = getState();
 
     if (origin.geometry && destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
       dispatch(fetchDirections(query, mode));
     }
 
-    dispatch(setMode(mode));
+    dispatch(_setMode(mode));
   };
 }
 
 export function reverseInputs() {
   return (dispatch, getState) => {
-    const { data } = getState();
-    const { origin, destination, wayPoints, mode } = data;
+    const { origin, destination, wayPoints, mode } = getState();
 
     if (origin.geometry && destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
@@ -343,8 +339,7 @@ export function queryPointFromMap(coordinates, mode) {
 
 export function addWayPoint(coords) {
   return (dispatch, getState) => {
-    const { data } = getState();
-    const { origin, destination, wayPoints, mode} = data;
+    const { origin, destination, wayPoints, mode} = getState();
 
     if (destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, [coords, ...wayPoints]);

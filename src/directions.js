@@ -1,15 +1,17 @@
 import { createStore, applyMiddleware, bindActionCreators } from 'redux';
-import mapboxgl from 'mapbox-gl';
 import thunk from 'redux-thunk';
+import mapboxgl from 'mapbox-gl';
 import debounce from 'lodash.debounce';
 import extent from 'turf-extent';
 import { decode } from 'polyline';
+import rootReducer from './reducers';
+
+const storeWithMiddleware = applyMiddleware(thunk)(createStore);
+const store = storeWithMiddleware(rootReducer);
 
 // State object management via redux
 import * as actions from './actions';
-import reducers from './reducers';
 import directionsStyle from './directions_style';
-let storeWithMiddleware = applyMiddleware(thunk)(createStore);
 
 // Controls
 import Inputs from './controls/inputs';
@@ -22,9 +24,8 @@ export default class Directions extends mapboxgl.Control {
 
     this.container = el;
     this.options = options;
-    this.store = storeWithMiddleware(reducers);
 
-    this.actions = bindActionCreators(actions, this.store.dispatch);
+    this.actions = bindActionCreators(actions, store.dispatch);
     this.onMouseDown = this._onMouseDown.bind(this);
     this.onMouseMove = this._onMouseMove.bind(this);
     this.onMouseUp = this._onMouseUp.bind(this);
@@ -33,23 +34,15 @@ export default class Directions extends mapboxgl.Control {
   onAdd(map) {
     this.map = map;
 
-    const data = this.store.getState();
-
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';
     this.container.appendChild(inputEl);
 
-    // Set up elements to the map
     // Add controllers to the page
-    new Inputs(inputEl, data, this.actions, this.store);
-
-    new Instructions(this.container, {
-      unit: data.unit,
-      directions: data.directions,
-      activeRoute: data.routeIndex
-    }, {
+    new Inputs(inputEl, store, this.actions);
+    new Instructions(this.container, store, {
       hoverMarker: this.actions.hoverMarker
-    }, this.store);
+    });
 
     this.mapState();
     this.subscribedActions();
@@ -79,7 +72,7 @@ export default class Directions extends mapboxgl.Control {
       map.getContainer().addEventListener('mouseup', this.onMouseUp);
 
       map.on('mousemove', (e) => {
-        const { hoverWayPoint } = this.store.getState();
+        const { hoverWayPoint } = store.getState();
 
         // Adjust cursor state on routes
         map.featuresAt(e.point, {
@@ -116,7 +109,7 @@ export default class Directions extends mapboxgl.Control {
 
       // Map event handlers
       map.on('click', (e) => {
-        const { origin } = this.store.getState();
+        const { origin } = store.getState();
         const coords = [e.lngLat.lng, e.lngLat.lat];
 
         if (!origin.geometry) {
@@ -162,25 +155,23 @@ export default class Directions extends mapboxgl.Control {
   }
 
   subscribedActions() {
-    this.store.subscribe(() => {
-      const data = this.store.getState();
-
-      console.log(this.store.getState());
+    store.subscribe(() => {
+      const { origin, destination, hoverMarker, hoverWayPoint, directions, routeIndex } = store.getState();
 
       const geojson = {
         type: 'FeatureCollection',
         features: [
-          data.origin,
-          data.destination,
-          data.hoverMarker,
-          data.hoverWayPoint
+          origin,
+          destination,
+          hoverMarker,
+          hoverWayPoint
         ].filter((d) => {
           return d.geometry;
         })
       };
 
-      if (data.directions.length) {
-        data.directions.forEach((feature, index) => {
+      if (directions.length) {
+        directions.forEach((feature, index) => {
 
           const lineString = {
             geometry: {
@@ -191,13 +182,13 @@ export default class Directions extends mapboxgl.Control {
             },
             properties: {
               'route-index': index,
-              route: (index === data.routeIndex) ? 'selected' : 'alternate'
+              route: (index === routeIndex) ? 'selected' : 'alternate'
             }
           };
 
           geojson.features.push(lineString);
 
-          if (index === data.routeIndex) {
+          if (index === routeIndex) {
             // Collect any possible waypoints from steps
             feature.steps.forEach((d) => {
               if (d.maneuver.type === 'waypoint') {
@@ -276,7 +267,7 @@ export default class Directions extends mapboxgl.Control {
   }
 
   _onMouseUp() {
-    const { hoverWayPoint } = this.store.getState();
+    const { hoverWayPoint } = store.getState();
 
     if (this.dragging && hoverWayPoint.geometry) {
       switch (this.dragging.layer.id) {

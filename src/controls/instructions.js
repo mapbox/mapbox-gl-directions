@@ -16,9 +16,10 @@ let tmpl = fs.readFileSync(__dirname + '/../templates/instructions.html', 'utf8'
  * @private
  */
 export default class Instructions {
-  constructor(el, data, actions, store) {
-    store.subscribe(() => {
-      console.log('Ran from instructions controller', store.getState());
-    });
+  constructor(el, store, actions) {
+    this.onAdd();
+    store.subscribe(this.render);
   }
+  onAdd() {}
+  render() {}
 }

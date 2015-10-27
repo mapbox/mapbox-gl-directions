@@ -58,6 +58,7 @@
     "react-autosuggest": "moroshko/react-autosuggest#2.0",
     "redux": "^1.0.1",
     "redux-thunk": "^1.0.0",
-    "turf-extent": "^1.0.4"
+    "turf-extent": "^1.0.4",
+    "typeahead": "^0.2.0"
   }
 }

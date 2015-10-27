@@ -1,8 +1,8 @@
 import template from 'lodash.template';
 import debounce from 'lodash.debounce';
+// import typeahead from 'typeahead';
 
 let fs = require('fs'); // substack/brfs#39
-
 let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'utf8'));
 
 /**
@@ -14,8 +14,8 @@ let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'ut
  * @private
  */
 export default class Inputs {
-  constructor(el, data, actions) {
-    const { originQuery, destinationQuery, mode } = data;
+  constructor(el, store, actions) {
+    const { originQuery, destinationQuery, mode } = store.getState();
 
     el.innerHTML = tmpl({
       originQuery,
@@ -23,15 +23,30 @@ export default class Inputs {
       mode
     });
 
-    this.onAdd(actions);
+    this.container = el;
+    this.actions = actions;
+    this.onAdd();
+    store.subscribe(this.render.bind(this, store.getState()));
   }
-  onAdd(actions) {
-    const { reverseInputs, queryOrigin } = actions;
+  onAdd() {
+    const { reverseInputs, queryOrigin, setMode } = this.actions;
 
     // Events
-    document.querySelector('.js-reverse-inputs').addEventListener('click', reverseInputs);
-    document.querySelector('.js-origin').addEventListener('keypress', debounce((e) => {
+    this.container.querySelector('.js-reverse-inputs').addEventListener('click', reverseInputs);
+    this.container.querySelector('.js-origin').addEventListener('keypress', debounce((e) => {
       queryOrigin(e.target.value);
     }), 100);
+
+    // Driving / Walking / Cycling modes
+    const profiles = this.container.querySelectorAll('input[type="radio"]');
+    Array.prototype.forEach.call(profiles, (el) => {
+      el.addEventListener('change', () => {
+        setMode(el.id.split('-').pop());
+      });
+    });
+
+  }
+  render(store) {
+    console.log('occur', store);
   }
 }
