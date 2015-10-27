@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import mapboxgl from 'mapbox-gl';
 import thunk from 'redux-thunk';
 import debounce from 'lodash.debounce';
@@ -24,6 +24,7 @@ export default class Directions extends mapboxgl.Control {
     this.options = options;
     this.store = storeWithMiddleware(reducers);
 
+    this.actions = bindActionCreators(actions, this.store.dispatch);
     this.onMouseDown = this._onMouseDown.bind(this);
     this.onMouseMove = this._onMouseMove.bind(this);
     this.onMouseUp = this._onMouseUp.bind(this);
@@ -31,6 +32,7 @@ export default class Directions extends mapboxgl.Control {
 
   onAdd(map) {
     this.map = map;
+
     const data = this.store.getState();
 
     const inputEl = document.createElement('div');
@@ -39,14 +41,14 @@ export default class Directions extends mapboxgl.Control {
 
     // Set up elements to the map
     // Add controllers to the page
-    new Inputs(inputEl, data, actions, this.store);
+    new Inputs(inputEl, data, this.actions, this.store);
 
     new Instructions(this.container, {
       unit: data.unit,
       directions: data.directions,
       activeRoute: data.routeIndex
     }, {
-      hoverMarker: actions.hoverMarker
+      hoverMarker: this.actions.hoverMarker
     }, this.store);
 
     this.mapState();
@@ -104,9 +106,9 @@ export default class Directions extends mapboxgl.Control {
           if (err) throw err;
           if (features.length) {
             var coords = e.lngLat;
-            this.store.dispatch(actions.hoverWayPoint([coords.lng, coords.lat]));
+            this.actions.hoverWayPoint([coords.lng, coords.lat]);
           } else if (hoverWayPoint.geometry) {
-            this.store.dispatch(actions.hoverWayPoint(null));
+            this.actions.hoverWayPoint(null);
           }
         });
 
@@ -118,7 +120,7 @@ export default class Directions extends mapboxgl.Control {
         const coords = [e.lngLat.lng, e.lngLat.lat];
 
         if (!origin.geometry) {
-          this.store.dispatch(actions.queryPointFromMap(coords, 'origin'));
+          this.actions.queryPointFromMap(coords, 'origin');
           map.flyTo({ center: coords });
         } else {
           map.featuresAt(e.point, {
@@ -132,11 +134,11 @@ export default class Directions extends mapboxgl.Control {
             if (err) throw err;
             if (features.length && features[0].properties.route === 'alternate') {
               const index = features[0].properties['route-index'];
-              this.store.dispatch(actions.setRouteIndex(index));
+              this.actions.setRouteIndex(index);
             }
 
             if (!features.length) {
-              this.store.dispatch(actions.queryPointFromMap(coords, 'destination'));
+              this.actions.queryPointFromMap(coords, 'destination');
               var bbox = extent({
                 type: 'FeatureCollection',
                 features: [origin, {
@@ -155,7 +157,7 @@ export default class Directions extends mapboxgl.Control {
       }.bind(this));
 
       // Set options.
-      this.store.dispatch(actions.setOptions(this.options));
+      this.actions.setOptions(this.options);
     });
   }
 
@@ -242,7 +244,7 @@ export default class Directions extends mapboxgl.Control {
 
         // Remove any existing waypoints from the same location
         if (this.dragging.layer.id === 'directions-waypoint-point') {
-          this.store.dispatch(actions.filterWayPoint(this.dragging.geometry.coordinates));
+          this.actions.filterWayPoint(this.dragging.geometry.coordinates);
         }
       }
     });
@@ -261,13 +263,13 @@ export default class Directions extends mapboxgl.Control {
 
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          debounce(this.store.dispatch(actions.queryPointFromMap(coords, 'origin')), 100);
+          debounce(this.actions.queryPointFromMap(coords, 'origin'), 100);
         break;
         case 'directions-destination-point':
-          debounce(this.store.dispatch(actions.queryPointFromMap(coords, 'destination')), 100);
+          debounce(this.actions.queryPointFromMap(coords, 'destination'), 100);
         break;
         case 'directions-waypoint-point':
-          debounce(this.store.dispatch(actions.hoverWayPoint(coords)), 100);
+          debounce(this.actions.hoverWayPoint(coords), 100);
         break;
       }
     }
@@ -279,7 +281,7 @@ export default class Directions extends mapboxgl.Control {
     if (this.dragging && hoverWayPoint.geometry) {
       switch (this.dragging.layer.id) {
         case 'directions-waypoint-point':
-          this.store.dispatch(actions.addWayPoint(hoverWayPoint.geometry.coordinates));
+          this.actions.addWayPoint(hoverWayPoint.geometry.coordinates);
         break;
       }
     }
