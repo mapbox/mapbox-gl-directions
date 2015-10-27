@@ -25,8 +25,9 @@ export default class Inputs {
 
     this.container = el;
     this.actions = actions;
+
     this.onAdd();
-    store.subscribe(this.render.bind(this, store.getState()));
+    this.render(store);
   }
   onAdd() {
     const { reverseInputs, queryOrigin, setMode } = this.actions;
@@ -47,6 +48,8 @@ export default class Inputs {
 
   }
   render(store) {
-    console.log('occur', store);
+    store.subscribe(() => {
+      console.log('occur', store.getState());
+    });
   }
 }
