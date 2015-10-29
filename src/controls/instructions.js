@@ -26,15 +26,10 @@ export default class Instructions {
       const direction = directions[routeIndex];
 
       if (directions.length) {
-        let steps = direction.steps.map((step) => {
-          step.distance = step.distance ? format[unit](step.distance) : '';
-          step.icon = step.maneuver.type.replace(/\s+/g, '-').toLowerCase();
-          return step;
-        });
-
         this.container.innerHTML = tmpl({
           routeIndex,
-          steps: steps,
+          steps: direction.steps,
+          format: format[unit],
           duration: format[unit](direction.duration),
           distance: format.duration(direction.distance)
         });

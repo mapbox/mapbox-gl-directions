@@ -40,35 +40,35 @@ export default class Inputs {
       reverseInputs
     } = this.actions;
 
-    const $origin = this.container.querySelector('.js-origin');
-    const $destination = this.container.querySelector('.js-destination');
+    this.originInput = this.container.querySelector('.js-origin');
+    this.destinationInput = this.container.querySelector('.js-destination');
 
     // Events
     // ======
 
     // Origin / Destination autosuggest
-    $origin.addEventListener('keypress', debounce((e) => {
+    this.originInput.addEventListener('keypress', debounce((e) => {
       queryOrigin(e.target.value);
     }), 100);
 
-    $origin.addEventListener('change', () => {
+    this.originInput.addEventListener('change', () => {
       if (this.originTypeahead.selected.center) {
         addOrigin(this.originTypeahead.selected.center);
       }
     });
 
-    $destination.addEventListener('keypress', debounce((e) => {
+    this.destinationInput.addEventListener('keypress', debounce((e) => {
       queryDestination(e.target.value);
     }), 100);
 
-    $destination.addEventListener('change', () => {
+    this.destinationInput.addEventListener('change', () => {
       if (this.destinationTypeahead.selected.center) {
         addDestination(this.destinationTypeahead.selected.center);
       }
     });
 
-    this.originTypeahead = new typeahead($origin, []);
-    this.destinationTypeahead = new typeahead($destination, []);
+    this.originTypeahead = new typeahead(this.originInput, []);
+    this.destinationTypeahead = new typeahead(this.destinationInput, []);
 
     // Filter results by place_name
     this.originTypeahead.getItemValue = function(item) { return item.place_name; };
@@ -90,9 +90,23 @@ export default class Inputs {
 
   render(store) {
     store.subscribe(() => {
-      const { originResults, destinationResults } = store.getState();
-      if (originResults.length) this.originTypeahead.update(originResults);
-      if (destinationResults.length) this.destinationTypeahead.update(destinationResults);
+      const {
+        originQuery,
+        originResults,
+        destinationQuery,
+        destinationResults
+      } = store.getState();
+
+      if (originResults.length) {
+        this.originTypeahead.update(originResults);
+      }
+
+      if (destinationResults.length) {
+        this.destinationTypeahead.update(destinationResults);
+      }
+
+      this.originInput.value = originQuery;
+      this.destinationInput.value = destinationQuery;
     });
   }
 }
