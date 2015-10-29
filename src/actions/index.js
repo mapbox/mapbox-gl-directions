@@ -204,7 +204,7 @@ export function addDestination(coordinates) {
       }
     };
 
-    if (destination.geometry) {
+    if (origin.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
       dispatch(fetchDirections(query, mode));
     }
