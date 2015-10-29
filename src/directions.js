@@ -2,6 +2,7 @@ import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
 import mapboxgl from 'mapbox-gl';
 import debounce from 'lodash.debounce';
+import isEqual from 'lodash.isEqual';
 import extent from 'turf-extent';
 import { decode } from 'polyline';
 import rootReducer from './reducers';
@@ -24,6 +25,7 @@ export default class Directions extends mapboxgl.Control {
 
     this.container = el;
     this.options = options;
+    this.cachedCoordinates = [];
 
     this.actions = bindActionCreators(actions, store.dispatch);
     this.onMouseDown = this._onMouseDown.bind(this);
@@ -173,7 +175,10 @@ export default class Directions extends mapboxgl.Control {
       }
 
       // Animate map to fit bounds if origin & destination exists.
-      if (origin.geometry && destination.geometry) {
+      if (origin.geometry &&
+          destination.geometry &&
+          !isEqual(this.cachedCoordinates, [origin, destination])) {
+        this.cachedCoordinates = [origin, destination];
         const bbox = extent({
           type: 'FeatureCollection',
           features: [origin, destination]
