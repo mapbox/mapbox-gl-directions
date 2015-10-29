@@ -1,5 +1,6 @@
 import format from '../format';
 import template from 'lodash.template';
+import isEqual from 'lodash.isequal';
 
 let fs = require('fs'); // substack/brfs#39
 let tmpl = template(fs.readFileSync(__dirname + '/../templates/instructions.html', 'utf8'));
@@ -18,20 +19,39 @@ export default class Instructions {
     this.container = el;
     this.actions = actions;
     this.render(store);
+    this.directions = {};
   }
 
   render(store) {
     store.subscribe(() => {
+      const { hoverMarker } = this.actions;
       const { routeIndex, unit, directions } = store.getState();
-      const direction = directions[routeIndex];
 
-      if (directions.length) {
+      if (directions.length && !isEqual(directions[routeIndex], this.directions)) {
+        const direction = this.directions = directions[routeIndex];
+
         this.container.innerHTML = tmpl({
           routeIndex,
           steps: direction.steps,
           format: format[unit],
-          duration: format[unit](direction.duration),
-          distance: format.duration(direction.distance)
+          duration: format[unit](direction.distance),
+          distance: format.duration(direction.duration)
+        });
+
+        var steps = this.container.querySelectorAll('.mapbox-directions-step');
+
+        Array.prototype.forEach.call(steps, (el) => {
+          const lng = el.getAttribute('data-lng');
+          const lat = el.getAttribute('data-lat');
+
+          el.addEventListener('mouseover', () => {
+            hoverMarker([lng, lat]);
+          });
+
+          el.addEventListener('mouseout', () => {
+            hoverMarker(null);
+          });
+
         });
       }
     });

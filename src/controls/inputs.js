@@ -52,7 +52,7 @@ export default class Inputs {
     }), 100);
 
     this.originInput.addEventListener('change', () => {
-      if (this.originTypeahead.selected.center) {
+      if (this.originTypeahead.selected) {
         addOrigin(this.originTypeahead.selected.center);
       }
     });
@@ -62,7 +62,7 @@ export default class Inputs {
     }), 100);
 
     this.destinationInput.addEventListener('change', () => {
-      if (this.destinationTypeahead.selected.center) {
+      if (this.destinationTypeahead.selected) {
         addDestination(this.destinationTypeahead.selected.center);
       }
     });

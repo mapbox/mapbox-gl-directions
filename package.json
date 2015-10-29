@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "lodash.debounce": "^3.1.1",
+    "lodash.isequal": "^3.0.4",
     "lodash.template": "^3.6.2",
     "mapbox": "^0.10.0",
     "polyline": "^0.2.0",

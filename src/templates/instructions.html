@@ -10,9 +10,16 @@
   <div class='mapbox-directions-instructions'>
     <ol class='mapbox-directions-steps'>
       <% steps.forEach(function(step) { %>
-        <% var distance = step.distance ? format(step.distance) : false; %>
-        <% var icon = step.maneuver.type.replace(/\s+/g, '-').toLowerCase(); %>
-        <li class='mapbox-directions-step'>
+        <%
+          var distance = step.distance ? format(step.distance) : false;
+          var icon = step.maneuver.type.replace(/\s+/g, '-').toLowerCase();
+          var lng = step.maneuver.location.coordinates[0];
+          var lat = step.maneuver.location.coordinates[1];
+        %>
+        <li
+          data-lat='<%= lat %>'
+          data-lng='<%= lng %>'
+          class='mapbox-directions-step'>
           <span class='directions-icon directions-icon-<%= icon %>'></span>
           <div class='mapbox-directions-step-maneuver'>
             <%= step.maneuver.instruction %>
