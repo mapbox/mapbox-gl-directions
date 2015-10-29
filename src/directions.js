@@ -134,18 +134,6 @@ export default class Directions extends mapboxgl.Control {
 
             if (!features.length) {
               this.actions.queryPointFromMap(coords, 'destination');
-              var bbox = extent({
-                type: 'FeatureCollection',
-                features: [origin, {
-                  type: 'feature',
-                  geometry: {
-                    type: 'Point',
-                    coordinates: coords
-                  }
-                }]});
-                map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-                padding: 40
-              });
             }
           });
         }
@@ -179,8 +167,21 @@ export default class Directions extends mapboxgl.Control {
         })
       };
 
+      // Animate map to origin point if destination does not exist.
       if (origin.geometry && !destination.geometry) {
         this.map.flyTo({ center: origin.geometry.coordinates });
+      }
+
+      // Animate map to fit bounds if origin & destination exists.
+      if (origin.geometry && destination.geometry) {
+        const bbox = extent({
+          type: 'FeatureCollection',
+          features: [origin, destination]
+        });
+
+        this.map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
+          padding: 40
+        });
       }
 
       if (directions.length) {
