@@ -9,16 +9,18 @@
 
   <div class='mapbox-directions-instructions'>
     <ol class='mapbox-directions-steps'>
-      <li
-        class='mapbox-directions-step'>
-        <span class='directions-icon directions-icon-<%= icon %>'></span>
-        <div class='mapbox-directions-step-maneuver'>
-          <%= instruction %>
-        </div>
-        <div class='mapbox-directions-step-distance'>
-          <%= distance %>
-        </div>
-      </li>
+      <% steps.forEach(function(step) { %>
+        <li
+          class='mapbox-directions-step'>
+          <span class='directions-icon directions-icon-<%= step.icon %>'></span>
+          <div class='mapbox-directions-step-maneuver'>
+            <%= step.maneuver.instruction %>
+          </div>
+          <div class='mapbox-directions-step-distance'>
+            <%= step.distance %>
+          </div>
+        </li>
+      <% }); %>
     </ol>
   </div>
 </div>

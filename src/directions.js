@@ -36,11 +36,15 @@ export default class Directions extends mapboxgl.Control {
 
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';
+    const directionsEl = document.createElement('div');
+    directionsEl.className = 'directions-control-directions-container';
+
     this.container.appendChild(inputEl);
+    this.container.appendChild(directionsEl);
 
     // Add controllers to the page
     new Inputs(inputEl, store, this.actions);
-    new Instructions(this.container, store, {
+    new Instructions(directionsEl, store, {
       hoverMarker: this.actions.hoverMarker
     });
 
@@ -63,9 +67,8 @@ export default class Directions extends mapboxgl.Control {
       // Add and set data theme layer/style
       map.addSource('directions', geojson);
 
-      directionsStyle.forEach((style) => {
-        map.addLayer(style);
-      });
+      // Add direction specific styles to the map
+      directionsStyle.forEach((style) => { map.addLayer(style); });
 
       map.getContainer().addEventListener('mousedown', this.onMouseDown);
       map.getContainer().addEventListener('mousemove', this.onMouseMove, true);
@@ -114,7 +117,6 @@ export default class Directions extends mapboxgl.Control {
 
         if (!origin.geometry) {
           this.actions.queryPointFromMap(coords, 'origin');
-          map.flyTo({ center: coords });
         } else {
           map.featuresAt(e.point, {
             radius: 10,
@@ -156,7 +158,14 @@ export default class Directions extends mapboxgl.Control {
 
   subscribedActions() {
     store.subscribe(() => {
-      const { origin, destination, hoverMarker, hoverWayPoint, directions, routeIndex } = store.getState();
+      const {
+        origin,
+        destination,
+        hoverMarker,
+        hoverWayPoint,
+        directions,
+        routeIndex
+      } = store.getState();
 
       const geojson = {
         type: 'FeatureCollection',
@@ -169,6 +178,10 @@ export default class Directions extends mapboxgl.Control {
           return d.geometry;
         })
       };
+
+      if (origin.geometry && !destination.geometry) {
+        this.map.flyTo({ center: origin.geometry.coordinates });
+      }
 
       if (directions.length) {
         directions.forEach((feature, index) => {

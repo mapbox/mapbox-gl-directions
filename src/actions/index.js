@@ -42,6 +42,7 @@ function fetchDirections(query, mode) {
     }, (err, res) => {
       if (err) throw err;
       dispatch(setRouteIndex(0));
+      // TODO Handle res.error
       dispatch(directionsResults(res.routes));
     });
   };

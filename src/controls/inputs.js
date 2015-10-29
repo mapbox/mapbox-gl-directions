@@ -9,8 +9,8 @@ let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'ut
  * Inputs controller
  *
  * @param {HTMLElement} el Summary parent container
- * @param {Object} data Data passed from store
- * @param {Actions} actions All available actions an element can dispatch
+ * @param {Object} store A redux store
+ * @param {Actions} actions Actions an element can dispatch
  * @private
  */
 export default class Inputs {
@@ -52,7 +52,9 @@ export default class Inputs {
     }), 100);
 
     $origin.addEventListener('change', () => {
-      addOrigin(this.originTypeahead.selected.center);
+      if (this.originTypeahead.selected.center) {
+        addOrigin(this.originTypeahead.selected.center);
+      }
     });
 
     $destination.addEventListener('keypress', debounce((e) => {
@@ -60,7 +62,9 @@ export default class Inputs {
     }), 100);
 
     $destination.addEventListener('change', () => {
-      addDestination(this.destinationTypeahead.selected.center);
+      if (this.destinationTypeahead.selected.center) {
+        addDestination(this.destinationTypeahead.selected.center);
+      }
     });
 
     this.originTypeahead = new typeahead($origin, []);
