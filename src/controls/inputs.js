@@ -10,7 +10,7 @@ let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'ut
  *
  * @param {HTMLElement} el Summary parent container
  * @param {Object} store A redux store
- * @param {Actions} actions Actions an element can dispatch
+ * @param {Object} actions Actions an element can dispatch
  * @private
  */
 export default class Inputs {

@@ -10,16 +10,18 @@ let tmpl = template(fs.readFileSync(__dirname + '/../templates/instructions.html
  *
  * @param {HTMLElement} el Summary parent container
  * @param {Object} store A redux store
- * @param {Actions} actions Actions an element can dispatch
+ * @param {Object} actions Actions an element can dispatch
+ * @param {Object} map The mapboxgl instance
  * @private
  */
 export default class Instructions {
-  constructor(el, store, actions) {
-
+  constructor(el, store, actions, map) {
     this.container = el;
     this.actions = actions;
-    this.render(store);
+    this.map = map;
     this.directions = {};
+
+    this.render(store);
   }
 
   render(store) {
@@ -52,6 +54,9 @@ export default class Instructions {
             hoverMarker(null);
           });
 
+          el.addEventListener('click', () => {
+            this.map.flyTo({ center: [lng, lat] });
+          });
         });
       }
     });

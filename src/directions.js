@@ -46,7 +46,7 @@ export default class Directions extends mapboxgl.Control {
     new Inputs(inputEl, store, this.actions);
     new Instructions(directionsEl, store, {
       hoverMarker: this.actions.hoverMarker
-    });
+    }, this.map);
 
     this.mapState();
     this.subscribedActions();
