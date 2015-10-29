@@ -57,6 +57,7 @@
   background-color:white;
   position:relative;
   }
+  .mapbox-directions-origin { border-bottom:1px solid #ddd; }
 
 .mapbox-form-label {
   position:absolute;
@@ -335,9 +336,9 @@
       display:block;
       padding:5px 10px;
       white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
       }
       .mapbox-directions-inputs ul > li.active > a,
       .mapbox-directions-inputs ul > li > a:hover {

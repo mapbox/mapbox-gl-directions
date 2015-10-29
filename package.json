@@ -55,9 +55,9 @@
     "lodash.template": "^3.6.2",
     "mapbox": "^0.9.0",
     "polyline": "^0.2.0",
-    "react-autosuggest": "moroshko/react-autosuggest#2.0",
     "redux": "^1.0.1",
     "redux-thunk": "^1.0.0",
+    "suggestions": "^1.0.1",
     "turf-extent": "^1.0.4",
     "type-ahead": "^2.1.0"
   }
