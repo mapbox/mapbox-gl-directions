@@ -3,7 +3,7 @@
  * @class mapboxgl.Directions
  *
  * @param {Object} options
- * @param {String} [options.mode="driving"]
+ * @param {String} [options.profile="driving"]
  * @param {String} [options.unit="imperial"]
  *
  * @return {Directions} `this`

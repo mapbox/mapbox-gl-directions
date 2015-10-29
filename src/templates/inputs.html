@@ -44,21 +44,21 @@
     <input
       type='radio'
       name='profile'
-      <% if (mode === "driving") { %>checked<% } %>
+      <% if (profile === "driving") { %>checked<% } %>
       id='mapbox-directions-profile-driving'
     />
     <label for='mapbox-directions-profile-driving'>Driving</label>
     <input
       type='radio'
       name='profile'
-      <% if (mode === "walking") { %>checked<% } %>
+      <% if (profile === "walking") { %>checked<% } %>
       id='mapbox-directions-profile-walking'
     />
     <label for='mapbox-directions-profile-walking'>Walking</label>
     <input
       type='radio'
       name='profile'
-      <% if (mode === "cycling") { %>checked<% } %>
+      <% if (profile === "cycling") { %>checked<% } %>
       id='mapbox-directions-profile-cycling'
     />
     <label for='mapbox-directions-profile-cycling'>Cycling</label>

@@ -15,12 +15,12 @@ let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'ut
  */
 export default class Inputs {
   constructor(el, store, actions) {
-    const { originQuery, destinationQuery, mode } = store.getState();
+    const { originQuery, destinationQuery, profile } = store.getState();
 
     el.innerHTML = tmpl({
       originQuery,
       destinationQuery,
-      mode
+      profile
     });
 
     this.container = el;
@@ -36,7 +36,7 @@ export default class Inputs {
       queryDestination,
       addOrigin,
       addDestination,
-      setMode,
+      setProfile,
       reverseInputs
     } = this.actions;
 
@@ -74,11 +74,11 @@ export default class Inputs {
     this.originTypeahead.getItemValue = function(item) { return item.place_name; };
     this.destinationTypeahead.getItemValue = function(item) { return item.place_name; };
 
-    // Driving / Walking / Cycling modes
+    // Driving / Walking / Cycling profiles
     const profiles = this.container.querySelectorAll('input[type="radio"]');
     Array.prototype.forEach.call(profiles, (el) => {
       el.addEventListener('change', () => {
-        setMode(el.id.split('-').pop());
+        setProfile(el.id.split('-').pop());
       });
     });
 

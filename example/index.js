@@ -12,7 +12,7 @@ var map = new mapboxgl.Map({
 
 var directions = Directions(document.getElementById('directions'), {
   unit: 'metric',
-  accessToken: mapboxgl.accessToken
+  profile: 'walking'
 });
 
 map.addControl(directions);

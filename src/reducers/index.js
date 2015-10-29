@@ -1,7 +1,7 @@
 import * as types from '../constants/action_types.js';
 
 const initialState = {
-  mode: 'driving',
+  profile: 'driving',
 
   // Marker feature drawn on the map at any point.
   origin: {},
@@ -35,9 +35,9 @@ function data(state = initialState, action) {
   case types.SET_OPTIONS:
     return Object.assign({}, state, action.options);
 
-  case types.DIRECTIONS_MODE:
+  case types.DIRECTIONS_PROFILE:
     return Object.assign({}, state, {
-      mode: action.mode
+      profile: action.profile
     });
 
   case types.ORIGIN:

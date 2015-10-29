@@ -1,4 +1,5 @@
 import * as types from '../constants/action_types';
+import mapboxgl from 'mapbox-gl';
 import MapboxClient from 'mapbox';
 let mapbox;
 
@@ -34,10 +35,10 @@ function geocode(query, callback) {
   };
 }
 
-function fetchDirections(query, mode) {
+function fetchDirections(query, profile) {
   return dispatch => {
     return mapbox.getDirections(query, {
-      profile: 'mapbox.' + mode,
+      profile: 'mapbox.' + profile,
       geometry: 'polyline'
     }, (err, res) => {
       if (err) throw err;
@@ -69,10 +70,10 @@ function setWayPoint(feature) {
   };
 }
 
-function _setMode(mode) {
+function _setProfile(profile) {
   return {
-    type: types.DIRECTIONS_MODE,
-    mode
+    type: types.DIRECTIONS_PROFILE,
+    profile
   };
 }
 
@@ -91,9 +92,11 @@ function setHoverWayPoint(feature) {
 }
 
 export function setOptions(options) {
-  if (options.accessToken) {
-    mapbox = new MapboxClient(options.accessToken);
-  }
+  const accessToken = (options.accessToken) ?
+    options.accessToken :
+    mapboxgl.accessToken;
+
+  mapbox = new MapboxClient(accessToken);
 
   return {
     type: types.SET_OPTIONS,
@@ -168,7 +171,7 @@ function buildDirectionsQuery(origin, destination, wayPoints) {
 
 export function addOrigin(coordinates) {
   return (dispatch, getState) => {
-    const { destination, mode, wayPoints } = getState();
+    const { destination, profile, wayPoints } = getState();
     const origin = {
       type: 'Feature',
       geometry: {
@@ -183,7 +186,7 @@ export function addOrigin(coordinates) {
 
     if (destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
-      dispatch(fetchDirections(query, mode));
+      dispatch(fetchDirections(query, profile));
     }
 
     dispatch(setOrigin(origin));
@@ -192,7 +195,7 @@ export function addOrigin(coordinates) {
 
 export function addDestination(coordinates) {
   return (dispatch, getState) => {
-    const { origin, mode, wayPoints } = getState();
+    const { origin, profile, wayPoints } = getState();
     const destination = {
       type: 'Feature',
       geometry: {
@@ -207,33 +210,33 @@ export function addDestination(coordinates) {
 
     if (origin.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
-      dispatch(fetchDirections(query, mode));
+      dispatch(fetchDirections(query, profile));
     }
 
     dispatch(setDestination(destination));
   };
 }
 
-export function setMode(mode) {
+export function setProfile(profile) {
   return (dispatch, getState) => {
     const { origin, destination, wayPoints } = getState();
 
     if (origin.geometry && destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
-      dispatch(fetchDirections(query, mode));
+      dispatch(fetchDirections(query, profile));
     }
 
-    dispatch(_setMode(mode));
+    dispatch(_setProfile(profile));
   };
 }
 
 export function reverseInputs() {
   return (dispatch, getState) => {
-    const { origin, destination, wayPoints, mode } = getState();
+    const { origin, destination, wayPoints, profile } = getState();
 
     if (origin.geometry && destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
-      dispatch(fetchDirections(query, mode));
+      dispatch(fetchDirections(query, profile));
     }
 
     let originReversed = {};
@@ -319,14 +322,14 @@ export function queryDestination(query) {
   };
 }
 
-export function queryPointFromMap(coordinates, mode) {
+export function queryPointFromMap(coordinates, profile) {
   return (dispatch) => {
     return dispatch(geocode(coordinates.join(','), (results) => {
 
-      if (results.length && mode === 'origin') {
+      if (results.length && profile === 'origin') {
         dispatch(addOrigin(coordinates));
         dispatch(originResults(results[0].place_name, results));
-      } else if (results.length && mode === 'destination') {
+      } else if (results.length && profile === 'destination') {
         dispatch(addDestination(coordinates));
         dispatch(destinationResults(results[0].place_name, results));
       }
@@ -340,11 +343,11 @@ export function queryPointFromMap(coordinates, mode) {
 
 export function addWayPoint(coords) {
   return (dispatch, getState) => {
-    const { origin, destination, wayPoints, mode} = getState();
+    const { origin, destination, wayPoints, profile} = getState();
 
     if (destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, [coords, ...wayPoints]);
-      dispatch(fetchDirections(query, mode));
+      dispatch(fetchDirections(query, profile));
     }
 
     dispatch(setWayPoint(coords));

@@ -24,10 +24,11 @@ export default class Directions extends mapboxgl.Control {
     super();
 
     this.container = el;
-    this.options = options;
     this.cachedCoordinates = [];
 
     this.actions = bindActionCreators(actions, store.dispatch);
+    this.actions.setOptions(options || {});
+
     this.onMouseDown = this._onMouseDown.bind(this);
     this.onMouseMove = this._onMouseMove.bind(this);
     this.onMouseUp = this._onMouseUp.bind(this);
@@ -140,9 +141,6 @@ export default class Directions extends mapboxgl.Control {
           });
         }
       }.bind(this));
-
-      // Set options.
-      this.actions.setOptions(this.options);
     });
   }
 
