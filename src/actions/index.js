@@ -230,7 +230,7 @@ export function setProfile(profile) {
   };
 }
 
-export function reverseInputs() {
+export function reverse() {
   return (dispatch, getState) => {
     const { origin, destination, wayPoints, profile } = getState();
 
@@ -276,11 +276,11 @@ export function reverseInputs() {
       });
     }
 
-    dispatch(reverseOriginDestination(originReversed, destinationReversed));
+    dispatch(reverseInputs(originReversed, destinationReversed));
   };
 }
 
-export function reverseOriginDestination(origin, destination) {
+export function reverseInputs(origin, destination) {
   return {
     type: types.REVERSE_INPUTS,
     origin,

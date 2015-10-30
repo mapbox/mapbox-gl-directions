@@ -337,4 +337,12 @@ export default class Directions extends mapboxgl.Control {
     return this;
   }
 
+  /**
+   * Swap the origin and destination.
+   * @returns {Directions} this
+   */
+  reverse() {
+    this.actions.reverse();
+    return this;
+  }
 }

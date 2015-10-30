@@ -37,7 +37,7 @@ export default class Inputs {
       addOrigin,
       addDestination,
       setProfile,
-      reverseInputs
+      reverse
     } = this.actions;
 
     this.originInput = this.container.querySelector('.js-origin');
@@ -85,7 +85,7 @@ export default class Inputs {
     // Reversing Origin / Destination
     this.container
       .querySelector('.js-reverse-inputs')
-      .addEventListener('click', reverseInputs);
+      .addEventListener('click', reverse);
   }
 
   render(store) {
