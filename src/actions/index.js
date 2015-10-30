@@ -322,14 +322,14 @@ export function queryDestination(query) {
   };
 }
 
-export function queryPointFromMap(coordinates, profile) {
+export function queryCoordinates(coordinates, mode) {
   return (dispatch) => {
     return dispatch(geocode(coordinates.join(','), (results) => {
 
-      if (results.length && profile === 'origin') {
+      if (results.length && mode === 'origin') {
         dispatch(addOrigin(coordinates));
         dispatch(originResults(results[0].place_name, results));
-      } else if (results.length && profile === 'destination') {
+      } else if (results.length && mode === 'destination') {
         dispatch(addDestination(coordinates));
         dispatch(destinationResults(results[0].place_name, results));
       }

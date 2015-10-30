@@ -15,4 +15,17 @@ var directions = Directions(document.getElementById('directions'), {
   profile: 'walking'
 });
 
+var button = document.createElement('button');
+button.textContent = 'click me';
+
+map.getContainer().querySelector('.mapboxgl-ctrl-bottom-left').appendChild(button);
+
 map.addControl(directions);
+
+map.on('load', function() {
+  directions.setOrigin([-79.52063083648702, 43.67873567846806]);
+});
+
+button.addEventListener('click', function() {
+  console.log(directions.getOrigin());
+});

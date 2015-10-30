@@ -119,7 +119,7 @@ export default class Directions extends mapboxgl.Control {
         const coords = [e.lngLat.lng, e.lngLat.lat];
 
         if (!origin.geometry) {
-          this.actions.queryPointFromMap(coords, 'origin');
+          this.actions.queryCoordinates(coords, 'origin');
         } else {
           map.featuresAt(e.point, {
             radius: 10,
@@ -136,7 +136,7 @@ export default class Directions extends mapboxgl.Control {
             }
 
             if (!features.length) {
-              this.actions.queryPointFromMap(coords, 'destination');
+              this.actions.queryCoordinates(coords, 'destination');
             }
           });
         }
@@ -271,10 +271,10 @@ export default class Directions extends mapboxgl.Control {
 
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          debounce(this.actions.queryPointFromMap(coords, 'origin'), 100);
+          debounce(this.actions.queryCoordinates(coords, 'origin'), 100);
         break;
         case 'directions-destination-point':
-          debounce(this.actions.queryPointFromMap(coords, 'destination'), 100);
+          debounce(this.actions.queryCoordinates(coords, 'destination'), 100);
         break;
         case 'directions-waypoint-point':
           debounce(this.actions.hoverWayPoint(coords), 100);
@@ -310,10 +310,31 @@ export default class Directions extends mapboxgl.Control {
   }
 
   /**
+   * Sets the origin of the current route.
+   * @param {Array} coordinates [lng, lat]
+   * @returns {Directions} this
+   */
+  setOrigin(coordinates) {
+    this.actions.queryCoordinates(coordinates, 'origin');
+    return this;
+  }
+
+  /**
    * Returns the destination of the current route.
    * @returns {Object} destination
    */
   getDestination() {
     return store.getState().destination;
   }
+
+  /**
+   * Sets the destination of the current route.
+   * @param {Array} coordinates [lng, lat]
+   * @returns {Directions} this
+   */
+  setDestination(coordinates) {
+    this.actions.queryCoordinates(coordinates, 'destination');
+    return this;
+  }
+
 }
