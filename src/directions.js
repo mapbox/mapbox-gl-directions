@@ -297,4 +297,23 @@ export default class Directions extends mapboxgl.Control {
     this.dragging = false;
     this.map.getContainer().classList.remove('directions-drag');
   }
+
+  //  API Methods
+  // ============================
+
+  /**
+   * Returns the origin of the current route.
+   * @returns {Object} origin
+   */
+  getOrigin() {
+    return store.getState().origin;
+  }
+
+  /**
+   * Returns the destination of the current route.
+   * @returns {Object} destination
+   */
+  getDestination() {
+    return store.getState().destination;
+  }
 }

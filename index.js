@@ -3,9 +3,16 @@
  * @class mapboxgl.Directions
  *
  * @param {Object} options
- * @param {String} [options.profile="driving"]
- * @param {String} [options.unit="imperial"]
+ * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
+ * @param {String} [options.profile="driving"] Routing profile to use. Options: `driving`, `walking`, `cycling`
+ * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
+ * @example
+ * var directions = Directions(document.getElementById('directions'), {
+ *   unit: 'metric',
+ *   profile: 'walking'
+ * });
  *
+ * map.addControl(directions);
  * @return {Directions} `this`
  */
 import Directions from './src/directions';
