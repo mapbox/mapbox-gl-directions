@@ -1,24 +1,18 @@
-const mapboxgl = require('mapbox-gl');
+'use strict';
+
 const test = require('tape');
-const Directions = require('../');
+const mapboxgl = require('mapbox-gl');
 
 mapboxgl.accessToken = process.env.MapboxAccessToken;
 
-test('basics', function(t) {
-  var container = document.createElement('div');
-
-  var directions = Directions(container, {
-    accessToken: process.env.MapboxAccessToken
-  });
-
-  t.ok(directions, 'Directions is initialized');
-  t.end();
-});
+// Tests
+require('./directions');
+require('./ui/inputs');
 
 // close the smokestack window once tests are complete
-test('shutdown', function(t) {
+test('shutdown', (t) => {
   t.end();
-  setTimeout(function() {
+  setTimeout(() => {
     window.close();
   });
 });
