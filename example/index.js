@@ -22,17 +22,6 @@ map.getContainer().querySelector('.mapboxgl-ctrl-bottom-left').appendChild(butto
 
 map.addControl(directions);
 
-var container = document.getElementById('directions');
-var input = container.querySelector('.js-origin');
-
-input.addEventListener('change', function() {
-  console.log('FOO FOO FOO');
-});
-
-map.on('load', function() {
-  directions.setOrigin([-79, 43]);
-});
-
 button.addEventListener('click', function() {
   console.log(directions.getOrigin());
 });

@@ -19,7 +19,7 @@ function destinationResults(query, results) {
   };
 }
 
-function directionsResults(directions) {
+function setDirections(directions) {
   return {
     type: types.DIRECTIONS,
     directions
@@ -44,7 +44,7 @@ function fetchDirections(query, profile) {
       if (err) throw err;
       if (res.error) throw res.error;
       dispatch(setRouteIndex(0));
-      dispatch(directionsResults(res.routes));
+      dispatch(setDirections(res.routes));
 
       // Revise origin + destination
       dispatch(setOrigin(Object.assign(res.origin, {
@@ -227,49 +227,32 @@ export function reverse() {
   return (dispatch, getState) => {
     const { origin, destination, wayPoints, profile } = getState();
 
+    let o = {}, d = {};
+
+    if (destination.geometry) {
+      o = Object.assign(destination, {
+        properties: {
+          id: 'origin',
+          'marker-symbol': 'A'
+        }
+      });
+    }
+
+    if (origin.geometry) {
+      d = Object.assign(origin, {
+        properties: {
+          id: 'destination',
+          'marker-symbol': 'B'
+        }
+      });
+    }
+
+    dispatch(reverseInputs(o, d));
+
     if (origin.geometry && destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, wayPoints);
+      const query = buildDirectionsQuery(o, d, wayPoints);
       dispatch(fetchDirections(query, profile));
     }
-
-    let originReversed = {};
-    let destinationReversed = {};
-
-    if (!destination.geometry || !origin.geometry) {
-
-      if (!destination.geometry && origin.geometry) {
-        // If Origin is empty Destination gets origin
-        destinationReversed = Object.assign({}, origin, {
-          properties: Object.assign({}, origin.properties, {
-            id: 'destination',
-            'marker-symbol': 'B'
-          })
-        });
-      } else if (!origin.geometry && destination.geometry) {
-        // If Destination is empty Origin gets destination
-        originReversed = Object.assign({}, destination, {
-          properties: Object.assign({}, destination.properties, {
-            id: 'origin',
-            'marker-symbol': 'A'
-          })
-        });
-      }
-
-    } else {
-      originReversed = Object.assign({}, origin, {
-        geometry: Object.assign({}, origin.geometry, {
-          coordinates: destination.geometry.coordinates
-        })
-      });
-
-      destinationReversed = Object.assign({}, destination, {
-        geometry: Object.assign({}, destination.geometry, {
-          coordinates: origin.geometry.coordinates
-        })
-      });
-    }
-
-    dispatch(reverseInputs(originReversed, destinationReversed));
   };
 }
 

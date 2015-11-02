@@ -167,9 +167,14 @@ export default class Directions extends mapboxgl.Control {
         })
       };
 
-      // Animate map to origin point if destination does not exist.
+      // Animate map to origin if destination does not exist.
       if (origin.geometry && !destination.geometry) {
         this.map.flyTo({ center: origin.geometry.coordinates });
+      }
+
+      // Animate map to destination if origin does not exist.
+      if (destination.geometry && !origin.geometry) {
+        this.map.flyTo({ center: destination.geometry.coordinates });
       }
 
       // Animate map to fit bounds if origin & destination exists.
