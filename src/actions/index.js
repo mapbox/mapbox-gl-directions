@@ -42,9 +42,24 @@ function fetchDirections(query, profile) {
       geometry: 'polyline'
     }, (err, res) => {
       if (err) throw err;
+      if (res.error) throw res.error;
       dispatch(setRouteIndex(0));
-      // TODO Handle res.error
       dispatch(directionsResults(res.routes));
+
+      // Revise origin + destination
+      dispatch(setOrigin(Object.assign(res.origin, {
+        properties: {
+          id: 'origin',
+          'marker-symbol': 'A'
+        }
+      })));
+      dispatch(setDestination(Object.assign(res.destination, {
+        properties: {
+          id: 'destination',
+          'marker-symbol': 'B'
+        }
+      })));
+
     });
   };
 }
