@@ -55,7 +55,10 @@ export default class Instructions {
           });
 
           el.addEventListener('click', () => {
-            this.map.flyTo({ center: [lng, lat] });
+            this.map.flyTo({
+              center: [lng, lat],
+              zoom: 16
+            });
           });
         });
       }
