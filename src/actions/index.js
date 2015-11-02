@@ -91,57 +91,14 @@ function setHoverWayPoint(feature) {
   };
 }
 
-export function setOptions(options) {
-  const accessToken = (options.accessToken) ?
-    options.accessToken :
-    mapboxgl.accessToken;
-
-  mapbox = new MapboxClient(accessToken);
-
+function buildPoint(coordinates, properties) {
   return {
-    type: types.SET_OPTIONS,
-    options: options
-  };
-}
-
-export function hoverWayPoint(coordinates) {
-  return (dispatch) => {
-    const feature = (coordinates) ? {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: coordinates
-      },
-      properties: {
-        id: 'waypoint'
-      }
-    } : {};
-
-    dispatch(setHoverWayPoint(feature));
-  };
-}
-
-export function hoverMarker(coordinates) {
-  return (dispatch) => {
-    const feature = (coordinates) ? {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: coordinates
-      },
-      properties: {
-        id: 'hover'
-      }
-    } : {};
-
-    dispatch(setHoverMarker(feature));
-  };
-}
-
-export function setRouteIndex(routeIndex) {
-  return {
-    type: types.ROUTE_INDEX,
-    routeIndex
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: coordinates
+    },
+    properties: properties
   };
 }
 
@@ -169,20 +126,48 @@ function buildDirectionsQuery(origin, destination, wayPoints) {
   return query;
 }
 
+export function setOptions(options) {
+  const accessToken = (options.accessToken) ?
+    options.accessToken :
+    mapboxgl.accessToken;
+
+  mapbox = new MapboxClient(accessToken);
+
+  return {
+    type: types.SET_OPTIONS,
+    options: options
+  };
+}
+
+export function hoverWayPoint(coordinates) {
+  return (dispatch) => {
+    const feature = (coordinates) ? buildPoint(coordinates, { id: 'waypoint'}) : {};
+    dispatch(setHoverWayPoint(feature));
+  };
+}
+
+export function hoverMarker(coordinates) {
+  return (dispatch) => {
+    const feature = (coordinates) ? buildPoint(coordinates, { id: 'hover'}) : {};
+    dispatch(setHoverMarker(feature));
+  };
+}
+
+export function setRouteIndex(routeIndex) {
+  return {
+    type: types.ROUTE_INDEX,
+    routeIndex
+  };
+}
+
 export function addOrigin(coordinates) {
   return (dispatch, getState) => {
     const { destination, profile, wayPoints } = getState();
-    const origin = {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: coordinates
-      },
-      properties: {
-        id: 'origin',
-        'marker-symbol': 'A'
-      }
-    };
+
+    const origin = buildPoint(coordinates, {
+      id: 'origin',
+      'marker-symbol': 'A'
+    });
 
     if (destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
@@ -196,17 +181,10 @@ export function addOrigin(coordinates) {
 export function addDestination(coordinates) {
   return (dispatch, getState) => {
     const { origin, profile, wayPoints } = getState();
-    const destination = {
-      type: 'Feature',
-      geometry: {
-        type: 'Point',
-        coordinates: coordinates
-      },
-      properties: {
-        id: 'destination',
-        'marker-symbol': 'B'
-      }
-    };
+    const destination = buildPoint(coordinates, {
+      id: 'destination',
+      'marker-symbol': 'B'
+    });
 
     if (origin.geometry) {
       const query = buildDirectionsQuery(origin, destination, wayPoints);
@@ -297,12 +275,6 @@ export function clearOrigin() {
 export function clearDestination() {
   return {
     type: types.DESTINATION_CLEAR
-  };
-}
-
-export function clearRefresh() {
-  return {
-    type: types.REFRESH_CLEAR
   };
 }
 

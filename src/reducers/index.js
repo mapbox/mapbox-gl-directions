@@ -26,8 +26,7 @@ const initialState = {
   // Any waypoints
   wayPoints: [],
 
-  routeIndex: 0,
-  refresh: false
+  routeIndex: 0
 };
 
 function data(state = initialState, action) {
@@ -113,8 +112,7 @@ function data(state = initialState, action) {
       originQuery: state.destinationQuery,
       destination: action.destination,
       destinationResults: state.originResults,
-      destinationQuery: state.originQuery,
-      refresh: true
+      destinationQuery: state.originQuery
     });
 
   case types.DIRECTIONS:
@@ -122,15 +120,9 @@ function data(state = initialState, action) {
       directions: action.directions
     });
 
-  case types.REFRESH_CLEAR:
-    return Object.assign({}, state, {
-      refresh: false
-    });
-
   case types.RESULT_FROM_MAP:
     return Object.assign({}, state, {
-      hoverWayPoint: {},
-      refresh: true
+      hoverWayPoint: {}
     });
 
   case types.ROUTE_INDEX:
