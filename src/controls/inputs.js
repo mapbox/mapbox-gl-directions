@@ -101,12 +101,21 @@ export default class Inputs {
         this.originTypeahead.update(originResults);
       }
 
+      this.originClear.classList.toggle('active', originResults.length);
+      this.destinationClear.classList.toggle('active', destinationResults.length);
+
       if (destinationResults.length) {
         this.destinationTypeahead.update(destinationResults);
       }
 
-      this.originInput.value = originQuery;
-      this.destinationInput.value = destinationQuery;
+      if (this.originInput !== document.activeElement) {
+        this.originInput.value = originQuery;
+      }
+
+      if (this.destinationInput !== document.activeElement) {
+        this.destinationInput.value = destinationQuery;
+      }
+
     });
   }
 }
