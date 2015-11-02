@@ -36,12 +36,17 @@ export default class Inputs {
       queryDestination,
       addOrigin,
       addDestination,
+      clearOrigin,
+      clearDestination,
       setProfile,
       reverse
     } = this.actions;
 
     this.originInput = this.container.querySelector('.js-origin');
     this.destinationInput = this.container.querySelector('.js-destination');
+
+    this.originClear = this.container.querySelector('.js-origin-clear');
+    this.destinationClear = this.container.querySelector('.js-destination-clear');
 
     // Events
     // ======
@@ -56,6 +61,9 @@ export default class Inputs {
         addOrigin(this.originTypeahead.selected.center);
       }
     });
+
+    this.originClear.addEventListener('click', clearOrigin);
+    this.destinationClear.addEventListener('click', clearDestination);
 
     this.destinationInput.addEventListener('keypress', debounce((e) => {
       queryDestination(e.target.value);
@@ -97,23 +105,27 @@ export default class Inputs {
         destinationResults
       } = store.getState();
 
-      if (originResults.length) {
-        this.originTypeahead.update(originResults);
-      }
+      if (originResults.length) this.originTypeahead.update(originResults);
+      if (destinationResults.length) this.destinationTypeahead.update(destinationResults);
 
       this.originClear.classList.toggle('active', originResults.length);
       this.destinationClear.classList.toggle('active', destinationResults.length);
 
-      if (destinationResults.length) {
-        this.destinationTypeahead.update(destinationResults);
-      }
+      var onChange = document.createEvent('HTMLEvents');
+      onChange.initEvent('change', true, false);
 
-      if (this.originInput !== document.activeElement) {
+      // Adjust values if input is not :focus
+      // or query remains unchanged.
+      if (this.originInput !== document.activeElement &&
+          this.originInput.value !== originQuery) {
         this.originInput.value = originQuery;
+        this.originInput.dispatchEvent(onChange);
       }
 
-      if (this.destinationInput !== document.activeElement) {
+      if (this.destinationInput !== document.activeElement &&
+          this.destinationInput.value !== destinationQuery) {
         this.destinationInput.value = destinationQuery;
+        this.destinationInput.dispatchEvent(onChange);
       }
 
     });

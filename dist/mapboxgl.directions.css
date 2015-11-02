@@ -112,7 +112,9 @@
   position:absolute;
   right:10px;
   top:10px;
+  display:none;
   }
+  .mapbox-directions-inputs .directions-close.active { display:block; }
 
 .mapbox-directions-profile {
   background:#fff;
