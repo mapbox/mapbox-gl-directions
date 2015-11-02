@@ -38,4 +38,13 @@ map.addControl(directions);
 
 ### Testing
 
+Tests require an environment variable to be set. Create a file named `env.test.sh`
+in the root directory with the following contents:
+
+    export MapboxAccessToken="YOUR ACCESS TOKEN"
+
+Don't have an access token? There's info [here](https://www.mapbox.com/help/create-api-access-token/) about it.
+
+Lastly, run the test command from the console:
+
     npm test
