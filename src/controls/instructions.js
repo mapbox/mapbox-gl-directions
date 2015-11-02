@@ -28,8 +28,9 @@ export default class Instructions {
     store.subscribe(() => {
       const { hoverMarker } = this.actions;
       const { routeIndex, unit, directions } = store.getState();
+      const shouldRender = !isEqual(directions[routeIndex], this.directions);
 
-      if (directions.length && !isEqual(directions[routeIndex], this.directions)) {
+      if (directions.length && shouldRender) {
         const direction = this.directions = directions[routeIndex];
 
         this.container.innerHTML = tmpl({
@@ -61,6 +62,8 @@ export default class Instructions {
             });
           });
         });
+      } else if (this.container.innerHTML && shouldRender) {
+        this.container.innerHTML = '';
       }
     });
   }
