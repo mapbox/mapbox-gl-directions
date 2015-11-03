@@ -7,7 +7,7 @@ var map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/streets-v8',
   center: [-79.45127964019774, 43.656881380438804],
-  zoom: 9
+  zoom: 12
 });
 
 var directions = Directions(document.getElementById('directions'), {

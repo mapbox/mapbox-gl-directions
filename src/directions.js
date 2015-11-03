@@ -1,9 +1,6 @@
 import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
 import mapboxgl from 'mapbox-gl';
-import debounce from 'lodash.debounce';
-import isEqual from 'lodash.isEqual';
-import extent from 'turf-extent';
 import { decode } from 'polyline';
 import rootReducer from './reducers';
 
@@ -24,7 +21,6 @@ export default class Directions extends mapboxgl.Control {
     super();
 
     this.container = el;
-    this.cachedCoordinates = [];
 
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
@@ -46,7 +42,7 @@ export default class Directions extends mapboxgl.Control {
     this.container.appendChild(directionsEl);
 
     // Add controllers to the page
-    new Inputs(inputEl, store, this.actions);
+    new Inputs(inputEl, store, this.actions, this.map);
     new Instructions(directionsEl, store, {
       hoverMarker: this.actions.hoverMarker
     }, this.map);
@@ -137,6 +133,7 @@ export default class Directions extends mapboxgl.Control {
 
             if (!features.length) {
               this.actions.queryDestinationCoordinates(coords);
+              this.map.flyTo({ center: coords });
             }
           });
         }
@@ -166,31 +163,6 @@ export default class Directions extends mapboxgl.Control {
           return d.geometry;
         })
       };
-
-      // Animate map to origin if destination does not exist.
-      if (origin.geometry && !destination.geometry) {
-        this.map.flyTo({ center: origin.geometry.coordinates });
-      }
-
-      // Animate map to destination if origin does not exist.
-      if (destination.geometry && !origin.geometry) {
-        this.map.flyTo({ center: destination.geometry.coordinates });
-      }
-
-      // Animate map to fit bounds if origin & destination exists.
-      if (origin.geometry &&
-          destination.geometry &&
-          !isEqual(this.cachedCoordinates, [origin, destination])) {
-        this.cachedCoordinates = [origin, destination];
-        const bbox = extent({
-          type: 'FeatureCollection',
-          features: [origin, destination]
-        });
-
-        this.map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-          padding: 40
-        });
-      }
 
       if (directions.length) {
         directions.forEach((feature, index) => {
@@ -276,23 +248,30 @@ export default class Directions extends mapboxgl.Control {
 
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          debounce(this.actions.queryOriginCoordinates(coords), 100);
+          this.actions.addOrigin(coords);
         break;
         case 'directions-destination-point':
-          debounce(this.actions.queryDestinationCoordinates(coords), 100);
+          this.actions.addDestination(coords);
         break;
         case 'directions-waypoint-point':
-          debounce(this.actions.hoverWayPoint(coords), 100);
+          this.actions.hoverWayPoint(coords);
         break;
       }
     }
   }
 
   _onMouseUp() {
-    const { hoverWayPoint } = store.getState();
+    const { hoverWayPoint, origin, destination } = store.getState();
 
-    if (this.dragging && hoverWayPoint.geometry) {
+    if (this.dragging) {
       switch (this.dragging.layer.id) {
+        case 'directions-origin-point':
+          this.actions.queryOriginCoordinates(origin.geometry.coordinates);
+        break;
+        case 'directions-destination-point':
+
+          this.actions.queryDestinationCoordinates(destination.geometry.coordinates);
+        break;
         case 'directions-waypoint-point':
           this.actions.addWayPoint(hoverWayPoint.geometry.coordinates);
         break;
@@ -321,6 +300,7 @@ export default class Directions extends mapboxgl.Control {
    */
   setOrigin(coordinates) {
     this.actions.queryOriginCoordinates(coordinates);
+    this.map.flyTo({ center: coordinates });
     return this;
   }
 
@@ -339,6 +319,7 @@ export default class Directions extends mapboxgl.Control {
    */
   setDestination(coordinates) {
     this.actions.queryDestinationCoordinates(coordinates);
+    this.map.flyTo({ center: coordinates });
     return this;
   }
 

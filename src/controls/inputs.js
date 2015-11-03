@@ -14,7 +14,7 @@ let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'ut
  * @private
  */
 export default class Inputs {
-  constructor(el, store, actions) {
+  constructor(el, store, actions, map) {
     const { originQuery, destinationQuery, profile } = store.getState();
 
     el.innerHTML = tmpl({
@@ -25,6 +25,7 @@ export default class Inputs {
 
     this.container = el;
     this.actions = actions;
+    this.map = map;
 
     this.onAdd();
     this.render(store);
@@ -58,7 +59,9 @@ export default class Inputs {
 
     this.originInput.addEventListener('change', () => {
       if (this.originTypeahead.selected) {
-        addOrigin(this.originTypeahead.selected.center);
+        const coords = this.originTypeahead.selected.center;
+        addOrigin(coords);
+        this.map.flyTo({ center: coords });
       }
     });
 
@@ -71,7 +74,9 @@ export default class Inputs {
 
     this.destinationInput.addEventListener('change', () => {
       if (this.destinationTypeahead.selected) {
-        addDestination(this.destinationTypeahead.selected.center);
+        const coords = this.destinationTypeahead.selected.center;
+        addDestination(coords);
+        this.map.flyTo({ center: coords });
       }
     });
 
