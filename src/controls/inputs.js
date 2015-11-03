@@ -1,6 +1,7 @@
 import template from 'lodash.template';
 import debounce from 'lodash.debounce';
 import typeahead from 'suggestions';
+import extent from 'turf-extent';
 
 let fs = require('fs'); // substack/brfs#39
 let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'utf8'));
@@ -11,6 +12,7 @@ let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'ut
  * @param {HTMLElement} el Summary parent container
  * @param {Object} store A redux store
  * @param {Object} actions Actions an element can dispatch
+ * @param {Object} map The mapboxgl instance
  * @private
  */
 export default class Inputs {
@@ -25,10 +27,27 @@ export default class Inputs {
 
     this.container = el;
     this.actions = actions;
+    this.store = store;
     this.map = map;
 
     this.onAdd();
-    this.render(store);
+    this.render();
+  }
+
+  animateToCoordinates(mode, coords) {
+    const { origin, destination } = this.store.getState();
+
+    if (origin.type && destination.type) {
+      // Animate map to fit bounds.
+      const bb = extent({
+        type: 'FeatureCollection',
+        features: [origin, destination]
+      });
+
+      this.map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 40 });
+    } else {
+      this.map.flyTo({ center: coords });
+    }
   }
 
   onAdd() {
@@ -61,7 +80,7 @@ export default class Inputs {
       if (this.originTypeahead.selected) {
         const coords = this.originTypeahead.selected.center;
         addOrigin(coords);
-        this.map.flyTo({ center: coords });
+        this.animateToCoordinates('origin', coords);
       }
     });
 
@@ -76,7 +95,7 @@ export default class Inputs {
       if (this.destinationTypeahead.selected) {
         const coords = this.destinationTypeahead.selected.center;
         addDestination(coords);
-        this.map.flyTo({ center: coords });
+        this.animateToCoordinates('destination', coords);
       }
     });
 
@@ -101,14 +120,14 @@ export default class Inputs {
       .addEventListener('click', reverse);
   }
 
-  render(store) {
-    store.subscribe(() => {
+  render() {
+    this.store.subscribe(() => {
       const {
         originQuery,
         originResults,
         destinationQuery,
         destinationResults
-      } = store.getState();
+      } = this.store.getState();
 
       if (originResults.length) this.originTypeahead.update(originResults);
       if (destinationResults.length) this.destinationTypeahead.update(destinationResults);

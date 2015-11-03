@@ -1,7 +1,6 @@
 import format from '../format';
 import template from 'lodash.template';
 import isEqual from 'lodash.isequal';
-import extent from 'turf-extent';
 
 let fs = require('fs'); // substack/brfs#39
 let tmpl = template(fs.readFileSync(__dirname + '/../templates/instructions.html', 'utf8'));
@@ -19,16 +18,17 @@ export default class Instructions {
   constructor(el, store, actions, map) {
     this.container = el;
     this.actions = actions;
+    this.store = store;
     this.map = map;
     this.directions = {};
 
-    this.render(store);
+    this.render();
   }
 
-  render(store) {
-    store.subscribe(() => {
+  render() {
+    this.store.subscribe(() => {
       const { hoverMarker } = this.actions;
-      const { origin, destination, routeIndex, unit, directions } = store.getState();
+      const { routeIndex, unit, directions } = this.store.getState();
       const shouldRender = !isEqual(directions[routeIndex], this.directions);
 
       if (directions.length && shouldRender) {
@@ -62,16 +62,6 @@ export default class Instructions {
               zoom: 16
             });
           });
-        });
-
-        // Animate map to fit bounds.
-        const bbox = extent({
-          type: 'FeatureCollection',
-          features: [origin, destination]
-        });
-
-        this.map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-          padding: 40
         });
 
       } else if (this.container.innerHTML && shouldRender) {
