@@ -297,10 +297,7 @@ export function queryOriginCoordinates(coordinates) {
     dispatch(addOrigin(coordinates));
     return dispatch(geocode(coordinates.join(','), (results) => {
       if (!results.length) return;
-      dispatch(originResults(results[0].place_name, results));
-      return {
-        type: types.RESULT_FROM_MAP
-      };
+      return dispatch(originResults(results[0].place_name, results));
     }));
   };
 }
@@ -310,10 +307,7 @@ export function queryDestinationCoordinates(coordinates) {
     dispatch(addDestination(coordinates));
     return dispatch(geocode(coordinates.join(','), (results) => {
       if (!results.length) return;
-      dispatch(destinationResults(results[0].place_name, results));
-      return {
-        type: types.RESULT_FROM_MAP
-      };
+      return dispatch(destinationResults(results[0].place_name, results));
     }));
   };
 }

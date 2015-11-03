@@ -92,7 +92,7 @@ export default class Directions extends mapboxgl.Control {
       // Add a possible waypoint marker
       // when hovering over the active route line
       map.featuresAt(e.point, {
-        radius: 5,
+        radius: 2,
         layer: 'directions-route-line'
       }, (err, features) => {
         if (err) throw err;
@@ -267,7 +267,6 @@ export default class Directions extends mapboxgl.Control {
           this.actions.queryOriginCoordinates(origin.geometry.coordinates);
         break;
         case 'directions-destination-point':
-
           this.actions.queryDestinationCoordinates(destination.geometry.coordinates);
         break;
         case 'directions-waypoint-point':

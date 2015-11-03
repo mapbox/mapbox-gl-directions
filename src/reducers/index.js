@@ -41,12 +41,14 @@ function data(state = initialState, action) {
 
   case types.ORIGIN:
     return Object.assign({}, state, {
-      origin: action.origin
+      origin: action.origin,
+      hoverWayPoint: {}
     });
 
   case types.DESTINATION:
     return Object.assign({}, state, {
-      destination: action.destination
+      destination: action.destination,
+      hoverWayPoint: {}
     });
 
   case types.HOVER_MARKER:
@@ -118,11 +120,6 @@ function data(state = initialState, action) {
   case types.DIRECTIONS:
     return Object.assign({}, state, {
       directions: action.directions
-    });
-
-  case types.RESULT_FROM_MAP:
-    return Object.assign({}, state, {
-      hoverWayPoint: {}
     });
 
   case types.ROUTE_INDEX:
