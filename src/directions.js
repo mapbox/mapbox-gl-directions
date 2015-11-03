@@ -47,98 +47,94 @@ export default class Directions extends mapboxgl.Control {
       hoverMarker: this.actions.hoverMarker
     }, this.map);
 
-    this.mapState();
+    map.on('load', () => { this.mapState(); });
     this.subscribedActions();
   }
 
   mapState() {
     const map = this.map;
+    const geojson = new mapboxgl.GeoJSONSource({
+      data: {
+        type: 'FeatureCollection',
+        features: []
+      }
+    });
 
-    map.on('load', () => {
+    // Add and set data theme layer/style
+    map.addSource('directions', geojson);
 
-      const geojson = new mapboxgl.GeoJSONSource({
-        data: {
-          type: 'FeatureCollection',
-          features: []
+    // Add direction specific styles to the map
+    directionsStyle.forEach((style) => { map.addLayer(style); });
+
+    map.getContainer().addEventListener('mousedown', this.onMouseDown);
+    map.getContainer().addEventListener('mousemove', this.onMouseMove, true);
+    map.getContainer().addEventListener('mouseup', this.onMouseUp);
+
+    map.on('mousemove', (e) => {
+      const { hoverWayPoint } = store.getState();
+
+      // Adjust cursor state on routes
+      map.featuresAt(e.point, {
+        radius: 10,
+        layer: [
+          'directions-route-line-alt',
+          'directions-route-line'
+        ]
+      }, (err, features) => {
+        if (err) throw err;
+        if (features.length) {
+          map.getContainer().classList.add('directions-select');
+        } else {
+          map.getContainer().classList.remove('directions-select');
         }
       });
 
-      // Add and set data theme layer/style
-      map.addSource('directions', geojson);
+      // Add a possible waypoint marker
+      // when hovering over the active route line
+      map.featuresAt(e.point, {
+        radius: 5,
+        layer: 'directions-route-line'
+      }, (err, features) => {
+        if (err) throw err;
+        if (features.length) {
+          var coords = e.lngLat;
+          this.actions.hoverWayPoint([coords.lng, coords.lat]);
+        } else if (hoverWayPoint.geometry) {
+          this.actions.hoverWayPoint(null);
+        }
+      });
 
-      // Add direction specific styles to the map
-      directionsStyle.forEach((style) => { map.addLayer(style); });
+    }.bind(this));
 
-      map.getContainer().addEventListener('mousedown', this.onMouseDown);
-      map.getContainer().addEventListener('mousemove', this.onMouseMove, true);
-      map.getContainer().addEventListener('mouseup', this.onMouseUp);
+    // Map event handlers
+    map.on('click', (e) => {
+      const { origin } = store.getState();
+      const coords = [e.lngLat.lng, e.lngLat.lat];
 
-      map.on('mousemove', (e) => {
-        const { hoverWayPoint } = store.getState();
-
-        // Adjust cursor state on routes
+      if (!origin.geometry) {
+        this.actions.queryOriginCoordinates(coords);
+      } else {
         map.featuresAt(e.point, {
           radius: 10,
           layer: [
-            'directions-route-line-alt',
-            'directions-route-line'
+            'directions-origin-point',
+            'directions-destination-point',
+            'directions-route-line-alt'
           ]
         }, (err, features) => {
           if (err) throw err;
-          if (features.length) {
-            map.getContainer().classList.add('directions-select');
-          } else {
-            map.getContainer().classList.remove('directions-select');
+          if (features.length && features[0].properties.route === 'alternate') {
+            const index = features[0].properties['route-index'];
+            this.actions.setRouteIndex(index);
+          }
+
+          if (!features.length) {
+            this.actions.queryDestinationCoordinates(coords);
+            this.map.flyTo({ center: coords });
           }
         });
-
-        // Add a possible waypoint marker
-        // when hovering over the active route line
-        map.featuresAt(e.point, {
-          radius: 5,
-          layer: 'directions-route-line'
-        }, (err, features) => {
-          if (err) throw err;
-          if (features.length) {
-            var coords = e.lngLat;
-            this.actions.hoverWayPoint([coords.lng, coords.lat]);
-          } else if (hoverWayPoint.geometry) {
-            this.actions.hoverWayPoint(null);
-          }
-        });
-
-      }.bind(this));
-
-      // Map event handlers
-      map.on('click', (e) => {
-        const { origin } = store.getState();
-        const coords = [e.lngLat.lng, e.lngLat.lat];
-
-        if (!origin.geometry) {
-          this.actions.queryOriginCoordinates(coords);
-        } else {
-          map.featuresAt(e.point, {
-            radius: 10,
-            layer: [
-              'directions-origin-point',
-              'directions-destination-point',
-              'directions-route-line-alt'
-            ]
-          }, (err, features) => {
-            if (err) throw err;
-            if (features.length && features[0].properties.route === 'alternate') {
-              const index = features[0].properties['route-index'];
-              this.actions.setRouteIndex(index);
-            }
-
-            if (!features.length) {
-              this.actions.queryDestinationCoordinates(coords);
-              this.map.flyTo({ center: coords });
-            }
-          });
-        }
-      }.bind(this));
-    });
+      }
+    }.bind(this));
   }
 
   subscribedActions() {
@@ -200,7 +196,9 @@ export default class Directions extends mapboxgl.Control {
         });
       }
 
-      this.map.getSource('directions').setData(geojson);
+      if (this.map.style) {
+        this.map.getSource('directions').setData(geojson);
+      }
     });
   }
 

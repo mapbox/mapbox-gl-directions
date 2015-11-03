@@ -6,8 +6,7 @@ const Directions = require('../../');
 
 function createMap() {
   var map = new mapboxgl.Map({
-    container: document.createElement('div'),
-    style: 'mapbox://styles/mapbox/streets-v8'
+    container: document.createElement('div')
   });
 
   return map;
@@ -19,13 +18,16 @@ test('Directions#inputs', (tt) => {
 
     var map = createMap();
     var container = document.createElement('div');
-    var directions = Directions(container);
+    var directions = Directions(container, {
+      accessToken: process.env.MapboxAccessToken
+    });
+
     map.addControl(directions);
 
     var event = document.createEvent('HTMLEvents');
     event.initEvent('click', true, false);
 
-    map.on('load', () => {
+    // map.on('load', () => {
       directions.setOrigin([-79, 43]);
       directions.setDestination([-78, 42]);
 
@@ -43,8 +45,7 @@ test('Directions#inputs', (tt) => {
         t.ok(inputDestination.value, 'value populates in destination');
         t.ok(inputDestinationClear.classList.contains('active'), 'clear link is active');
       });
-
-    });
+    // });
   });
 
   tt.test('passed options profile is set on initialization', (t) => {

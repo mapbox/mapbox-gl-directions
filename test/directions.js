@@ -3,33 +3,40 @@
 const test = require('tape');
 const Directions = require('../');
 
+function createDirections() {
+  const directions = Directions(document.createElement('div'), {
+    accessToken: process.env.MapboxAccessToken
+  });
+
+  return directions;
+}
+
 test('initialization', (t) => {
-  var directions = Directions(document.createElement('div'));
+  const directions = createDirections();
   t.ok(directions, 'Directions is initialized');
   t.end();
 });
 
 test('Directions.setOrigin Directions.getOrigin', (t) => {
-  var coordinates = [-79, 43];
-  var directions = Directions(document.createElement('div'));
+  const coordinates = [-79, 43];
+  const directions = createDirections();
   directions.setOrigin(coordinates);
   t.equal(directions.getOrigin().geometry.coordinates, coordinates);
   t.end();
 });
 
 test('Directions.setDestination Directions.getDestination', (t) => {
-  var coordinates = [-79, 43];
-  var directions = Directions(document.createElement('div'));
+  const coordinates = [-79, 43];
+  const directions = createDirections();
   directions.setDestination(coordinates);
   t.equal(directions.getDestination().geometry.coordinates, coordinates);
   t.end();
 });
 
 test('Directions.reverse', (t) => {
-  var a = [-79, 43];
-  var b = [-78, 42];
-
-  var directions = Directions(document.createElement('div'));
+  const a = [-79, 43];
+  const b = [-78, 42];
+  const directions = createDirections();
 
   directions.setOrigin(a);
   directions.setDestination(b);
