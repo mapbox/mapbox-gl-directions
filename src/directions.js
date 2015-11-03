@@ -300,7 +300,6 @@ export default class Directions extends mapboxgl.Control {
    */
   setOrigin(coordinates) {
     this.actions.queryOriginCoordinates(coordinates);
-    this.map.flyTo({ center: coordinates });
     return this;
   }
 
@@ -319,7 +318,6 @@ export default class Directions extends mapboxgl.Control {
    */
   setDestination(coordinates) {
     this.actions.queryDestinationCoordinates(coordinates);
-    this.map.flyTo({ center: coordinates });
     return this;
   }
 

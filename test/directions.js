@@ -10,7 +10,7 @@ test('initialization', (t) => {
 });
 
 test('Directions.setOrigin Directions.getOrigin', (t) => {
-  var coordinates = [-79.4512, 43.6568];
+  var coordinates = [-79, 43];
   var directions = Directions(document.createElement('div'));
   directions.setOrigin(coordinates);
   t.equal(directions.getOrigin().geometry.coordinates, coordinates);
@@ -18,9 +18,25 @@ test('Directions.setOrigin Directions.getOrigin', (t) => {
 });
 
 test('Directions.setDestination Directions.getDestination', (t) => {
-  var coordinates = [-79.4512, 43.6568];
+  var coordinates = [-79, 43];
   var directions = Directions(document.createElement('div'));
   directions.setDestination(coordinates);
   t.equal(directions.getDestination().geometry.coordinates, coordinates);
+  t.end();
+});
+
+test('Directions.reverse', (t) => {
+  var a = [-79, 43];
+  var b = [-78, 42];
+
+  var directions = Directions(document.createElement('div'));
+
+  directions.setOrigin(a);
+  directions.setDestination(b);
+  directions.reverse();
+
+  t.equal(directions.getDestination().geometry.coordinates, a);
+  t.equal(directions.getOrigin().geometry.coordinates, b);
+
   t.end();
 });
