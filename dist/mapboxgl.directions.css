@@ -78,7 +78,10 @@
   height:40px;
   margin:0;
   color:rgba(0,0,0,.5);
-  padding:10px 10px 10px 50px;
+  padding:10px 30px 10px 50px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  overflow:hidden;
   }
   .mapbox-directions-inputs input:focus {
     color:rgba(0,0,0,.75);
