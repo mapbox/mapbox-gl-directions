@@ -47,8 +47,8 @@ export default class Directions extends mapboxgl.Control {
       hoverMarker: this.actions.hoverMarker
     }, this.map);
 
-    map.on('load', () => { this.mapState(); });
     this.subscribedActions();
+    map.on('load', () => { this.mapState(); });
   }
 
   mapState() {

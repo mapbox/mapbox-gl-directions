@@ -129,8 +129,11 @@ export default class Inputs {
         destinationResults
       } = this.store.getState();
 
-      if (originResults.length) this.originTypeahead.update(originResults);
-      if (destinationResults.length) this.destinationTypeahead.update(destinationResults);
+      if (!originResults.length) this.originTypeahead.selected = null;
+      if (!destinationResults.length) this.destinationTypeahead.selected = null;
+
+      this.originTypeahead.update(originResults);
+      this.destinationTypeahead.update(destinationResults);
 
       this.originClear.classList.toggle('active', originResults.length);
       this.destinationClear.classList.toggle('active', destinationResults.length);
