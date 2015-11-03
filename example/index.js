@@ -22,6 +22,9 @@ map.getContainer().querySelector('.mapboxgl-ctrl-bottom-left').appendChild(butto
 
 map.addControl(directions);
 
-button.addEventListener('click', function() {
-  console.log(directions.getOrigin());
+map.on('load', () => {
+  button.addEventListener('click', function() {
+    directions.setOrigin([-79.4512, 43.6568]);
+    console.log(directions.getOrigin());
+  });
 });

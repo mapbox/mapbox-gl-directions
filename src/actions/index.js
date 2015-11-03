@@ -292,18 +292,25 @@ export function queryDestination(query) {
   };
 }
 
-export function queryCoordinates(coordinates, mode) {
+export function queryOriginCoordinates(coordinates) {
   return (dispatch) => {
+    dispatch(addOrigin(coordinates));
     return dispatch(geocode(coordinates.join(','), (results) => {
+      if (!results.length) return;
+      dispatch(originResults(results[0].place_name, results));
+      return {
+        type: types.RESULT_FROM_MAP
+      };
+    }));
+  };
+}
 
-      if (results.length && mode === 'origin') {
-        dispatch(addOrigin(coordinates));
-        dispatch(originResults(results[0].place_name, results));
-      } else if (results.length && mode === 'destination') {
-        dispatch(addDestination(coordinates));
-        dispatch(destinationResults(results[0].place_name, results));
-      }
-
+export function queryDestinationCoordinates(coordinates) {
+  return (dispatch) => {
+    dispatch(addDestination(coordinates));
+    return dispatch(geocode(coordinates.join(','), (results) => {
+      if (!results.length) return;
+      dispatch(destinationResults(results[0].place_name, results));
       return {
         type: types.RESULT_FROM_MAP
       };

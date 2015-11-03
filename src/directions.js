@@ -119,7 +119,7 @@ export default class Directions extends mapboxgl.Control {
         const coords = [e.lngLat.lng, e.lngLat.lat];
 
         if (!origin.geometry) {
-          this.actions.queryCoordinates(coords, 'origin');
+          this.actions.queryOriginCoordinates(coords);
         } else {
           map.featuresAt(e.point, {
             radius: 10,
@@ -136,7 +136,7 @@ export default class Directions extends mapboxgl.Control {
             }
 
             if (!features.length) {
-              this.actions.queryCoordinates(coords, 'destination');
+              this.actions.queryDestinationCoordinates(coords);
             }
           });
         }
@@ -276,10 +276,10 @@ export default class Directions extends mapboxgl.Control {
 
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          debounce(this.actions.queryCoordinates(coords, 'origin'), 100);
+          debounce(this.actions.queryOriginCoordinates(coords), 100);
         break;
         case 'directions-destination-point':
-          debounce(this.actions.queryCoordinates(coords, 'destination'), 100);
+          debounce(this.actions.queryDestinationCoordinates(coords), 100);
         break;
         case 'directions-waypoint-point':
           debounce(this.actions.hoverWayPoint(coords), 100);
@@ -320,7 +320,7 @@ export default class Directions extends mapboxgl.Control {
    * @returns {Directions} this
    */
   setOrigin(coordinates) {
-    this.actions.queryCoordinates(coordinates, 'origin');
+    this.actions.queryOriginCoordinates(coordinates);
     return this;
   }
 
@@ -338,7 +338,7 @@ export default class Directions extends mapboxgl.Control {
    * @returns {Directions} this
    */
   setDestination(coordinates) {
-    this.actions.queryCoordinates(coordinates, 'destination');
+    this.actions.queryDestinationCoordinates(coordinates);
     return this;
   }
 
