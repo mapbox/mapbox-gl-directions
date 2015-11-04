@@ -1,5 +1,6 @@
 import * as types from '../constants/action_types';
 import mapboxgl from 'mapbox-gl';
+import { inProximity } from '../utils';
 import MapboxClient from 'mapbox';
 let mapbox;
 
@@ -307,13 +308,29 @@ export function addWaypoint(waypoint) {
       dispatch(fetchDirections(query, profile));
     }
 
-    dispatch(setWaypoint(waypoint));
+    dispatch({
+      type: types.WAYPOINTS,
+      waypoints: [...waypoints, waypoint]
+    });
   };
 }
 
-export function removeWaypoint(feature) {
-  return {
-    type: types.REMOVE_WAYPOINT,
-    waypoint: feature
+export function removeWaypoint(waypoint) {
+  return (dispatch, getState) => {
+    const { origin, destination, waypoints, profile} = getState();
+
+      const revisedWaypoints = waypoints.filter((way) => {
+        return !inProximity(way, waypoint);
+      });
+
+      if (destination.geometry) {
+        const query = buildDirectionsQuery(origin, destination, revisedWaypoints);
+        dispatch(fetchDirections(query, profile));
+      }
+
+    dispatch({
+      type: types.WAYPOINTS,
+      waypoints: revisedWaypoints
+    });
   };
 }

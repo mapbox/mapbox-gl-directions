@@ -1,5 +1,4 @@
 import * as types from '../constants/action_types.js';
-import { inProximity } from '../utils';
 
 const initialState = {
   profile: 'driving',
@@ -58,17 +57,7 @@ function data(state = initialState, action) {
 
   case types.WAYPOINTS:
     return Object.assign({}, state, {
-      waypoints: [
-        ...state.waypoints,
-        action.waypoint
-      ]
-    });
-
-  case types.REMOVE_WAYPOINT:
-    return Object.assign({}, state, {
-      waypoints: state.waypoints.filter((way) => {
-        return !inProximity(way, action.waypoint);
-      })
+      waypoints: action.waypoints
     });
 
   case types.ORIGIN_INPUT:
