@@ -1,5 +1,4 @@
 import * as types from '../constants/action_types.js';
-import isEqual from 'lodash.isequal';
 
 const initialState = {
   profile: 'driving',
@@ -75,8 +74,8 @@ function data(state = initialState, action) {
     return Object.assign({}, state, {
       waypoints: state.waypoints.filter((way) => {
         const c = way.geometry.coordinates;
-        return c[0].toFixed(3) !== coords[0].toFixed(3) &&
-          c[1].toFixed(3) !== coords[1].toFixed(3);
+        return c[0].toFixed(4) !== coords[0].toFixed(4) &&
+          c[1].toFixed(4) !== coords[1].toFixed(4);
       })
     });
 

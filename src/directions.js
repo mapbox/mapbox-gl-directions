@@ -283,9 +283,7 @@ export default class Directions extends mapboxgl.Control {
           this.actions.queryDestinationCoordinates(destination.geometry.coordinates);
         break;
         case 'directions-waypoint-point':
-          if (hoverWaypoint.geometry) {
-            this.actions.addWaypoint(hoverWaypoint);
-          }
+          if (hoverWaypoint.geometry) this.actions.addWaypoint(hoverWaypoint);
         break;
       }
     }
