@@ -79,13 +79,6 @@ function setDestination(feature) {
   };
 }
 
-function setWaypoint(feature) {
-  return {
-    type: types.WAYPOINTS,
-    waypoint: feature
-  };
-}
-
 function _setProfile(profile) {
   return {
     type: types.DIRECTIONS_PROFILE,
