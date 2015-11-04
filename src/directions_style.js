@@ -44,7 +44,7 @@ const style = [{
     ['in', 'id', 'hover']
   ],
   'paint': {
-    'circle-radius': 7,
+    'circle-radius': 5,
     'circle-color': '#3bb2d0'
   }
 }, {
@@ -57,7 +57,7 @@ const style = [{
     ['in', 'id', 'waypoint']
   ],
   'paint': {
-    'circle-radius': 7,
+    'circle-radius': 5,
     'circle-color': '#8a8bc9'
   },
   'interactive': true

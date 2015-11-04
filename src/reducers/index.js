@@ -1,4 +1,5 @@
 import * as types from '../constants/action_types.js';
+import isEqual from 'lodash.isequal';
 
 const initialState = {
   profile: 'driving',
@@ -7,7 +8,7 @@ const initialState = {
   origin: {},
   destination: {},
   hoverMarker: {},
-  hoverWayPoint: {},
+  hoverWaypoint: {},
 
   // Original input user entered
   originQuery: '',
@@ -24,7 +25,7 @@ const initialState = {
   directions: [],
 
   // Any waypoints
-  wayPoints: [],
+  waypoints: [],
 
   routeIndex: 0
 };
@@ -42,13 +43,13 @@ function data(state = initialState, action) {
   case types.ORIGIN:
     return Object.assign({}, state, {
       origin: action.origin,
-      hoverWayPoint: {}
+      hoverWaypoint: {}
     });
 
   case types.DESTINATION:
     return Object.assign({}, state, {
       destination: action.destination,
-      hoverWayPoint: {}
+      hoverWaypoint: {}
     });
 
   case types.HOVER_MARKER:
@@ -58,22 +59,24 @@ function data(state = initialState, action) {
 
   case types.HOVER_WAYPOINT:
     return Object.assign({}, state, {
-      hoverWayPoint: action.hoverWayPoint
+      hoverWaypoint: action.hoverWaypoint
     });
 
   case types.WAYPOINTS:
     return Object.assign({}, state, {
-      wayPoints: [
-        ...state.wayPoints,
-        action.wayPoint
+      waypoints: [
+        ...state.waypoints,
+        action.waypoint
       ]
     });
 
-  case types.REDUCE_WAYPOINTS:
+  case types.REMOVE_WAYPOINT:
+    const coords = action.waypoint.geometry.coordinates;
     return Object.assign({}, state, {
-      wayPoints: state.wayPoints.filter((way) => {
-        return way[0].toFixed(3) !== action.wayPoint[0].toFixed(3) &&
-               way[1].toFixed(3) !== action.wayPoint[1].toFixed(3);
+      waypoints: state.waypoints.filter((way) => {
+        const c = way.geometry.coordinates;
+        return c[0].toFixed(3) !== coords[0].toFixed(3) &&
+          c[1].toFixed(3) !== coords[1].toFixed(3);
       })
     });
 
@@ -94,7 +97,7 @@ function data(state = initialState, action) {
       origin: {},
       originQuery: '',
       originResults: [],
-      wayPoints: [],
+      waypoints: [],
       directions: []
     });
 
@@ -103,7 +106,7 @@ function data(state = initialState, action) {
       destination: {},
       destinationQuery: '',
       destinationResults: [],
-      wayPoints: [],
+      waypoints: [],
       directions: []
     });
 

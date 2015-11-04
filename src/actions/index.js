@@ -78,10 +78,10 @@ function setDestination(feature) {
   };
 }
 
-function setWayPoint(feature) {
+function setWaypoint(feature) {
   return {
     type: types.WAYPOINTS,
-    wayPoint: feature
+    waypoint: feature
   };
 }
 
@@ -99,10 +99,10 @@ function setHoverMarker(feature) {
   };
 }
 
-function setHoverWayPoint(feature) {
+function setHoverWaypoint(feature) {
   return {
     type: types.HOVER_WAYPOINT,
-    hoverWayPoint: feature
+    hoverWaypoint: feature
   };
 }
 
@@ -117,18 +117,18 @@ function buildPoint(coordinates, properties) {
   };
 }
 
-function buildDirectionsQuery(origin, destination, wayPoints) {
+function buildDirectionsQuery(origin, destination, waypoints) {
   let query = [{
     longitude: origin.geometry.coordinates[0],
     latitude: origin.geometry.coordinates[1]
   }];
 
   // Add any waypoints.
-  if (wayPoints.length) {
-    wayPoints.forEach((wayPoint) => {
+  if (waypoints.length) {
+    waypoints.forEach((waypoint) => {
       query.push({
-        longitude: wayPoint[0],
-        latitude: wayPoint[1]
+        longitude: waypoint.geometry.coordinates[0],
+        latitude: waypoint.geometry.coordinates[1]
       });
     });
   }
@@ -154,10 +154,10 @@ export function setOptions(options) {
   };
 }
 
-export function hoverWayPoint(coordinates) {
+export function hoverWaypoint(coordinates) {
   return (dispatch) => {
     const feature = (coordinates) ? buildPoint(coordinates, { id: 'waypoint'}) : {};
-    dispatch(setHoverWayPoint(feature));
+    dispatch(setHoverWaypoint(feature));
   };
 }
 
@@ -177,7 +177,7 @@ export function setRouteIndex(routeIndex) {
 
 export function addOrigin(coordinates) {
   return (dispatch, getState) => {
-    const { destination, profile, wayPoints } = getState();
+    const { destination, profile, waypoints } = getState();
 
     const origin = buildPoint(coordinates, {
       id: 'origin',
@@ -185,7 +185,7 @@ export function addOrigin(coordinates) {
     });
 
     if (destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, wayPoints);
+      const query = buildDirectionsQuery(origin, destination, waypoints);
       dispatch(fetchDirections(query, profile));
     }
 
@@ -195,14 +195,14 @@ export function addOrigin(coordinates) {
 
 export function addDestination(coordinates) {
   return (dispatch, getState) => {
-    const { origin, profile, wayPoints } = getState();
+    const { origin, profile, waypoints } = getState();
     const destination = buildPoint(coordinates, {
       id: 'destination',
       'marker-symbol': 'B'
     });
 
     if (origin.geometry) {
-      const query = buildDirectionsQuery(origin, destination, wayPoints);
+      const query = buildDirectionsQuery(origin, destination, waypoints);
       dispatch(fetchDirections(query, profile));
     }
 
@@ -212,10 +212,10 @@ export function addDestination(coordinates) {
 
 export function setProfile(profile) {
   return (dispatch, getState) => {
-    const { origin, destination, wayPoints } = getState();
+    const { origin, destination, waypoints } = getState();
 
     if (origin.geometry && destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, wayPoints);
+      const query = buildDirectionsQuery(origin, destination, waypoints);
       dispatch(fetchDirections(query, profile));
     }
 
@@ -225,7 +225,7 @@ export function setProfile(profile) {
 
 export function reverse() {
   return (dispatch, getState) => {
-    const { origin, destination, wayPoints, profile } = getState();
+    const { origin, destination, waypoints, profile } = getState();
 
     let o = {}, d = {};
 
@@ -250,7 +250,7 @@ export function reverse() {
     dispatch(reverseInputs(o, d));
 
     if (origin.geometry && destination.geometry) {
-      const query = buildDirectionsQuery(o, d, wayPoints);
+      const query = buildDirectionsQuery(o, d, waypoints);
       dispatch(fetchDirections(query, profile));
     }
   };
@@ -312,22 +312,22 @@ export function queryDestinationCoordinates(coordinates) {
   };
 }
 
-export function addWayPoint(coords) {
+export function addWaypoint(waypoint) {
   return (dispatch, getState) => {
-    const { origin, destination, wayPoints, profile} = getState();
+    const { origin, destination, waypoints, profile} = getState();
 
     if (destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, [coords, ...wayPoints]);
+      const query = buildDirectionsQuery(origin, destination, [waypoint, ...waypoints]);
       dispatch(fetchDirections(query, profile));
     }
 
-    dispatch(setWayPoint(coords));
+    dispatch(setWaypoint(waypoint));
   };
 }
 
-export function filterWayPoint(coords) {
+export function removeWaypoint(feature) {
   return {
-    type: types.REDUCE_WAYPOINTS,
-    wayPoint: coords
+    type: types.REMOVE_WAYPOINT,
+    waypoint: feature
   };
 }

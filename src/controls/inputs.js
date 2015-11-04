@@ -69,7 +69,7 @@ export default class Inputs {
     this.destinationClear = this.container.querySelector('.js-destination-clear');
 
     // Events
-    // ======
+    // ============================
 
     // Origin / Destination autosuggest
     this.originInput.addEventListener('keypress', debounce((e) => {
