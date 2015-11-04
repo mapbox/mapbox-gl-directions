@@ -1,4 +1,11 @@
-const formats = {
+function inProximity(a, b) {
+  a = a.geometry.coordinates;
+  b = b.geometry.coordinates;
+  return a[0].toFixed(4) === b[0].toFixed(4) &&
+    a[1].toFixed(4) === b[1].toFixed(4);
+}
+
+const format = {
   duration(s) {
     var m = Math.floor(s / 60),
       h = Math.floor(m / 60);
@@ -25,4 +32,4 @@ const formats = {
   }
 };
 
-export default formats;
+export default { format, inProximity };

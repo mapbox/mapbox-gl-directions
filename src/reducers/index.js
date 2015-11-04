@@ -1,4 +1,5 @@
 import * as types from '../constants/action_types.js';
+import { inProximity } from '../utils';
 
 const initialState = {
   profile: 'driving',
@@ -64,12 +65,9 @@ function data(state = initialState, action) {
     });
 
   case types.REMOVE_WAYPOINT:
-    const coords = action.waypoint.geometry.coordinates;
     return Object.assign({}, state, {
       waypoints: state.waypoints.filter((way) => {
-        const c = way.geometry.coordinates;
-        return c[0].toFixed(4) !== coords[0].toFixed(4) &&
-          c[1].toFixed(4) !== coords[1].toFixed(4);
+        return !inProximity(way, action.waypoint);
       })
     });
 

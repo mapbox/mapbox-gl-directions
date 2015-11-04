@@ -1,4 +1,4 @@
-import format from '../format';
+import { format } from '../utils';
 import template from 'lodash.template';
 import isEqual from 'lodash.isequal';
 

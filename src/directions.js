@@ -2,6 +2,7 @@ import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
 import mapboxgl from 'mapbox-gl';
 import { decode } from 'polyline';
+import { inProximity } from './utils';
 import rootReducer from './reducers';
 
 const storeWithMiddleware = applyMiddleware(thunk)(createStore);
@@ -281,7 +282,10 @@ export default class Directions extends mapboxgl.Control {
           this.actions.queryDestinationCoordinates(destination.geometry.coordinates);
         break;
         case 'directions-hover-point':
-          if (hoverMarker.geometry) this.actions.addWaypoint(hoverMarker);
+          // Add waypoint if a sufficent amount of dragging has occurred.
+          if (hoverMarker.geometry && !inProximity(this.dragging, hoverMarker)) {
+            this.actions.addWaypoint(hoverMarker);
+          }
         break;
       }
     }
