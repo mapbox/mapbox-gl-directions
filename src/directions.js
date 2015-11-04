@@ -71,7 +71,7 @@ export default class Directions extends mapboxgl.Control {
     map.getContainer().addEventListener('mouseup', this.onMouseUp);
 
     map.on('mousemove', (e) => {
-      const { hoverWaypoint } = store.getState();
+      const { hoverMarker } = store.getState();
 
       // Adjust cursor state on routes
       map.featuresAt(e.point, {
@@ -100,9 +100,9 @@ export default class Directions extends mapboxgl.Control {
         if (err) throw err;
         if (features.length) {
           const coords = e.lngLat;
-          this.actions.hoverWaypoint([coords.lng, coords.lat]);
-        } else if (hoverWaypoint.geometry) {
-          this.actions.hoverWaypoint(null);
+          this.actions.hoverMarker([coords.lng, coords.lat]);
+        } else if (hoverMarker.geometry) {
+          this.actions.hoverMarker(null);
         }
       });
 
@@ -156,7 +156,6 @@ export default class Directions extends mapboxgl.Control {
         origin,
         destination,
         hoverMarker,
-        hoverWaypoint,
         directions,
         routeIndex
       } = store.getState();
@@ -166,8 +165,7 @@ export default class Directions extends mapboxgl.Control {
         features: [
           origin,
           destination,
-          hoverMarker,
-          hoverWaypoint
+          hoverMarker
         ].filter((d) => {
           return d.geometry;
         })
@@ -231,14 +229,14 @@ export default class Directions extends mapboxgl.Control {
       layer: [
         'directions-origin-point',
         'directions-destination-point',
-        'directions-waypoint-point'
+        'directions-hover-point'
       ]
     }, (err, features) => {
       if (err) throw err;
       if (features.length) {
         this.dragging = features[0];
         features.forEach((f) => {
-          if (f.layer.id === 'directions-waypoint-point') {
+          if (f.layer.id === 'directions-hover-point') {
             this.actions.removeWaypoint(f);
           }
         });
@@ -264,15 +262,15 @@ export default class Directions extends mapboxgl.Control {
         case 'directions-destination-point':
           this.actions.addDestination(coords);
         break;
-        case 'directions-waypoint-point':
-          this.actions.hoverWaypoint(coords);
+        case 'directions-hover-point':
+          this.actions.hoverMarker(coords);
         break;
       }
     }
   }
 
   _onMouseUp() {
-    const { hoverWaypoint, origin, destination } = store.getState();
+    const { hoverMarker, origin, destination } = store.getState();
 
     if (this.dragging) {
       switch (this.dragging.layer.id) {
@@ -282,8 +280,8 @@ export default class Directions extends mapboxgl.Control {
         case 'directions-destination-point':
           this.actions.queryDestinationCoordinates(destination.geometry.coordinates);
         break;
-        case 'directions-waypoint-point':
-          if (hoverWaypoint.geometry) this.actions.addWaypoint(hoverWaypoint);
+        case 'directions-hover-point':
+          if (hoverMarker.geometry) this.actions.addWaypoint(hoverMarker);
         break;
       }
     }

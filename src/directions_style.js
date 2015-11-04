@@ -46,7 +46,8 @@ const style = [{
   'paint': {
     'circle-radius': 5,
     'circle-color': '#3bb2d0'
-  }
+  },
+  'interactive': true
 }, {
   'id': 'directions-waypoint-point',
   'type': 'circle',

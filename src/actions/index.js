@@ -99,13 +99,6 @@ function setHoverMarker(feature) {
   };
 }
 
-function setHoverWaypoint(feature) {
-  return {
-    type: types.HOVER_WAYPOINT,
-    hoverWaypoint: feature
-  };
-}
-
 function buildPoint(coordinates, properties) {
   return {
     type: 'Feature',
@@ -151,13 +144,6 @@ export function setOptions(options) {
   return {
     type: types.SET_OPTIONS,
     options: options
-  };
-}
-
-export function hoverWaypoint(coordinates) {
-  return (dispatch) => {
-    const feature = (coordinates) ? buildPoint(coordinates, { id: 'waypoint'}) : {};
-    dispatch(setHoverWaypoint(feature));
   };
 }
 

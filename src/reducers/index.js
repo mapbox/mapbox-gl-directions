@@ -7,7 +7,6 @@ const initialState = {
   origin: {},
   destination: {},
   hoverMarker: {},
-  hoverWaypoint: {},
 
   // Original input user entered
   originQuery: '',
@@ -42,23 +41,18 @@ function data(state = initialState, action) {
   case types.ORIGIN:
     return Object.assign({}, state, {
       origin: action.origin,
-      hoverWaypoint: {}
+      hoverMarker: {}
     });
 
   case types.DESTINATION:
     return Object.assign({}, state, {
       destination: action.destination,
-      hoverWaypoint: {}
+      hoverMarker: {}
     });
 
   case types.HOVER_MARKER:
     return Object.assign({}, state, {
       hoverMarker: action.hoverMarker
-    });
-
-  case types.HOVER_WAYPOINT:
-    return Object.assign({}, state, {
-      hoverWaypoint: action.hoverWaypoint
     });
 
   case types.WAYPOINTS:

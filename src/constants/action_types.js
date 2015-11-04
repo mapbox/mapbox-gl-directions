@@ -21,6 +21,5 @@ export const HOVER_MARKER = 'HOVER_MARKER';
 
 export const ROUTE_INDEX = 'ROUTE_INDEX';
 
-export const HOVER_WAYPOINT = 'HOVER_WAYPOINT';
 export const WAYPOINTS = 'WAYPOINTS';
 export const REMOVE_WAYPOINT = 'REMOVE_WAYPOINT';
