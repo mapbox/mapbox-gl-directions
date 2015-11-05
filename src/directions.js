@@ -115,7 +115,7 @@ export default class Directions extends mapboxgl.Control {
       const coords = [e.lngLat.lng, e.lngLat.lat];
 
       if (!origin.geometry) {
-        this.actions.queryOriginCoordinates(coords);
+        this.actions.queryOrigin(coords);
       } else {
         map.featuresAt(e.point, {
           radius: 10,
@@ -143,7 +143,7 @@ export default class Directions extends mapboxgl.Control {
               this.actions.setRouteIndex(index);
             }
           } else {
-            this.actions.queryDestinationCoordinates(coords);
+            this.actions.queryDestination(coords);
             this.map.flyTo({ center: coords });
           }
         });
@@ -276,10 +276,10 @@ export default class Directions extends mapboxgl.Control {
     if (this.dragging) {
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          this.actions.queryOriginCoordinates(origin.geometry.coordinates);
+          this.actions.queryOrigin(origin.geometry.coordinates);
         break;
         case 'directions-destination-point':
-          this.actions.queryDestinationCoordinates(destination.geometry.coordinates);
+          this.actions.queryDestination(destination.geometry.coordinates);
         break;
         case 'directions-hover-point':
           // Add waypoint if a sufficent amount of dragging has occurred.
@@ -307,11 +307,11 @@ export default class Directions extends mapboxgl.Control {
 
   /**
    * Sets the origin of the current route.
-   * @param {Array} coordinates [lng, lat]
+   * @param {Array|String} query An array of coordinates [lng, lat] or location name as a string.
    * @returns {Directions} this
    */
-  setOrigin(coordinates) {
-    this.actions.queryOriginCoordinates(coordinates);
+  setOrigin(query) {
+    this.actions.queryOrigin(query);
     return this;
   }
 
@@ -325,11 +325,11 @@ export default class Directions extends mapboxgl.Control {
 
   /**
    * Sets the destination of the current route.
-   * @param {Array} coordinates [lng, lat]
+   * @param {Array|String} query An array of coordinates [lng, lat] or location name as a string.
    * @returns {Directions} this
    */
-  setDestination(coordinates) {
-    this.actions.queryDestinationCoordinates(coordinates);
+  setDestination(query) {
+    this.actions.queryDestination(query);
     return this;
   }
 

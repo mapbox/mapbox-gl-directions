@@ -52,8 +52,8 @@ export default class Inputs {
 
   onAdd() {
     const {
-      queryOrigin,
-      queryDestination,
+      queryOriginInput,
+      queryDestinationInput,
       addOrigin,
       addDestination,
       clearOrigin,
@@ -73,7 +73,7 @@ export default class Inputs {
 
     // Origin / Destination autosuggest
     this.originInput.addEventListener('keypress', debounce((e) => {
-      queryOrigin(e.target.value);
+      queryOriginInput(e.target.value);
     }), 100);
 
     this.originInput.addEventListener('change', () => {
@@ -88,7 +88,7 @@ export default class Inputs {
     this.destinationClear.addEventListener('click', clearDestination);
 
     this.destinationInput.addEventListener('keypress', debounce((e) => {
-      queryDestination(e.target.value);
+      queryDestinationInput(e.target.value);
     }), 100);
 
     this.destinationInput.addEventListener('change', () => {
