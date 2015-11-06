@@ -345,12 +345,24 @@ export default class Directions extends mapboxgl.Control {
   /**
    * Add a waypoint to the route.
    * @param {Number} index position waypoint should be placed in the waypoint array
-   * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or a [lng, lat] coordinates.
+   * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or [lng, lat] coordinates.
    * @returns {Directions} this;
    */
   addWaypoint(index, waypoint) {
     if (!waypoint.type) waypoint = createPoint(waypoint, { id: 'waypoint' });
     this.actions.addWaypoint(index, waypoint);
+    return this;
+  }
+
+  /**
+   * Change the waypoint at a given index in the route.
+   * @param {Number} index indexed position of the waypoint to update
+   * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or [lng, lat] coordinates.
+   * @returns {Directions} this;
+   */
+  setWaypoint(index, waypoint) {
+    if (!waypoint.type) waypoint = createPoint(waypoint, { id: 'waypoint' });
+    this.actions.setWaypoint(index, waypoint);
     return this;
   }
 

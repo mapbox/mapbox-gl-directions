@@ -324,6 +324,20 @@ export function addWaypoint(index, waypoint) {
   };
 }
 
+export function setWaypoint(index, waypoint) {
+  return (dispatch, getState) => {
+    let { origin, destination, waypoints, profile} = getState();
+    waypoints[index] = normalizeWaypoint(waypoint);
+
+    if (destination.geometry) {
+      const query = buildDirectionsQuery(origin, destination, waypoints);
+      dispatch(fetchDirections(query, profile));
+    }
+
+    dispatch(updateWaypoints(waypoints));
+  };
+}
+
 export function removeWaypoint(waypoint) {
   return (dispatch, getState) => {
     let { origin, destination, waypoints, profile} = getState();
