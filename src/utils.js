@@ -5,6 +5,17 @@ function inProximity(a, b) {
     a[1].toFixed(3) === b[1].toFixed(3);
 }
 
+function createPoint(coordinates, properties) {
+  return {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: coordinates
+    },
+    properties: properties ? properties : {}
+  };
+}
+
 const format = {
   duration(s) {
     var m = Math.floor(s / 60),
@@ -32,4 +43,4 @@ const format = {
   }
 };
 
-export default { format, inProximity };
+export default { format, inProximity, createPoint };

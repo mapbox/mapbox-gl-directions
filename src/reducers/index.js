@@ -2,29 +2,24 @@ import * as types from '../constants/action_types.js';
 
 const initialState = {
   profile: 'driving',
+  unit: 'imperial',
 
   // Marker feature drawn on the map at any point.
   origin: {},
   destination: {},
   hoverMarker: {},
+  waypoints: [],
 
-  // Original input user entered
+  // User input strings or result returned from geocoder
   originQuery: '',
   destinationQuery: '',
 
-  // Arrays returned from geocode result.
+  // Feature results returned from geocoder.
   originResults: [],
   destinationResults: [],
 
-  originCoordinates: [], // [Lng, Lat]
-  destinationCoordinates: [], // [Lng, Lat]
-
   // Directions data
   directions: [],
-
-  // Any waypoints
-  waypoints: [],
-
   routeIndex: 0
 };
 

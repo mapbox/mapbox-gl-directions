@@ -1,6 +1,6 @@
 import * as types from '../constants/action_types';
 import mapboxgl from 'mapbox-gl';
-import { inProximity } from '../utils';
+import { inProximity, createPoint } from '../utils';
 import MapboxClient from 'mapbox';
 let mapbox;
 
@@ -107,17 +107,6 @@ function fetchDirections(query, profile) {
   };
 }
 
-function buildPoint(coordinates, properties) {
-  return {
-    type: 'Feature',
-    geometry: {
-      type: 'Point',
-      coordinates: coordinates
-    },
-    properties: properties
-  };
-}
-
 function buildDirectionsQuery(origin, destination, waypoints) {
   let query = [{
     longitude: origin.geometry.coordinates[0],
@@ -140,6 +129,15 @@ function buildDirectionsQuery(origin, destination, waypoints) {
   });
 
   return query;
+}
+
+function normalizeWaypoint(waypoint) {
+  const properties = { id: 'waypoint' };
+  return Object.assign(waypoint, {
+    properties: waypoint.properties ?
+      Object.assign(waypoint.properties, properties) :
+      properties
+  });
 }
 
 export function clearOrigin() {
@@ -169,7 +167,7 @@ export function setOptions(options) {
 
 export function hoverMarker(coordinates) {
   return (dispatch) => {
-    const feature = (coordinates) ? buildPoint(coordinates, { id: 'hover'}) : {};
+    const feature = (coordinates) ? createPoint(coordinates, { id: 'hover'}) : {};
     dispatch(setHoverMarker(feature));
   };
 }
@@ -185,7 +183,7 @@ export function addOrigin(coordinates) {
   return (dispatch, getState) => {
     const { destination, profile, waypoints } = getState();
 
-    const origin = buildPoint(coordinates, {
+    const origin = createPoint(coordinates, {
       id: 'origin',
       'marker-symbol': 'A'
     });
@@ -202,7 +200,7 @@ export function addOrigin(coordinates) {
 export function addDestination(coordinates) {
   return (dispatch, getState) => {
     const { origin, profile, waypoints } = getState();
-    const destination = buildPoint(coordinates, {
+    const destination = createPoint(coordinates, {
       id: 'destination',
       'marker-symbol': 'B'
     });
@@ -312,15 +310,17 @@ export function queryDestination(input) {
   };
 }
 
-export function addWaypoint(waypoint) {
+export function addWaypoint(index, waypoint) {
   return (dispatch, getState) => {
-    const { origin, destination, waypoints, profile} = getState();
+    let { origin, destination, waypoints, profile} = getState();
+    waypoints.splice(index, 0, normalizeWaypoint(waypoint));
+
     if (destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, [waypoint, ...waypoints]);
+      const query = buildDirectionsQuery(origin, destination, waypoints);
       dispatch(fetchDirections(query, profile));
     }
 
-    dispatch(updateWaypoints([...waypoints, waypoint]));
+    dispatch(updateWaypoints(waypoints));
   };
 }
 
