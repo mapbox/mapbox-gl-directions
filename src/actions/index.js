@@ -41,11 +41,40 @@ function setDirections(directions) {
   };
 }
 
+function updateWaypoints(waypoints) {
+  return {
+    type: types.WAYPOINTS,
+    waypoints: waypoints
+  };
+}
+
+function newProfile(profile) {
+  return {
+    type: types.DIRECTIONS_PROFILE,
+    profile
+  };
+}
+
+function reverseInputs(origin, destination) {
+  return {
+    type: types.REVERSE_INPUTS,
+    origin,
+    destination
+  };
+}
+
+function setHoverMarker(feature) {
+  return {
+    type: types.HOVER_MARKER,
+    hoverMarker: feature
+  };
+}
+
 function geocode(query, callback) {
   return dispatch => {
     return mapbox.geocodeForward(query.trim(), (err, res) => {
       if (err) throw err;
-      dispatch(callback(res.features));
+      return dispatch(callback(res.features));
     });
   };
 }
@@ -74,15 +103,7 @@ function fetchDirections(query, profile) {
           'marker-symbol': 'B'
         }
       })));
-
     });
-  };
-}
-
-function setHoverMarker(feature) {
-  return {
-    type: types.HOVER_MARKER,
-    hoverMarker: feature
   };
 }
 
@@ -119,6 +140,18 @@ function buildDirectionsQuery(origin, destination, waypoints) {
   });
 
   return query;
+}
+
+export function clearOrigin() {
+  return {
+    type: types.ORIGIN_CLEAR
+  };
+}
+
+export function clearDestination() {
+  return {
+    type: types.DESTINATION_CLEAR
+  };
 }
 
 export function setOptions(options) {
@@ -186,16 +219,11 @@ export function addDestination(coordinates) {
 export function setProfile(profile) {
   return (dispatch, getState) => {
     const { origin, destination, waypoints } = getState();
-
     if (origin.geometry && destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, waypoints);
       dispatch(fetchDirections(query, profile));
     }
-
-    dispatch({
-      type: types.DIRECTIONS_PROFILE,
-      profile
-    });
+    dispatch(newProfile(profile));
   };
 }
 
@@ -223,32 +251,12 @@ export function reverse() {
       });
     }
 
-    dispatch(reverseInputs(o, d));
-
     if (origin.geometry && destination.geometry) {
       const query = buildDirectionsQuery(o, d, waypoints);
-      dispatch(fetchDirections(query, profile));
+      return dispatch(fetchDirections(query, profile));
     }
-  };
-}
 
-export function reverseInputs(origin, destination) {
-  return {
-    type: types.REVERSE_INPUTS,
-    origin,
-    destination
-  };
-}
-
-export function clearOrigin() {
-  return {
-    type: types.ORIGIN_CLEAR
-  };
-}
-
-export function clearDestination() {
-  return {
-    type: types.DESTINATION_CLEAR
+    dispatch(reverseInputs(origin, destination));
   };
 }
 
@@ -258,7 +266,7 @@ export function clearDestination() {
 export function queryOriginInput(query) {
   return (dispatch) => {
     return dispatch(geocode(query, (results) => {
-      return dispatch(originResults(query, results));
+      dispatch(originResults(query, results));
     }));
   };
 }
@@ -269,7 +277,7 @@ export function queryOriginInput(query) {
 export function queryDestinationInput(query) {
   return (dispatch) => {
     return dispatch(geocode(query, (results) => {
-      return dispatch(destinationResults(query, results));
+      dispatch(destinationResults(query, results));
     }));
   };
 }
@@ -307,16 +315,12 @@ export function queryDestination(input) {
 export function addWaypoint(waypoint) {
   return (dispatch, getState) => {
     const { origin, destination, waypoints, profile} = getState();
-
     if (destination.geometry) {
       const query = buildDirectionsQuery(origin, destination, [waypoint, ...waypoints]);
       dispatch(fetchDirections(query, profile));
     }
 
-    dispatch({
-      type: types.WAYPOINTS,
-      waypoints: [...waypoints, waypoint]
-    });
+    dispatch(updateWaypoints([...waypoints, waypoint]));
   };
 }
 
@@ -333,9 +337,6 @@ export function removeWaypoint(waypoint) {
         dispatch(fetchDirections(query, profile));
       }
 
-    dispatch({
-      type: types.WAYPOINTS,
-      waypoints: revisedWaypoints
-    });
+      dispatch(updateWaypoints(revisedWaypoints));
   };
 }
