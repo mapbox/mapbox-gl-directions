@@ -1,6 +1,6 @@
 import * as types from '../constants/action_types';
 import mapboxgl from 'mapbox-gl';
-import { inProximity, createPoint } from '../utils';
+import { coordinateMatch, createPoint } from '../utils';
 import MapboxClient from 'mapbox';
 let mapbox;
 
@@ -285,7 +285,7 @@ export function queryDestinationInput(query) {
 // or from clicking an origin on the map.
 export function queryOrigin(input) {
   return (dispatch) => {
-    const query = (typeof input === 'string') ? input : input.join(',');
+    const query = (typeof input === 'string') ? input : input.join();
     return dispatch(geocode(query, (results) => {
       if (!results.length) return;
       const result = results[0];
@@ -300,7 +300,7 @@ export function queryOrigin(input) {
 // or from clicking an destination on the map.
 export function queryDestination(input) {
   return (dispatch) => {
-    const query = (typeof input === 'string') ? input : input.join(',');
+    const query = (typeof input === 'string') ? input : input.join();
     return dispatch(geocode(query, (results) => {
       if (!results.length) return;
       const result = results[0];
@@ -326,17 +326,17 @@ export function addWaypoint(index, waypoint) {
 
 export function removeWaypoint(waypoint) {
   return (dispatch, getState) => {
-    const { origin, destination, waypoints, profile} = getState();
+    let { origin, destination, waypoints, profile} = getState();
 
-      const revisedWaypoints = waypoints.filter((way) => {
-        return !inProximity(way, waypoint);
+      waypoints = waypoints.filter((way) => {
+        return !coordinateMatch(way, waypoint);
       });
 
       if (destination.geometry) {
-        const query = buildDirectionsQuery(origin, destination, revisedWaypoints);
+        const query = buildDirectionsQuery(origin, destination, waypoints);
         dispatch(fetchDirections(query, profile));
       }
 
-      dispatch(updateWaypoints(revisedWaypoints));
+      dispatch(updateWaypoints(waypoints));
   };
 }

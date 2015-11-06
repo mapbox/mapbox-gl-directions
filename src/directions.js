@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
 import mapboxgl from 'mapbox-gl';
 import { decode } from 'polyline';
-import { inProximity, createPoint } from './utils';
+import { coordinateMatch, createPoint } from './utils';
 import rootReducer from './reducers';
 
 const storeWithMiddleware = applyMiddleware(thunk)(createStore);
@@ -283,7 +283,7 @@ export default class Directions extends mapboxgl.Control {
         break;
         case 'directions-hover-point':
           // Add waypoint if a sufficent amount of dragging has occurred.
-          if (hoverMarker.geometry && !inProximity(this.dragging, hoverMarker)) {
+          if (hoverMarker.geometry && !coordinateMatch(this.dragging, hoverMarker)) {
             this.actions.addWaypoint(0, hoverMarker);
           }
         break;
@@ -346,10 +346,30 @@ export default class Directions extends mapboxgl.Control {
    * Add a waypoint to the route.
    * @param {Number} index position waypoint should be placed in the waypoint array
    * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or a [lng, lat] coordinates.
+   * @returns {Directions} this;
    */
   addWaypoint(index, waypoint) {
     if (!waypoint.type) waypoint = createPoint(waypoint, { id: 'waypoint' });
     this.actions.addWaypoint(index, waypoint);
     return this;
+  }
+
+  /**
+   * Remove a waypoint from the route.
+   * @param {Number} index position in the waypoints array.
+   * @returns {Directions} this;
+   */
+  removeWaypoint(index) {
+    const { waypoints } = store.getState();
+    this.actions.removeWaypoint(waypoints[index]);
+    return this;
+  }
+
+  /**
+   * Fetch all current waypoints in a route.
+   * @returns {Array} waypoints
+   */
+  getWaypoints() {
+    return store.getState().waypoints;
   }
 }

@@ -1,7 +1,8 @@
-function inProximity(a, b) {
+function coordinateMatch(a, b) {
   a = a.geometry.coordinates;
   b = b.geometry.coordinates;
-  return a[0].toFixed(3) === b[0].toFixed(3) &&
+  return (a.join() === b.join()) ||
+    a[0].toFixed(3) === b[0].toFixed(3) &&
     a[1].toFixed(3) === b[1].toFixed(3);
 }
 
@@ -43,4 +44,4 @@ const format = {
   }
 };
 
-export default { format, inProximity, createPoint };
+export default { format, coordinateMatch, createPoint };
