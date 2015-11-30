@@ -5,16 +5,22 @@ import MapboxClient from 'mapbox';
 let mapbox;
 
 function originPoint(feature) {
-  return {
-    type: types.ORIGIN,
-    origin: feature
+  return dispatch => {
+    dispatch(eventEmit('origin', { feature: feature }));
+    dispatch({
+      type: types.ORIGIN,
+      origin: feature
+    });
   };
 }
 
 function destinationPoint(feature) {
-  return {
-    type: types.DESTINATION,
-    destination: feature
+  return dispatch => {
+    dispatch(eventEmit('destination', { feature: feature }));
+    dispatch({
+      type: types.DESTINATION,
+      destination: feature
+    });
   };
 }
 
@@ -35,9 +41,12 @@ function destinationResults(query, results) {
 }
 
 function setDirections(directions) {
-  return {
-    type: types.DIRECTIONS,
-    directions
+  return dispatch => {
+    dispatch(eventEmit('route', { route: directions }));
+    dispatch({
+      type: types.DIRECTIONS,
+      directions
+    });
   };
 }
 
@@ -141,14 +150,20 @@ function normalizeWaypoint(waypoint) {
 }
 
 export function clearOrigin() {
-  return {
-    type: types.ORIGIN_CLEAR
+  return dispatch => {
+    dispatch(eventEmit('clear', { type: 'origin' }));
+    dispatch({
+      type: types.ORIGIN_CLEAR
+    });
   };
 }
 
 export function clearDestination() {
-  return {
-    type: types.DESTINATION_CLEAR
+  return dispatch => {
+    dispatch(eventEmit('clear', { type: 'destination' }));
+    dispatch({
+      type: types.DESTINATION_CLEAR
+    });
   };
 }
 
