@@ -6,7 +6,7 @@ let mapbox;
 
 function originPoint(feature) {
   return dispatch => {
-    dispatch(eventEmit('origin', { feature: feature }));
+    dispatch(eventEmit('origin', { feature }));
     dispatch({
       type: types.ORIGIN,
       origin: feature
@@ -16,7 +16,7 @@ function originPoint(feature) {
 
 function destinationPoint(feature) {
   return dispatch => {
-    dispatch(eventEmit('destination', { feature: feature }));
+    dispatch(eventEmit('destination', { feature }));
     dispatch({
       type: types.DESTINATION,
       destination: feature
@@ -58,9 +58,12 @@ function updateWaypoints(waypoints) {
 }
 
 function newProfile(profile) {
-  return {
-    type: types.DIRECTIONS_PROFILE,
-    profile
+  return dispatch => {
+    dispatch(eventEmit('profile', { profile }));
+    dispatch({
+      type: types.DIRECTIONS_PROFILE,
+      profile
+    });
   };
 }
 
