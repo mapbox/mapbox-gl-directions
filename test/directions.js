@@ -37,7 +37,6 @@ test('directions', (tt) => {
     });
   });
 
-  directions.remove();
   tt.end();
 });
 
