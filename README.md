@@ -36,14 +36,15 @@ map.addControl(directions);
 
     npm install & npm start & open http://localhost:9966/example/
 
+You'll need a [Mapbox access token](https://www.mapbox.com/help/create-api-access-token/) stored in localstorage. Set it via
+
+    localStorage.setItem('MapboxAccessToken', '<TOKEN HERE>');
+
 ### Testing
 
-Tests require an environment variable to be set. Create a file named `env.test.sh`
-in the root directory with the following contents:
+Tests require an MapboxAccessToken env variable to be set.
 
     export MapboxAccessToken="YOUR ACCESS TOKEN"
-
-Don't have an access token? There's info [here](https://www.mapbox.com/help/create-api-access-token/) about it.
 
 Lastly, run the test command from the console:
 
