@@ -4,60 +4,62 @@ const test = require('tape');
 const mapboxgl = require('mapbox-gl');
 const Directions = require('../../');
 
-function createMap() {
-  var map = new mapboxgl.Map({
-    container: document.createElement('div')
-  });
+test('clear buttons', (t) => {
 
-  return map;
-}
-
-test('Directions#inputs', (tt) => {
-  tt.test('clear buttons', (t) => {
-    t.plan(4);
-
-    var map = createMap();
-    var container = document.createElement('div');
-    var directions = Directions(container, {
+  function createDirections(el, opts) {
+    opts = opts || {};
+    const config = Object.assign({
       accessToken: process.env.MapboxAccessToken
-    });
+    }, opts);
+    return new Directions(el, config);
+  }
 
-    map.addControl(directions);
+  var container = document.body;
+  var map = new mapboxgl.Map({ container: document.body });
+  var directions = createDirections(document.body);
 
-    var event = document.createEvent('HTMLEvents');
-    event.initEvent('click', true, false);
+  map.addControl(directions);
 
-    // map.on('load', () => {
-      directions.setOrigin([-79, 43]);
-      directions.setDestination([-78, 42]);
+  // map.on('load', () => {
 
+    t.test('origin change event', tt => {
       var inputOrigin = container.querySelector('.js-origin');
       var inputOriginClear = container.querySelector('.js-origin-clear');
+      inputOrigin.addEventListener('change', () => {
+        tt.ok(inputOrigin.value, 'value populates in origin');
+        tt.ok(inputOriginClear.classList.contains('active'), 'clear link is active');
+        tt.end();
+      });
+      directions.setOrigin([-79, 43]);
+    });
+
+    t.test('destination change event', tt => {
       var inputDestination = container.querySelector('.js-destination');
       var inputDestinationClear = container.querySelector('.js-destination-clear');
-
-      inputOrigin.addEventListener('change', () => {
-        t.ok(inputOrigin.value, 'value populates in origin');
-        t.ok(inputOriginClear.classList.contains('active'), 'clear link is active');
-      });
-
       inputDestination.addEventListener('change', () => {
-        t.ok(inputDestination.value, 'value populates in destination');
-        t.ok(inputDestinationClear.classList.contains('active'), 'clear link is active');
+        tt.ok(inputDestination.value, 'value populates in destination');
+        tt.ok(inputDestinationClear.classList.contains('active'), 'clear link is active');
+        tt.end();
       });
-    // });
-  });
+      directions.setDestination([-78, 42]);
+    });
 
-  tt.test('passed options profile is set on initialization', (t) => {
-    var map = createMap();
-    var container = document.createElement('div');
-    var directions = Directions(container, { profile: 'cycling' });
-    map.addControl(directions);
-
-    t.equal(container.querySelector('#mapbox-directions-profile-driving').checked, false);
-    t.equal(container.querySelector('#mapbox-directions-profile-cycling').checked, true);
     t.end();
-  });
-
-  tt.end();
+  // });
 });
+
+/*
+
+test('passed options profile is set on initialization', (t) => {
+  var container = document.createElement('div');
+  var map = createMap({ container: container });
+  var directions = createDirections();
+
+  map.addControl(directions);
+
+  t.equal(container.querySelector('#mapbox-directions-profile-driving').checked, false);
+  t.equal(container.querySelector('#mapbox-directions-profile-cycling').checked, true);
+  t.end();
+});
+
+*/

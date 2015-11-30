@@ -21,7 +21,7 @@ export default class Directions extends mapboxgl.Control {
   constructor(el, options) {
     super();
 
-    this.container = el;
+    this.container = el.appendChild(document.createElement('div'));
 
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
@@ -383,5 +383,14 @@ export default class Directions extends mapboxgl.Control {
    */
   getWaypoints() {
     return store.getState().waypoints;
+  }
+
+  /**
+   * Remove this control from the map it has been added to.
+   * @returns {Directions} `this`
+   */
+  remove() {
+    this.container.parentNode.removeChild(this.container);
+    return this;
   }
 }

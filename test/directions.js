@@ -3,47 +3,41 @@
 const test = require('tape');
 const Directions = require('../');
 
-function createDirections() {
-  const directions = Directions(document.createElement('div'), {
-    accessToken: process.env.MapboxAccessToken
+test('directions', (tt) => {
+  function createDirections(opts) {
+    opts = opts || {};
+    const config = Object.assign({
+      accessToken: process.env.MapboxAccessToken
+    }, opts);
+    return new Directions(document.body, config);
+  }
+
+  const directions = createDirections();
+
+  tt.test('initialized', (t) => {
+    t.ok(directions);
+    t.end();
   });
 
-  return directions;
-}
+  tt.test('getting setting origin', (t) => {
+    t.plan(1);
+    const coordinates = [-79, 43];
+    directions.setOrigin(coordinates);
+    directions.on('origin', (e) => {
+      t.ok(e.feature);
+    });
+  });
 
-test('initialization', (t) => {
-  const directions = createDirections();
-  t.ok(directions, 'Directions is initialized');
-  t.end();
+  tt.test('getting setting destination', (t) => {
+    t.plan(1);
+    const coordinates = [-77, 41];
+    directions.setDestination(coordinates);
+    directions.on('destination', (e) => {
+      t.ok(e.feature);
+    });
+  });
+
+  directions.remove();
+  tt.end();
 });
 
-test('Directions.setOrigin Directions.getOrigin', (t) => {
-  const coordinates = [-79, 43];
-  const directions = createDirections();
-  directions.setOrigin(coordinates);
-  t.equal(directions.getOrigin().geometry.coordinates, coordinates);
-  t.end();
-});
-
-test('Directions.setDestination Directions.getDestination', (t) => {
-  const coordinates = [-79, 43];
-  const directions = createDirections();
-  directions.setDestination(coordinates);
-  t.equal(directions.getDestination().geometry.coordinates, coordinates);
-  t.end();
-});
-
-test('Directions.reverse', (t) => {
-  const a = [-79, 43];
-  const b = [-78, 42];
-  const directions = createDirections();
-
-  directions.setOrigin(a);
-  directions.setDestination(b);
-  directions.reverse();
-
-  t.equal(directions.getDestination().geometry.coordinates, a);
-  t.equal(directions.getOrigin().geometry.coordinates, b);
-
-  t.end();
-});
