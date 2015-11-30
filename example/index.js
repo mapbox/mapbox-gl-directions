@@ -1,7 +1,7 @@
 var mapboxgl = require('mapbox-gl');
 var Directions = require('../');
 
-mapboxgl.accessToken = 'pk.eyJ1IjoidHJpc3RlbiIsImEiOiJiUzBYOEJzIn0.VyXs9qNWgTfABLzSI3YcrQ';
+mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
 var map = new mapboxgl.Map({
   container: 'map',
