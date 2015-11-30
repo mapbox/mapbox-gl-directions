@@ -354,3 +354,34 @@ export function removeWaypoint(waypoint) {
       dispatch(updateWaypoints(waypoints));
   };
 }
+
+export function eventSubscribe(type, fn) {
+  return (dispatch, getState) => {
+    const { events } = getState();
+    events[type] = events[type] || [];
+    events[type].push(fn);
+    return {
+      type: types.EVENTS,
+      events
+    };
+  };
+}
+
+export function eventEmit(type, data) {
+  return (dispatch, getState) => {
+    const { events } = getState();
+
+    if (!events[type]) {
+      return {
+        type: types.EVENTS,
+        events
+      };
+    }
+
+    const listeners = events[type].slice();
+
+    for (var i = 0; i < listeners.length; i++) {
+      listeners[i].call(this, data);
+    }
+  };
+}

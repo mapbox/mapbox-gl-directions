@@ -384,4 +384,15 @@ export default class Directions extends mapboxgl.Control {
   getWaypoints() {
     return store.getState().waypoints;
   }
+
+  /**
+   * Subscribe to events that happen within gl-directions.
+   * @param {String} type name of event.
+   * @param {Function} fn function that's called when the event is emitted.
+   * @returns {Directions} this;
+   */
+  on(type, fn) {
+    this.actions.eventSubscribe(type, fn);
+    return this;
+  }
 }
