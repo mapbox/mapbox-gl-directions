@@ -26,7 +26,5 @@ map.on('load', () => {
   button.addEventListener('click', function() {
     directions.setOrigin('Toronto');
     directions.setDestination([-78, 42]);
-
-    console.log(directions.getOrigin());
   });
 });
