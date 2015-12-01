@@ -1,5 +1,6 @@
 'use strict';
 
+const once = require('lodash.once');
 const test = require('tape');
 
 test('Directions#inputControl', tt => {
@@ -16,11 +17,11 @@ test('Directions#inputControl', tt => {
     setup();
     var inputOrigin = container.querySelector('.js-origin');
     var inputOriginClear = container.querySelector('.js-origin-clear');
-    inputOrigin.addEventListener('change', () => {
+    inputOrigin.addEventListener('change', once(() => {
       t.ok(inputOrigin.value, 'value populates in origin');
       t.ok(inputOriginClear.classList.contains('active'), 'clear link is active');
       t.end();
-    });
+    }));
     directions.setOrigin([-79, 43]);
   });
 
@@ -28,11 +29,11 @@ test('Directions#inputControl', tt => {
     setup();
     var inputDestination = container.querySelector('.js-destination');
     var inputDestinationClear = container.querySelector('.js-destination-clear');
-    inputDestination.addEventListener('change', () => {
+    inputDestination.addEventListener('change', once(() => {
       t.ok(inputDestination.value, 'value populates in destination');
       t.ok(inputDestinationClear.classList.contains('active'), 'clear link is active');
       t.end();
-    });
+    }));
     directions.setDestination([-78, 42]);
   });
 

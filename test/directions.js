@@ -17,7 +17,6 @@ test('directions', (tt) => {
   });
 
   tt.test('set/get inputs', t => {
-    t.plan(4);
     setup();
 
     directions.setOrigin('Toronto');
@@ -32,6 +31,8 @@ test('directions', (tt) => {
       t.ok(directions.getDestination());
       t.ok(e.route);
     });
+
+    t.end();
   });
 
   tt.end();
