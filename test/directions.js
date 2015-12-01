@@ -1,7 +1,6 @@
 'use strict';
 
 const test = require('tape');
-const Directions = require('../');
 
 test('directions', (tt) => {
   function createDirections(opts) {

@@ -1,6 +1,5 @@
 import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
-import mapboxgl from 'mapbox-gl';
 import { decode } from 'polyline';
 import { coordinateMatch, createPoint } from './utils';
 import rootReducer from './reducers';
@@ -49,7 +48,7 @@ export default class Directions extends mapboxgl.Control {
     }, this.map);
 
     this.subscribedActions();
-    map.on('load', () => { this.mapState(); });
+    map.on('style.load', () => { this.mapState(); });
   }
 
   mapState() {

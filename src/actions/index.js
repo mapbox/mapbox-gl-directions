@@ -1,5 +1,4 @@
 import * as types from '../constants/action_types';
-import mapboxgl from 'mapbox-gl';
 import { coordinateMatch, createPoint } from '../utils';
 import MapboxClient from 'mapbox';
 let mapbox;
