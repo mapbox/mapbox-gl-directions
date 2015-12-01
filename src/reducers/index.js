@@ -1,8 +1,12 @@
 import * as types from '../constants/action_types.js';
 
 const initialState = {
+  // Options set on initialization
   profile: 'driving',
   unit: 'imperial',
+  proximity: false,
+
+  // Container for client registered events
   events: {},
 
   // Marker feature drawn on the map at any point.
@@ -104,11 +108,6 @@ function data(state = initialState, action) {
   case types.ROUTE_INDEX:
     return Object.assign({}, state, {
       routeIndex: action.routeIndex
-    });
-
-  case types.EVENTS:
-    return Object.assign({}, state, {
-      events: action.events
     });
 
   default:

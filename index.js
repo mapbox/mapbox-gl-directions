@@ -6,6 +6,7 @@
  * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
  * @param {String} [options.profile="driving"] Routing profile to use. Options: `driving`, `walking`, `cycling`
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
+ * @param {Object} [options.proximity=false] Object a proximity argument: this is a geographical point given as an object with latitude and longitude properties. Search results closer to this point will be given higher priority.
  * @example
  * var directions = Directions(document.getElementById('directions'), {
  *   unit: 'metric',
