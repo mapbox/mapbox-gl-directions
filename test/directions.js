@@ -8,17 +8,17 @@ test('directions', (tt) => {
     const config = Object.assign({
       accessToken: process.env.MapboxAccessToken
     }, opts);
-    return new Directions(document.body, config);
+    return new mapboxgl.Directions(document.body, config);
   }
 
   const directions = createDirections();
 
-  tt.test('initialized', (t) => {
+  tt.test('initialized', t => {
     t.ok(directions);
     t.end();
   });
 
-  tt.test('getting setting origin', (t) => {
+  tt.test('getting setting origin', t => {
     t.plan(1);
     const coordinates = [-79, 43];
     directions.setOrigin(coordinates);
@@ -27,7 +27,7 @@ test('directions', (tt) => {
     });
   });
 
-  tt.test('getting setting destination', (t) => {
+  tt.test('getting setting destination', t => {
     t.plan(1);
     const coordinates = [-77, 41];
     directions.setDestination(coordinates);
