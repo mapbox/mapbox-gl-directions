@@ -5,21 +5,21 @@ let mapbox;
 
 function originPoint(feature) {
   return dispatch => {
-    dispatch(eventEmit('origin', { feature }));
     dispatch({
       type: types.ORIGIN,
       origin: feature
     });
+    dispatch(eventEmit('directions.origin', { feature }));
   };
 }
 
 function destinationPoint(feature) {
   return dispatch => {
-    dispatch(eventEmit('destination', { feature }));
     dispatch({
       type: types.DESTINATION,
       destination: feature
     });
+    dispatch(eventEmit('directions.destination', { feature }));
   };
 }
 
@@ -41,11 +41,11 @@ function destinationResults(query, results) {
 
 function setDirections(directions) {
   return dispatch => {
-    dispatch(eventEmit('route', { route: directions }));
     dispatch({
       type: types.DIRECTIONS,
       directions
     });
+    dispatch(eventEmit('directions.route', { route: directions }));
   };
 }
 
@@ -53,16 +53,6 @@ function updateWaypoints(waypoints) {
   return {
     type: types.WAYPOINTS,
     waypoints: waypoints
-  };
-}
-
-function newProfile(profile) {
-  return dispatch => {
-    dispatch(eventEmit('profile', { profile }));
-    dispatch({
-      type: types.DIRECTIONS_PROFILE,
-      profile
-    });
   };
 }
 
@@ -155,19 +145,19 @@ function normalizeWaypoint(waypoint) {
 
 export function clearOrigin() {
   return dispatch => {
-    dispatch(eventEmit('clear', { type: 'origin' }));
     dispatch({
       type: types.ORIGIN_CLEAR
     });
+    dispatch(eventEmit('directions.clear', { type: 'origin' }));
   };
 }
 
 export function clearDestination() {
   return dispatch => {
-    dispatch(eventEmit('clear', { type: 'destination' }));
     dispatch({
       type: types.DESTINATION_CLEAR
     });
+    dispatch(eventEmit('directions.clear', { type: 'destination' }));
   };
 }
 
@@ -240,7 +230,9 @@ export function setProfile(profile) {
       const query = buildDirectionsQuery(origin, destination, waypoints);
       dispatch(fetchDirections(query, profile));
     }
-    dispatch(newProfile(profile));
+
+    dispatch({ type: types.DIRECTIONS_PROFILE, profile });
+    dispatch(eventEmit('directions.profile', { profile }));
   };
 }
 

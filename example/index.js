@@ -31,7 +31,3 @@ map.on('load', () => {
     directions.setDestination([-78, 42]);
   });
 });
-
-directions.on('route', () => {
-  console.log(directions.getDestination());
-});

@@ -23,12 +23,12 @@ test('directions', (tt) => {
     directions.setOrigin('Toronto');
     directions.setDestination([-77, 41]);
 
-    directions.on('origin', (e) => {
+    directions.on('directions.origin', (e) => {
       t.ok(e.feature);
       t.ok(directions.getOrigin());
     });
 
-    directions.on('route', (e) => {
+    directions.on('directions.route', (e) => {
       t.ok(directions.getDestination());
       t.ok(e.route);
     });
