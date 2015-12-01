@@ -3,36 +3,34 @@
 const test = require('tape');
 
 test('directions', (tt) => {
-  function createDirections(opts) {
-    opts = opts || {};
-    const config = Object.assign({
-      accessToken: process.env.MapboxAccessToken
-    }, opts);
-    return new mapboxgl.Directions(document.body, config);
+  let container, directions;
+
+  function setup(opts) {
+    container = document.createElement('div');
+    directions = mapboxgl.Directions(container, opts);
   }
 
-  const directions = createDirections();
-
   tt.test('initialized', t => {
+    setup();
     t.ok(directions);
     t.end();
   });
 
-  tt.test('getting setting origin', t => {
-    t.plan(1);
-    const coordinates = [-79, 43];
-    directions.setOrigin(coordinates);
+  tt.test('set/get inputs', t => {
+    t.plan(4);
+    setup();
+
+    directions.setOrigin('Toronto');
+    directions.setDestination([-77, 41]);
+
     directions.on('origin', (e) => {
       t.ok(e.feature);
+      t.ok(directions.getOrigin());
     });
-  });
 
-  tt.test('getting setting destination', t => {
-    t.plan(1);
-    const coordinates = [-77, 41];
-    directions.setDestination(coordinates);
-    directions.on('destination', (e) => {
-      t.ok(e.feature);
+    directions.on('route', (e) => {
+      t.ok(directions.getDestination());
+      t.ok(e.route);
     });
   });
 

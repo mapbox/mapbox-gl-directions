@@ -6,12 +6,9 @@ test('Directions#inputControl', tt => {
   let container, map, directions;
 
   function setup(opts) {
-    container = document.body;
-    map = new mapboxgl.Map({ container: document.body });
-    directions = mapboxgl.Directions(document.body, Object.assign({
-      accessToken: process.env.MapboxAccessToken
-    }, opts));
-
+    container = document.createElement('div');
+    map = new mapboxgl.Map({ container: container });
+    directions = mapboxgl.Directions(container, opts);
     map.addControl(directions);
   }
 
