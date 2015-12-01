@@ -281,7 +281,7 @@ export function reverse() {
 export function queryOriginInput(query) {
   return (dispatch) => {
     return dispatch(geocode(query, (results) => {
-      dispatch(originResults(query, results));
+      return dispatch(originResults(query, results));
     }));
   };
 }
@@ -292,7 +292,7 @@ export function queryOriginInput(query) {
 export function queryDestinationInput(query) {
   return (dispatch) => {
     return dispatch(geocode(query, (results) => {
-      dispatch(destinationResults(query, results));
+      return dispatch(destinationResults(query, results));
     }));
   };
 }
