@@ -1,6 +1,7 @@
 'use strict';
 
 const test = require('tape');
+const once = require('lodash.once');
 
 test('directions', (tt) => {
   let container, directions;
@@ -22,15 +23,19 @@ test('directions', (tt) => {
     directions.setOrigin('Toronto');
     directions.setDestination([-77, 41]);
 
-    directions.on('directions.origin', (e) => {
-      t.ok(e.feature);
-      t.ok(directions.getOrigin());
-    });
+    directions.on('directions.origin', once((e) => {
+      t.ok(directions.getOrigin().type, 'origin feature is present from get');
+      t.ok(e.feature, 'origin feature is in the event object');
+    }));
 
-    directions.on('directions.route', (e) => {
-      t.ok(directions.getDestination());
-      t.ok(e.route);
-    });
+    directions.on('directions.destination', once((e) => {
+      t.ok(directions.getDestination().type, 'destination feature is present from get');
+      t.ok(e.feature, 'destination feature is in the event object');
+    }));
+
+    directions.on('directions.route', once((e) => {
+      t.ok(e.route, 'routing data was passed');
+    }));
 
     t.end();
   });

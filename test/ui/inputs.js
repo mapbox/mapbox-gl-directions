@@ -39,8 +39,8 @@ test('Directions#inputControl', tt => {
 
   tt.test('profiles', t => {
     setup({ profile: 'cycling' });
-    t.equal(container.querySelector('#mapbox-directions-profile-driving').checked, false);
-    t.equal(container.querySelector('#mapbox-directions-profile-cycling').checked, true);
+    t.equal(container.querySelector('#mapbox-directions-profile-driving').checked, false, 'default driving profile should is false');
+    t.equal(container.querySelector('#mapbox-directions-profile-cycling').checked, true, 'cycling profile is active');
     t.end();
   });
 
