@@ -82,14 +82,15 @@ function geocode(query, callback) {
 }
 
 function fetchDirections(query, profile) {
-  return dispatch => {
+  return (dispatch, getState) => {
+    const { routeIndex } = getState();
     return mapbox.getDirections(query, {
       profile: 'mapbox.' + profile,
       geometry: 'polyline'
     }, (err, res) => {
       if (err) throw err;
       if (res.error) throw res.error;
-      dispatch(setRouteIndex(0));
+      if (!res.routes[routeIndex]) dispatch(setRouteIndex(0));
       dispatch(setDirections(res.routes));
 
       // Revise origin + destination
