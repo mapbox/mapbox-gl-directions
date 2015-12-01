@@ -12,7 +12,11 @@ var map = new mapboxgl.Map({
 
 var directions = Directions(document.getElementById('directions'), {
   unit: 'metric',
-  profile: 'walking'
+  profile: 'walking',
+  proximity: {
+    latitude: 66.1,
+    longitude: 45.3
+  }
 });
 
 var button = document.createElement('button');

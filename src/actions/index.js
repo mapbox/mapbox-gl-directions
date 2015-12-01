@@ -71,8 +71,10 @@ function setHoverMarker(feature) {
 }
 
 function geocode(query, callback) {
-  return dispatch => {
-    return mapbox.geocodeForward(query.trim(), (err, res) => {
+  return (dispatch, getState) => {
+    const { proximity } = getState();
+    const options = proximity ? { proximity } : {};
+    return mapbox.geocodeForward(query.trim(), options, (err, res) => {
       if (err) throw err;
       return dispatch(callback(res.features));
     });

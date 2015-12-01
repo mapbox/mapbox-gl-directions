@@ -1,8 +1,10 @@
 import * as types from '../constants/action_types.js';
 
 const initialState = {
+  // Options set on initialization
   profile: 'driving',
   unit: 'imperial',
+  proximity: false,
 
   // Marker feature drawn on the map at any point.
   origin: {},
