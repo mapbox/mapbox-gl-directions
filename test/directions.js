@@ -13,11 +13,12 @@ test('directions', (tt) => {
 
   tt.test('initialized', t => {
     setup();
-    t.ok(directions);
+    t.ok(directions, 'directions is initialized');
     t.end();
   });
 
   tt.test('set/get inputs', t => {
+    t.plan(5);
     setup();
 
     directions.setOrigin('Toronto');
@@ -37,7 +38,6 @@ test('directions', (tt) => {
       t.ok(e.route, 'routing data was passed');
     }));
 
-    t.end();
   });
 
   tt.end();
