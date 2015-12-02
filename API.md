@@ -29,7 +29,7 @@ Returns **Array** waypoints
 
 # on
 
-Subscribe to events that happen within gl-directions.
+Subscribe to events that happen within the plugin.
 
 **Parameters**
 

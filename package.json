@@ -1,5 +1,5 @@
 {
-  "name": "gl-directions",
+  "name": "mapbox-gl-directions",
   "version": "0.0.0",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
   "main": "index.js",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/mapbox/gl-directions.js.git"
+    "url": "git+ssh://git@github.com/mapbox/mapbox-gl-directions.js.git"
   },
   "keywords": [
     "directions",
@@ -30,9 +30,9 @@
   "author": "Mapbox",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mapbox/gl-directions.js/issues"
+    "url": "https://github.com/mapbox/mapbox-gl-directions.js/issues"
   },
-  "homepage": "https://github.com/mapbox/gl-directions.js#readme",
+  "homepage": "https://github.com/mapbox/mapbox-gl-directions.js#readme",
   "devDependencies": {
     "babel-eslint": "^4.0.10",
     "babel-plugin-object-assign": "^1.2.1",
