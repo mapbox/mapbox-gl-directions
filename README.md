@@ -28,7 +28,7 @@ map.addControl(directions);
 </script>
 ```
 
-## Documentation
+### More advanced stuff
 
 - See [API.md](https://github.com/mapbox/gl-directions/blob/master/API.md).
 
