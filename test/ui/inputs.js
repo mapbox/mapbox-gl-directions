@@ -6,6 +6,12 @@ const test = require('tape');
 test('Directions#inputControl', tt => {
   let container, map, directions;
 
+  const changeEvent = document.createEvent('HTMLEvents');
+  changeEvent.initEvent('change', true, false);
+
+  const clickEvent = document.createEvent('HTMLEvents');
+  clickEvent.initEvent('click', true, false);
+
   function setup(opts) {
     container = document.createElement('div');
     map = new mapboxgl.Map({ container: container });
@@ -15,34 +21,43 @@ test('Directions#inputControl', tt => {
 
   tt.test('origin', t => {
     setup();
-    t.plan(2);
-    var inputOrigin = container.querySelector('.js-origin');
-    var inputOriginClear = container.querySelector('.js-origin-clear');
-    inputOrigin.addEventListener('change', once(() => {
-      t.ok(inputOrigin.value, 'value populates in origin');
-      t.ok(inputOriginClear.classList.contains('active'), 'clear link is active');
+    t.plan(3);
+    var inputEl = container.querySelector('.js-origin');
+    var clearEl = container.querySelector('.js-origin-clear');
+    inputEl.addEventListener('change', once(() => {
+      t.ok(inputEl.value, 'value populates in origin');
+      t.ok(clearEl.classList.contains('active'), 'clear link is active');
+      clearEl.dispatchEvent(clickEvent);
     }));
+
+    directions.on('directions.clear', once((e) => {
+      t.equal(e.type, 'origin', 'origin input was cleared');
+    }));
+
     directions.setOrigin([-79, 43]);
   });
 
   tt.test('destination', t => {
     setup();
-    t.plan(2);
-    var inputDestination = container.querySelector('.js-destination');
-    var inputDestinationClear = container.querySelector('.js-destination-clear');
-    inputDestination.addEventListener('change', once(() => {
-      t.ok(inputDestination.value, 'value populates in destination');
-      t.ok(inputDestinationClear.classList.contains('active'), 'clear link is active');
+    t.plan(3);
+    var inputEl = container.querySelector('.js-destination');
+    var clearEl = container.querySelector('.js-destination-clear');
+    inputEl.addEventListener('change', once(() => {
+      t.ok(inputEl.value, 'value populates in destination');
+      t.ok(clearEl.classList.contains('active'), 'clear link is active');
+      clearEl.dispatchEvent(clickEvent);
     }));
+
+    directions.on('directions.clear', once((e) => {
+      t.equal(e.type, 'destination', 'destination input was cleared');
+    }));
+
     directions.setDestination([-78, 42]);
   });
 
   tt.test('profiles', t => {
     setup({ profile: 'cycling' });
     t.plan(3);
-
-    var changeEvent = document.createEvent('HTMLEvents');
-    changeEvent.initEvent('change', true, false);
 
     var drivingEl = container.querySelector('#mapbox-directions-profile-driving');
     var cyclingEl = container.querySelector('#mapbox-directions-profile-cycling');
