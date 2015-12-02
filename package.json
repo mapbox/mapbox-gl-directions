@@ -14,7 +14,7 @@
     "start": "budo example/index.js --serve=example/bundle.js --live -d | bistre",
     "build": "NODE_ENV=production && npm run build-example && browserify index.js | uglifyjs -c -m > dist/mapboxgl.directions.js",
     "build-example": "browserify example/index.js | uglifyjs -c -m > example/bundle.js",
-    "test": "npm run lint && browserify test/test.js | smokestack -b firefox | tap-status",
+    "test": "npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
     "docs": "documentation --format=md > API.md",
     "lint": "eslint --no-eslintrc -c .eslintrc index.js src"
   },

@@ -7,8 +7,8 @@ require('../');
 mapboxgl.accessToken = process.env.MapboxAccessToken;
 
 // Tests
-require('./directions');
-require('./ui/inputs');
+require('./test.directions');
+require('./test.inputs');
 
 // close the smokestack window once tests are complete
 test('shutdown', (t) => {
