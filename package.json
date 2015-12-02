@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "budo example/index.js --serve=example/bundle.js --live -d | bistre",
-    "build": "NODE_ENV=production && browserify index.js | uglifyjs -c -m > dist/mapbox-gl.directions.js",
+    "build": "NODE_ENV=production && browserify index.js | uglifyjs -c -m > dist/mapbox-gl-directions.js",
     "test": "npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
     "docs": "documentation --format=md > API.md",
     "lint": "eslint --no-eslintrc -c .eslintrc index.js src"
