@@ -1,20 +1,25 @@
 import * as types from '../constants/action_types';
-import mapboxgl from 'mapbox-gl';
 import { coordinateMatch, createPoint } from '../utils';
 import MapboxClient from 'mapbox';
 let mapbox;
 
 function originPoint(feature) {
-  return {
-    type: types.ORIGIN,
-    origin: feature
+  return dispatch => {
+    dispatch({
+      type: types.ORIGIN,
+      origin: feature
+    });
+    dispatch(eventEmit('directions.origin', { feature }));
   };
 }
 
 function destinationPoint(feature) {
-  return {
-    type: types.DESTINATION,
-    destination: feature
+  return dispatch => {
+    dispatch({
+      type: types.DESTINATION,
+      destination: feature
+    });
+    dispatch(eventEmit('directions.destination', { feature }));
   };
 }
 
@@ -35,9 +40,12 @@ function destinationResults(query, results) {
 }
 
 function setDirections(directions) {
-  return {
-    type: types.DIRECTIONS,
-    directions
+  return dispatch => {
+    dispatch({
+      type: types.DIRECTIONS,
+      directions
+    });
+    dispatch(eventEmit('directions.route', { route: directions }));
   };
 }
 
@@ -45,13 +53,6 @@ function updateWaypoints(waypoints) {
   return {
     type: types.WAYPOINTS,
     waypoints: waypoints
-  };
-}
-
-function newProfile(profile) {
-  return {
-    type: types.DIRECTIONS_PROFILE,
-    profile
   };
 }
 
@@ -144,14 +145,20 @@ function normalizeWaypoint(waypoint) {
 }
 
 export function clearOrigin() {
-  return {
-    type: types.ORIGIN_CLEAR
+  return dispatch => {
+    dispatch({
+      type: types.ORIGIN_CLEAR
+    });
+    dispatch(eventEmit('directions.clear', { type: 'origin' }));
   };
 }
 
 export function clearDestination() {
-  return {
-    type: types.DESTINATION_CLEAR
+  return dispatch => {
+    dispatch({
+      type: types.DESTINATION_CLEAR
+    });
+    dispatch(eventEmit('directions.clear', { type: 'destination' }));
   };
 }
 
@@ -224,7 +231,9 @@ export function setProfile(profile) {
       const query = buildDirectionsQuery(origin, destination, waypoints);
       dispatch(fetchDirections(query, profile));
     }
-    dispatch(newProfile(profile));
+
+    dispatch({ type: types.DIRECTIONS_PROFILE, profile });
+    dispatch(eventEmit('directions.profile', { profile }));
   };
 }
 
@@ -355,5 +364,36 @@ export function removeWaypoint(waypoint) {
       }
 
       dispatch(updateWaypoints(waypoints));
+  };
+}
+
+export function eventSubscribe(type, fn) {
+  return (dispatch, getState) => {
+    const { events } = getState();
+    events[type] = events[type] || [];
+    events[type].push(fn);
+    return {
+      type: types.EVENTS,
+      events
+    };
+  };
+}
+
+export function eventEmit(type, data) {
+  return (dispatch, getState) => {
+    const { events } = getState();
+
+    if (!events[type]) {
+      return {
+        type: types.EVENTS,
+        events
+      };
+    }
+
+    const listeners = events[type].slice();
+
+    for (var i = 0; i < listeners.length; i++) {
+      listeners[i].call(this, data);
+    }
   };
 }

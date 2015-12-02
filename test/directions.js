@@ -1,40 +1,43 @@
 'use strict';
 
 const test = require('tape');
-const Directions = require('../');
+const once = require('lodash.once');
 
 test('directions', (tt) => {
-  function createDirections(opts) {
-    opts = opts || {};
-    const config = Object.assign({
-      accessToken: process.env.MapboxAccessToken
-    }, opts);
-    return new Directions(document.body, config);
+  let container, directions;
+
+  function setup(opts) {
+    container = document.createElement('div');
+    directions = mapboxgl.Directions(container, opts);
   }
 
-  const directions = createDirections();
-
-  tt.test('initialized', (t) => {
-    t.ok(directions);
+  tt.test('initialized', t => {
+    setup();
+    t.ok(directions, 'directions is initialized');
     t.end();
   });
 
-  tt.test('getting setting origin', (t) => {
-    t.plan(1);
-    const coordinates = [-79, 43];
-    directions.setOrigin(coordinates);
-    directions.on('origin', (e) => {
-      t.ok(e.feature);
-    });
-  });
+  tt.test('set/get inputs', t => {
+    t.plan(5);
+    setup();
 
-  tt.test('getting setting destination', (t) => {
-    t.plan(1);
-    const coordinates = [-77, 41];
-    directions.setDestination(coordinates);
-    directions.on('destination', (e) => {
-      t.ok(e.feature);
-    });
+    directions.setOrigin('Toronto');
+    directions.setDestination([-77, 41]);
+
+    directions.on('directions.origin', once((e) => {
+      t.ok(directions.getOrigin().type, 'origin feature is present from get');
+      t.ok(e.feature, 'origin feature is in the event object');
+    }));
+
+    directions.on('directions.destination', once((e) => {
+      t.ok(directions.getDestination().type, 'destination feature is present from get');
+      t.ok(e.feature, 'destination feature is in the event object');
+    }));
+
+    directions.on('directions.route', once((e) => {
+      t.ok(e.route, 'routing data was passed');
+    }));
+
   });
 
   tt.end();

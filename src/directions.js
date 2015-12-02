@@ -1,6 +1,5 @@
 import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
-import mapboxgl from 'mapbox-gl';
 import { decode } from 'polyline';
 import { coordinateMatch, createPoint } from './utils';
 import rootReducer from './reducers';
@@ -49,10 +48,15 @@ export default class Directions extends mapboxgl.Control {
     }, this.map);
 
     this.subscribedActions();
-    map.on('load', () => { this.mapState(); });
+    map.on('style.load', () => { this.mapState(); });
   }
 
   mapState() {
+    const { profile } = store.getState();
+
+    // Emit any default or option set config
+    this.actions.eventEmit('directions.profile', { profile });
+
     const map = this.map;
     const geojson = new mapboxgl.GeoJSONSource({
       data: {
@@ -383,5 +387,21 @@ export default class Directions extends mapboxgl.Control {
    */
   getWaypoints() {
     return store.getState().waypoints;
+  }
+
+  /**
+   * Subscribe to events that happen within gl-directions.
+   * @param {String} type name of event. Available events and the data passed into their respective event objects are:
+   * directions.clear { type: } Type is one of `origin` or `destination`
+   * directions.profile { profile } //  Profile is one of `driving`, `walking`, or `cycling`
+   * directions.origin { feature } // Fired when origin is set
+   * directions.destination { feature } // Fired when destination is set
+   * directions.route { route } // Fired when a route is updated
+   * @param {Function} fn function that's called when the event is emitted.
+   * @returns {Directions} this;
+   */
+  on(type, fn) {
+    this.actions.eventSubscribe(type, fn);
+    return this;
   }
 }

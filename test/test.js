@@ -1,7 +1,8 @@
 'use strict';
 
 const test = require('tape');
-const mapboxgl = require('mapbox-gl');
+window.mapboxgl = require('mapbox-gl');
+require('../');
 
 mapboxgl.accessToken = process.env.MapboxAccessToken;
 

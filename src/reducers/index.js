@@ -6,6 +6,9 @@ const initialState = {
   unit: 'imperial',
   proximity: false,
 
+  // Container for client registered events
+  events: {},
+
   // Marker feature drawn on the map at any point.
   origin: {},
   destination: {},

@@ -1,5 +1,4 @@
-var mapboxgl = require('mapbox-gl');
-var Directions = require('../');
+require('../');
 
 mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
@@ -10,7 +9,7 @@ var map = new mapboxgl.Map({
   zoom: 13
 });
 
-var directions = Directions(document.getElementById('directions'), {
+var directions = mapboxgl.Directions(document.getElementById('directions'), {
   unit: 'metric',
   profile: 'walking',
   proximity: {

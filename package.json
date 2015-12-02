@@ -45,6 +45,7 @@
     "documentation": "^3.0.0",
     "envify": "^3.4.0",
     "eslint": "^1.1.0",
+    "lodash.once": "^3.0.1",
     "smokestack": "^3.3.1",
     "tap-status": "^1.0.1",
     "tape": "^4.2.0",
