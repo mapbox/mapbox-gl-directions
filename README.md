@@ -28,9 +28,9 @@ map.addControl(directions);
 </script>
 ```
 
-### More advanced stuff
+### Deeper dive
 
-- See [API.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/API.md).
+- See [API.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/API.md) for complete reference.
 
 ## Contributing
 
