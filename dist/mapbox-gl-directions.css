@@ -309,6 +309,21 @@
         cursor:pointer;
         }
 
+/* Mobile */
+@media only screen and (max-width:640px) {
+
+/* Containers */
+.directions-control.directions-control { width:100%; max-width:100%; }
+
+/* Input container */
+.directions-control.directions-control-inputs { top:0;left:0; }
+.mapbox-directions-profile { margin:5px 10px; }
+
+/* Instructions container */
+.directions-control.directions-control-directions { top:60%; }
+
+}
+
 /* icons */
 .directions-icon {
   display:inline-block;
