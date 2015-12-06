@@ -17,10 +17,8 @@ import Instructions from './controls/instructions';
 
 export default class Directions extends mapboxgl.Control {
 
-  constructor(el, options) {
+  constructor(options) {
     super();
-
-    this.container = el;
 
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
@@ -32,6 +30,11 @@ export default class Directions extends mapboxgl.Control {
 
   onAdd(map) {
     this.map = map;
+
+    const { container } = store.getState();
+
+    this.container = container ? typeof container === 'string' ?
+      document.getElementById(container) : container : this.map.getContainer();
 
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';

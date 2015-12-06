@@ -18,8 +18,8 @@
  */
 import Directions from './src/directions';
 
-function exportFn(el, options) {
-  return new Directions(el, options);
+function exportFn(options) {
+  return new Directions(options);
 }
 
 if (window.mapboxgl) {
