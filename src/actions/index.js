@@ -151,9 +151,12 @@ function normalizeWaypoint(waypoint) {
 }
 
 function setLoading(input, loading) {
-  return {
-    type: input + '_LOADING',
-    loading
+  return dispatch => {
+    dispatch({
+      type: input + '_LOADING',
+      loading
+    });
+    if (loading) dispatch(eventEmit('directions.loading', { type: input.toLowerCase() }));
   };
 }
 

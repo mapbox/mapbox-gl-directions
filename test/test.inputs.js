@@ -21,13 +21,17 @@ test('Directions#inputControl', tt => {
 
   tt.test('origin', t => {
     setup();
-    t.plan(3);
+    t.plan(4);
     var inputEl = container.querySelector('.js-origin');
     var clearEl = container.querySelector('.js-origin-clear');
     inputEl.addEventListener('change', once(() => {
       t.ok(inputEl.value, 'value populates in origin');
       t.ok(clearEl.classList.contains('active'), 'clear link is active');
       clearEl.dispatchEvent(clickEvent);
+    }));
+
+    directions.on('directions.loading', once((e) => {
+      t.equal(e.type, 'origin', 'origin load event was emitted');
     }));
 
     directions.on('directions.clear', once((e) => {
@@ -39,13 +43,17 @@ test('Directions#inputControl', tt => {
 
   tt.test('destination', t => {
     setup();
-    t.plan(3);
+    t.plan(4);
     var inputEl = container.querySelector('.js-destination');
     var clearEl = container.querySelector('.js-destination-clear');
     inputEl.addEventListener('change', once(() => {
       t.ok(inputEl.value, 'value populates in destination');
       t.ok(clearEl.classList.contains('active'), 'clear link is active');
       clearEl.dispatchEvent(clickEvent);
+    }));
+
+    directions.on('directions.loading', once((e) => {
+      t.equal(e.type, 'destination', 'destination load event was emitted');
     }));
 
     directions.on('directions.clear', once((e) => {
