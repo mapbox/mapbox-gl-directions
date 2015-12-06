@@ -123,6 +123,11 @@ function data(state = initialState, action) {
       routeIndex: action.routeIndex
     });
 
+  case types.ERROR:
+    return Object.assign({}, state, {
+      error: action.error
+    });
+
   default:
     return state;
   }
