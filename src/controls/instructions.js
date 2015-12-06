@@ -27,7 +27,7 @@ export default class Instructions {
 
   render() {
     this.store.subscribe(() => {
-      const { hoverMarker } = this.actions;
+      const { hoverMarker, setRouteIndex } = this.actions;
       const { routeIndex, unit, directions, error } = this.store.getState();
       const shouldRender = !isEqual(directions[routeIndex], this.directions);
 
@@ -38,16 +38,16 @@ export default class Instructions {
 
       if (directions.length && shouldRender) {
         const direction = this.directions = directions[routeIndex];
-
         this.container.innerHTML = instructionsTemplate({
           routeIndex,
+          routes: directions.length,
           steps: direction.steps,
           format: format[unit],
           duration: format[unit](direction.distance),
           distance: format.duration(direction.duration)
         });
 
-        var steps = this.container.querySelectorAll('.mapbox-directions-step');
+        const steps = this.container.querySelectorAll('.mapbox-directions-step');
 
         Array.prototype.forEach.call(steps, (el) => {
           const lng = el.getAttribute('data-lng');
@@ -69,6 +69,10 @@ export default class Instructions {
           });
         });
 
+        const routes = this.container.querySelectorAll('input[type="radio"]');
+        Array.prototype.forEach.call(routes, (el) => {
+          el.addEventListener('change', (e) => { setRouteIndex(parseInt(e.target.id, 10)); });
+        });
       } else if (this.container.innerHTML && shouldRender) {
         this.container.innerHTML = '';
       }

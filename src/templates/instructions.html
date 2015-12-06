@@ -1,10 +1,15 @@
 <div class='directions-control directions-control-directions'>
-  <div class='mapbox-directions-component mapbox-directions-route-summary'>
-    <div>
-      <label>Route <%- routeIndex + 1 %></label>
-      <h1><%- duration %></h1>
-      <span><%- distance %></span>
+  <div class='mapbox-directions-component mapbox-directions-route-summary<% if (routes > 1) { %> mapbox-directions-multiple<% } %>'>
+    <% if (routes > 1) { %>
+    <div class='mapbox-directions-routes mapbox-directions-clearfix'>
+      <% for (var i = 0; i < routes; i++) { %>
+        <input type='radio' name='routes' id='<%= i %>' <% if (i === routeIndex) { %>checked<% } %>>
+        <label for='<%= i %>' class='mapbox-directions-route'><%= i + 1 %></label>
+      <% } %>
     </div>
+    <% } %>
+    <h1><%- duration %></h1>
+    <span><%- distance %></span>
   </div>
 
   <div class='mapbox-directions-instructions'>

@@ -25,6 +25,6 @@ map.addControl(directions);
 map.on('load', () => {
   button.addEventListener('click', function() {
     directions.setOrigin('Montreal Quebec');
-    directions.setDestination('Toledo Spain');
+    directions.setDestination('Toronto');
   });
 });

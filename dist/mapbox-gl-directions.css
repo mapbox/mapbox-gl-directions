@@ -118,13 +118,6 @@
   border-radius:15px;
   vertical-align:middle;
   }
-  .mapbox-directions-profile:after {
-    content:'';
-    display:block;
-    height:0;
-    clear:both;
-    visibility:hidden;
-    }
   .mapbox-directions-profile label {
     cursor:pointer;
     vertical-align:top;
@@ -184,35 +177,53 @@
   position:fixed;
   z-index:1;
   width:100%;
-  min-height:75px;
+  min-height:50px;
   background-color:rgba(0,0,0,0.75);
   color:#fff;
+  padding:10px 20px;
+  font-size:20px;
+  line-height:28px;
   }
-  .mapbox-directions-route-summary > div {
-    padding:10px 20px;
+  .mapbox-directions-route-summary + .mapbox-directions-instructions {
+    padding-top:50px;
     }
   .mapbox-directions-route-summary h1 {
-    font-size:20px;
-    line-height:20px;
     font-weight:500;
     margin:0;
     display:inline;
-    }
-  .mapbox-directions-route-summary label {
-    display:block;
-    font-size:12px;
-    margin-bottom:5px;
+    font-size:inherit;
+    line-height:inherit;
     }
   .mapbox-directions-route-summary span {
-    font-size:20px;
     color:rgba(255,255,255,0.5);
     margin:0 5px;
     }
 
+  /* Alt route selection */
+  .mapbox-directions-multiple {
+    min-height:75px;
+    }
+    .mapbox-directions-multiple + .mapbox-directions-instructions {
+      padding-top:75px;
+      }
+  .mapbox-directions-routes {
+    margin:0 0 10px;
+    font-size:12px;
+    }
+  .mapbox-directions-routes input[type=radio] { display: none;}
+  .mapbox-directions-routes input[type=radio]:not(:checked) + .button:before { width: 0;}
+  .mapbox-directions-routes input[type=radio] + label {
+    background-color:rgba(255,255,255,0.10);
+    float:left;
+    padding:0 10px;
+    cursor:pointer;
+    }
+    .mapbox-directions-routes input[type=radio] + label:hover,
+    .mapbox-directions-routes input[type=radio]:checked + label {
+      background-color:rgba(255,255,255,0.25);
+      }
+
 /* Instructions */
-.mapbox-directions-instructions {
-  padding-top:75px; /* Matches the height of summary */
-  }
 .mapbox-directions-instructions .directions-icon {
   position:absolute;
   left:10px;
@@ -316,6 +327,14 @@
         cursor:pointer;
         }
 
+.mapbox-directions-clearfix:after {
+  content:'';
+  display:block;
+  height:0;
+  clear:both;
+  visibility:hidden;
+  }
+
 /* Mobile */
 @media only screen and (max-width:640px) {
 
@@ -327,7 +346,10 @@
 .mapbox-directions-profile { margin:5px 10px; }
 
 /* Instructions container */
+.mapbox-directions-routes { float:right; margin-right:10px; }
 .directions-control.directions-control-directions { top:auto; max-height:40%; }
+.mapbox-directions-multiple { min-height:50px; }
+.mapbox-directions-multiple + .mapbox-directions-instructions { padding-top:50px; }
 }
 
 @-webkit-keyframes rotate { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
