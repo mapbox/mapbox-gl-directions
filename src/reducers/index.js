@@ -19,6 +19,9 @@ const initialState = {
   originQuery: '',
   destinationQuery: '',
 
+  originLoading: false,
+  destinationLoading: false,
+
   // Feature results returned from geocoder.
   originResults: [],
   destinationResults: [],
@@ -88,6 +91,16 @@ function data(state = initialState, action) {
       destinationResults: [],
       waypoints: [],
       directions: []
+    });
+
+  case types.ORIGIN_LOADING:
+    return Object.assign({}, state, {
+      originLoading: action.loading
+    });
+
+  case types.DESTINATION_LOADING:
+    return Object.assign({}, state, {
+      destinationLoading: action.loading
     });
 
   case types.REVERSE_INPUTS:

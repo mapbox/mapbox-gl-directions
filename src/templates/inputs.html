@@ -9,10 +9,13 @@
       class='js-origin'
       placeholder='Choose a starting place'
     />
-    <button
-      class='directions-icon directions-icon-close directions-close js-origin-clear'
-      title='Clear value'>
-    </button>
+    <div class='directions-pin-right'>
+      <button
+        class='directions-icon directions-icon-close js-origin-clear'
+        title='Clear value'>
+      </button>
+      <span class='directions-icon directions-icon-loading js-origin-loading'></span>
+    </div>
   </div>
 
   <button
@@ -30,10 +33,13 @@
       value='<%- destinationQuery %>'
       placeholder='Choose destination'
     />
-    <button
-      class='directions-icon directions-icon-close directions-close js-destination-clear'
-      title='Clear value'>
-    </button>
+    <div class='directions-pin-right'>
+      <button
+        class='directions-icon directions-icon-close js-destination-clear'
+        title='Clear value'>
+      </button>
+      <span class='directions-icon directions-icon-loading js-destination-loading'></span>
+    </div>
   </div>
 
   <div class='mapbox-directions-profile'>

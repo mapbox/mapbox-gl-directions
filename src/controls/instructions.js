@@ -21,7 +21,6 @@ export default class Instructions {
     this.store = store;
     this.map = map;
     this.directions = {};
-
     this.render();
   }
 
