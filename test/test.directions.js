@@ -8,7 +8,9 @@ test('directions', (tt) => {
 
   function setup(opts) {
     container = document.createElement('div');
-    directions = mapboxgl.Directions(container, opts);
+    directions = new mapboxgl.Directions(opts, Object.assign({
+      container: container
+    }, opts));
   }
 
   tt.test('initialized', t => {

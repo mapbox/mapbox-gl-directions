@@ -9,9 +9,10 @@ var map = new mapboxgl.Map({
   zoom: 13
 });
 
-var directions = mapboxgl.Directions(document.getElementById('directions'), {
+var directions = mapboxgl.Directions({
   unit: 'metric',
   profile: 'walking',
+  container: 'directions',
   proximity: {
     latitude: 66.1,
     longitude: 45.3
