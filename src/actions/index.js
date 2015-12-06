@@ -267,12 +267,12 @@ export function reverse() {
       });
     }
 
+    dispatch(reverseInputs(origin, destination));
+
     if (origin.geometry && destination.geometry) {
       const query = buildDirectionsQuery(o, d, waypoints);
       return dispatch(fetchDirections(query, profile));
     }
-
-    dispatch(reverseInputs(origin, destination));
   };
 }
 
