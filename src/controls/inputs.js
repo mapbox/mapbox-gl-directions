@@ -68,6 +68,9 @@ export default class Inputs {
     this.originClear = this.container.querySelector('.js-origin-clear');
     this.destinationClear = this.container.querySelector('.js-destination-clear');
 
+    this.originLoading = this.container.querySelector('.js-origin-loading');
+    this.destinationLoading = this.container.querySelector('.js-destination-loading');
+
     // Events
     // ============================
 
@@ -124,8 +127,10 @@ export default class Inputs {
     this.store.subscribe(() => {
       const {
         originQuery,
+        originLoading,
         originResults,
         destinationQuery,
+        destinationLoading,
         destinationResults
       } = this.store.getState();
 
@@ -137,6 +142,9 @@ export default class Inputs {
 
       this.originClear.classList.toggle('active', originResults.length);
       this.destinationClear.classList.toggle('active', destinationResults.length);
+
+      this.originLoading.classList.toggle('active', originLoading);
+      this.destinationLoading.classList.toggle('active', destinationLoading);
 
       var onChange = document.createEvent('HTMLEvents');
       onChange.initEvent('change', true, false);

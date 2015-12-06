@@ -150,6 +150,13 @@ function normalizeWaypoint(waypoint) {
   });
 }
 
+function setLoading(input, loading) {
+  return {
+    type: input + '_LOADING',
+    loading
+  };
+}
+
 export function clearOrigin() {
   return dispatch => {
     dispatch({
@@ -281,7 +288,9 @@ export function reverse() {
 // the origin input element
 export function queryOriginInput(query) {
   return (dispatch) => {
+    dispatch(setLoading('ORIGIN', true));
     return dispatch(geocode(query, (results) => {
+      dispatch(setLoading('ORIGIN', false));
       return dispatch(originResults(query, results));
     }));
   };
@@ -292,7 +301,9 @@ export function queryOriginInput(query) {
 // the destination input element
 export function queryDestinationInput(query) {
   return (dispatch) => {
+    dispatch(setLoading('DESTINATION', true));
     return dispatch(geocode(query, (results) => {
+      dispatch(setLoading('DESTINATION', false));
       return dispatch(destinationResults(query, results));
     }));
   };
@@ -304,7 +315,9 @@ export function queryDestinationInput(query) {
 export function queryOrigin(input) {
   return (dispatch) => {
     const query = (typeof input === 'string') ? input : input.join();
+    dispatch(setLoading('ORIGIN', true));
     return dispatch(geocode(query, (results) => {
+      dispatch(setLoading('ORIGIN', false));
       if (!results.length) return;
       const result = results[0];
       dispatch(addOrigin(result.geometry.coordinates));
@@ -319,7 +332,9 @@ export function queryOrigin(input) {
 export function queryDestination(input) {
   return (dispatch) => {
     const query = (typeof input === 'string') ? input : input.join();
+    dispatch(setLoading('DESTINATION', true));
     return dispatch(geocode(query, (results) => {
+      dispatch(setLoading('DESTINATION', false));
       if (!results.length) return;
       const result = results[0];
       dispatch(addDestination(result.geometry.coordinates));
