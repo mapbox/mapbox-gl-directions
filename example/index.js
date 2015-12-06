@@ -13,10 +13,7 @@ var directions = mapboxgl.Directions({
   unit: 'metric',
   profile: 'walking',
   container: 'directions',
-  proximity: {
-    latitude: 66.1,
-    longitude: 45.3
-  }
+  proximity: [-79.45, 43.65]
 });
 
 var button = document.createElement('button');
