@@ -7,7 +7,7 @@
  * @param {String} [options.profile="driving"] Routing profile to use. Options: `driving`, `walking`, `cycling`
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
  * @param {string|Element} options.container HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
- * @param {Object} [options.proximity=false] Object a proximity argument: this is a geographical point given as an object with latitude and longitude properties. Search results closer to this point will be given higher priority.
+ * @param {Array<Array<number>>} options.proximity If set, search results closer to these coordinates will be given higher priority.
  * @example
  * var directions = Directions(document.getElementById('directions'), {
  *   unit: 'metric',
