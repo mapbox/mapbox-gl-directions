@@ -3,7 +3,8 @@ import template from 'lodash.template';
 import isEqual from 'lodash.isequal';
 
 let fs = require('fs'); // substack/brfs#39
-let tmpl = template(fs.readFileSync(__dirname + '/../templates/instructions.html', 'utf8'));
+let instructionsTemplate = template(fs.readFileSync(__dirname + '/../templates/instructions.html', 'utf8'));
+let errorTemplate = template(fs.readFileSync(__dirname + '/../templates/error.html', 'utf8'));
 
 /**
  * Summary/Instructions controller
@@ -27,13 +28,18 @@ export default class Instructions {
   render() {
     this.store.subscribe(() => {
       const { hoverMarker } = this.actions;
-      const { routeIndex, unit, directions } = this.store.getState();
+      const { routeIndex, unit, directions, error } = this.store.getState();
       const shouldRender = !isEqual(directions[routeIndex], this.directions);
+
+      if (error) {
+        this.container.innerHTML = errorTemplate({ error });
+        return;
+      }
 
       if (directions.length && shouldRender) {
         const direction = this.directions = directions[routeIndex];
 
-        this.container.innerHTML = tmpl({
+        this.container.innerHTML = instructionsTemplate({
           routeIndex,
           steps: direction.steps,
           format: format[unit],

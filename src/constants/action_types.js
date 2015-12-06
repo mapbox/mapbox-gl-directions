@@ -5,6 +5,7 @@ export const DESTINATION_LOADING = 'DESTINATION_LOADING';
 export const DIRECTIONS = 'DIRECTIONS';
 export const DIRECTIONS_PROFILE = 'DIRECTIONS_PROFILE';
 export const EVENTS = 'EVENTS';
+export const ERROR = 'ERROR';
 export const HOVER_MARKER = 'HOVER_MARKER';
 export const ORIGIN = 'ORIGIN';
 export const ORIGIN_CLEAR = 'ORIGIN_CLEAR';

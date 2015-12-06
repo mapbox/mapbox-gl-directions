@@ -12,8 +12,7 @@ var map = new mapboxgl.Map({
 var directions = mapboxgl.Directions({
   unit: 'metric',
   profile: 'walking',
-  container: 'directions',
-  proximity: [-79.45, 43.65]
+  container: 'directions'
 });
 
 var button = document.createElement('button');
@@ -25,7 +24,7 @@ map.addControl(directions);
 
 map.on('load', () => {
   button.addEventListener('click', function() {
-    directions.setOrigin('Toronto');
-    directions.setDestination([-78, 42]);
+    directions.setOrigin('Montreal Quebec');
+    directions.setDestination('Toledo Spain');
   });
 });

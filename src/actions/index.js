@@ -83,6 +83,8 @@ function geocode(query, callback) {
 
     return mapbox.geocodeForward(query.trim(), options, (err, res) => {
       if (err) throw err;
+      if (res.error) return dispatch(setError(res.error));
+      dispatch(setError(null));
       return dispatch(callback(res.features));
     });
   };
@@ -96,7 +98,8 @@ function fetchDirections(query, profile) {
       geometry: 'polyline'
     }, (err, res) => {
       if (err) throw err;
-      if (res.error) throw res.error;
+      if (res.error) return dispatch(setError(res.error));
+      dispatch(setError(null));
       if (!res.routes[routeIndex]) dispatch(setRouteIndex(0));
       dispatch(setDirections(res.routes));
 
@@ -160,12 +163,23 @@ function setLoading(input, loading) {
   };
 }
 
+function setError(error) {
+  return dispatch => {
+    dispatch({
+      type: 'ERROR',
+      error
+    });
+    if (error) dispatch(eventEmit('directions.error', { error: error }));
+  };
+}
+
 export function clearOrigin() {
   return dispatch => {
     dispatch({
       type: types.ORIGIN_CLEAR
     });
     dispatch(eventEmit('directions.clear', { type: 'origin' }));
+    dispatch(setError(null));
   };
 }
 
@@ -175,6 +189,7 @@ export function clearDestination() {
       type: types.DESTINATION_CLEAR
     });
     dispatch(eventEmit('directions.clear', { type: 'destination' }));
+    dispatch(setError(null));
   };
 }
 

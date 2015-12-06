@@ -401,6 +401,7 @@ export default class Directions extends mapboxgl.Control {
    * - __directions.origin__ `{ feature } Fired when origin is set`
    * - __directions.destination__ `{ feature } Fired when destination is set`
    * - __directions.route__ `{ route } Fired when a route is updated`
+   * - __directions.error__ `{ error } Error as string
    * @param {Function} fn function that's called when the event is emitted.
    * @returns {Directions} this;
    */

@@ -30,6 +30,7 @@
   }
   .directions-control.directions-control-directions {
     background:rgba(0,0,0,0.75);
+    color:#fff;
     top:0;
     right:0;
     bottom:0;
@@ -222,6 +223,11 @@
     vertical-align:top;
     }
 
+.mapbox-directions-error {
+  padding:20px;
+  font-size:20px;
+  line-height:25px;
+  }
 .mapbox-directions-steps {
   position:relative;
   list-style:none;
@@ -321,8 +327,7 @@
 .mapbox-directions-profile { margin:5px 10px; }
 
 /* Instructions container */
-.directions-control.directions-control-directions { top:60%; }
-
+.directions-control.directions-control-directions { top:auto; max-height:40%; }
 }
 
 @-webkit-keyframes rotate { from { -webkit-transform: rotate(0deg); } to { -webkit-transform: rotate(360deg); } }
