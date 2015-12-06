@@ -21,9 +21,9 @@ test('directions', (tt) => {
 
   tt.test('set/get inputs', t => {
     t.plan(5);
-    setup();
+    setup({ proximity: [-79.45, 43.65] });
 
-    directions.setOrigin('Toronto');
+    directions.setOrigin('Queen Street');
     directions.setDestination([-77, 41]);
 
     directions.on('directions.origin', once((e) => {
