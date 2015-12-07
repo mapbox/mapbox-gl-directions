@@ -1,6 +1,6 @@
 {
   "name": "mapbox-gl-directions",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
   "main": "index.js",
   "browserify": {
