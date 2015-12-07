@@ -34,10 +34,12 @@ Subscribe to events that happen within the plugin.
 **Parameters**
 
 -   `type` **String** name of event. Available events and the data passed into their respective event objects are:-   **directions.clear** `{ type: } Type is one of 'origin' or 'destination'`
+    -   **directions.loading** `{ type: } Type is one of 'origin' or 'destination'`
     -   **directions.profile** `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
     -   **directions.origin** `{ feature } Fired when origin is set`
     -   **directions.destination** `{ feature } Fired when destination is set`
     -   **directions.route** `{ route } Fired when a route is updated`
+    -   **directions.error** `{ error } Error as string
 -   `fn` **Function** function that's called when the event is emitted.
 
 Returns **Directions** this;
@@ -99,7 +101,8 @@ A directions component using Mapbox Directions APi
     -   `options.accessToken` **[String]** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
     -   `options.profile` **[String]** Routing profile to use. Options: `driving`, `walking`, `cycling` (optional, default `"driving"`)
     -   `options.unit` **[String]** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
-    -   `options.proximity` **[Object]** Object a proximity argument: this is a geographical point given as an object with latitude and longitude properties. Search results closer to this point will be given higher priority. (optional, default `false`)
+    -   `options.container` **string or Element** HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
+    -   `options.proximity` **Array&lt;Array&lt;number&gt;&gt;** If set, search results closer to these coordinates will be given higher priority.
 
 **Examples**
 
