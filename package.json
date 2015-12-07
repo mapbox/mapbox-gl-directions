@@ -11,7 +11,7 @@
     ]
   },
   "scripts": {
-    "start": "budo example/index.js --serve=example/bundle.js --live -d | bistre",
+    "start": "budo example/index.js --serve=example/bundle.js --live -d",
     "build": "NODE_ENV=production && browserify index.js | uglifyjs -c -m > dist/mapbox-gl-directions.js",
     "test": "npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
     "docs": "documentation --format=md > API.md",
@@ -37,10 +37,9 @@
     "babel-eslint": "^4.0.10",
     "babel-plugin-object-assign": "^1.2.1",
     "babelify": "^6.4.0",
-    "bistre": "^1.0.1",
     "brfs": "^1.4.1",
     "browserify": "^11.2.0",
-    "budo": "^5.1.5",
+    "budo": "^7.0.2",
     "documentation": "^3.0.0",
     "envify": "^3.4.0",
     "eslint": "^1.1.0",
