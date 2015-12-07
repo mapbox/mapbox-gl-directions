@@ -1,3 +1,29 @@
+# mapboxgl.Directions
+
+A directions component using Mapbox Directions APi
+
+**Parameters**
+
+-   `options` **Object** 
+    -   `options.accessToken` **[String]** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
+    -   `options.profile` **[String]** Routing profile to use. Options: `driving`, `walking`, `cycling` (optional, default `"driving"`)
+    -   `options.unit` **[String]** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
+    -   `options.container` **string or Element** HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
+    -   `options.proximity` **Array&lt;Array&lt;number&gt;&gt;** If set, search results closer to these coordinates will be given higher priority.
+
+**Examples**
+
+```javascript
+var directions = Directions(document.getElementById('directions'), {
+  unit: 'metric',
+  profile: 'walking'
+});
+
+map.addControl(directions);
+```
+
+Returns **Directions** `this`
+
 # addWaypoint
 
 Add a waypoint to the route.
@@ -90,29 +116,3 @@ Change the waypoint at a given index in the route.
 -   `waypoint` **Array&lt;number&gt; or Point** can be a GeoJSON Point Feature or [lng, lat] coordinates.
 
 Returns **Directions** this;
-
-# mapboxgl.Directions
-
-A directions component using Mapbox Directions APi
-
-**Parameters**
-
--   `options` **Object** 
-    -   `options.accessToken` **[String]** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
-    -   `options.profile` **[String]** Routing profile to use. Options: `driving`, `walking`, `cycling` (optional, default `"driving"`)
-    -   `options.unit` **[String]** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
-    -   `options.container` **string or Element** HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
-    -   `options.proximity` **Array&lt;Array&lt;number&gt;&gt;** If set, search results closer to these coordinates will be given higher priority.
-
-**Examples**
-
-```javascript
-var directions = Directions(document.getElementById('directions'), {
-  unit: 'metric',
-  profile: 'walking'
-});
-
-map.addControl(directions);
-```
-
-Returns **Directions** `this`
