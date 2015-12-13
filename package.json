@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/mapbox/mapbox-gl-directions.js.git"
+    "url": "git+ssh://git@github.com/mapbox/mapbox-gl-directions.git"
   },
   "keywords": [
     "directions",
@@ -30,9 +30,9 @@
   "author": "Mapbox",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mapbox/mapbox-gl-directions.js/issues"
+    "url": "https://github.com/mapbox/mapbox-gl-directions/issues"
   },
-  "homepage": "https://github.com/mapbox/mapbox-gl-directions.js#readme",
+  "homepage": "https://github.com/mapbox/mapbox-gl-directions#readme",
   "devDependencies": {
     "babel-eslint": "^4.0.10",
     "babel-plugin-object-assign": "^1.2.1",
