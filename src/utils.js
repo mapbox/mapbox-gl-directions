@@ -1,3 +1,7 @@
+function validCoords(coords) {
+  return coords[0] >= -180 && coords[0] <= 180 && coords[1] >= -90 && coords[1] <= 90;
+}
+
 function coordinateMatch(a, b) {
   a = a.geometry.coordinates;
   b = b.geometry.coordinates;
@@ -44,4 +48,4 @@ const format = {
   }
 };
 
-export default { format, coordinateMatch, createPoint };
+export default { format, coordinateMatch, createPoint, validCoords };
