@@ -1,41 +1,57 @@
 import * as types from '../constants/action_types';
-import { coordinateMatch, createPoint } from '../utils';
+import { coordinateMatch, createPoint, validCoords } from '../utils';
 import MapboxClient from 'mapbox';
 let mapbox;
 
-function originPoint(feature) {
-  return dispatch => {
-    dispatch({
-      type: types.ORIGIN,
-      origin: feature
-    });
-    dispatch(eventEmit('directions.origin', { feature }));
-  };
-}
-
-function destinationPoint(feature) {
-  return dispatch => {
-    dispatch({
-      type: types.DESTINATION,
-      destination: feature
-    });
-    dispatch(eventEmit('directions.destination', { feature }));
-  };
-}
-
-function originResults(query, results) {
+function originResults(results) {
   return {
-    type: types.ORIGIN_INPUT,
-    query,
-    results
+    type: types.ORIGIN_RESULTS,
+    results: results ? results : []
   };
 }
 
-function destinationResults(query, results) {
+function originQuery(query) {
   return {
-    type: types.DESTINATION_INPUT,
-    query,
-    results
+    type: types.ORIGIN_QUERY,
+    query
+  };
+}
+
+function destinationResults(results) {
+  return {
+    type: types.DESTINATION_RESULTS,
+    results: results ? results : []
+  };
+}
+
+function destinationQuery(query) {
+  return {
+    type: types.DESTINATION_QUERY,
+    query
+  };
+}
+
+function originPoint(coordinates) {
+  return (dispatch) => {
+    const origin = createPoint(coordinates, {
+      id: 'origin',
+      'marker-symbol': 'A'
+    });
+
+    dispatch({ type: types.ORIGIN, origin });
+    dispatch(eventEmit('directions.origin', { feature: origin }));
+  };
+}
+
+function destinationPoint(coordinates) {
+  return (dispatch) => {
+    const destination = createPoint(coordinates, {
+      id: 'destination',
+      'marker-symbol': 'B'
+    });
+
+    dispatch({ type: types.DESTINATION, destination });
+    dispatch(eventEmit('directions.destination', { feature: destination }));
   };
 }
 
@@ -53,14 +69,6 @@ function updateWaypoints(waypoints) {
   return {
     type: types.WAYPOINTS,
     waypoints: waypoints
-  };
-}
-
-function reverseInputs(origin, destination) {
-  return {
-    type: types.REVERSE_INPUTS,
-    origin,
-    destination
   };
 }
 
@@ -90,9 +98,10 @@ function geocode(query, callback) {
   };
 }
 
-function fetchDirections(query, profile) {
+function fetchDirections() {
   return (dispatch, getState) => {
-    const { routeIndex } = getState();
+    const { routeIndex, profile } = getState();
+    const query = buildDirectionsQuery(getState);
     return mapbox.getDirections(query, {
       profile: 'mapbox.' + profile,
       geometry: 'polyline'
@@ -103,24 +112,21 @@ function fetchDirections(query, profile) {
       if (!res.routes[routeIndex]) dispatch(setRouteIndex(0));
       dispatch(setDirections(res.routes));
 
-      // Revise origin + destination
-      dispatch(originPoint(Object.assign(res.origin, {
-        properties: {
-          id: 'origin',
-          'marker-symbol': 'A'
-        }
-      })));
-      dispatch(destinationPoint(Object.assign(res.destination, {
-        properties: {
-          id: 'destination',
-          'marker-symbol': 'B'
-        }
-      })));
+      // Revise origin / destination points
+      dispatch(originPoint(res.origin.geometry.coordinates));
+      dispatch(destinationPoint(res.destination.geometry.coordinates));
     });
   };
 }
 
-function buildDirectionsQuery(origin, destination, waypoints) {
+/*
+ * Build query used to fetch directions
+ *
+ * @param {Function} state
+ */
+function buildDirectionsQuery(state) {
+  const { origin, destination, waypoints } = state();
+
   let query = [{
     longitude: origin.geometry.coordinates[0],
     latitude: origin.geometry.coordinates[1]
@@ -220,189 +226,149 @@ export function setRouteIndex(routeIndex) {
   };
 }
 
-export function addOrigin(coordinates) {
+export function originCoordinates(coordinates) {
   return (dispatch, getState) => {
-    const { destination, profile, waypoints } = getState();
-
-    const origin = createPoint(coordinates, {
-      id: 'origin',
-      'marker-symbol': 'A'
-    });
-
-    if (destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, waypoints);
-      dispatch(fetchDirections(query, profile));
-    }
-
-    dispatch(originPoint(origin));
+    const { destination } = getState();
+    dispatch(originPoint(coordinates));
+    if (destination.geometry) dispatch(fetchDirections());
   };
 }
 
-export function addDestination(coordinates) {
+export function destinationCoordinates(coordinates) {
   return (dispatch, getState) => {
-    const { origin, profile, waypoints } = getState();
-    const destination = createPoint(coordinates, {
-      id: 'destination',
-      'marker-symbol': 'B'
-    });
-
-    if (origin.geometry) {
-      const query = buildDirectionsQuery(origin, destination, waypoints);
-      dispatch(fetchDirections(query, profile));
-    }
-
-    dispatch(destinationPoint(destination));
+    const { origin } = getState();
+    dispatch(destinationPoint(coordinates));
+    if (origin.geometry) dispatch(fetchDirections());
   };
 }
 
 export function setProfile(profile) {
   return (dispatch, getState) => {
-    const { origin, destination, waypoints } = getState();
-    if (origin.geometry && destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, waypoints);
-      dispatch(fetchDirections(query, profile));
-    }
-
+    const { origin, destination } = getState();
     dispatch({ type: types.DIRECTIONS_PROFILE, profile });
     dispatch(eventEmit('directions.profile', { profile }));
+    if (origin.geometry && destination.geometry) dispatch(fetchDirections());
   };
 }
 
 export function reverse() {
   return (dispatch, getState) => {
-    const { origin, destination, waypoints, profile } = getState();
+    const state = getState();
 
-    let o = {}, d = {};
+    dispatch(originQuery(state.destinationQuery));
+    dispatch(originResults(state.desintationResults));
+    dispatch(destinationQuery(state.originQuery));
+    dispatch(destinationResults(state.originResults));
 
-    if (destination.geometry) {
-      o = Object.assign(destination, {
-        properties: {
-          id: 'origin',
-          'marker-symbol': 'A'
-        }
-      });
-    }
-
-    if (origin.geometry) {
-      d = Object.assign(origin, {
-        properties: {
-          id: 'destination',
-          'marker-symbol': 'B'
-        }
-      });
-    }
-
-    dispatch(reverseInputs(origin, destination));
-
-    if (origin.geometry && destination.geometry) {
-      const query = buildDirectionsQuery(o, d, waypoints);
-      return dispatch(fetchDirections(query, profile));
-    }
+    if (state.destination.geometry) dispatch(originPoint(state.destination.geometry.coordinates));
+    if (state.origin.geometry) dispatch(destinationPoint(state.origin.geometry.coordinates));
+    if (state.origin.geometry && state.destination.geometry) dispatch(fetchDirections());
   };
 }
 
-// Populates gecode results based on
-// a search string typed by the user from
-// the origin input element
-export function queryOriginInput(query) {
+/*
+ * Set origin from query string
+ *
+ * @param {String} query search string.
+ */
+export function queryOrigin(query) {
   return (dispatch) => {
     dispatch(setLoading('ORIGIN', true));
     return dispatch(geocode(query, (results) => {
       dispatch(setLoading('ORIGIN', false));
-      return dispatch(originResults(query, results));
+      dispatch(originCoordinates(results[0].geometry.coordinates));
+      dispatch(originResults(results));
+      return dispatch(originQuery(query));
     }));
   };
 }
 
-// Populates gecode results based on
-// a search string typed by the user from
-// the destination input element
-export function queryDestinationInput(query) {
+/*
+ * Set destination from query string
+ *
+ * @param {String} query search string.
+ */
+export function queryDestination(query) {
   return (dispatch) => {
     dispatch(setLoading('DESTINATION', true));
     return dispatch(geocode(query, (results) => {
+      dispatch(destinationCoordinates(results[0].geometry.coordinates));
       dispatch(setLoading('DESTINATION', false));
-      return dispatch(destinationResults(query, results));
+      dispatch(destinationResults(results));
+      return dispatch(destinationQuery(query));
     }));
   };
 }
 
-// Populates gecode results and sets the origin object
-// based on [lng,lat] coordinates or string passed from `directions.setOrigin`
-// or from clicking an origin on the map.
-export function queryOrigin(input) {
+/*
+ * Set origin from coordinates
+ *
+ * @param {Array<number>} coordinates [lng, lat] array.
+ */
+export function setOrigin(coords) {
   return (dispatch) => {
-    const query = (typeof input === 'string') ? input : input.join();
+    if (!validCoords(coords)) return dispatch(setError(new Error('Coordinates are not valid')));
     dispatch(setLoading('ORIGIN', true));
-    return dispatch(geocode(query, (results) => {
+    dispatch(originCoordinates(coords));
+    dispatch(originQuery(`${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`));
+    return dispatch(geocode(coords.join(), (results) => {
       dispatch(setLoading('ORIGIN', false));
-      if (!results.length) return;
+      if (!results.length) return {};
       const result = results[0];
-      dispatch(addOrigin(result.geometry.coordinates));
-      return dispatch(originResults(result.place_name, results));
+      if (result.context && result.context.length > 2) dispatch(originQuery(result.place_name));
+      return dispatch(originResults(results));
     }));
   };
 }
 
-// Populates gecode results and sets the destination object
-// based on [lng,lat] coordinates or string passed from `directions.setDestination`
-// or from clicking an destination on the map.
-export function queryDestination(input) {
+/*
+ * Set destination from coordinates
+ *
+ * @param {Array<number>} coords [lng, lat] array.
+ */
+export function setDestination(coords) {
   return (dispatch) => {
-    const query = (typeof input === 'string') ? input : input.join();
+    if (!validCoords(coords)) return dispatch(setError(new Error('Coordinates are not valid')));
     dispatch(setLoading('DESTINATION', true));
-    return dispatch(geocode(query, (results) => {
+    dispatch(destinationCoordinates(coords));
+    dispatch(destinationQuery(`${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`));
+    return dispatch(geocode(coords.join(), (results) => {
       dispatch(setLoading('DESTINATION', false));
-      if (!results.length) return;
+      if (!results.length) return {};
       const result = results[0];
-      dispatch(addDestination(result.geometry.coordinates));
-      return dispatch(destinationResults(result.place_name, results));
+      if (result.context && result.context.length > 2) dispatch(destinationQuery(result.place_name));
+      return dispatch(destinationResults(results));
     }));
   };
 }
 
 export function addWaypoint(index, waypoint) {
   return (dispatch, getState) => {
-    let { origin, destination, waypoints, profile} = getState();
+    let { destination, waypoints } = getState();
     waypoints.splice(index, 0, normalizeWaypoint(waypoint));
-
-    if (destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, waypoints);
-      dispatch(fetchDirections(query, profile));
-    }
-
     dispatch(updateWaypoints(waypoints));
+    if (destination.geometry) dispatch(fetchDirections());
   };
 }
 
 export function setWaypoint(index, waypoint) {
   return (dispatch, getState) => {
-    let { origin, destination, waypoints, profile} = getState();
+    let { destination, waypoints } = getState();
     waypoints[index] = normalizeWaypoint(waypoint);
-
-    if (destination.geometry) {
-      const query = buildDirectionsQuery(origin, destination, waypoints);
-      dispatch(fetchDirections(query, profile));
-    }
-
     dispatch(updateWaypoints(waypoints));
+    if (destination.geometry) dispatch(fetchDirections());
   };
 }
 
 export function removeWaypoint(waypoint) {
   return (dispatch, getState) => {
-    let { origin, destination, waypoints, profile} = getState();
-
+    let { destination, waypoints } = getState();
       waypoints = waypoints.filter((way) => {
         return !coordinateMatch(way, waypoint);
       });
 
-      if (destination.geometry) {
-        const query = buildDirectionsQuery(origin, destination, waypoints);
-        dispatch(fetchDirections(query, profile));
-      }
-
       dispatch(updateWaypoints(waypoints));
+      if (destination.geometry) dispatch(fetchDirections());
   };
 }
 

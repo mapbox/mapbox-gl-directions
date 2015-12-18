@@ -63,15 +63,23 @@ function data(state = initialState, action) {
       waypoints: action.waypoints
     });
 
-  case types.ORIGIN_INPUT:
+  case types.ORIGIN_QUERY:
     return Object.assign({}, state, {
-      originQuery: action.query,
+      originQuery: action.query
+    });
+
+  case types.ORIGIN_RESULTS:
+    return Object.assign({}, state, {
       originResults: action.results
     });
 
-  case types.DESTINATION_INPUT:
+  case types.DESTINATION_QUERY:
     return Object.assign({}, state, {
-      destinationQuery: action.query,
+      destinationQuery: action.query
+    });
+
+  case types.DESTINATION_RESULTS:
+    return Object.assign({}, state, {
       destinationResults: action.results
     });
 
@@ -101,16 +109,6 @@ function data(state = initialState, action) {
   case types.DESTINATION_LOADING:
     return Object.assign({}, state, {
       destinationLoading: action.loading
-    });
-
-  case types.REVERSE_INPUTS:
-    return Object.assign({}, state, {
-      origin: action.origin,
-      originResults: state.destinationResults,
-      originQuery: state.destinationQuery,
-      destination: action.destination,
-      destinationResults: state.originResults,
-      destinationQuery: state.originQuery
     });
 
   case types.DIRECTIONS:

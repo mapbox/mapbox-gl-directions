@@ -52,10 +52,10 @@ export default class Inputs {
 
   onAdd() {
     const {
-      queryOriginInput,
-      queryDestinationInput,
-      addOrigin,
-      addDestination,
+      queryOrigin,
+      queryDestination,
+      originCoordinates,
+      destinationCoordinates,
       clearOrigin,
       clearDestination,
       setProfile,
@@ -76,13 +76,13 @@ export default class Inputs {
 
     // Origin / Destination autosuggest
     this.originInput.addEventListener('keypress', debounce((e) => {
-      queryOriginInput(e.target.value);
-    }), 100);
+      queryOrigin(e.target.value);
+    }), 300);
 
     this.originInput.addEventListener('change', () => {
       if (this.originTypeahead.selected) {
         const coords = this.originTypeahead.selected.center;
-        addOrigin(coords);
+        originCoordinates(coords);
         this.animateToCoordinates('origin', coords);
       }
     });
@@ -91,13 +91,13 @@ export default class Inputs {
     this.destinationClear.addEventListener('click', clearDestination);
 
     this.destinationInput.addEventListener('keypress', debounce((e) => {
-      queryDestinationInput(e.target.value);
-    }), 100);
+      queryDestination(e.target.value);
+    }), 300);
 
     this.destinationInput.addEventListener('change', () => {
       if (this.destinationTypeahead.selected) {
         const coords = this.destinationTypeahead.selected.center;
-        addDestination(coords);
+        destinationCoordinates(coords);
         this.animateToCoordinates('destination', coords);
       }
     });

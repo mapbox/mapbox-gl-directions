@@ -123,7 +123,7 @@ export default class Directions extends mapboxgl.Control {
       const coords = [e.lngLat.lng, e.lngLat.lat];
 
       if (!origin.geometry) {
-        this.actions.queryOrigin(coords);
+        this.actions.setOrigin(coords);
       } else {
         map.featuresAt(e.point, {
           radius: 10,
@@ -151,7 +151,7 @@ export default class Directions extends mapboxgl.Control {
               this.actions.setRouteIndex(index);
             }
           } else {
-            this.actions.queryDestination(coords);
+            this.actions.setDestination(coords);
             this.map.flyTo({ center: coords });
           }
         });
@@ -266,10 +266,10 @@ export default class Directions extends mapboxgl.Control {
 
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          this.actions.addOrigin(coords);
+          this.actions.originCoordinates(coords);
         break;
         case 'directions-destination-point':
-          this.actions.addDestination(coords);
+          this.actions.destinationCoordinates(coords);
         break;
         case 'directions-hover-point':
           this.actions.hoverMarker(coords);
@@ -284,10 +284,10 @@ export default class Directions extends mapboxgl.Control {
     if (this.dragging) {
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          this.actions.queryOrigin(origin.geometry.coordinates);
+          this.actions.setOrigin(origin.geometry.coordinates);
         break;
         case 'directions-destination-point':
-          this.actions.queryDestination(destination.geometry.coordinates);
+          this.actions.setDestination(destination.geometry.coordinates);
         break;
         case 'directions-hover-point':
           // Add waypoint if a sufficent amount of dragging has occurred.
@@ -315,11 +315,16 @@ export default class Directions extends mapboxgl.Control {
 
   /**
    * Sets the origin of the current route.
-   * @param {Array|String} query An array of coordinates [lng, lat] or location name as a string.
+   * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
    * @returns {Directions} this
    */
   setOrigin(query) {
-    this.actions.queryOrigin(query);
+    if (typeof query === 'string') {
+      this.actions.queryOrigin(query);
+    } else {
+      this.actions.setOrigin(query);
+    }
+
     return this;
   }
 
@@ -333,11 +338,16 @@ export default class Directions extends mapboxgl.Control {
 
   /**
    * Sets the destination of the current route.
-   * @param {Array|String} query An array of coordinates [lng, lat] or location name as a string.
+   * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
    * @returns {Directions} this
    */
   setDestination(query) {
-    this.actions.queryDestination(query);
+    if (typeof query === 'string') {
+      this.actions.queryDestination(query);
+    } else {
+      this.actions.setDestination(query);
+    }
+
     return this;
   }
 

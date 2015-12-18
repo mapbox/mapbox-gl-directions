@@ -4,6 +4,7 @@ mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
 var map = new mapboxgl.Map({
   container: 'map',
+  hash: true,
   style: 'mapbox://styles/mapbox/streets-v8',
   center: [-79.4512, 43.6568],
   zoom: 13
@@ -11,7 +12,7 @@ var map = new mapboxgl.Map({
 
 var directions = mapboxgl.Directions({
   unit: 'metric',
-  profile: 'walking',
+  profile: 'cycling',
   container: 'directions'
 });
 
