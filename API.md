@@ -66,7 +66,7 @@ Sets the destination of the current route.
 
 **Parameters**
 
--   `query` **Array or String** An array of coordinates [lng, lat] or location name as a string.
+-   `query` **Array&lt;number&gt; or String** An array of coordinates [lng, lat] or location name as a string.
 
 Returns **Directions** this
 
@@ -76,7 +76,7 @@ Sets the origin of the current route.
 
 **Parameters**
 
--   `query` **Array or String** An array of coordinates [lng, lat] or location name as a string.
+-   `query` **Array&lt;number&gt; or String** An array of coordinates [lng, lat] or location name as a string.
 
 Returns **Directions** this
 
@@ -107,7 +107,7 @@ A directions component using Mapbox Directions APi
 **Examples**
 
 ```javascript
-var directions = mapboxgl.Directions({
+var directions = new mapboxgl.Directions({
   container: 'directions',
   unit: 'metric',
   profile: 'walking'

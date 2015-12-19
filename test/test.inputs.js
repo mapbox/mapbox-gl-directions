@@ -15,7 +15,7 @@ test('Directions#inputControl', tt => {
   function setup(opts) {
     container = document.createElement('div');
     map = new mapboxgl.Map({ container: container });
-    directions = mapboxgl.Directions(opts);
+    directions = new mapboxgl.Directions(opts);
     map.addControl(directions);
   }
 

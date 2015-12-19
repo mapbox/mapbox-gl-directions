@@ -9,7 +9,7 @@
  * @param {string|Element} options.container HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
  * @param {Array<Array<number>>} options.proximity If set, search results closer to these coordinates will be given higher priority.
  * @example
- * var directions = mapboxgl.Directions({
+ * var directions = new mapboxgl.Directions({
  *   container: 'directions',
  *   unit: 'metric',
  *   profile: 'walking'
@@ -20,12 +20,8 @@
  */
 import Directions from './src/directions';
 
-function exportFn(options) {
-  return new Directions(options);
-}
-
 if (window.mapboxgl) {
-  mapboxgl.Directions = exportFn;
+  mapboxgl.Directions = Directions;
 } else if (typeof module !== 'undefined') {
-  module.exports = exportFn;
+  module.exports = Directions;
 }

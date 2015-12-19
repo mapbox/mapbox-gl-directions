@@ -10,7 +10,7 @@ var map = new mapboxgl.Map({
   zoom: 13
 });
 
-var directions = mapboxgl.Directions({
+var directions = new mapboxgl.Directions({
   unit: 'metric',
   profile: 'cycling',
   container: 'directions'
@@ -28,4 +28,8 @@ map.on('load', () => {
     directions.setOrigin('Montreal Quebec');
     directions.setDestination('Toronto');
   });
+});
+
+directions.on('directions.route', function(e) {
+  console.log('fired', e.route);
 });
