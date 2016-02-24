@@ -1,3 +1,7 @@
+## Dependencies
+
+- [node.js](https://nodejs.org/en/) >= 0.12
+
 ## Developing
 
     npm install & npm start & open http://localhost:9966/example/
