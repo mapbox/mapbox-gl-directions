@@ -103,8 +103,9 @@ function fetchDirections() {
     const { routeIndex, profile } = getState();
     const query = buildDirectionsQuery(getState);
     return mapbox.getDirections(query, {
-      profile: 'mapbox.' + profile,
-      geometry: 'polyline'
+      profile: profile,
+      geometry: 'polyline',
+      overview: 'full'
     }, (err, res) => {
       if (err) throw err;
       if (res.error) return dispatch(setError(res.error));
@@ -113,8 +114,8 @@ function fetchDirections() {
       dispatch(setDirections(res.routes));
 
       // Revise origin / destination points
-      dispatch(originPoint(res.origin.geometry.coordinates));
-      dispatch(destinationPoint(res.destination.geometry.coordinates));
+      dispatch(originPoint(res.waypoints[0].location));
+      dispatch(destinationPoint(res.waypoints[res.waypoints.length - 1].location));
     });
   };
 }
