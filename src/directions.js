@@ -182,11 +182,10 @@ export default class Directions extends mapboxgl.Control {
 
       if (directions.length) {
         directions.forEach((feature, index) => {
-
           const lineString = {
             geometry: {
               type: 'LineString',
-              coordinates: decode(feature.geometry, 6).map((c) => {
+              coordinates: decode(feature.geometry, 5).map((c) => {
                 return c.reverse();
               })
             },
@@ -199,18 +198,19 @@ export default class Directions extends mapboxgl.Control {
           geojson.features.push(lineString);
 
           if (index === routeIndex) {
+            // TODO: respect each leg (no need for searching waypoints anymore)
             // Collect any possible waypoints from steps
-            feature.steps.forEach((d) => {
-              if (d.maneuver.type === 'waypoint') {
-                geojson.features.push({
-                  type: 'Feature',
-                  geometry: d.maneuver.location,
-                  properties: {
-                    id: 'waypoint'
-                  }
-                });
-              }
-            });
+            //feature.steps.forEach((d) => {
+              //if (d.maneuver.type === 'waypoint') {
+                //geojson.features.push({
+                  //type: 'Feature',
+                  //geometry: d.maneuver.location,
+                  //properties: {
+                    //id: 'waypoint'
+                  //}
+                //});
+              //}
+            //});
           }
 
         });

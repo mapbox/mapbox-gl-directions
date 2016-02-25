@@ -37,11 +37,11 @@ export default class Instructions {
       }
 
       if (directions.length && shouldRender) {
-        const direction = this.directions = directions[routeIndex];
+        const direction = directions[routeIndex];
         this.container.innerHTML = instructionsTemplate({
           routeIndex,
           routes: directions.length,
-          steps: direction.steps,
+          steps: direction.legs[0].steps, // Todo: Respect all legs
           format: format[unit],
           duration: format[unit](direction.distance),
           distance: format.duration(direction.duration)

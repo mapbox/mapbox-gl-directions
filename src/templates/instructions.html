@@ -18,8 +18,8 @@
         <%
           var distance = step.distance ? format(step.distance) : false;
           var icon = step.maneuver.type.replace(/\s+/g, '-').toLowerCase();
-          var lng = step.maneuver.location.coordinates[0];
-          var lat = step.maneuver.location.coordinates[1];
+          var lng = step.maneuver.location[0];
+          var lat = step.maneuver.location[1];
         %>
         <li
           data-lat='<%= lat %>'
@@ -31,7 +31,7 @@
           </div>
           <% if (step.distance) { %>
             <div class='mapbox-directions-step-distance'>
-              <%= distance %>
+              <%= step.distance %>
             </div>
           <% } %>
         </li>
