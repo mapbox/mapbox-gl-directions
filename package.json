@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "budo example/index.js --serve=example/bundle.js --live -d",
-    "build": "NODE_ENV=production && browserify index.js | uglifyjs -c -m > dist/mapbox-gl-directions.js",
+    "build": "browserify index.js | uglifyjs -c -m > dist/mapbox-gl-directions.js",
     "test": "npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
     "docs": "documentation --format=md > API.md",
     "lint": "eslint --no-eslintrc -c .eslintrc index.js src"
@@ -50,7 +50,7 @@
     "uglify-js": "^2.4.24"
   },
   "peerDependencies": {
-    "mapbox-gl": "^0.11.1"
+    "mapbox-gl": "^0.13.1 || ^0.14.0 || ^0.15.0"
   },
   "dependencies": {
     "lodash.debounce": "^3.1.1",

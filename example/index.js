@@ -1,11 +1,13 @@
-require('../');
+'use strict';
+/* global mapboxgl */
 
+require('../');
 mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
 var map = new mapboxgl.Map({
   container: 'map',
-  hash: true,
   style: 'mapbox://styles/mapbox/streets-v8',
+  hash: true,
   center: [-79.4512, 43.6568],
   zoom: 13
 });
@@ -20,7 +22,6 @@ var button = document.createElement('button');
 button.textContent = 'click me';
 
 map.getContainer().querySelector('.mapboxgl-ctrl-bottom-left').appendChild(button);
-
 map.addControl(directions);
 
 map.on('load', () => {
@@ -28,8 +29,4 @@ map.on('load', () => {
     directions.setOrigin('Montreal Quebec');
     directions.setDestination('Toronto');
   });
-});
-
-directions.on('directions.route', function(e) {
-  console.log('fired', e.route);
 });
