@@ -5,6 +5,7 @@ const initialState = {
   profile: 'driving',
   unit: 'imperial',
   proximity: false,
+  styles: [],
 
   // Container for client registered events
   events: {},

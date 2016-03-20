@@ -8,6 +8,7 @@ mapboxgl.accessToken = process.env.MapboxAccessToken;
 
 // Tests
 require('./test.directions');
+// require('./test.options');
 require('./test.inputs');
 require('./test.instructions');
 

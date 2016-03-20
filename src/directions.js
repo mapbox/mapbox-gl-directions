@@ -56,7 +56,7 @@ export default class Directions extends mapboxgl.Control {
   }
 
   mapState() {
-    const { profile } = store.getState();
+    const { profile, styles } = store.getState();
 
     // Emit any default or option set config
     this.actions.eventEmit('directions.profile', { profile });
@@ -74,6 +74,10 @@ export default class Directions extends mapboxgl.Control {
 
     // Add direction specific styles to the map
     directionsStyle.forEach((style) => { map.addLayer(style); });
+
+    if (styles && styles.length) {
+      styles.forEach((style) => { map.addLayer(style); });
+    }
 
     map.getContainer().addEventListener('mousedown', this.onMouseDown);
     map.getContainer().addEventListener('mousemove', this.onMouseMove, true);
