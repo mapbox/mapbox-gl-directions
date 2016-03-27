@@ -308,7 +308,8 @@ export default class Directions extends mapboxgl.Control {
   }
 
   /**
-   * Sets the origin of the current route.
+   * Sets origin. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+   * to have run.
    * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
    * @returns {Directions} this
    */
@@ -331,7 +332,8 @@ export default class Directions extends mapboxgl.Control {
   }
 
   /**
-   * Sets the destination of the current route.
+   * Sets destination. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+   * to have run.
    * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
    * @returns {Directions} this
    */
@@ -355,7 +357,8 @@ export default class Directions extends mapboxgl.Control {
   }
 
   /**
-   * Add a waypoint to the route.
+   * Add a waypoint to the route. _Note:_ calling this method requires the
+   * [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load) to have run.
    * @param {Number} index position waypoint should be placed in the waypoint array
    * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or [lng, lat] coordinates.
    * @returns {Directions} this;
@@ -367,7 +370,9 @@ export default class Directions extends mapboxgl.Control {
   }
 
   /**
-   * Change the waypoint at a given index in the route.
+   * Change the waypoint at a given index in the route. _Note:_ calling this
+   * method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+   * to have run.
    * @param {Number} index indexed position of the waypoint to update
    * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or [lng, lat] coordinates.
    * @returns {Directions} this;

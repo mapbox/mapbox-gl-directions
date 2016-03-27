@@ -1,6 +1,7 @@
 # addWaypoint
 
-Add a waypoint to the route.
+Add a waypoint to the route. _Note:_ calling this method requires the
+[map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load) to have run.
 
 **Parameters**
 
@@ -62,7 +63,8 @@ Returns **Directions** this
 
 # setDestination
 
-Sets the destination of the current route.
+Sets destination. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+to have run.
 
 **Parameters**
 
@@ -72,7 +74,8 @@ Returns **Directions** this
 
 # setOrigin
 
-Sets the origin of the current route.
+Sets origin. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+to have run.
 
 **Parameters**
 
@@ -82,7 +85,9 @@ Returns **Directions** this
 
 # setWaypoint
 
-Change the waypoint at a given index in the route.
+Change the waypoint at a given index in the route. _Note:_ calling this
+method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+to have run.
 
 **Parameters**
 
@@ -98,6 +103,7 @@ A directions component using Mapbox Directions APi
 **Parameters**
 
 -   `options` **Object** 
+    -   `options.styles` **[Array]** Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
     -   `options.accessToken` **[String]** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
     -   `options.profile` **[String]** Routing profile to use. Options: `driving`, `walking`, `cycling` (optional, default `"driving"`)
     -   `options.unit` **[String]** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
