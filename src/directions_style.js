@@ -72,10 +72,27 @@ const style = [{
     ['in', 'marker-symbol', 'A']
   ],
   'paint': {
-    'circle-radius': 7,
+    'circle-radius': 20,
     'circle-color': '#3bb2d0'
   },
   'interactive': true
+}, {
+  'id': 'directions-origin-label',
+  'type': 'symbol',
+  'source': 'directions',
+  'layout': {
+    'text-field': 'A',
+    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+    'text-size': 12
+  },
+  'paint': {
+    'text-color': '#fff'
+  },
+  'filter': [
+    'all',
+    ['in', '$type', 'Point'],
+    ['in', 'marker-symbol', 'A']
+  ]
 }, {
   'id': 'directions-destination-point',
   'type': 'circle',
@@ -86,10 +103,27 @@ const style = [{
     ['in', 'marker-symbol', 'B']
   ],
   'paint': {
-    'circle-radius': 7,
+    'circle-radius': 20,
     'circle-color': '#8a8bc9'
   },
   'interactive': true
+}, {
+  'id': 'directions-destination-label',
+  'type': 'symbol',
+  'source': 'directions',
+  'layout': {
+    'text-field': 'B',
+    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+    'text-size': 12
+  },
+  'paint': {
+    'text-color': '#fff'
+  },
+  'filter': [
+    'all',
+    ['in', '$type', 'Point'],
+    ['in', 'marker-symbol', 'B']
+  ]
 }];
 
 export default style;

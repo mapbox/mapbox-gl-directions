@@ -87,37 +87,33 @@ export default class Directions extends mapboxgl.Control {
       const { hoverMarker } = store.getState();
 
       // Adjust cursor state on routes
-      map.featuresAt(e.point, {
-        radius: 10,
-        layer: [
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [
           'directions-route-line-alt',
           'directions-route-line'
         ]
-      }, (err, features) => {
-        if (err) throw err;
-        if (features.length) {
-          map.getContainer().classList.add('directions-select');
-        } else {
-          map.getContainer().classList.remove('directions-select');
-        }
       });
+
+      if (features.length) {
+        map.getContainer().classList.add('directions-select');
+      } else {
+        map.getContainer().classList.remove('directions-select');
+      }
 
       // Add a possible waypoint marker
       // when hovering over the active route line
-      map.featuresAt(e.point, {
-        radius: 2,
-        layer: [
+      const wp = map.queryRenderedFeatures(e.point, {
+        layers: [
           'directions-route-line'
         ]
-      }, (err, features) => {
-        if (err) throw err;
-        if (features.length) {
-          const coords = e.lngLat;
-          this.actions.hoverMarker([coords.lng, coords.lat]);
-        } else if (hoverMarker.geometry) {
-          this.actions.hoverMarker(null);
-        }
       });
+
+      if (wp.length) {
+        const coords = e.lngLat;
+        this.actions.hoverMarker([coords.lng, coords.lat]);
+      } else if (hoverMarker.geometry) {
+        this.actions.hoverMarker(null);
+      }
 
     }.bind(this));
 
@@ -129,36 +125,33 @@ export default class Directions extends mapboxgl.Control {
       if (!origin.geometry) {
         this.actions.setOrigin(coords);
       } else {
-        map.featuresAt(e.point, {
-          radius: 10,
-          includeGeometry: true,
-          layer: [
+
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: [
             'directions-origin-point',
             'directions-destination-point',
             'directions-waypoint-point',
             'directions-route-line-alt'
           ]
-        }, (err, features) => {
-          if (err) throw err;
-
-          if (features.length) {
-
-            // Remove any waypoints
-            features.forEach((f) => {
-              if (f.layer.id === 'directions-waypoint-point') {
-                this.actions.removeWaypoint(f);
-              }
-            });
-
-            if (features[0].properties.route === 'alternate') {
-              const index = features[0].properties['route-index'];
-              this.actions.setRouteIndex(index);
-            }
-          } else {
-            this.actions.setDestination(coords);
-            this.map.flyTo({ center: coords });
-          }
         });
+
+        if (features.length) {
+
+          // Remove any waypoints
+          features.forEach((f) => {
+            if (f.layer.id === 'directions-waypoint-point') {
+              this.actions.removeWaypoint(f);
+            }
+          });
+
+          if (features[0].properties.route === 'alternate') {
+            const index = features[0].properties['route-index'];
+            this.actions.setRouteIndex(index);
+          }
+        } else {
+          this.actions.setDestination(coords);
+          this.map.flyTo({ center: coords });
+        }
       }
     }.bind(this));
   }
@@ -236,25 +229,22 @@ export default class Directions extends mapboxgl.Control {
   }
 
   _onMouseDown(e) {
-    this.map.featuresAt(this.mousePos(e), {
-      radius: 10,
-      includeGeometry: true,
-      layer: [
+    const features = this.map.queryRenderedFeatures(this.mousePos(e), {
+      layers: [
         'directions-origin-point',
         'directions-destination-point',
         'directions-hover-point'
       ]
-    }, (err, features) => {
-      if (err) throw err;
-      if (features.length) {
-        this.dragging = features[0];
-        features.forEach((f) => {
-          if (f.layer.id === 'directions-hover-point') {
-            this.actions.removeWaypoint(f);
-          }
-        });
-      }
     });
+
+    if (features.length) {
+      this.dragging = features[0];
+      features.forEach((f) => {
+        if (f.layer.id === 'directions-hover-point') {
+          this.actions.removeWaypoint(f);
+        }
+      });
+    }
   }
 
   _onMouseMove(e) {
