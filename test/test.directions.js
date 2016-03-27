@@ -26,17 +26,17 @@ test('directions', (tt) => {
     directions.setOrigin('Queen Street');
     directions.setDestination([-77, 41]);
 
-    directions.on('directions.origin', once((e) => {
+    directions.on('origin', once((e) => {
       t.ok(directions.getOrigin().type, 'origin feature is present from get');
       t.ok(e.feature, 'origin feature is in the event object');
     }));
 
-    directions.on('directions.destination', once((e) => {
+    directions.on('destination', once((e) => {
       t.ok(directions.getDestination().type, 'destination feature is present from get');
       t.ok(e.feature, 'destination feature is in the event object');
     }));
 
-    directions.on('directions.route', once((e) => {
+    directions.on('route', once((e) => {
       t.ok(e.route, 'routing data was passed');
     }));
 

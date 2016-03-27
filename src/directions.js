@@ -59,7 +59,7 @@ export default class Directions extends mapboxgl.Control {
     const { profile, styles } = store.getState();
 
     // Emit any default or option set config
-    this.actions.eventEmit('directions.profile', { profile });
+    this.actions.eventEmit('profile', { profile });
 
     const map = this.map;
     const geojson = new mapboxgl.GeoJSONSource({
@@ -405,13 +405,13 @@ export default class Directions extends mapboxgl.Control {
   /**
    * Subscribe to events that happen within the plugin.
    * @param {String} type name of event. Available events and the data passed into their respective event objects are:
-   * - __directions.clear__ `{ type: } Type is one of 'origin' or 'destination'`
-   * - __directions.loading__ `{ type: } Type is one of 'origin' or 'destination'`
-   * - __directions.profile__ `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
-   * - __directions.origin__ `{ feature } Fired when origin is set`
-   * - __directions.destination__ `{ feature } Fired when destination is set`
-   * - __directions.route__ `{ route } Fired when a route is updated`
-   * - __directions.error__ `{ error } Error as string
+   * - __clear__ `{ type: } Type is one of 'origin' or 'destination'`
+   * - __loading__ `{ type: } Type is one of 'origin' or 'destination'`
+   * - __profile__ `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
+   * - __origin__ `{ feature } Fired when origin is set`
+   * - __destination__ `{ feature } Fired when destination is set`
+   * - __route__ `{ route } Fired when a route is updated`
+   * - __error__ `{ error } Error as string
    * @param {Function} fn function that's called when the event is emitted.
    * @returns {Directions} this;
    */

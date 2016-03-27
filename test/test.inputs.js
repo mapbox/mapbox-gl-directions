@@ -30,11 +30,11 @@ test('Directions#inputControl', tt => {
       clearEl.dispatchEvent(clickEvent);
     }));
 
-    directions.on('directions.loading', once((e) => {
+    directions.on('loading', once((e) => {
       t.equal(e.type, 'origin', 'origin load event was emitted');
     }));
 
-    directions.on('directions.clear', once((e) => {
+    directions.on('clear', once((e) => {
       t.equal(e.type, 'origin', 'origin input was cleared');
     }));
 
@@ -52,11 +52,11 @@ test('Directions#inputControl', tt => {
       clearEl.dispatchEvent(clickEvent);
     }));
 
-    directions.on('directions.loading', once((e) => {
+    directions.on('loading', once((e) => {
       t.equal(e.type, 'destination', 'destination load event was emitted');
     }));
 
-    directions.on('directions.clear', once((e) => {
+    directions.on('clear', once((e) => {
       t.equal(e.type, 'destination', 'destination input was cleared');
     }));
 
@@ -73,7 +73,7 @@ test('Directions#inputControl', tt => {
     t.equal(drivingEl.checked, false, 'default driving profile should is false');
     t.equal(cyclingEl.checked, true, 'cycling profile is active');
 
-    directions.on('directions.profile', once((e) => {
+    directions.on('profile', once((e) => {
       t.equal(e.profile, 'driving', 'driving profile is set and event emitted');
     }));
 

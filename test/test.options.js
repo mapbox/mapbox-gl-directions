@@ -33,7 +33,7 @@ test('Directions#styles', tt => {
     });
 
     directions.setOrigin([-77, 41]);
-    directions.on('directions.origin', once(() => {
+    directions.on('origin', once(() => {
       map.featuresIn({
         layer: 'origin'
       }, function(err, features) {

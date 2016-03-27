@@ -39,7 +39,7 @@ function originPoint(coordinates) {
     });
 
     dispatch({ type: types.ORIGIN, origin });
-    dispatch(eventEmit('directions.origin', { feature: origin }));
+    dispatch(eventEmit('origin', { feature: origin }));
   };
 }
 
@@ -51,7 +51,7 @@ function destinationPoint(coordinates) {
     });
 
     dispatch({ type: types.DESTINATION, destination });
-    dispatch(eventEmit('directions.destination', { feature: destination }));
+    dispatch(eventEmit('destination', { feature: destination }));
   };
 }
 
@@ -61,7 +61,7 @@ function setDirections(directions) {
       type: types.DIRECTIONS,
       directions
     });
-    dispatch(eventEmit('directions.route', { route: directions }));
+    dispatch(eventEmit('route', { route: directions }));
   };
 }
 
@@ -165,7 +165,7 @@ function setLoading(input, loading) {
       type: input + '_LOADING',
       loading
     });
-    if (loading) dispatch(eventEmit('directions.loading', { type: input.toLowerCase() }));
+    if (loading) dispatch(eventEmit('loading', { type: input.toLowerCase() }));
   };
 }
 
@@ -175,7 +175,7 @@ function setError(error) {
       type: 'ERROR',
       error
     });
-    if (error) dispatch(eventEmit('directions.error', { error: error }));
+    if (error) dispatch(eventEmit('error', { error: error }));
   };
 }
 
@@ -184,7 +184,7 @@ export function clearOrigin() {
     dispatch({
       type: types.ORIGIN_CLEAR
     });
-    dispatch(eventEmit('directions.clear', { type: 'origin' }));
+    dispatch(eventEmit('clear', { type: 'origin' }));
     dispatch(setError(null));
   };
 }
@@ -194,7 +194,7 @@ export function clearDestination() {
     dispatch({
       type: types.DESTINATION_CLEAR
     });
-    dispatch(eventEmit('directions.clear', { type: 'destination' }));
+    dispatch(eventEmit('clear', { type: 'destination' }));
     dispatch(setError(null));
   };
 }
@@ -246,7 +246,7 @@ export function setProfile(profile) {
   return (dispatch, getState) => {
     const { origin, destination } = getState();
     dispatch({ type: types.DIRECTIONS_PROFILE, profile });
-    dispatch(eventEmit('directions.profile', { profile }));
+    dispatch(eventEmit('profile', { profile }));
     if (origin.geometry && destination.geometry) dispatch(fetchDirections());
   };
 }
