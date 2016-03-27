@@ -50,6 +50,11 @@ export default class Inputs {
     }
   }
 
+  nonKeyList(code) {
+    // TAB, ESC, LEFT, RIGHT, ENTER, UP, DOWN
+    return [9, 27, 37, 39, 13, 38, 40].indexOf(code) !== -1;
+  }
+
   onAdd() {
     const {
       queryOrigin,
@@ -75,8 +80,14 @@ export default class Inputs {
     // ============================
 
     // Origin / Destination autosuggest
-    this.originInput.addEventListener('keypress', debounce((e) => {
-      queryOrigin(e.target.value);
+    this.originInput.addEventListener('keydown', debounce((e) => {
+      if (this.nonKeyList(e.keyCode)) return;
+      const v = e.target.value.trim();
+      if (v.length > 2) {
+        queryOrigin(v);
+      } else {
+        this.originClear.classList.remove('active');
+      }
     }), 300);
 
     this.originInput.addEventListener('change', () => {
@@ -87,11 +98,24 @@ export default class Inputs {
       }
     });
 
-    this.originClear.addEventListener('click', clearOrigin);
-    this.destinationClear.addEventListener('click', clearDestination);
+    this.originClear.addEventListener('click', () => {
+      this.originClear.classList.remove('active');
+      clearOrigin();
+    });
 
-    this.destinationInput.addEventListener('keypress', debounce((e) => {
-      queryDestination(e.target.value);
+    this.destinationClear.addEventListener('click', () => {
+      this.destinationClear.classList.remove('active');
+      clearDestination();
+    });
+
+    this.destinationInput.addEventListener('keydown', debounce((e) => {
+      if (this.nonKeyList(e.keyCode)) return;
+      const v = e.target.value.trim();
+      if (v.length > 2) {
+        queryDestination(e.target.value);
+      } else {
+        this.destinationClear.classList.remove('active');
+      }
     }), 300);
 
     this.destinationInput.addEventListener('change', () => {
@@ -134,17 +158,40 @@ export default class Inputs {
         destinationResults
       } = this.store.getState();
 
-      if (!originResults.length) this.originTypeahead.selected = null;
-      if (!destinationResults.length) this.destinationTypeahead.selected = null;
+      if (!originResults.length || !originQuery.length) {
+        this.originTypeahead.clear();
+      }
+
+      if (!destinationResults.length || !destinationQuery.length) {
+        this.destinationTypeahead.clear();
+      }
 
       this.originTypeahead.update(originResults);
       this.destinationTypeahead.update(destinationResults);
 
-      this.originClear.classList.toggle('active', originResults.length);
-      this.destinationClear.classList.toggle('active', destinationResults.length);
+      if (originQuery) {
+        this.originClear.classList.add('active');
+      } else {
+        this.originClear.classList.remove('active');
+      }
 
-      this.originLoading.classList.toggle('active', originLoading);
-      this.destinationLoading.classList.toggle('active', destinationLoading);
+      if (originLoading) {
+        this.originLoading.classList.add('active');
+      } else {
+        this.originLoading.classList.remove('active');
+      }
+
+      if (destinationQuery) {
+        this.destinationClear.classList.add('active');
+      } else {
+        this.destinationClear.classList.remove('active');
+      }
+
+      if (destinationLoading) {
+        this.destinationLoading.classList.add('active');
+      } else {
+        this.destinationLoading.classList.remove('active');
+      }
 
       var onChange = document.createEvent('HTMLEvents');
       onChange.initEvent('change', true, false);
