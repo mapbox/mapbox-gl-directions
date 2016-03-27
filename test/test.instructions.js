@@ -18,7 +18,7 @@ test('Directions#instructionControl', tt => {
     t.plan(2);
     directions.setOrigin([-79, 43]);
     directions.setDestination([-77, 41]);
-    directions.on('directions.route', once((e) => {
+    directions.on('route', once((e) => {
       t.ok(e.route, 'route is emitted');
       t.ok(container.querySelector('.directions-control-directions').textContent, 'instructions are shown');
     }));
@@ -29,7 +29,7 @@ test('Directions#instructionControl', tt => {
     t.plan(1);
     directions.setOrigin('Montreal Quebec');
     directions.setDestination('Toledo Spain');
-    directions.on('directions.error', once((e) => {
+    directions.on('error', once((e) => {
       t.ok(e.error, 'error is emitted');
     }));
   });
