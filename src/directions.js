@@ -86,7 +86,6 @@ export default class Directions extends mapboxgl.Control {
     map.on('mousemove', (e) => {
       const { hoverMarker } = store.getState();
 
-      // Adjust cursor state on routes
       const features = map.queryRenderedFeatures(e.point, {
         layers: [
           'directions-route-line-alt',
