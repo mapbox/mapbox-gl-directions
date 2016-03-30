@@ -53,6 +53,8 @@ export default class Directions extends mapboxgl.Control {
 
     this.subscribedActions();
     map.on('style.load', () => { this.mapState(); });
+
+    this.actions.eventEmit('load', {});
   }
 
   mapState() {
@@ -402,8 +404,9 @@ export default class Directions extends mapboxgl.Control {
   }
 
   /**
-   * Subscribe to events that happen within the plugin.
+   * Subscribe to events.
    * @param {String} type name of event. Available events and the data passed into their respective event objects are:
+   * - __load__ Fired when directions has been added to the map.
    * - __clear__ `{ type: } Type is one of 'origin' or 'destination'`
    * - __loading__ `{ type: } Type is one of 'origin' or 'destination'`
    * - __profile__ `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
@@ -416,6 +419,17 @@ export default class Directions extends mapboxgl.Control {
    */
   on(type, fn) {
     this.actions.eventSubscribe(type, fn);
+    return this;
+  }
+
+  /**
+   * Unsubscribe to events
+   * @param {String} type name of event. Available events are outlined in `on`
+   * @param {Function} fn optional. The function that's called when the event is emitted.
+   * @returns {Directions} this;
+   */
+  off(type, fn) {
+    this.actions.eventUnsubscribe(type, fn);
     return this;
   }
 }

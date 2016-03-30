@@ -4,24 +4,22 @@ const once = require('lodash.once');
 const test = require('tape');
 
 test('Directions#inputControl', tt => {
-  let container, map, directions;
-
   const changeEvent = document.createEvent('HTMLEvents');
   changeEvent.initEvent('change', true, false);
 
   const clickEvent = document.createEvent('HTMLEvents');
   clickEvent.initEvent('click', true, false);
 
-  function setup(opts) {
-    container = document.createElement('div');
-    map = new mapboxgl.Map({ container: container });
-    directions = new mapboxgl.Directions(opts);
-    map.addControl(directions);
-  }
-
   tt.test('origin', t => {
-    setup();
     t.plan(4);
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const map = new mapboxgl.Map({ container: container });
+    const directions = new mapboxgl.Directions();
+    map.addControl(directions);
+
+    console.log(container.innerHTML);
+
     var inputEl = container.querySelector('.js-origin');
     var clearEl = container.querySelector('.js-origin-clear');
     inputEl.addEventListener('change', once(() => {
@@ -39,11 +37,15 @@ test('Directions#inputControl', tt => {
     }));
 
     directions.setOrigin([-79, 43]);
-  });
+  }, 3000);
 
   tt.test('destination', t => {
-    setup();
     t.plan(4);
+    const container = document.createElement('div');
+    const map = new mapboxgl.Map({ container: container });
+    const directions = new mapboxgl.Directions();
+    map.addControl(directions);
+
     var inputEl = container.querySelector('.js-destination');
     var clearEl = container.querySelector('.js-destination-clear');
     inputEl.addEventListener('change', once(() => {
@@ -64,7 +66,13 @@ test('Directions#inputControl', tt => {
   });
 
   tt.test('profiles', t => {
-    setup({ profile: 'cycling' });
+    const container = document.createElement('div');
+    const map = new mapboxgl.Map({ container: container });
+    const directions = new mapboxgl.Directions({
+      profile: 'cycling'
+    });
+    map.addControl(directions);
+
     t.plan(3);
 
     var drivingEl = container.querySelector('#mapbox-directions-profile-driving');

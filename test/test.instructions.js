@@ -4,18 +4,13 @@ const once = require('lodash.once');
 const test = require('tape');
 
 test('Directions#instructionControl', tt => {
-  let container, map, directions;
-
-  function setup(opts) {
-    container = document.createElement('div');
-    map = new mapboxgl.Map({ container: container });
-    directions = new mapboxgl.Directions(opts);
-    map.addControl(directions);
-  }
-
   tt.test('displayed', t => {
-    setup();
     t.plan(2);
+    const container = document.createElement('div');
+    const map = new mapboxgl.Map({ container: container });
+    const directions = new mapboxgl.Directions();
+    map.addControl(directions);
+
     directions.setOrigin([-79, 43]);
     directions.setDestination([-77, 41]);
     directions.on('route', once((e) => {
@@ -25,8 +20,12 @@ test('Directions#instructionControl', tt => {
   });
 
   tt.test('error', t => {
-    setup();
     t.plan(1);
+    const container = document.createElement('div');
+    const map = new mapboxgl.Map({ container: container });
+    const directions = new mapboxgl.Directions();
+    map.addControl(directions);
+
     directions.setOrigin('Montreal Quebec');
     directions.setDestination('Toledo Spain');
     directions.on('error', once((e) => {

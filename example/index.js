@@ -4,8 +4,13 @@
 require('../');
 mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
+var foo = document.createElement('div');
+foo.className = 'map';
+document.body.appendChild(foo);
+
 var map = new mapboxgl.Map({
-  container: 'map',
+  // container: 'map',
+  container: foo,
   style: 'mapbox://styles/mapbox/streets-v8',
   hash: true,
   center: [-79.4512, 43.6568],
@@ -14,8 +19,7 @@ var map = new mapboxgl.Map({
 
 var directions = new mapboxgl.Directions({
   unit: 'metric',
-  profile: 'cycling',
-  container: 'directions'
+  profile: 'cycling'
 });
 
 var button = document.createElement('button');
@@ -30,3 +34,15 @@ map.on('load', () => {
     directions.setDestination('Toronto');
   });
 });
+
+directions.on('load', function() {
+  console.log('hey');
+});
+
+directions.on('origin', bar);
+
+function bar(e) {
+  console.log('bar', e);
+}
+
+// directions.on('origin', bar);
