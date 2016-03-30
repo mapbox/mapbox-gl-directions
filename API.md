@@ -34,13 +34,13 @@ Subscribe to events that happen within the plugin.
 
 **Parameters**
 
--   `type` **String** name of event. Available events and the data passed into their respective event objects are:-   **directions.clear** `{ type: } Type is one of 'origin' or 'destination'`
-    -   **directions.loading** `{ type: } Type is one of 'origin' or 'destination'`
-    -   **directions.profile** `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
-    -   **directions.origin** `{ feature } Fired when origin is set`
-    -   **directions.destination** `{ feature } Fired when destination is set`
-    -   **directions.route** `{ route } Fired when a route is updated`
-    -   **directions.error** `{ error } Error as string
+-   `type` **String** name of event. Available events and the data passed into their respective event objects are:-   **clear** `{ type: } Type is one of 'origin' or 'destination'`
+    -   **loading** `{ type: } Type is one of 'origin' or 'destination'`
+    -   **profile** `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
+    -   **origin** `{ feature } Fired when origin is set`
+    -   **destination** `{ feature } Fired when destination is set`
+    -   **route** `{ route } Fired when a route is updated`
+    -   **error** `{ error } Error as string
 -   `fn` **Function** function that's called when the event is emitted.
 
 Returns **Directions** this;
