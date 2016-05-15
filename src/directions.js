@@ -1,3 +1,5 @@
+if (!mapboxgl) throw new Error('include mapboxgl before mapbox-gl-directions.js');
+
 import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
 import { decode } from 'polyline';

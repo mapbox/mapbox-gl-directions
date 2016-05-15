@@ -49,9 +49,6 @@
     "tape": "^4.2.0",
     "uglify-js": "^2.4.24"
   },
-  "peerDependencies": {
-    "mapbox-gl": "^0.16.0"
-  },
   "dependencies": {
     "lodash.debounce": "^3.1.1",
     "lodash.isequal": "^3.0.4",
