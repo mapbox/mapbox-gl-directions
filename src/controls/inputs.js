@@ -1,6 +1,5 @@
+import 'mapbox-gl-geocoder';
 import template from 'lodash.template';
-import debounce from 'lodash.debounce';
-import typeahead from 'suggestions';
 import extent from 'turf-extent';
 
 let fs = require('fs'); // substack/brfs#39
@@ -50,88 +49,50 @@ export default class Inputs {
     }
   }
 
-  nonKeyList(code) {
-    // TAB, ESC, LEFT, RIGHT, ENTER, UP, DOWN
-    return [9, 27, 37, 39, 13, 38, 40].indexOf(code) !== -1;
-  }
-
   onAdd() {
     const {
-      queryOrigin,
-      queryDestination,
-      originCoordinates,
-      destinationCoordinates,
       clearOrigin,
       clearDestination,
+      originCoordinates,
+      destinationCoordinates,
       setProfile,
       reverse
     } = this.actions;
 
-    this.originInput = this.container.querySelector('.js-origin');
-    this.destinationInput = this.container.querySelector('.js-destination');
+    this.originInput = new mapboxgl.Geocoder({
+      flyTo: false,
+      placeholder: 'Choose a starting place',
+      container: this.container.querySelector('#mapbox-directions-origin-input')
+    });
 
-    this.originClear = this.container.querySelector('.js-origin-clear');
-    this.destinationClear = this.container.querySelector('.js-destination-clear');
+    this.map.addControl(this.originInput);
 
-    this.originLoading = this.container.querySelector('.js-origin-loading');
-    this.destinationLoading = this.container.querySelector('.js-destination-loading');
+    this.destinationInput = new mapboxgl.Geocoder({
+      flyTo: false,
+      placeholder: 'Choose destination',
+      container: this.container.querySelector('#mapbox-directions-destination-input')
+    });
+
+    this.map.addControl(this.destinationInput);
 
     // Events
     // ============================
 
-    // Origin / Destination autosuggest
-    this.originInput.addEventListener('keydown', debounce((e) => {
-      if (this.nonKeyList(e.keyCode)) return;
-      const v = e.target.value.trim();
-      if (v.length > 2) {
-        queryOrigin(v);
-      } else {
-        this.originClear.classList.remove('active');
-      }
-    }), 300);
-
-    this.originInput.addEventListener('change', () => {
-      if (this.originTypeahead.selected) {
-        const coords = this.originTypeahead.selected.center;
-        originCoordinates(coords);
-        this.animateToCoordinates('origin', coords);
-      }
+    this.originInput.on('result', (e) => {
+      const coords = e.result.center;
+      originCoordinates(coords);
+      this.animateToCoordinates('origin', coords);
     });
 
-    this.originClear.addEventListener('click', () => {
-      this.originClear.classList.remove('active');
-      clearOrigin();
+    this.originInput.on('clear', clearOrigin);
+
+    this.destinationInput.on('result', (e) => {
+      const coords = e.result.center;
+      destinationCoordinates(coords);
+      this.animateToCoordinates('destination', coords);
     });
 
-    this.destinationClear.addEventListener('click', () => {
-      this.destinationClear.classList.remove('active');
-      clearDestination();
-    });
-
-    this.destinationInput.addEventListener('keydown', debounce((e) => {
-      if (this.nonKeyList(e.keyCode)) return;
-      const v = e.target.value.trim();
-      if (v.length > 2) {
-        queryDestination(e.target.value);
-      } else {
-        this.destinationClear.classList.remove('active');
-      }
-    }), 300);
-
-    this.destinationInput.addEventListener('change', () => {
-      if (this.destinationTypeahead.selected) {
-        const coords = this.destinationTypeahead.selected.center;
-        destinationCoordinates(coords);
-        this.animateToCoordinates('destination', coords);
-      }
-    });
-
-    this.originTypeahead = new typeahead(this.originInput, []);
-    this.destinationTypeahead = new typeahead(this.destinationInput, []);
-
-    // Filter results by place_name
-    this.originTypeahead.getItemValue = function(item) { return item.place_name; };
-    this.destinationTypeahead.getItemValue = function(item) { return item.place_name; };
+    this.destinationInput.on('clear', clearDestination);
 
     // Driving / Walking / Cycling profiles
     const profiles = this.container.querySelectorAll('input[type="radio"]');
@@ -149,67 +110,17 @@ export default class Inputs {
 
   render() {
     this.store.subscribe(() => {
-      const {
-        originQuery,
-        originLoading,
-        originResults,
-        destinationQuery,
-        destinationLoading,
-        destinationResults
-      } = this.store.getState();
-
-      if (!originResults.length || !originQuery.length) {
-        this.originTypeahead.clear();
-      }
-
-      if (!destinationResults.length || !destinationQuery.length) {
-        this.destinationTypeahead.clear();
-      }
-
-      this.originTypeahead.update(originResults);
-      this.destinationTypeahead.update(destinationResults);
+      const { originQuery, destinationQuery } = this.store.getState();
 
       if (originQuery) {
-        this.originClear.classList.add('active');
-      } else {
-        this.originClear.classList.remove('active');
-      }
-
-      if (originLoading) {
-        this.originLoading.classList.add('active');
-      } else {
-        this.originLoading.classList.remove('active');
+        this.originInput.query(originQuery);
+        this.actions.originQuery(null);
       }
 
       if (destinationQuery) {
-        this.destinationClear.classList.add('active');
-      } else {
-        this.destinationClear.classList.remove('active');
+        this.destinationInput.query(destinationQuery);
+        this.actions.destinationQuery(null);
       }
-
-      if (destinationLoading) {
-        this.destinationLoading.classList.add('active');
-      } else {
-        this.destinationLoading.classList.remove('active');
-      }
-
-      var onChange = document.createEvent('HTMLEvents');
-      onChange.initEvent('change', true, false);
-
-      // Adjust values if input is not :focus
-      // or query remains unchanged.
-      if (this.originInput !== document.activeElement &&
-          this.originInput.value !== originQuery) {
-        this.originInput.value = originQuery;
-        this.originInput.dispatchEvent(onChange);
-      }
-
-      if (this.destinationInput !== document.activeElement &&
-          this.destinationInput.value !== destinationQuery) {
-        this.destinationInput.value = destinationQuery;
-        this.destinationInput.dispatchEvent(onChange);
-      }
-
     });
   }
 }

@@ -85,7 +85,7 @@ export default class Directions extends mapboxgl.Control {
     map.getContainer().addEventListener('mousemove', this.onMouseMove, true);
     map.getContainer().addEventListener('mouseup', this.onMouseUp);
 
-    map.on('mousemove', (e) => {
+    map.on('mousemove', function(e) {
       const { hoverMarker } = store.getState();
 
       const features = map.queryRenderedFeatures(e.point, {
@@ -119,7 +119,7 @@ export default class Directions extends mapboxgl.Control {
     }.bind(this));
 
     // Map event handlers
-    map.on('click', (e) => {
+    map.on('click', function(e) {
       const { origin } = store.getState();
       const coords = [e.lngLat.lng, e.lngLat.lat];
 

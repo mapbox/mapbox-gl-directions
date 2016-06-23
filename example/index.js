@@ -6,8 +6,7 @@ mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
 var map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v8',
-  hash: true,
+  style: 'mapbox://styles/mapbox/streets-v9',
   center: [-79.4512, 43.6568],
   zoom: 13
 });

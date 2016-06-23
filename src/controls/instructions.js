@@ -1,4 +1,4 @@
-import { format } from '../utils';
+import utils from '../utils';
 import template from 'lodash.template';
 import isEqual from 'lodash.isequal';
 
@@ -42,9 +42,9 @@ export default class Instructions {
           routeIndex,
           routes: directions.length,
           steps: direction.steps,
-          format: format[unit],
-          duration: format[unit](direction.distance),
-          distance: format.duration(direction.duration)
+          format: utils.format[unit],
+          duration: utils.format[unit](direction.distance),
+          distance: utils.format.duration(direction.duration)
         });
 
         const steps = this.container.querySelectorAll('.mapbox-directions-step');
