@@ -3,7 +3,7 @@ if (!mapboxgl) throw new Error('include mapboxgl before mapbox-gl-directions.js'
 import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
 import { decode } from 'polyline';
-import { coordinateMatch, createPoint } from './utils';
+import utils from './utils';
 import rootReducer from './reducers';
 
 const storeWithMiddleware = applyMiddleware(thunk)(createStore);
@@ -286,7 +286,7 @@ export default class Directions extends mapboxgl.Control {
         break;
         case 'directions-hover-point':
           // Add waypoint if a sufficent amount of dragging has occurred.
-          if (hoverMarker.geometry && !coordinateMatch(this.dragging, hoverMarker)) {
+          if (hoverMarker.geometry && !utils.coordinateMatch(this.dragging, hoverMarker)) {
             this.actions.addWaypoint(0, hoverMarker);
           }
         break;
@@ -365,7 +365,7 @@ export default class Directions extends mapboxgl.Control {
    * @returns {Directions} this;
    */
   addWaypoint(index, waypoint) {
-    if (!waypoint.type) waypoint = createPoint(waypoint, { id: 'waypoint' });
+    if (!waypoint.type) waypoint = utils.createPoint(waypoint, { id: 'waypoint' });
     this.actions.addWaypoint(index, waypoint);
     return this;
   }
@@ -379,7 +379,7 @@ export default class Directions extends mapboxgl.Control {
    * @returns {Directions} this;
    */
   setWaypoint(index, waypoint) {
-    if (!waypoint.type) waypoint = createPoint(waypoint, { id: 'waypoint' });
+    if (!waypoint.type) waypoint = utils.createPoint(waypoint, { id: 'waypoint' });
     this.actions.setWaypoint(index, waypoint);
     return this;
   }
