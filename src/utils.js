@@ -10,6 +10,12 @@ function coordinateMatch(a, b) {
     a[1].toFixed(3) === b[1].toFixed(3);
 }
 
+function wrap(n) {
+  var d = 180 - -180;
+  var w = ((n - -180) % d + d) % d + -180;
+  return (w === -180) ? 180 : w;
+}
+
 function createPoint(coordinates, properties) {
   return {
     type: 'Feature',
@@ -48,4 +54,4 @@ const format = {
   }
 };
 
-export default { format, coordinateMatch, createPoint, validCoords };
+export default { format, coordinateMatch, createPoint, validCoords, wrap };

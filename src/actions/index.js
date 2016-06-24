@@ -228,7 +228,7 @@ export function reverse() {
  */
 export function setOrigin(coords) {
   return (dispatch) => {
-    if (!utils.validCoords(coords)) return dispatch(setError(new Error('Coordinates are not valid')));
+    if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
     dispatch(queryOrigin(coords));
   };
 }
@@ -240,7 +240,7 @@ export function setOrigin(coords) {
  */
 export function setDestination(coords) {
   return (dispatch) => {
-    if (!utils.validCoords(coords)) return dispatch(setError(new Error('Coordinates are not valid')));
+    if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
     dispatch(queryDestination(coords));
   };
 }
