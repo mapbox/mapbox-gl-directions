@@ -7,6 +7,12 @@ const initialState = {
   proximity: false,
   styles: [],
 
+  // UI controls
+  controls: {
+    inputs: true,
+    instructions: true
+  },
+
   // Container for client registered events
   events: {},
 

@@ -114,12 +114,12 @@ export default class Inputs {
 
       if (originQuery) {
         this.originInput.query(originQuery);
-        this.actions.originQuery(null);
+        this.actions.queryOrigin(null);
       }
 
       if (destinationQuery) {
         this.destinationInput.query(destinationQuery);
-        this.actions.destinationQuery(null);
+        this.actions.queryDestination(null);
       }
     });
   }

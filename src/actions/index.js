@@ -122,14 +122,14 @@ function setError(error) {
   };
 }
 
-export function originQuery(query) {
+export function queryOrigin(query) {
   return {
     type: types.ORIGIN_QUERY,
     query
   };
 }
 
-export function destinationQuery(query) {
+export function queryDestination(query) {
   return {
     type: types.DESTINATION_QUERY,
     query
@@ -212,8 +212,8 @@ export function reverse() {
   return (dispatch, getState) => {
     const state = getState();
 
-    dispatch(originQuery(state.destinationQuery));
-    dispatch(destinationQuery(state.originQuery));
+    dispatch(queryOrigin(state.queryDestination));
+    dispatch(queryDestination(state.queryOrigin));
 
     if (state.destination.geometry) dispatch(originPoint(state.destination.geometry.coordinates));
     if (state.origin.geometry) dispatch(destinationPoint(state.origin.geometry.coordinates));
@@ -229,8 +229,7 @@ export function reverse() {
 export function setOrigin(coords) {
   return (dispatch) => {
     if (!utils.validCoords(coords)) return dispatch(setError(new Error('Coordinates are not valid')));
-    dispatch(originCoordinates(coords));
-    dispatch(originQuery(coords));
+    dispatch(queryOrigin(coords));
   };
 }
 
@@ -242,8 +241,7 @@ export function setOrigin(coords) {
 export function setDestination(coords) {
   return (dispatch) => {
     if (!utils.validCoords(coords)) return dispatch(setError(new Error('Coordinates are not valid')));
-    dispatch(destinationCoordinates(coords));
-    dispatch(destinationQuery(coords));
+    dispatch(queryDestination(coords));
   };
 }
 

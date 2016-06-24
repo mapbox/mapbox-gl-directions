@@ -33,25 +33,26 @@ export default class Directions extends mapboxgl.Control {
   onAdd(map) {
     this.map = map;
 
-    const { container } = store.getState();
+    const { container, controls } = store.getState();
 
     this.container = container ? typeof container === 'string' ?
       document.getElementById(container) : container : this.map.getContainer();
 
+    // Add controls to the page
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';
+    new Inputs(inputEl, store, this.actions, this.map);
+
     const directionsEl = document.createElement('div');
     directionsEl.className = 'directions-control-directions-container';
 
-    this.container.appendChild(inputEl);
-    this.container.appendChild(directionsEl);
-
-    // Add controllers to the page
-    new Inputs(inputEl, store, this.actions, this.map);
     new Instructions(directionsEl, store, {
       hoverMarker: this.actions.hoverMarker,
       setRouteIndex: this.actions.setRouteIndex
     }, this.map);
+
+    if (controls.inputs) this.container.appendChild(inputEl);
+    if (controls.instructions) this.container.appendChild(directionsEl);
 
     this.subscribedActions();
     map.on('style.load', () => { this.mapState(); });
@@ -406,6 +407,7 @@ export default class Directions extends mapboxgl.Control {
   /**
    * Subscribe to events that happen within the plugin.
    * @param {String} type name of event. Available events and the data passed into their respective event objects are:
+   *
    * - __clear__ `{ type: } Type is one of 'origin' or 'destination'`
    * - __loading__ `{ type: } Type is one of 'origin' or 'destination'`
    * - __profile__ `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
