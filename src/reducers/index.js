@@ -26,13 +26,6 @@ const initialState = {
   originQuery: '',
   destinationQuery: '',
 
-  originLoading: false,
-  destinationLoading: false,
-
-  // Feature results returned from geocoder.
-  originResults: [],
-  destinationResults: [],
-
   // Directions data
   directions: [],
   routeIndex: 0
@@ -75,26 +68,15 @@ function data(state = initialState, action) {
       originQuery: action.query
     });
 
-  case types.ORIGIN_RESULTS:
-    return Object.assign({}, state, {
-      originResults: action.results
-    });
-
   case types.DESTINATION_QUERY:
     return Object.assign({}, state, {
       destinationQuery: action.query
-    });
-
-  case types.DESTINATION_RESULTS:
-    return Object.assign({}, state, {
-      destinationResults: action.results
     });
 
   case types.ORIGIN_CLEAR:
     return Object.assign({}, state, {
       origin: {},
       originQuery: '',
-      originResults: [],
       waypoints: [],
       directions: []
     });
@@ -103,19 +85,8 @@ function data(state = initialState, action) {
     return Object.assign({}, state, {
       destination: {},
       destinationQuery: '',
-      destinationResults: [],
       waypoints: [],
       directions: []
-    });
-
-  case types.ORIGIN_LOADING:
-    return Object.assign({}, state, {
-      originLoading: action.loading
-    });
-
-  case types.DESTINATION_LOADING:
-    return Object.assign({}, state, {
-      destinationLoading: action.loading
     });
 
   case types.DIRECTIONS:

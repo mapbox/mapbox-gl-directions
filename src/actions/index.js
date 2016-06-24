@@ -229,6 +229,7 @@ export function reverse() {
 export function setOrigin(coords) {
   return (dispatch) => {
     if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
+    if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
     dispatch(queryOrigin(coords));
   };
 }
@@ -241,6 +242,7 @@ export function setOrigin(coords) {
 export function setDestination(coords) {
   return (dispatch) => {
     if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
+    if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
     dispatch(queryDestination(coords));
   };
 }

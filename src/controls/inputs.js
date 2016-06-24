@@ -105,7 +105,12 @@ export default class Inputs {
     // Reversing Origin / Destination
     this.container
       .querySelector('.js-reverse-inputs')
-      .addEventListener('click', reverse);
+      .addEventListener('click', () => {
+        const { origin, destination } = this.store.getState();
+        if (origin) this.actions.setDestination(origin.geometry.coordinates);
+        if (destination) this.actions.setOrigin(destination.geometry.coordinates);
+        reverse();
+      });
   }
 
   render() {
