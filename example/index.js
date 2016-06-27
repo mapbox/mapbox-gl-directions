@@ -26,7 +26,7 @@ map.addControl(directions);
 
 map.on('load', () => {
   button.addEventListener('click', function() {
-    directions.setOrigin('Montreal Quebec');
-    directions.setDestination('Toronto');
+    directions.setOrigin([-79.4512, 43.6568]);
+    directions.setDestination('Montreal Quebec');
   });
 });

@@ -367,23 +367,6 @@
   font-size:20px;
   line-height:25px;
   }
-.mapbox-directions-steps {
-  position:relative;
-  list-style:none;
-  margin:0;
-  padding:0;
-  }
-
-.mapbox-directions-step {
-  position:relative;
-  color:rgba(255,255,255,.75);
-  cursor:pointer;
-  padding:20px 20px 20px 40px;
-  font-size:20px;
-  line-height:25px;
-  }
-  .mapbox-directions-step * { pointer-events:none; }
-
 .mapbox-directions-step-distance {
   color:rgba(255,255,255,.5);
   position:absolute;
@@ -392,24 +375,36 @@
   left:30px;
   bottom:-15px;
   }
-
-.mapbox-directions-step:hover {
-  color:white;
+.mapbox-directions-steps {
+  position:relative;
+  list-style:none;
+  margin:0;
+  padding:0;
   }
-
-.mapbox-directions-step:after {
-  content:'';
-  position:absolute;
-  top:50px;
-  bottom:-20px;
-  border-left:2px dotted rgba(255,255,255,.2);
-  left:20px;
-  }
-
-.mapbox-directions-step:last-child:after,
-.mapbox-directions-step:last-child .mapbox-directions-step-distance {
-  display:none;
-  }
+  .mapbox-directions-step {
+    position:relative;
+    color:rgba(255,255,255,.75);
+    cursor:pointer;
+    padding:20px 20px 20px 40px;
+    font-size:20px;
+    line-height:25px;
+    }
+    .mapbox-directions-step * { pointer-events:none; }
+    .mapbox-directions-step:hover {
+      color:white;
+      }
+    .mapbox-directions-step:after {
+      content:'';
+      position:absolute;
+      top:50px;
+      bottom:-20px;
+      border-left:2px dotted rgba(255,255,255,.2);
+      left:20px;
+      }
+    .mapbox-directions-step:last-child:after,
+    .mapbox-directions-step:last-child .mapbox-directions-step-distance {
+      display:none;
+      }
 
 .mapbox-marker-drag-icon {
   display:block;
@@ -417,43 +412,9 @@
   border-radius:50%;
   box-shadow:0 0 5px 0 rgba(0,0,0,0.5);
   }
-.mapbox-marker-drag-icon-step {
-  background-color:#3BB2D0;
-  }
-
-/* Auto suggestions */
-.directions-control-inputs {
-  position:relative;
-  }
-  .directions-control-inputs ul {
-    background-color:#fff;
-    left:0;
-    list-style:none;
-    margin:0;
-    padding:0;
-    position:absolute;
-    width:100%;
-    top:100%;
-    z-index:1000;
-    overflow:hidden;
-    font-size:12px;
+  .mapbox-marker-drag-icon-step {
+    background-color:#3BB2D0;
     }
-    .mapbox-directions-inputs ul > li > a {
-      clear:both;
-      cursor:default;
-      display:block;
-      padding:5px 10px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-      }
-      .mapbox-directions-inputs ul > li.active > a,
-      .mapbox-directions-inputs ul > li > a:hover {
-        background-color:#eee;
-        text-decoration:none;
-        cursor:pointer;
-        }
 
 .mapbox-directions-clearfix:after {
   content:'';

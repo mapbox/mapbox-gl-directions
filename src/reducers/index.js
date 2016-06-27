@@ -23,8 +23,10 @@ const initialState = {
   waypoints: [],
 
   // User input strings or result returned from geocoder
-  originQuery: '',
-  destinationQuery: '',
+  originQuery: null,
+  destinationQuery: null,
+  originQueryCoordinates: null,
+  destinationQueryCoordinates: null,
 
   // Directions data
   directions: [],
@@ -71,6 +73,16 @@ function data(state = initialState, action) {
   case types.DESTINATION_QUERY:
     return Object.assign({}, state, {
       destinationQuery: action.query
+    });
+
+  case types.ORIGIN_FROM_COORDINATES:
+    return Object.assign({}, state, {
+      originQueryCoordinates: action.coordinates
+    });
+
+  case types.DESTINATION_FROM_COORDINATES:
+    return Object.assign({}, state, {
+      destinationQueryCoordinates: action.coordinates
     });
 
   case types.ORIGIN_CLEAR:

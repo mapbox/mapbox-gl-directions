@@ -125,7 +125,7 @@ export default class Directions extends mapboxgl.Control {
       const coords = [e.lngLat.lng, e.lngLat.lat];
 
       if (!origin.geometry) {
-        this.actions.setOrigin(coords);
+        this.actions.setOriginFromCoordinates(coords);
       } else {
 
         const features = map.queryRenderedFeatures(e.point, {
@@ -151,7 +151,7 @@ export default class Directions extends mapboxgl.Control {
             this.actions.setRouteIndex(index);
           }
         } else {
-          this.actions.setDestination(coords);
+          this.actions.setDestinationFromCoordinates(coords);
           this.map.flyTo({ center: coords });
         }
       }
@@ -262,10 +262,10 @@ export default class Directions extends mapboxgl.Control {
 
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          this.actions.originCoordinates(coords);
+          this.actions.createOrigin(coords);
         break;
         case 'directions-destination-point':
-          this.actions.destinationCoordinates(coords);
+          this.actions.createDestination(coords);
         break;
         case 'directions-hover-point':
           this.actions.hoverMarker(coords);
@@ -280,10 +280,10 @@ export default class Directions extends mapboxgl.Control {
     if (this.dragging) {
       switch (this.dragging.layer.id) {
         case 'directions-origin-point':
-          this.actions.setOrigin(origin.geometry.coordinates);
+          this.actions.setOriginFromCoordinates(origin.geometry.coordinates);
         break;
         case 'directions-destination-point':
-          this.actions.setDestination(destination.geometry.coordinates);
+          this.actions.setDestinationFromCoordinates(destination.geometry.coordinates);
         break;
         case 'directions-hover-point':
           // Add waypoint if a sufficent amount of dragging has occurred.
@@ -319,7 +319,7 @@ export default class Directions extends mapboxgl.Control {
     if (typeof query === 'string') {
       this.actions.queryOrigin(query);
     } else {
-      this.actions.setOrigin(query);
+      this.actions.setOriginFromCoordinates(query);
     }
 
     return this;
@@ -343,7 +343,7 @@ export default class Directions extends mapboxgl.Control {
     if (typeof query === 'string') {
       this.actions.queryDestination(query);
     } else {
-      this.actions.setDestination(query);
+      this.actions.setDestinationFromCoordinates(query);
     }
 
     return this;

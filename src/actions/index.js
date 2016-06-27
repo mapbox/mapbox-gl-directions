@@ -136,6 +136,20 @@ export function queryDestination(query) {
   };
 }
 
+export function queryOriginCoordinates(coords) {
+  return {
+    type: types.ORIGIN_FROM_COORDINATES,
+    coordinates: coords
+  };
+}
+
+export function queryDestinationCoordinates(coords) {
+  return {
+    type: types.DESTINATION_FROM_COORDINATES,
+    coordinates: coords
+  };
+}
+
 export function clearOrigin() {
   return dispatch => {
     dispatch({
@@ -183,7 +197,7 @@ export function setRouteIndex(routeIndex) {
   };
 }
 
-export function originCoordinates(coordinates) {
+export function createOrigin(coordinates) {
   return (dispatch, getState) => {
     const { destination } = getState();
     dispatch(originPoint(coordinates));
@@ -191,7 +205,7 @@ export function originCoordinates(coordinates) {
   };
 }
 
-export function destinationCoordinates(coordinates) {
+export function createDestination(coordinates) {
   return (dispatch, getState) => {
     const { origin } = getState();
     dispatch(destinationPoint(coordinates));
@@ -211,10 +225,6 @@ export function setProfile(profile) {
 export function reverse() {
   return (dispatch, getState) => {
     const state = getState();
-
-    dispatch(queryOrigin(state.queryDestination));
-    dispatch(queryDestination(state.queryOrigin));
-
     if (state.destination.geometry) dispatch(originPoint(state.destination.geometry.coordinates));
     if (state.origin.geometry) dispatch(destinationPoint(state.origin.geometry.coordinates));
     if (state.origin.geometry && state.destination.geometry) dispatch(fetchDirections());
@@ -226,11 +236,12 @@ export function reverse() {
  *
  * @param {Array<number>} coordinates [lng, lat] array.
  */
-export function setOrigin(coords) {
+export function setOriginFromCoordinates(coords) {
   return (dispatch) => {
     if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
     if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
-    dispatch(queryOrigin(coords));
+    dispatch(queryOriginCoordinates(coords));
+    dispatch(createOrigin(coords));
   };
 }
 
@@ -239,11 +250,12 @@ export function setOrigin(coords) {
  *
  * @param {Array<number>} coords [lng, lat] array.
  */
-export function setDestination(coords) {
+export function setDestinationFromCoordinates(coords) {
   return (dispatch) => {
     if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
     if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
-    dispatch(queryDestination(coords));
+    dispatch(createDestination(coords));
+    dispatch(queryDestinationCoordinates(coords));
   };
 }
 

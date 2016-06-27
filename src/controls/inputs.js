@@ -1,5 +1,6 @@
 import 'mapbox-gl-geocoder';
 import template from 'lodash.template';
+import isEqual from 'lodash.isequal';
 import extent from 'turf-extent';
 
 let fs = require('fs'); // substack/brfs#39
@@ -36,14 +37,17 @@ export default class Inputs {
   animateToCoordinates(mode, coords) {
     const { origin, destination } = this.store.getState();
 
-    if (origin.type && destination.type) {
+    if (origin.geometry &&
+        destination.geometry &&
+        !isEqual(origin.geometry, destination.geometry)) {
+
       // Animate map to fit bounds.
       const bb = extent({
         type: 'FeatureCollection',
         features: [origin, destination]
       });
 
-      this.map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 40 });
+      this.map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
     } else {
       this.map.flyTo({ center: coords });
     }
@@ -53,8 +57,8 @@ export default class Inputs {
     const {
       clearOrigin,
       clearDestination,
-      originCoordinates,
-      destinationCoordinates,
+      createOrigin,
+      createDestination,
       setProfile,
       reverse
     } = this.actions;
@@ -75,12 +79,9 @@ export default class Inputs {
 
     this.map.addControl(this.destinationInput);
 
-    // Events
-    // ============================
-
     this.originInput.on('result', (e) => {
       const coords = e.result.center;
-      originCoordinates(coords);
+      createOrigin(coords);
       this.animateToCoordinates('origin', coords);
     });
 
@@ -88,7 +89,7 @@ export default class Inputs {
 
     this.destinationInput.on('result', (e) => {
       const coords = e.result.center;
-      destinationCoordinates(coords);
+      createDestination(coords);
       this.animateToCoordinates('destination', coords);
     });
 
@@ -107,15 +108,20 @@ export default class Inputs {
       .querySelector('.js-reverse-inputs')
       .addEventListener('click', () => {
         const { origin, destination } = this.store.getState();
-        if (origin) this.actions.setDestination(origin.geometry.coordinates);
-        if (destination) this.actions.setOrigin(destination.geometry.coordinates);
+        if (origin) this.actions.queryDestination(origin.geometry.coordinates);
+        if (destination) this.actions.queryOrigin(destination.geometry.coordinates);
         reverse();
       });
   }
 
   render() {
     this.store.subscribe(() => {
-      const { originQuery, destinationQuery } = this.store.getState();
+      const {
+        originQuery,
+        destinationQuery,
+        originQueryCoordinates,
+        destinationQueryCoordinates
+      } = this.store.getState();
 
       if (originQuery) {
         this.originInput.query(originQuery);
@@ -125,6 +131,18 @@ export default class Inputs {
       if (destinationQuery) {
         this.destinationInput.query(destinationQuery);
         this.actions.queryDestination(null);
+      }
+
+      if (originQueryCoordinates) {
+        this.originInput.setInput(originQueryCoordinates);
+        this.animateToCoordinates('origin', originQueryCoordinates);
+        this.actions.queryOriginCoordinates(null);
+      }
+
+      if (destinationQueryCoordinates) {
+        this.destinationInput.setInput(destinationQueryCoordinates);
+        this.animateToCoordinates('destination', destinationQueryCoordinates);
+        this.actions.queryDestinationCoordinates(null);
       }
     });
   }
