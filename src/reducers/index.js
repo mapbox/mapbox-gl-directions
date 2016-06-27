@@ -2,6 +2,7 @@ import * as types from '../constants/action_types.js';
 
 const initialState = {
   // Options set on initialization
+  api: 'https://api.mapbox.com/v4/directions/',
   profile: 'driving',
   unit: 'imperial',
   proximity: false,

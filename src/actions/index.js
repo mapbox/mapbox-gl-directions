@@ -1,7 +1,7 @@
 import * as types from '../constants/action_types';
 import utils from '../utils';
-import MapboxClient from 'mapbox';
-let mapbox;
+import request from 'request';
+let getDirections;
 
 function originPoint(coordinates) {
   return (dispatch) => {
@@ -53,21 +53,46 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { routeIndex, profile } = getState();
+    if (getDirections) getDirections.abort();
+    const { api, accessToken, routeIndex, profile } = getState();
     const query = buildDirectionsQuery(getState);
-    return mapbox.getDirections(query, {
-      profile: 'mapbox.' + profile,
-      geometry: 'polyline'
-    }, (err, res) => {
-      if (err) throw err;
-      if (res.error) return dispatch(setError(res.error));
+
+    var options = {
+      geometry: 'polyline',
+      instructions: 'text',
+      alternatives: true,
+      steps: true
+    };
+
+    options.access_token = accessToken ? accessToken : mapboxgl.accessToken;
+
+    getDirections = request({
+      url: `${api}mapbox.${profile}/${query}.json`,
+      qs: options,
+      json: true
+    }, function(err, res, body) {
+      if (err) {
+        dispatch(setDirections([]));
+        return dispatch(setError(err.message));
+      }
+
+      if (body.message) {
+        dispatch(setDirections([]));
+        return dispatch(setError(body.message));
+      }
+
+      if (body.error) {
+        dispatch(setDirections([]));
+        return dispatch(setError(body.error));
+      }
+
       dispatch(setError(null));
-      if (!res.routes[routeIndex]) dispatch(setRouteIndex(0));
-      dispatch(setDirections(res.routes));
+      if (!body.routes[routeIndex]) dispatch(setRouteIndex(0));
+      dispatch(setDirections(body.routes));
 
       // Revise origin / destination points
-      dispatch(originPoint(res.origin.geometry.coordinates));
-      dispatch(destinationPoint(res.destination.geometry.coordinates));
+      dispatch(originPoint(body.origin.geometry.coordinates));
+      dispatch(destinationPoint(body.destination.geometry.coordinates));
     });
   };
 }
@@ -80,27 +105,20 @@ function fetchDirections() {
 function buildDirectionsQuery(state) {
   const { origin, destination, waypoints } = state();
 
-  let query = [{
-    longitude: origin.geometry.coordinates[0],
-    latitude: origin.geometry.coordinates[1]
-  }];
+  let query = [];
+  query = query.concat(origin.geometry.coordinates);
+  query.push(';');
 
   // Add any waypoints.
   if (waypoints.length) {
     waypoints.forEach((waypoint) => {
-      query.push({
-        longitude: waypoint.geometry.coordinates[0],
-        latitude: waypoint.geometry.coordinates[1]
-      });
+      query = query.concat(waypoint.geometery.coordinates);
+      query.push(';');
     });
   }
 
-  query.push({
-    longitude: destination.geometry.coordinates[0],
-    latitude: destination.geometry.coordinates[1]
-  });
-
-  return query;
+  query = query.concat(destination.geometry.coordinates);
+  return encodeURIComponent(query.join());
 }
 
 function normalizeWaypoint(waypoint) {
@@ -171,12 +189,6 @@ export function clearDestination() {
 }
 
 export function setOptions(options) {
-  const accessToken = (options.accessToken) ?
-    options.accessToken :
-    mapboxgl.accessToken;
-
-  mapbox = new MapboxClient(accessToken);
-
   return {
     type: types.SET_OPTIONS,
     options: options

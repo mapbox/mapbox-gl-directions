@@ -181,6 +181,7 @@
     right:0;
     bottom:0;
     overflow:auto;
+    overflow-x:hidden;
     }
   .directions-control.directions-control-inputs {
     top:10px;
