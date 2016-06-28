@@ -112,7 +112,7 @@ function buildDirectionsQuery(state) {
   // Add any waypoints.
   if (waypoints.length) {
     waypoints.forEach((waypoint) => {
-      query = query.concat(waypoint.geometery.coordinates);
+      query = query.concat(waypoint.geometry.coordinates);
       query.push(';');
     });
   }
