@@ -198,13 +198,15 @@ export default class Directions extends mapboxgl.Control {
       this.map.dragPan.disable();
 
       // Add a possible waypoint marker when hovering over the active route line
-      if (this.isCursorOverPoint.layer.id === 'directions-route-line') {
-        this.actions.hoverMarker([e.lngLat.lng, e.lngLat.lat]);
-      } else if (hoverMarker.geometry) {
-        this.actions.hoverMarker(null);
-      }
+      features.forEach((feature) => {
+        if (feature.layer.id === 'directions-route-line') {
+          this.actions.hoverMarker([e.lngLat.lng, e.lngLat.lat]);
+        } else if (hoverMarker.geometry) {
+          this.actions.hoverMarker(null);
+        }
+      });
 
-    } else {
+    } else if (this.isCursorOverPoint) {
       this.isCursorOverPoint = false;
       this.map.dragPan.enable();
     }
@@ -213,14 +215,9 @@ export default class Directions extends mapboxgl.Control {
   _onMouseDown() {
     if (!this.isCursorOverPoint) return;
     this.isDragging = this.isCursorOverPoint;
-
-    if (this.isDragging.layer.id === 'directions-hover-point') {
-      return this.actions.removeWaypoint(this.isDragging);
-    }
-
     this.map.getCanvas().style.cursor = 'grab';
-    this.map.on('mousemove', (ev) => this._onMouseMove(ev));
-    this.map.on('mouseup', (ev) => this._onMouseUp(ev));
+    this.map.on('mousemove', (e) => this._onMouseMove(e));
+    this.map.on('mouseup', (e) => this._onMouseUp(e));
   }
 
   _onMouseMove(e) {
