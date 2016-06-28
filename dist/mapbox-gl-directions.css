@@ -153,14 +153,6 @@
   box-shadow:0 0 0 2px rgba(0,0,0,0.1);
   border-radius:3px;
   }
-.directions-select .mapboxgl-canvas-container.mapboxgl-interactive {
-  cursor:pointer;
-  }
-.directions-drag .mapboxgl-canvas-container.mapboxgl-interactive {
-  cursor:-webkit-grabbing;
-  cursor:-moz-grabbing;
-  cursor:grabbing;
-  }
 
 .directions-control {
   font:15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;

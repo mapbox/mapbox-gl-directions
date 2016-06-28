@@ -21,13 +21,8 @@ export default class Directions extends mapboxgl.Control {
 
   constructor(options) {
     super();
-
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
-
-    this.onMouseDown = this._onMouseDown.bind(this);
-    this.onMouseMove = this._onMouseMove.bind(this);
-    this.onMouseUp = this._onMouseUp.bind(this);
   }
 
   onAdd(map) {
@@ -55,7 +50,7 @@ export default class Directions extends mapboxgl.Control {
     if (controls.instructions) this.container.appendChild(directionsEl);
 
     this.subscribedActions();
-    map.on('style.load', () => { this.mapState(); });
+    map.on('style.load', () => this.mapState());
   }
 
   mapState() {
@@ -76,86 +71,13 @@ export default class Directions extends mapboxgl.Control {
     map.addSource('directions', geojson);
 
     // Add direction specific styles to the map
-    directionsStyle.forEach((style) => { map.addLayer(style); });
+    directionsStyle.forEach((style) => map.addLayer(style));
 
-    if (styles && styles.length) {
-      styles.forEach((style) => { map.addLayer(style); });
-    }
+    if (styles && styles.length) styles.forEach((style) => map.addLayer(style));
 
-    map.getContainer().addEventListener('mousedown', this.onMouseDown);
-    map.getContainer().addEventListener('mousemove', this.onMouseMove, true);
-    map.getContainer().addEventListener('mouseup', this.onMouseUp);
-
-    map.on('mousemove', function(e) {
-      const { hoverMarker } = store.getState();
-
-      const features = map.queryRenderedFeatures(e.point, {
-        layers: [
-          'directions-route-line-alt',
-          'directions-route-line'
-        ]
-      });
-
-      if (features.length) {
-        map.getContainer().classList.add('directions-select');
-      } else {
-        map.getContainer().classList.remove('directions-select');
-      }
-
-      // Add a possible waypoint marker
-      // when hovering over the active route line
-      const wp = map.queryRenderedFeatures(e.point, {
-        layers: [
-          'directions-route-line'
-        ]
-      });
-
-      if (wp.length) {
-        const coords = e.lngLat;
-        this.actions.hoverMarker([coords.lng, coords.lat]);
-      } else if (hoverMarker.geometry) {
-        this.actions.hoverMarker(null);
-      }
-
-    }.bind(this));
-
-    // Map event handlers
-    map.on('click', function(e) {
-      const { origin } = store.getState();
-      const coords = [e.lngLat.lng, e.lngLat.lat];
-
-      if (!origin.geometry) {
-        this.actions.setOriginFromCoordinates(coords);
-      } else {
-
-        const features = map.queryRenderedFeatures(e.point, {
-          layers: [
-            'directions-origin-point',
-            'directions-destination-point',
-            'directions-waypoint-point',
-            'directions-route-line-alt'
-          ]
-        });
-
-        if (features.length) {
-
-          // Remove any waypoints
-          features.forEach((f) => {
-            if (f.layer.id === 'directions-waypoint-point') {
-              this.actions.removeWaypoint(f);
-            }
-          });
-
-          if (features[0].properties.route === 'alternate') {
-            const index = features[0].properties['route-index'];
-            this.actions.setRouteIndex(index);
-          }
-        } else {
-          this.actions.setDestinationFromCoordinates(coords);
-          this.map.flyTo({ center: coords });
-        }
-      }
-    }.bind(this));
+    map.on('mousedown', () => this._onMouseDown(), true);
+    map.on('mousemove', (e) => this._mouseMove(e));
+    map.on('click', (e) => this._click(e));
   }
 
   subscribedActions() {
@@ -215,87 +137,133 @@ export default class Directions extends mapboxgl.Control {
         });
       }
 
-      if (this.map.style) {
-        this.map.getSource('directions').setData(geojson);
-      }
+      if (this.map.style) this.map.getSource('directions').setData(geojson);
     });
   }
 
-  mousePos(e) {
-    const el = this.map.getContainer();
-    const rect = el.getBoundingClientRect();
-    return new mapboxgl.Point(
-      e.clientX - rect.left - el.clientLeft,
-      e.clientY - rect.top - el.clientTop
-    );
+  _click(e) {
+    const { origin } = store.getState();
+    const coords = [e.lngLat.lng, e.lngLat.lat];
+
+    if (!origin.geometry) {
+      this.actions.setOriginFromCoordinates(coords);
+    } else {
+
+      const features = this.map.queryRenderedFeatures(e.point, {
+        layers: [
+          'directions-origin-point',
+          'directions-destination-point',
+          'directions-waypoint-point',
+          'directions-route-line-alt'
+        ]
+      });
+
+      if (features.length) {
+
+        // Remove any waypoints
+        features.forEach((f) => {
+          if (f.layer.id === 'directions-waypoint-point') {
+            this.actions.removeWaypoint(f);
+          }
+        });
+
+        if (features[0].properties.route === 'alternate') {
+          const index = features[0].properties['route-index'];
+          this.actions.setRouteIndex(index);
+        }
+      } else {
+        this.actions.setDestinationFromCoordinates(coords);
+        this.map.flyTo({ center: coords });
+      }
+    }
   }
 
-  _onMouseDown(e) {
-    const features = this.map.queryRenderedFeatures(this.mousePos(e), {
+  _mouseMove(e) {
+    const { hoverMarker } = store.getState();
+
+    const features = this.map.queryRenderedFeatures(e.point, {
       layers: [
+        'directions-route-line-alt',
+        'directions-route-line',
         'directions-origin-point',
         'directions-destination-point',
         'directions-hover-point'
       ]
     });
 
+    this.map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+
     if (features.length) {
-      this.dragging = features[0];
-      features.forEach((f) => {
-        if (f.layer.id === 'directions-hover-point') {
-          this.actions.removeWaypoint(f);
-        }
-      });
+      this.isCursorOverPoint = features[0];
+      this.map.dragPan.disable();
+
+      // Add a possible waypoint marker when hovering over the active route line
+      if (this.isCursorOverPoint.layer.id === 'directions-route-line') {
+        this.actions.hoverMarker([e.lngLat.lng, e.lngLat.lat]);
+      } else if (hoverMarker.geometry) {
+        this.actions.hoverMarker(null);
+      }
+
+    } else {
+      this.isCursorOverPoint = false;
+      this.map.dragPan.enable();
     }
   }
 
+  _onMouseDown() {
+    if (!this.isCursorOverPoint) return;
+    this.isDragging = this.isCursorOverPoint;
+
+    if (this.isDragging.layer.id === 'directions-hover-point') {
+      return this.actions.removeWaypoint(this.isDragging);
+    }
+
+    this.map.getCanvas().style.cursor = 'grab';
+    this.map.on('mousemove', (ev) => this._onMouseMove(ev));
+    this.map.on('mouseup', (ev) => this._onMouseUp(ev));
+  }
+
   _onMouseMove(e) {
-    if (this.dragging) {
+    if (!this.isDragging) return;
 
-      // Disable map dragging.
-      e.stopPropagation();
-      e.preventDefault();
-
-      this.map.getContainer().classList.add('directions-drag');
-      const lngLat = this.map.unproject(this.mousePos(e));
-      const coords = [lngLat.lng, lngLat.lat];
-
-      switch (this.dragging.layer.id) {
-        case 'directions-origin-point':
-          this.actions.createOrigin(coords);
-        break;
-        case 'directions-destination-point':
-          this.actions.createDestination(coords);
-        break;
-        case 'directions-hover-point':
-          this.actions.hoverMarker(coords);
-        break;
-      }
+    const coords = [e.lngLat.lng, e.lngLat.lat];
+    switch (this.isDragging.layer.id) {
+      case 'directions-origin-point':
+        this.actions.createOrigin(coords);
+      break;
+      case 'directions-destination-point':
+        this.actions.createDestination(coords);
+      break;
+      case 'directions-hover-point':
+        this.actions.hoverMarker(coords);
+      break;
     }
   }
 
   _onMouseUp() {
+    if (!this.isDragging) return;
+
     const { hoverMarker, origin, destination } = store.getState();
 
-    if (this.dragging) {
-      switch (this.dragging.layer.id) {
-        case 'directions-origin-point':
-          this.actions.setOriginFromCoordinates(origin.geometry.coordinates);
-        break;
-        case 'directions-destination-point':
-          this.actions.setDestinationFromCoordinates(destination.geometry.coordinates);
-        break;
-        case 'directions-hover-point':
-          // Add waypoint if a sufficent amount of dragging has occurred.
-          if (hoverMarker.geometry && !utils.coordinateMatch(this.dragging, hoverMarker)) {
-            this.actions.addWaypoint(0, hoverMarker);
-          }
-        break;
-      }
+    switch (this.isDragging.layer.id) {
+      case 'directions-origin-point':
+        this.actions.setOriginFromCoordinates(origin.geometry.coordinates);
+      break;
+      case 'directions-destination-point':
+        this.actions.setDestinationFromCoordinates(destination.geometry.coordinates);
+      break;
+      case 'directions-hover-point':
+        // Add waypoint if a sufficent amount of dragging has occurred.
+        if (hoverMarker.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
+          this.actions.addWaypoint(0, hoverMarker);
+        }
+      break;
     }
 
-    this.dragging = false;
-    this.map.getContainer().classList.remove('directions-drag');
+    this.isDragging = false;
+    this.map.getCanvas().style.cursor = '';
+    this.map.off('mousemove', this._onMouseMove);
+    this.map.off('mouseup', this._onMouseUp);
   }
 
   // API Methods
