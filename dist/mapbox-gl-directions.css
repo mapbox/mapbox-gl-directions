@@ -425,7 +425,7 @@
 
 /* Input container */
 .directions-control.directions-control-inputs { top:0;left:0; }
-.mapbox-directions-profile { margin:5px 10px; }
+.mapbox-directions-profile { margin:10px; }
 
 /* Instructions container */
 .mapbox-directions-routes { float:right; margin-right:10px; }

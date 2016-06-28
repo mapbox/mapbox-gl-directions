@@ -24,7 +24,9 @@ export default class Directions extends mapboxgl.Control {
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
 
-    this.onMouseDown = this._onMouseDown.bind(this);
+    this.onDragDown = this._onDragDown.bind(this);
+    this.onDragMove = this._onDragMove.bind(this);
+    this.onDragUp = this._onDragUp.bind(this);
     this.move = this._move.bind(this);
     this.onClick = this._onClick.bind(this);
   }
@@ -54,7 +56,7 @@ export default class Directions extends mapboxgl.Control {
     if (controls.instructions) this.container.appendChild(directionsEl);
 
     this.subscribedActions();
-    map.on('style.load', () => this.mapState());
+    this.map.on('style.load', () => this.mapState());
   }
 
   mapState() {
@@ -63,7 +65,6 @@ export default class Directions extends mapboxgl.Control {
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });
 
-    const map = this.map;
     const geojson = new mapboxgl.GeoJSONSource({
       data: {
         type: 'FeatureCollection',
@@ -72,17 +73,20 @@ export default class Directions extends mapboxgl.Control {
     });
 
     // Add and set data theme layer/style
-    map.addSource('directions', geojson);
+    this.map.addSource('directions', geojson);
 
     // Add direction specific styles to the map
-    directionsStyle.forEach((style) => map.addLayer(style));
+    directionsStyle.forEach((style) => this.map.addLayer(style));
 
-    if (styles && styles.length) styles.forEach((style) => map.addLayer(style));
+    if (styles && styles.length) styles.forEach((style) => this.map.addLayer(style));
 
     if (interactive) {
-      map.on('mousedown', this.onMouseDown);
-      map.on('mousemove', this.move);
-      map.on('click', this.onClick);
+      this.map.on('mousedown', this.onDragDown);
+      this.map.on('mousemove', this.move);
+      this.map.on('click', this.onClick);
+
+      this.map.on('touchstart', this.move);
+      this.map.on('touchstart', this.onDragDown);
     }
   }
 
@@ -218,15 +222,19 @@ export default class Directions extends mapboxgl.Control {
     }
   }
 
-  _onMouseDown() {
+  _onDragDown() {
     if (!this.isCursorOverPoint) return;
     this.isDragging = this.isCursorOverPoint;
     this.map.getCanvas().style.cursor = 'grab';
-    this.map.on('mousemove', (e) => this._onMouseMove(e));
-    this.map.on('mouseup', (e) => this._onMouseUp(e));
+
+    this.map.on('mousemove', this.onDragMove);
+    this.map.on('mouseup', this.onDragUp);
+
+    this.map.on('touchmove', this.onDragMove);
+    this.map.on('touchend', this.onDragUp);
   }
 
-  _onMouseMove(e) {
+  _onDragMove(e) {
     if (!this.isDragging) return;
 
     const coords = [e.lngLat.lng, e.lngLat.lat];
@@ -243,7 +251,7 @@ export default class Directions extends mapboxgl.Control {
     }
   }
 
-  _onMouseUp() {
+  _onDragUp() {
     if (!this.isDragging) return;
 
     const { hoverMarker, origin, destination } = store.getState();
@@ -265,8 +273,12 @@ export default class Directions extends mapboxgl.Control {
 
     this.isDragging = false;
     this.map.getCanvas().style.cursor = '';
-    this.map.off('mousemove', this._onMouseMove);
-    this.map.off('mouseup', this._onMouseUp);
+
+    this.map.off('touchmove', this.onDragMove);
+    this.map.off('touchend', this.onDragUp);
+
+    this.map.off('mousemove', this.onDragMove);
+    this.map.off('mouseup', this.onDragUp);
   }
 
   // API Methods
@@ -279,11 +291,17 @@ export default class Directions extends mapboxgl.Control {
    */
   interactive(state) {
     if (state) {
-      this.map.on('mousedown', this.onMouseDown);
+      this.map.on('touchstart', this.move);
+      this.map.on('touchstart', this.onDragDown);
+
+      this.map.on('mousedown', this.onDragDown);
       this.map.on('mousemove', this.move);
       this.map.on('click', this.onClick);
     } else {
-      this.map.off('mousedown', this.onMouseDown);
+      this.map.off('touchstart', this.move);
+      this.map.off('touchstart', this.onDragDown);
+
+      this.map.off('mousedown', this.onDragDown);
       this.map.off('mousemove', this.move);
       this.map.off('click', this.onClick);
     }
