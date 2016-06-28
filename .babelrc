@@ -1,5 +1,6 @@
 {
-  "stage": 0,
-  "loose": "all",
-  "plugins": ["object-assign"]
+    "presets": [
+        "es2015"
+    ],
+    "plugins": ["transform-inline-environment-variables"]
 }

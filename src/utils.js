@@ -10,6 +10,12 @@ function coordinateMatch(a, b) {
     a[1].toFixed(3) === b[1].toFixed(3);
 }
 
+function wrap(n) {
+  var d = 180 - -180;
+  var w = ((n - -180) % d + d) % d + -180;
+  return (w === -180) ? 180 : w;
+}
+
 function createPoint(coordinates, properties) {
   return {
     type: 'Feature',
@@ -27,25 +33,25 @@ const format = {
       h = Math.floor(m / 60);
     s %= 60;
     m %= 60;
-    if (h === 0 && m === 0) return s + ' s';
-    if (h === 0) return m + ' min';
-    return h + ' h ' + m + ' min';
+    if (h === 0 && m === 0) return s + 's';
+    if (h === 0) return m + 'min';
+    return h + 'h ' + m + 'min';
   },
 
   imperial(m) {
     var mi = m / 1609.344;
-    if (mi >= 100) return mi.toFixed(0) + ' mi';
-    if (mi >= 10) return mi.toFixed(1) + ' mi';
-    if (mi >= 0.1) return mi.toFixed(2) + ' mi';
-    return (mi * 5280).toFixed(0) + ' ft';
+    if (mi >= 100) return mi.toFixed(0) + 'mi';
+    if (mi >= 10) return mi.toFixed(1) + 'mi';
+    if (mi >= 0.1) return mi.toFixed(2) + 'mi';
+    return (mi * 5280).toFixed(0) + 'ft';
   },
 
   metric(m) {
-    if (m >= 100000) return (m / 1000).toFixed(0) + ' km';
-    if (m >= 10000) return (m / 1000).toFixed(1) + ' km';
-    if (m >= 100) return (m / 1000).toFixed(2) + ' km';
-    return m.toFixed(0) + ' m';
+    if (m >= 100000) return (m / 1000).toFixed(0) + 'km';
+    if (m >= 10000) return (m / 1000).toFixed(1) + 'km';
+    if (m >= 100) return (m / 1000).toFixed(2) + 'km';
+    return m.toFixed(0) + 'm';
   }
 };
 
-export default { format, coordinateMatch, createPoint, validCoords };
+export default { format, coordinateMatch, createPoint, validCoords, wrap };

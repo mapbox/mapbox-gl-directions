@@ -2,10 +2,19 @@ import * as types from '../constants/action_types.js';
 
 const initialState = {
   // Options set on initialization
+  api: 'https://api.mapbox.com/v4/directions/',
   profile: 'driving',
   unit: 'imperial',
   proximity: false,
   styles: [],
+
+  // UI controls
+  controls: {
+    inputs: true,
+    instructions: true
+  },
+
+  interactive: true,
 
   // Container for client registered events
   events: {},
@@ -17,15 +26,10 @@ const initialState = {
   waypoints: [],
 
   // User input strings or result returned from geocoder
-  originQuery: '',
-  destinationQuery: '',
-
-  originLoading: false,
-  destinationLoading: false,
-
-  // Feature results returned from geocoder.
-  originResults: [],
-  destinationResults: [],
+  originQuery: null,
+  destinationQuery: null,
+  originQueryCoordinates: null,
+  destinationQueryCoordinates: null,
 
   // Directions data
   directions: [],
@@ -69,26 +73,25 @@ function data(state = initialState, action) {
       originQuery: action.query
     });
 
-  case types.ORIGIN_RESULTS:
-    return Object.assign({}, state, {
-      originResults: action.results
-    });
-
   case types.DESTINATION_QUERY:
     return Object.assign({}, state, {
       destinationQuery: action.query
     });
 
-  case types.DESTINATION_RESULTS:
+  case types.ORIGIN_FROM_COORDINATES:
     return Object.assign({}, state, {
-      destinationResults: action.results
+      originQueryCoordinates: action.coordinates
+    });
+
+  case types.DESTINATION_FROM_COORDINATES:
+    return Object.assign({}, state, {
+      destinationQueryCoordinates: action.coordinates
     });
 
   case types.ORIGIN_CLEAR:
     return Object.assign({}, state, {
       origin: {},
       originQuery: '',
-      originResults: [],
       waypoints: [],
       directions: []
     });
@@ -97,19 +100,8 @@ function data(state = initialState, action) {
     return Object.assign({}, state, {
       destination: {},
       destinationQuery: '',
-      destinationResults: [],
       waypoints: [],
       directions: []
-    });
-
-  case types.ORIGIN_LOADING:
-    return Object.assign({}, state, {
-      originLoading: action.loading
-    });
-
-  case types.DESTINATION_LOADING:
-    return Object.assign({}, state, {
-      destinationLoading: action.loading
     });
 
   case types.DIRECTIONS:

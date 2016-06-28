@@ -19,51 +19,7 @@ test('Directions#inputControl', tt => {
     map.addControl(directions);
   }
 
-  tt.test('origin', t => {
-    setup();
-    t.plan(4);
-    var inputEl = container.querySelector('.js-origin');
-    var clearEl = container.querySelector('.js-origin-clear');
-    inputEl.addEventListener('change', once(() => {
-      t.ok(inputEl.value, 'value populates in origin');
-      t.ok(clearEl.classList.contains('active'), 'clear link is active');
-      clearEl.dispatchEvent(clickEvent);
-    }));
-
-    directions.on('loading', once((e) => {
-      t.equal(e.type, 'origin', 'origin load event was emitted');
-    }));
-
-    directions.on('clear', once((e) => {
-      t.equal(e.type, 'origin', 'origin input was cleared');
-    }));
-
-    directions.setOrigin([-79, 43]);
-  });
-
-  tt.test('destination', t => {
-    setup();
-    t.plan(4);
-    var inputEl = container.querySelector('.js-destination');
-    var clearEl = container.querySelector('.js-destination-clear');
-    inputEl.addEventListener('change', once(() => {
-      t.ok(inputEl.value, 'value populates in destination');
-      t.ok(clearEl.classList.contains('active'), 'clear link is active');
-      clearEl.dispatchEvent(clickEvent);
-    }));
-
-    directions.on('loading', once((e) => {
-      t.equal(e.type, 'destination', 'destination load event was emitted');
-    }));
-
-    directions.on('clear', once((e) => {
-      t.equal(e.type, 'destination', 'destination input was cleared');
-    }));
-
-    directions.setDestination([-78, 42]);
-  });
-
-  tt.test('profiles', t => {
+  tt.test('profiles', (t) => {
     setup({ profile: 'cycling' });
     t.plan(3);
 

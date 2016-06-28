@@ -1,39 +1,11 @@
 import * as types from '../constants/action_types';
-import { coordinateMatch, createPoint, validCoords } from '../utils';
-import MapboxClient from 'mapbox';
-let mapbox;
-
-function originResults(results) {
-  return {
-    type: types.ORIGIN_RESULTS,
-    results: results ? results : []
-  };
-}
-
-function originQuery(query) {
-  return {
-    type: types.ORIGIN_QUERY,
-    query
-  };
-}
-
-function destinationResults(results) {
-  return {
-    type: types.DESTINATION_RESULTS,
-    results: results ? results : []
-  };
-}
-
-function destinationQuery(query) {
-  return {
-    type: types.DESTINATION_QUERY,
-    query
-  };
-}
+import utils from '../utils';
+import request from 'request';
+let getDirections;
 
 function originPoint(coordinates) {
   return (dispatch) => {
-    const origin = createPoint(coordinates, {
+    const origin = utils.createPoint(coordinates, {
       id: 'origin',
       'marker-symbol': 'A'
     });
@@ -45,7 +17,7 @@ function originPoint(coordinates) {
 
 function destinationPoint(coordinates) {
   return (dispatch) => {
-    const destination = createPoint(coordinates, {
+    const destination = utils.createPoint(coordinates, {
       id: 'destination',
       'marker-symbol': 'B'
     });
@@ -79,42 +51,48 @@ function setHoverMarker(feature) {
   };
 }
 
-function geocode(query, callback) {
-  return (dispatch, getState) => {
-    const { proximity } = getState();
-    const options = proximity ? {
-      proximity: {
-        longitude: proximity[0],
-        latitude: proximity[1]
-      }
-    } : {};
-
-    return mapbox.geocodeForward(query.trim(), options, (err, res) => {
-      if (err) throw err;
-      if (res.error) return dispatch(setError(res.error));
-      dispatch(setError(null));
-      return dispatch(callback(res.features));
-    });
-  };
-}
-
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { routeIndex, profile } = getState();
+    if (getDirections) getDirections.abort();
+    const { api, accessToken, routeIndex, profile } = getState();
     const query = buildDirectionsQuery(getState);
-    return mapbox.getDirections(query, {
-      profile: 'mapbox.' + profile,
-      geometry: 'polyline'
-    }, (err, res) => {
-      if (err) throw err;
-      if (res.error) return dispatch(setError(res.error));
+
+    var options = {
+      geometry: 'polyline',
+      instructions: 'text',
+      alternatives: true,
+      steps: true
+    };
+
+    options.access_token = accessToken ? accessToken : mapboxgl.accessToken;
+
+    getDirections = request({
+      url: `${api}mapbox.${profile}/${query}.json`,
+      qs: options,
+      json: true
+    }, function(err, res, body) {
+      if (err) {
+        dispatch(setDirections([]));
+        return dispatch(setError(err.message));
+      }
+
+      if (body.message) {
+        dispatch(setDirections([]));
+        return dispatch(setError(body.message));
+      }
+
+      if (body.error) {
+        dispatch(setDirections([]));
+        return dispatch(setError(body.error));
+      }
+
       dispatch(setError(null));
-      if (!res.routes[routeIndex]) dispatch(setRouteIndex(0));
-      dispatch(setDirections(res.routes));
+      if (!body.routes[routeIndex]) dispatch(setRouteIndex(0));
+      dispatch(setDirections(body.routes));
 
       // Revise origin / destination points
-      dispatch(originPoint(res.origin.geometry.coordinates));
-      dispatch(destinationPoint(res.destination.geometry.coordinates));
+      dispatch(originPoint(body.origin.geometry.coordinates));
+      dispatch(destinationPoint(body.destination.geometry.coordinates));
     });
   };
 }
@@ -127,27 +105,20 @@ function fetchDirections() {
 function buildDirectionsQuery(state) {
   const { origin, destination, waypoints } = state();
 
-  let query = [{
-    longitude: origin.geometry.coordinates[0],
-    latitude: origin.geometry.coordinates[1]
-  }];
+  let query = [];
+  query = query.concat(origin.geometry.coordinates);
+  query.push(';');
 
   // Add any waypoints.
   if (waypoints.length) {
     waypoints.forEach((waypoint) => {
-      query.push({
-        longitude: waypoint.geometry.coordinates[0],
-        latitude: waypoint.geometry.coordinates[1]
-      });
+      query = query.concat(waypoint.geometry.coordinates);
+      query.push(';');
     });
   }
 
-  query.push({
-    longitude: destination.geometry.coordinates[0],
-    latitude: destination.geometry.coordinates[1]
-  });
-
-  return query;
+  query = query.concat(destination.geometry.coordinates);
+  return encodeURIComponent(query.join());
 }
 
 function normalizeWaypoint(waypoint) {
@@ -159,16 +130,6 @@ function normalizeWaypoint(waypoint) {
   });
 }
 
-function setLoading(input, loading) {
-  return dispatch => {
-    dispatch({
-      type: input + '_LOADING',
-      loading
-    });
-    if (loading) dispatch(eventEmit('loading', { type: input.toLowerCase() }));
-  };
-}
-
 function setError(error) {
   return dispatch => {
     dispatch({
@@ -176,6 +137,34 @@ function setError(error) {
       error
     });
     if (error) dispatch(eventEmit('error', { error: error }));
+  };
+}
+
+export function queryOrigin(query) {
+  return {
+    type: types.ORIGIN_QUERY,
+    query
+  };
+}
+
+export function queryDestination(query) {
+  return {
+    type: types.DESTINATION_QUERY,
+    query
+  };
+}
+
+export function queryOriginCoordinates(coords) {
+  return {
+    type: types.ORIGIN_FROM_COORDINATES,
+    coordinates: coords
+  };
+}
+
+export function queryDestinationCoordinates(coords) {
+  return {
+    type: types.DESTINATION_FROM_COORDINATES,
+    coordinates: coords
   };
 }
 
@@ -200,12 +189,6 @@ export function clearDestination() {
 }
 
 export function setOptions(options) {
-  const accessToken = (options.accessToken) ?
-    options.accessToken :
-    mapboxgl.accessToken;
-
-  mapbox = new MapboxClient(accessToken);
-
   return {
     type: types.SET_OPTIONS,
     options: options
@@ -214,7 +197,7 @@ export function setOptions(options) {
 
 export function hoverMarker(coordinates) {
   return (dispatch) => {
-    const feature = (coordinates) ? createPoint(coordinates, { id: 'hover'}) : {};
+    const feature = (coordinates) ? utils.createPoint(coordinates, { id: 'hover'}) : {};
     dispatch(setHoverMarker(feature));
   };
 }
@@ -226,7 +209,7 @@ export function setRouteIndex(routeIndex) {
   };
 }
 
-export function originCoordinates(coordinates) {
+export function createOrigin(coordinates) {
   return (dispatch, getState) => {
     const { destination } = getState();
     dispatch(originPoint(coordinates));
@@ -234,7 +217,7 @@ export function originCoordinates(coordinates) {
   };
 }
 
-export function destinationCoordinates(coordinates) {
+export function createDestination(coordinates) {
   return (dispatch, getState) => {
     const { origin } = getState();
     dispatch(destinationPoint(coordinates));
@@ -254,49 +237,9 @@ export function setProfile(profile) {
 export function reverse() {
   return (dispatch, getState) => {
     const state = getState();
-
-    dispatch(originQuery(state.destinationQuery));
-    dispatch(originResults(state.desintationResults));
-    dispatch(destinationQuery(state.originQuery));
-    dispatch(destinationResults(state.originResults));
-
     if (state.destination.geometry) dispatch(originPoint(state.destination.geometry.coordinates));
     if (state.origin.geometry) dispatch(destinationPoint(state.origin.geometry.coordinates));
     if (state.origin.geometry && state.destination.geometry) dispatch(fetchDirections());
-  };
-}
-
-/*
- * Set origin from query string
- *
- * @param {String} query search string.
- */
-export function queryOrigin(query) {
-  return (dispatch) => {
-    dispatch(setLoading('ORIGIN', true));
-    return dispatch(geocode(query, (results) => {
-      dispatch(setLoading('ORIGIN', false));
-      dispatch(originCoordinates(results[0].geometry.coordinates));
-      dispatch(originResults(results));
-      return dispatch(originQuery(query));
-    }));
-  };
-}
-
-/*
- * Set destination from query string
- *
- * @param {String} query search string.
- */
-export function queryDestination(query) {
-  return (dispatch) => {
-    dispatch(setLoading('DESTINATION', true));
-    return dispatch(geocode(query, (results) => {
-      dispatch(destinationCoordinates(results[0].geometry.coordinates));
-      dispatch(setLoading('DESTINATION', false));
-      dispatch(destinationResults(results));
-      return dispatch(destinationQuery(query));
-    }));
   };
 }
 
@@ -305,19 +248,12 @@ export function queryDestination(query) {
  *
  * @param {Array<number>} coordinates [lng, lat] array.
  */
-export function setOrigin(coords) {
+export function setOriginFromCoordinates(coords) {
   return (dispatch) => {
-    if (!validCoords(coords)) return dispatch(setError(new Error('Coordinates are not valid')));
-    dispatch(setLoading('ORIGIN', true));
-    dispatch(originCoordinates(coords));
-    dispatch(originQuery(`${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`));
-    return dispatch(geocode(coords.join(), (results) => {
-      dispatch(setLoading('ORIGIN', false));
-      if (!results.length) return {};
-      const result = results[0];
-      if (result.context && result.context.length > 2) dispatch(originQuery(result.place_name));
-      return dispatch(originResults(results));
-    }));
+    if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
+    if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
+    dispatch(queryOriginCoordinates(coords));
+    dispatch(createOrigin(coords));
   };
 }
 
@@ -326,19 +262,12 @@ export function setOrigin(coords) {
  *
  * @param {Array<number>} coords [lng, lat] array.
  */
-export function setDestination(coords) {
+export function setDestinationFromCoordinates(coords) {
   return (dispatch) => {
-    if (!validCoords(coords)) return dispatch(setError(new Error('Coordinates are not valid')));
-    dispatch(setLoading('DESTINATION', true));
-    dispatch(destinationCoordinates(coords));
-    dispatch(destinationQuery(`${coords[0].toFixed(4)}, ${coords[1].toFixed(4)}`));
-    return dispatch(geocode(coords.join(), (results) => {
-      dispatch(setLoading('DESTINATION', false));
-      if (!results.length) return {};
-      const result = results[0];
-      if (result.context && result.context.length > 2) dispatch(destinationQuery(result.place_name));
-      return dispatch(destinationResults(results));
-    }));
+    if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
+    if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
+    dispatch(createDestination(coords));
+    dispatch(queryDestinationCoordinates(coords));
   };
 }
 
@@ -364,7 +293,7 @@ export function removeWaypoint(waypoint) {
   return (dispatch, getState) => {
     let { destination, waypoints } = getState();
       waypoints = waypoints.filter((way) => {
-        return !coordinateMatch(way, waypoint);
+        return !utils.coordinateMatch(way, waypoint);
       });
 
       dispatch(updateWaypoints(waypoints));

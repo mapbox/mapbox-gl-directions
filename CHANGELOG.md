@@ -1,3 +1,14 @@
+## 2.1.0
+
+- [bug] Warn if mapboxgl is not present [#66](https://github.com/mapbox/mapbox-gl-directions/issues/66)
+- [bug] Point `main` in `package.json` to transpiled result [#63](https://github.com/mapbox/mapbox-gl-directions/issues/63)
+- [feature] Wrap coordinates outside of -180, 180 [#54]((https://github.com/mapbox/mapbox-gl-directions/issues/54)
+- [feature] Basic support for touch handling [#61](https://github.com/mapbox/mapbox-gl-directions/issues/61)
+- [feature] Allow interaction to be toggled on or off [#65](https://github.com/mapbox/mapbox-gl-directions/issues/65)
+- [feature] Allow controls to be removed on initialization.
+- [internal] Refactor out native DOM and use registered mapbox-gl-js ones.
+- [internal] Remove custom implementation of a geocoder and use mapbox-gl-geocoder.
+
 ## 2.0.0
 
 - [breaking] Drop `directions` prefix from event names [#59](https://github.com/mapbox/mapbox-gl-directions/issues/59)

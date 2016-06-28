@@ -1,13 +1,13 @@
 'use strict';
 /* global mapboxgl */
 
-require('../');
+require('../index');
 mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
 var map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v8',
   hash: true,
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v9',
   center: [-79.4512, 43.6568],
   zoom: 13
 });
@@ -26,7 +26,7 @@ map.addControl(directions);
 
 map.on('load', () => {
   button.addEventListener('click', function() {
-    directions.setOrigin('Montreal Quebec');
-    directions.setDestination('Toronto');
+    directions.setOrigin([-79.4512, 43.6568]);
+    directions.setDestination('Montreal Quebec');
   });
 });
