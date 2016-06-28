@@ -15,6 +15,7 @@ var map = new mapboxgl.Map({
 var directions = new mapboxgl.Directions({
   unit: 'metric',
   profile: 'cycling',
+  interactive: false,
   container: 'directions'
 });
 
@@ -28,5 +29,6 @@ map.on('load', () => {
   button.addEventListener('click', function() {
     directions.setOrigin([-79.4512, 43.6568]);
     directions.setDestination('Montreal Quebec');
+    directions.interactive(true);
   });
 });

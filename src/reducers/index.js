@@ -14,7 +14,7 @@ const initialState = {
     instructions: true
   },
 
-  interaction: true,
+  interactive: true,
 
   // Container for client registered events
   events: {},

@@ -23,6 +23,10 @@ export default class Directions extends mapboxgl.Control {
     super();
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
+
+    this.onMouseDown = this._onMouseDown.bind(this);
+    this.move = this._move.bind(this);
+    this.onClick = this._onClick.bind(this);
   }
 
   onAdd(map) {
@@ -54,7 +58,7 @@ export default class Directions extends mapboxgl.Control {
   }
 
   mapState() {
-    const { profile, styles } = store.getState();
+    const { profile, styles, interactive } = store.getState();
 
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });
@@ -75,9 +79,11 @@ export default class Directions extends mapboxgl.Control {
 
     if (styles && styles.length) styles.forEach((style) => map.addLayer(style));
 
-    map.on('mousedown', () => this._onMouseDown(), true);
-    map.on('mousemove', (e) => this._mouseMove(e));
-    map.on('click', (e) => this._click(e));
+    if (interactive) {
+      map.on('mousedown', this.onMouseDown);
+      map.on('mousemove', this.move);
+      map.on('click', this.onClick);
+    }
   }
 
   subscribedActions() {
@@ -141,7 +147,7 @@ export default class Directions extends mapboxgl.Control {
     });
   }
 
-  _click(e) {
+  _onClick(e) {
     const { origin } = store.getState();
     const coords = [e.lngLat.lng, e.lngLat.lat];
 
@@ -178,7 +184,7 @@ export default class Directions extends mapboxgl.Control {
     }
   }
 
-  _mouseMove(e) {
+  _move(e) {
     const { hoverMarker } = store.getState();
 
     const features = this.map.queryRenderedFeatures(e.point, {
@@ -265,6 +271,25 @@ export default class Directions extends mapboxgl.Control {
 
   // API Methods
   // ============================
+
+  /**
+   * Turn on or off interactivity
+   * @param {Boolean} state sets interactivity based on a state of `true` or `false`.
+   * @returns {Directions} this
+   */
+  interactive(state) {
+    if (state) {
+      this.map.on('mousedown', this.onMouseDown);
+      this.map.on('mousemove', this.move);
+      this.map.on('click', this.onClick);
+    } else {
+      this.map.off('mousedown', this.onMouseDown);
+      this.map.off('mousemove', this.move);
+      this.map.off('click', this.onClick);
+    }
+
+    return this;
+  }
 
   /**
    * Returns the origin of the current route.
