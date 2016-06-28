@@ -3,7 +3,7 @@
 const once = require('lodash.once');
 const test = require('tape');
 
-test('Directions#styles', tt => {
+test('Directions#option', tt => {
   let container, map, directions;
 
   function setup(opts) {
@@ -17,8 +17,7 @@ test('Directions#styles', tt => {
     t.plan(1);
     setup({
       styles: [{
-        'id': 'origin',
-        'interactive': true,
+        'id': 'foo',
         'type': 'circle',
         'source': 'directions',
         'paint': {
@@ -34,15 +33,9 @@ test('Directions#styles', tt => {
 
     directions.setOrigin([-77, 41]);
     directions.on('origin', once(() => {
-      map.featuresIn({
-        layer: 'origin'
-      }, function(err, features) {
-        if (err) t.notOk(err);
-        t.ok(features.length, 'Custom layer is present');
-      });
+      t.ok(map.getLayer('foo'), 'Custom layer is present');
     }));
   });
 
   tt.end();
 });
-

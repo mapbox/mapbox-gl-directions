@@ -4,13 +4,13 @@ const test = require('tape');
 const once = require('lodash.once');
 
 test('directions', (tt) => {
-  let container, directions;
+  var container, map, directions;
 
   function setup(opts) {
     container = document.createElement('div');
-    directions = new mapboxgl.Directions(opts, Object.assign({
-      container: container
-    }, opts));
+    map = new mapboxgl.Map({ container: container });
+    directions = new mapboxgl.Directions(opts);
+    map.addControl(directions);
   }
 
   tt.test('initialized', t => {
