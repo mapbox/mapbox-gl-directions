@@ -1,3 +1,8499 @@
-!function t(e,n,r){function i(s,a){if(!n[s]){if(!e[s]){var c="function"==typeof require&&require;if(!a&&c)return c(s,!0);if(o)return o(s,!0);var u=new Error("Cannot find module '"+s+"'");throw u.code="MODULE_NOT_FOUND",u}var l=n[s]={exports:{}};e[s][0].call(l.exports,function(t){var n=e[s][1][t];return i(n?n:t)},l,l.exports,t,e,n,r)}return n[s].exports}for(var o="function"==typeof require&&require,s=0;s<r.length;s++)i(r[s]);return i}({1:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}var i=t("./src/directions"),o=r(i);window.mapboxgl?mapboxgl.Directions=o["default"]:"undefined"!=typeof e&&(e.exports=o["default"])},{"./src/directions":42}],2:[function(t,e,n){function r(){this._events=this._events||{},this._maxListeners=this._maxListeners||void 0}function i(t){return"function"==typeof t}function o(t){return"number"==typeof t}function s(t){return"object"==typeof t&&null!==t}function a(t){return void 0===t}e.exports=r,r.EventEmitter=r,r.prototype._events=void 0,r.prototype._maxListeners=void 0,r.defaultMaxListeners=10,r.prototype.setMaxListeners=function(t){if(!o(t)||t<0||isNaN(t))throw TypeError("n must be a positive number");return this._maxListeners=t,this},r.prototype.emit=function(t){var e,n,r,o,c,u;if(this._events||(this._events={}),"error"===t&&(!this._events.error||s(this._events.error)&&!this._events.error.length)){if(e=arguments[1],e instanceof Error)throw e;var l=new Error('Uncaught, unspecified "error" event. ('+e+")");throw l.context=e,l}if(n=this._events[t],a(n))return!1;if(i(n))switch(arguments.length){case 1:n.call(this);break;case 2:n.call(this,arguments[1]);break;case 3:n.call(this,arguments[1],arguments[2]);break;default:o=Array.prototype.slice.call(arguments,1),n.apply(this,o)}else if(s(n))for(o=Array.prototype.slice.call(arguments,1),u=n.slice(),r=u.length,c=0;c<r;c++)u[c].apply(this,o);return!0},r.prototype.addListener=function(t,e){var n;if(!i(e))throw TypeError("listener must be a function");return this._events||(this._events={}),this._events.newListener&&this.emit("newListener",t,i(e.listener)?e.listener:e),this._events[t]?s(this._events[t])?this._events[t].push(e):this._events[t]=[this._events[t],e]:this._events[t]=e,s(this._events[t])&&!this._events[t].warned&&(n=a(this._maxListeners)?r.defaultMaxListeners:this._maxListeners,n&&n>0&&this._events[t].length>n&&(this._events[t].warned=!0,console.error("(node) warning: possible EventEmitter memory leak detected. %d listeners added. Use emitter.setMaxListeners() to increase limit.",this._events[t].length),"function"==typeof console.trace&&console.trace())),this},r.prototype.on=r.prototype.addListener,r.prototype.once=function(t,e){function n(){this.removeListener(t,n),r||(r=!0,e.apply(this,arguments))}if(!i(e))throw TypeError("listener must be a function");var r=!1;return n.listener=e,this.on(t,n),this},r.prototype.removeListener=function(t,e){var n,r,o,a;if(!i(e))throw TypeError("listener must be a function");if(!this._events||!this._events[t])return this;if(n=this._events[t],o=n.length,r=-1,n===e||i(n.listener)&&n.listener===e)delete this._events[t],this._events.removeListener&&this.emit("removeListener",t,e);else if(s(n)){for(a=o;a-- >0;)if(n[a]===e||n[a].listener&&n[a].listener===e){r=a;break}if(r<0)return this;1===n.length?(n.length=0,delete this._events[t]):n.splice(r,1),this._events.removeListener&&this.emit("removeListener",t,e)}return this},r.prototype.removeAllListeners=function(t){var e,n;if(!this._events)return this;if(!this._events.removeListener)return 0===arguments.length?this._events={}:this._events[t]&&delete this._events[t],this;if(0===arguments.length){for(e in this._events)"removeListener"!==e&&this.removeAllListeners(e);return this.removeAllListeners("removeListener"),this._events={},this}if(n=this._events[t],i(n))this.removeListener(t,n);else if(n)for(;n.length;)this.removeListener(t,n[n.length-1]);return delete this._events[t],this},r.prototype.listeners=function(t){var e;return e=this._events&&this._events[t]?i(this._events[t])?[this._events[t]]:this._events[t].slice():[]},r.prototype.listenerCount=function(t){if(this._events){var e=this._events[t];if(i(e))return 1;if(e)return e.length}return 0},r.listenerCount=function(t,e){return t.listenerCount(e)}},{}],3:[function(t,e,n){!function(){var t=this,r={};"undefined"!=typeof n?e.exports=r:t.fuzzy=r,r.simpleFilter=function(t,e){return e.filter(function(e){return r.test(t,e)})},r.test=function(t,e){return null!==r.match(t,e)},r.match=function(t,e,n){n=n||{};var r,i=0,o=[],s=e.length,a=0,c=0,u=n.pre||"",l=n.post||"",f=n.caseSensitive&&e||e.toLowerCase();t=n.caseSensitive&&t||t.toLowerCase();for(var p=0;p<s;p++)r=e[p],f[p]===t[i]?(r=u+r+l,i+=1,c+=1+c):c=0,a+=c,o[o.length]=r;return i===t.length?{rendered:o.join(""),score:a}:null},r.filter=function(t,e,n){return n=n||{},e.reduce(function(e,i,o,s){var a=i;n.extract&&(a=n.extract(i));var c=r.match(t,a,n);return null!=c&&(e[e.length]={string:c.rendered,score:c.score,index:o,original:i}),e},[]).sort(function(t,e){var n=e.score-t.score;return n?n:t.index-e.index})}}()},{}],4:[function(t,e,n){var r=/<%=([\s\S]+?)%>/g;e.exports=r},{}],5:[function(t,e,n){(function(t){function r(t){return t&&t.Object===Object?t:null}var i={"function":!0,object:!0},o=i[typeof n]&&n&&!n.nodeType?n:void 0,s=i[typeof e]&&e&&!e.nodeType?e:void 0,a=r(o&&s&&"object"==typeof t&&t),c=r(i[typeof self]&&self),u=r(i[typeof window]&&window),l=r(i[typeof this]&&this),f=a||u!==(l&&l.window)&&u||c||l||Function("return this")();e.exports=f}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],6:[function(t,e,n){function r(t,e,n){var r=t[e];w.call(t,e)&&u(r,n)&&(void 0!==n||e in t)||(t[e]=n)}function i(t){return function(e){return null==e?void 0:e[t]}}function o(t,e,n,i){n||(n={});for(var o=-1,s=e.length;++o<s;){var a=e[o],c=i?i(n[a],t[a],a,n,t):t[a];r(n,a,c)}return n}function s(t){return y(function(e,n){var r=-1,i=n.length,o=i>1?n[i-1]:void 0,s=i>2?n[2]:void 0;for(o=t.length>3&&"function"==typeof o?(i--,o):void 0,s&&c(n[0],n[1],s)&&(o=i<3?void 0:o,i=1),e=Object(e);++r<i;){var a=n[r];a&&t(e,a,r,o)}return e})}function a(t,e){return e=null==e?v:e,!!e&&("number"==typeof t||b.test(t))&&t>-1&&t%1==0&&t<e}function c(t,e,n){if(!d(n))return!1;var r=typeof e;return!!("number"==r?l(n)&&a(e,n.length):"string"==r&&e in n)&&u(n[e],t)}function u(t,e){return t===e||t!==t&&e!==e}function l(t){return null!=t&&p(E(t))&&!f(t)}function f(t){var e=d(t)?O.call(t):"";return e==g||e==m}function p(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=v}function d(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}var h=t("lodash.keysin"),y=t("lodash.rest"),v=9007199254740991,g="[object Function]",m="[object GeneratorFunction]",b=/^(?:0|[1-9]\d*)$/,_=Object.prototype,w=_.hasOwnProperty,O=_.toString,E=i("length"),x=s(function(t,e,n,r){o(e,h(e),t,r)});e.exports=x},{"lodash.keysin":11,"lodash.rest":12}],7:[function(t,e,n){function r(t,e,n){function r(e){var n=y,r=v;return y=v=void 0,x=e,m=t.apply(r,n)}function i(t){return x=t,b=setTimeout(l,e),j?r(t):m}function s(t){var n=t-_,r=t-x,i=e-n;return I?O(i,g-r):i}function a(t){var n=t-_,r=t-x;return!_||n>=e||n<0||I&&r>=g}function l(){var t=E();return a(t)?f(t):void(b=setTimeout(l,s(t)))}function f(t){return clearTimeout(b),b=void 0,S&&y?r(t):(y=v=void 0,m)}function p(){void 0!==b&&clearTimeout(b),_=x=0,y=v=b=void 0}function d(){return void 0===b?m:f(E())}function h(){var t=E(),n=a(t);if(y=arguments,v=this,_=t,n){if(void 0===b)return i(_);if(I)return clearTimeout(b),b=setTimeout(l,e),r(_)}return void 0===b&&(b=setTimeout(l,e)),m}var y,v,g,m,b,_=0,x=0,j=!1,I=!1,S=!0;if("function"!=typeof t)throw new TypeError(u);return e=c(e)||0,o(n)&&(j=!!n.leading,I="maxWait"in n,g=I?w(c(n.maxWait)||0,e):g,S="trailing"in n?!!n.trailing:S),h.cancel=p,h.flush=d,h}function i(t){var e=o(t)?_.call(t):"";return e==f||e==p}function o(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function s(t){return!!t&&"object"==typeof t}function a(t){return"symbol"==typeof t||s(t)&&_.call(t)==d}function c(t){if("number"==typeof t)return t;if(a(t))return l;if(o(t)){var e=i(t.valueOf)?t.valueOf():t;t=o(e)?e+"":e}if("string"!=typeof t)return 0===t?t:+t;t=t.replace(h,"");var n=v.test(t);return n||g.test(t)?m(t.slice(2),n?2:8):y.test(t)?l:+t}var u="Expected a function",l=NaN,f="[object Function]",p="[object GeneratorFunction]",d="[object Symbol]",h=/^\s+|\s+$/g,y=/^[-+]0x[0-9a-f]+$/i,v=/^0b[01]+$/i,g=/^0o[0-7]+$/i,m=parseInt,b=Object.prototype,_=b.toString,w=Math.max,O=Math.min,E=Date.now;e.exports=r},{}],8:[function(t,e,n){function r(t){return c[t]}function i(t){return t=o(t),t&&a.test(t)?t.replace(s,r):t}var o=t("lodash.tostring"),s=/[&<>"'`]/g,a=RegExp(s.source),c={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","`":"&#96;"};e.exports=i},{"lodash.tostring":15}],9:[function(t,e,n){function r(t,e){for(var n=-1,r=t.length;++n<r;)if(e(t[n],n,t))return!0;return!1}function i(t){var e=!1;if(null!=t&&"function"!=typeof t.toString)try{e=!!(t+"")}catch(n){}return e}function o(t){var e=-1,n=Array(t.size);return t.forEach(function(t,r){n[++e]=[r,t]}),n}function s(t){var e=-1,n=Array(t.size);return t.forEach(function(t){n[++e]=t}),n}function a(t){var e=-1,n=t?t.length:0;for(this.clear();++e<n;){var r=t[e];this.set(r[0],r[1])}}function c(){this.__data__=Zt?Zt(null):{}}function u(t){return this.has(t)&&delete this.__data__[t]}function l(t){var e=this.__data__;if(Zt){var n=e[t];return n===it?void 0:n}return Gt.call(e,t)?e[t]:void 0}function f(t){var e=this.__data__;return Zt?void 0!==e[t]:Gt.call(e,t)}function p(t,e){var n=this.__data__;return n[t]=Zt&&void 0===e?it:e,this}function d(t){var e=-1,n=t?t.length:0;for(this.clear();++e<n;){var r=t[e];this.set(r[0],r[1])}}function h(){this.__data__=[]}function y(t){var e=this.__data__,n=L(e,t);if(n<0)return!1;var r=e.length-1;return n==r?e.pop():Bt.call(e,n,1),!0}function v(t){var e=this.__data__,n=L(e,t);return n<0?void 0:e[n][1]}function g(t){return L(this.__data__,t)>-1}function m(t,e){var n=this.__data__,r=L(n,t);return r<0?n.push([t,e]):n[r][1]=e,this}function b(t){var e=-1,n=t?t.length:0;for(this.clear();++e<n;){var r=t[e];this.set(r[0],r[1])}}function _(){this.__data__={hash:new a,map:new(Yt||d),string:new a}}function w(t){return G(this,t)["delete"](t)}function O(t){return G(this,t).get(t)}function E(t){return G(this,t).has(t)}function x(t,e){return G(this,t).set(t,e),this}function j(t){var e=-1,n=t?t.length:0;for(this.__data__=new b;++e<n;)this.add(t[e])}function I(t){return this.__data__.set(t,it),this}function S(t){return this.__data__.has(t)}function T(t){this.__data__=new d(t)}function C(){this.__data__=new d}function N(t){return this.__data__["delete"](t)}function R(t){return this.__data__.get(t)}function k(t){return this.__data__.has(t)}function A(t,e){var n=this.__data__;return n instanceof d&&n.__data__.length==rt&&(n=this.__data__=new b(n.__data__)),n.set(t,e),this}function L(t,e){for(var n=t.length;n--;)if(H(t[n][0],e))return n;return-1}function M(t,e){return Gt.call(t,e)||"object"==typeof t&&e in t&&null===Q(t)}function D(t,e,n,r,i){return t===e||(null==t||null==e||!K(t)&&!X(e)?t!==t&&e!==e:P(t,e,D,n,r,i))}function P(t,e,n,r,o,s){var a=ae(t),c=ae(e),u=ut,l=ut;a||(u=W(t),u=u==ct?gt:u),c||(l=W(e),l=l==ct?gt:l);var f=u==gt&&!i(t),p=l==gt&&!i(e),d=u==l;if(d&&!f)return s||(s=new T),a||tt(t)?F(t,e,n,r,o,s):q(t,e,u,n,r,o,s);if(!(o&st)){var h=f&&Gt.call(t,"__wrapped__"),y=p&&Gt.call(e,"__wrapped__");if(h||y){var v=h?t.value():t,g=y?e.value():e;return s||(s=new T),n(v,g,r,o,s)}}return!!d&&(s||(s=new T),U(t,e,n,r,o,s))}function F(t,e,n,i,o,s){var a=o&st,c=t.length,u=e.length;if(c!=u&&!(a&&u>c))return!1;var l=s.get(t);if(l)return l==e;var f=-1,p=!0,d=o&ot?new j:void 0;for(s.set(t,e);++f<c;){var h=t[f],y=e[f];if(i)var v=a?i(y,h,f,e,t,s):i(h,y,f,t,e,s);if(void 0!==v){if(v)continue;p=!1;break}if(d){if(!r(e,function(t,e){if(!d.has(e)&&(h===t||n(h,t,i,o,s)))return d.add(e)})){p=!1;break}}else if(h!==y&&!n(h,y,i,o,s)){p=!1;break}}return s["delete"](t),p}function q(t,e,n,r,i,a,c){switch(n){case jt:if(t.byteLength!=e.byteLength||t.byteOffset!=e.byteOffset)return!1;t=t.buffer,e=e.buffer;case xt:return!(t.byteLength!=e.byteLength||!r(new zt(t),new zt(e)));case lt:case ft:return+t==+e;case pt:return t.name==e.name&&t.message==e.message;case vt:return t!=+t?e!=+e:t==+e;case bt:case wt:return t==e+"";case yt:var u=o;case _t:var l=a&st;if(u||(u=s),t.size!=e.size&&!l)return!1;var f=c.get(t);return f?f==e:(a|=ot,c.set(t,e),F(u(t),u(e),r,i,a,c));case Ot:if(se)return se.call(t)==se.call(e)}return!1}function U(t,e,n,r,i,o){var s=i&st,a=et(t),c=a.length,u=et(e),l=u.length;if(c!=l&&!s)return!1;for(var f=c;f--;){var p=a[f];if(!(s?p in e:M(e,p)))return!1}var d=o.get(t);if(d)return d==e;var h=!0;o.set(t,e);for(var y=s;++f<c;){p=a[f];var v=t[p],g=e[p];if(r)var m=s?r(g,v,p,e,t,o):r(v,g,p,t,e,o);if(!(void 0===m?v===g||n(v,g,r,i,o):m)){h=!1;break}y||(y="constructor"==p)}if(h&&!y){var b=t.constructor,_=e.constructor;b!=_&&"constructor"in t&&"constructor"in e&&!("function"==typeof b&&b instanceof b&&"function"==typeof _&&_ instanceof _)&&(h=!1)}return o["delete"](t),h}function G(t,e){var n=t.__data__;return z(e)?n["string"==typeof e?"string":"hash"]:n.map}function $(t,e){var n=t[e];return Z(n)?n:void 0}function Q(t){return Ht(Object(t))}function W(t){return $t.call(t)}function z(t){var e=typeof t;return"string"==e||"number"==e||"symbol"==e||"boolean"==e?"__proto__"!==t:null===t}function B(t){if(null!=t){try{return Ut.call(t)}catch(e){}try{return t+""}catch(e){}}return""}function H(t,e){return t===e||t!==t&&e!==e}function V(t,e){return D(t,e)}function Y(t){var e=K(t)?$t.call(t):"";return e==dt||e==ht}function J(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=at}function K(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function X(t){return!!t&&"object"==typeof t}function Z(t){if(!K(t))return!1;var e=Y(t)||i(t)?Qt:Dt;return e.test(B(t))}function tt(t){return X(t)&&J(t.length)&&!!Pt[$t.call(t)]}var et=t("lodash.keys"),nt=t("lodash._root"),rt=200,it="__lodash_hash_undefined__",ot=1,st=2,at=9007199254740991,ct="[object Arguments]",ut="[object Array]",lt="[object Boolean]",ft="[object Date]",pt="[object Error]",dt="[object Function]",ht="[object GeneratorFunction]",yt="[object Map]",vt="[object Number]",gt="[object Object]",mt="[object Promise]",bt="[object RegExp]",_t="[object Set]",wt="[object String]",Ot="[object Symbol]",Et="[object WeakMap]",xt="[object ArrayBuffer]",jt="[object DataView]",It="[object Float32Array]",St="[object Float64Array]",Tt="[object Int8Array]",Ct="[object Int16Array]",Nt="[object Int32Array]",Rt="[object Uint8Array]",kt="[object Uint8ClampedArray]",At="[object Uint16Array]",Lt="[object Uint32Array]",Mt=/[\\^$.*+?()[\]{}|]/g,Dt=/^\[object .+?Constructor\]$/,Pt={};Pt[It]=Pt[St]=Pt[Tt]=Pt[Ct]=Pt[Nt]=Pt[Rt]=Pt[kt]=Pt[At]=Pt[Lt]=!0,Pt[ct]=Pt[ut]=Pt[xt]=Pt[lt]=Pt[jt]=Pt[ft]=Pt[pt]=Pt[dt]=Pt[yt]=Pt[vt]=Pt[gt]=Pt[bt]=Pt[_t]=Pt[wt]=Pt[Et]=!1;var Ft=Array.prototype,qt=Object.prototype,Ut=Function.prototype.toString,Gt=qt.hasOwnProperty,$t=qt.toString,Qt=RegExp("^"+Ut.call(Gt).replace(Mt,"\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g,"$1.*?")+"$"),Wt=nt.Symbol,zt=nt.Uint8Array,Bt=Ft.splice,Ht=Object.getPrototypeOf,Vt=$(nt,"DataView"),Yt=$(nt,"Map"),Jt=$(nt,"Promise"),Kt=$(nt,"Set"),Xt=$(nt,"WeakMap"),Zt=$(Object,"create"),te=B(Vt),ee=B(Yt),ne=B(Jt),re=B(Kt),ie=B(Xt),oe=Wt?Wt.prototype:void 0,se=oe?oe.valueOf:void 0;a.prototype.clear=c,a.prototype["delete"]=u,a.prototype.get=l,a.prototype.has=f,a.prototype.set=p,d.prototype.clear=h,d.prototype["delete"]=y,d.prototype.get=v,d.prototype.has=g,d.prototype.set=m,b.prototype.clear=_,b.prototype["delete"]=w,b.prototype.get=O,b.prototype.has=E,b.prototype.set=x,j.prototype.add=j.prototype.push=I,j.prototype.has=S,T.prototype.clear=C,T.prototype["delete"]=N,T.prototype.get=R,T.prototype.has=k,T.prototype.set=A,(Vt&&W(new Vt(new ArrayBuffer(1)))!=jt||Yt&&W(new Yt)!=yt||Jt&&W(Jt.resolve())!=mt||Kt&&W(new Kt)!=_t||Xt&&W(new Xt)!=Et)&&(W=function(t){var e=$t.call(t),n=e==gt?t.constructor:void 0,r=n?B(n):void 0;if(r)switch(r){case te:return jt;case ee:return yt;case ne:return mt;case re:return _t;case ie:return Et}return e});var ae=Array.isArray;e.exports=V},{"lodash._root":5,"lodash.keys":10}],10:[function(t,e,n){function r(t,e){for(var n=-1,r=Array(t);++n<t;)r[n]=e(n);return r}function i(t,e){return S.call(t,e)||"object"==typeof t&&e in t&&null===a(t)}function o(t){return R(Object(t))}function s(t){return function(e){return null==e?void 0:e[t]}}function a(t){return N(Object(t))}function c(t){var e=t?t.length:void 0;return y(e)&&(A(t)||m(t)||f(t))?r(e,String):null}function u(t,e){return e=null==e?_:e,!!e&&("number"==typeof t||j.test(t))&&t>-1&&t%1==0&&t<e}function l(t){var e=t&&t.constructor,n="function"==typeof e&&e.prototype||I;return t===n}function f(t){return d(t)&&S.call(t,"callee")&&(!C.call(t,"callee")||T.call(t)==w)}function p(t){return null!=t&&y(k(t))&&!h(t)}function d(t){return g(t)&&p(t)}function h(t){var e=v(t)?T.call(t):"";return e==O||e==E}function y(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=_}function v(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function g(t){return!!t&&"object"==typeof t}function m(t){return"string"==typeof t||!A(t)&&g(t)&&T.call(t)==x}function b(t){var e=l(t);if(!e&&!p(t))return o(t);var n=c(t),r=!!n,s=n||[],a=s.length;for(var f in t)!i(t,f)||r&&("length"==f||u(f,a))||e&&"constructor"==f||s.push(f);return s}var _=9007199254740991,w="[object Arguments]",O="[object Function]",E="[object GeneratorFunction]",x="[object String]",j=/^(?:0|[1-9]\d*)$/,I=Object.prototype,S=I.hasOwnProperty,T=I.toString,C=I.propertyIsEnumerable,N=Object.getPrototypeOf,R=Object.keys,k=s("length"),A=Array.isArray;e.exports=b},{}],11:[function(t,e,n){(function(t){function r(t,e){for(var n=-1,r=Array(t);++n<t;)r[n]=e(n);return r}function i(t){return t&&t.Object===Object?t:null}function o(t){for(var e,n=[];!(e=t.next()).done;)n.push(e.value);return n}function s(t){t=null==t?t:Object(t);var e=[];for(var n in t)e.push(n);return e}function a(t){return function(e){return null==e?void 0:e[t]}}function c(t){var e=t?t.length:void 0;return y(e)&&(G(t)||m(t)||f(t))?r(e,String):null}function u(t,e){return e=null==e?_:e,!!e&&("number"==typeof t||j.test(t))&&t>-1&&t%1==0&&t<e}function l(t){var e=t&&t.constructor,n="function"==typeof e&&e.prototype||L;return t===n}function f(t){return d(t)&&M.call(t,"callee")&&(!q.call(t,"callee")||D.call(t)==w)}function p(t){return null!=t&&y(U(t))&&!h(t)}function d(t){return g(t)&&p(t)}function h(t){var e=v(t)?D.call(t):"";return e==O||e==E}function y(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=_}function v(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function g(t){return!!t&&"object"==typeof t}function m(t){return"string"==typeof t||!G(t)&&g(t)&&D.call(t)==x}function b(t){for(var e=-1,n=l(t),r=s(t),i=r.length,o=c(t),a=!!o,f=o||[],p=f.length;++e<i;){var d=r[e];a&&("length"==d||u(d,p))||"constructor"==d&&(n||!M.call(t,d))||f.push(d)}return f}var _=9007199254740991,w="[object Arguments]",O="[object Function]",E="[object GeneratorFunction]",x="[object String]",j=/^(?:0|[1-9]\d*)$/,I={"function":!0,object:!0},S=I[typeof n]&&n&&!n.nodeType?n:void 0,T=I[typeof e]&&e&&!e.nodeType?e:void 0,C=i(S&&T&&"object"==typeof t&&t),N=i(I[typeof self]&&self),R=i(I[typeof window]&&window),k=i(I[typeof this]&&this),A=C||R!==(k&&k.window)&&R||N||k||Function("return this")(),L=Object.prototype,M=L.hasOwnProperty,D=L.toString,P=A.Reflect,F=P?P.enumerate:void 0,q=L.propertyIsEnumerable;F&&!q.call({valueOf:1},"valueOf")&&(s=function(t){return o(F(t))});var U=a("length"),G=Array.isArray;e.exports=b}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],12:[function(t,e,n){function r(t,e,n){var r=n.length;switch(r){case 0:return t.call(e);case 1:return t.call(e,n[0]);case 2:return t.call(e,n[0],n[1]);case 3:return t.call(e,n[0],n[1],n[2])}return t.apply(e,n)}function i(t,e){if("function"!=typeof t)throw new TypeError(p);return e=I(void 0===e?t.length-1:l(e),0),function(){for(var n=arguments,i=-1,o=I(n.length-e,0),s=Array(o);++i<o;)s[i]=n[e+i];switch(e){case 0:return t.call(this,s);case 1:return t.call(this,n[0],s);case 2:return t.call(this,n[0],n[1],s)}var a=Array(e+1);for(i=-1;++i<e;)a[i]=n[i];return a[e]=s,r(t,this,a)}}function o(t){var e=s(t)?j.call(t):"";return e==v||e==g}function s(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function a(t){return!!t&&"object"==typeof t}function c(t){return"symbol"==typeof t||a(t)&&j.call(t)==m}function u(t){if(!t)return 0===t?t:0;if(t=f(t),t===d||t===-d){var e=t<0?-1:1;return e*h}return t===t?t:0}function l(t){var e=u(t),n=e%1;return e===e?n?e-n:e:0}function f(t){if("number"==typeof t)return t;if(c(t))return y;if(s(t)){var e=o(t.valueOf)?t.valueOf():t;t=s(e)?e+"":e}if("string"!=typeof t)return 0===t?t:+t;t=t.replace(b,"");var n=w.test(t);return n||O.test(t)?E(t.slice(2),n?2:8):_.test(t)?y:+t}var p="Expected a function",d=1/0,h=1.7976931348623157e308,y=NaN,v="[object Function]",g="[object GeneratorFunction]",m="[object Symbol]",b=/^\s+|\s+$/g,_=/^[-+]0x[0-9a-f]+$/i,w=/^0b[01]+$/i,O=/^0o[0-7]+$/i,E=parseInt,x=Object.prototype,j=x.toString,I=Math.max;e.exports=i},{}],13:[function(t,e,n){function r(t,e,n){var r=n.length;switch(r){case 0:return t.call(e);case 1:return t.call(e,n[0]);case 2:return t.call(e,n[0],n[1]);case 3:return t.call(e,n[0],n[1],n[2])}return t.apply(e,n)}function i(t,e){for(var n=-1,r=t.length,i=Array(r);++n<r;)i[n]=e(t[n],n,t);return i}function o(t,e){return i(e,function(e){return t[e]})}function s(t){return"\\"+D[t]}function a(t,e,n,r){return void 0===t||f(t,P[n])&&!F.call(r,n)?e:t}function c(t){return function(e){return null==e?void 0:e[t]}}function u(t,e){return e=null==e?j:e,!!e&&("number"==typeof t||A.test(t))&&t>-1&&t%1==0&&t<e}function l(t,e,n){if(!v(n))return!1;var r=typeof e;return!!("number"==r?p(n)&&u(e,n.length):"string"==r&&e in n)&&f(n[e],t)}function f(t,e){return t===e||t!==t&&e!==e}function p(t){return null!=t&&y(U(t))&&!h(t)}function d(t){return!!g(t)&&(q.call(t)==I||"string"==typeof t.message&&"string"==typeof t.name)}function h(t){var e=v(t)?q.call(t):"";return e==S||e==T}function y(t){return"number"==typeof t&&t>-1&&t%1==0&&t<=j}function v(t){var e=typeof t;return!!t&&("object"==e||"function"==e)}function g(t){return!!t&&"object"==typeof t}function m(t,e,n){var r=E.imports._.templateSettings||E;n&&l(t,e,n)&&(e=void 0),t=x(t),e=b({},e,r,a);var i,c,u=b({},e.imports,r.imports,a),f=_(u),p=o(u,f),h=0,y=e.interpolate||L,v="__p += '",g=RegExp((e.escape||L).source+"|"+y.source+"|"+(y===w?k:L).source+"|"+(e.evaluate||L).source+"|$","g"),m="sourceURL"in e?"//# sourceURL="+e.sourceURL+"\n":"";t.replace(g,function(e,n,r,o,a,u){return r||(r=o),v+=t.slice(h,u).replace(M,s),n&&(i=!0,v+="' +\n__e("+n+") +\n'"),a&&(c=!0,v+="';\n"+a+";\n__p += '"),r&&(v+="' +\n((__t = ("+r+")) == null ? '' : __t) +\n'"),h=u+e.length,e}),v+="';\n";var O=e.variable;O||(v="with (obj) {\n"+v+"\n}\n"),v=(c?v.replace(C,""):v).replace(N,"$1").replace(R,"$1;"),v="function("+(O||"obj")+") {\n"+(O?"":"obj || (obj = {});\n")+"var __t, __p = ''"+(i?", __e = _.escape":"")+(c?", __j = Array.prototype.join;\nfunction print() { __p += __j.call(arguments, '') }\n":";\n")+v+"return __p\n}";var j=G(function(){return Function(f,m+"return "+v).apply(void 0,p)});if(j.source=v,d(j))throw j;return j}var b=t("lodash.assigninwith"),_=t("lodash.keys"),w=t("lodash._reinterpolate"),O=t("lodash.rest"),E=t("lodash.templatesettings"),x=t("lodash.tostring"),j=9007199254740991,I="[object Error]",S="[object Function]",T="[object GeneratorFunction]",C=/\b__p \+= '';/g,N=/\b(__p \+=) '' \+/g,R=/(__e\(.*?\)|\b__t\)) \+\n'';/g,k=/\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g,A=/^(?:0|[1-9]\d*)$/,L=/($^)/,M=/['\n\r\u2028\u2029\\]/g,D={"\\":"\\","'":"'","\n":"n","\r":"r","\u2028":"u2028","\u2029":"u2029"},P=Object.prototype,F=P.hasOwnProperty,q=P.toString,U=c("length"),G=O(function(t,e){try{return r(t,void 0,e)}catch(n){return d(n)?n:new Error(n)}});e.exports=m},{"lodash._reinterpolate":4,"lodash.assigninwith":6,"lodash.keys":10,"lodash.rest":12,"lodash.templatesettings":14,"lodash.tostring":15}],14:[function(t,e,n){var r=t("lodash.escape"),i=t("lodash._reinterpolate"),o=/<%-([\s\S]+?)%>/g,s=/<%([\s\S]+?)%>/g,a={escape:o,evaluate:s,interpolate:i,variable:"",imports:{_:{escape:r}}};e.exports=a},{"lodash._reinterpolate":4,"lodash.escape":8}],15:[function(t,e,n){(function(t){function r(t){return t&&t.Object===Object?t:null}function i(t){if("string"==typeof t)return t;if(s(t))return O?O.call(t):"";var e=t+"";return"0"==e&&1/t==-c?"-0":e}function o(t){return!!t&&"object"==typeof t}function s(t){return"symbol"==typeof t||o(t)&&b.call(t)==u}function a(t){return null==t?"":i(t)}var c=1/0,u="[object Symbol]",l={"function":!0,object:!0},f=l[typeof n]&&n&&!n.nodeType?n:void 0,p=l[typeof e]&&e&&!e.nodeType?e:void 0,d=r(f&&p&&"object"==typeof t&&t),h=r(l[typeof self]&&self),y=r(l[typeof window]&&window),v=r(l[typeof this]&&this),g=d||y!==(v&&v.window)&&y||h||v||Function("return this")(),m=Object.prototype,b=m.toString,_=g.Symbol,w=_?_.prototype:void 0,O=w?w.toString:void 0;e.exports=a}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],16:[function(t,e,n){function r(t){return i(Object(t))}var i=Object.getPrototypeOf;e.exports=r},{}],17:[function(t,e,n){function r(t){var e=!1;if(null!=t&&"function"!=typeof t.toString)try{e=!!(t+"")}catch(n){}return e}e.exports=r},{}],18:[function(t,e,n){function r(t){return!!t&&"object"==typeof t}e.exports=r},{}],19:[function(t,e,n){function r(t){if(!s(t)||p.call(t)!=a||o(t))return!1;var e=i(t);if(null===e)return!0;var n=l.call(e,"constructor")&&e.constructor;return"function"==typeof n&&n instanceof n&&u.call(n)==f}var i=t("./_getPrototype"),o=t("./_isHostObject"),s=t("./isObjectLike"),a="[object Object]",c=Object.prototype,u=Function.prototype.toString,l=c.hasOwnProperty,f=u.call(Object),p=c.toString;e.exports=r},{"./_getPrototype":16,"./_isHostObject":17,"./isObjectLike":18}],20:[function(t,e,n){"use strict";function r(t){this._ev=new a,this.options=s({},this.options,t)}if(!mapboxgl)throw new Error("include mapboxgl before mapbox-gl-geocoder.js");var i=t("suggestions"),o=t("lodash.debounce"),s=t("xtend"),a=t("events").EventEmitter,c="https://api.mapbox.com/geocoding/v5/mapbox.places/";r.prototype=mapboxgl.util.inherit(mapboxgl.Control,{options:{position:"top-left",placeholder:"Search",zoom:16,flyTo:!0},onAdd:function(t){this.request=new XMLHttpRequest,this.container=this.options.container?"string"==typeof this.options.container?document.getElementById(this.options.container):this.options.container:t.getContainer();var e=document.createElement("div");e.className="mapboxgl-ctrl-geocoder";var n=document.createElement("span");n.className="geocoder-icon geocoder-icon-search";var r=this._inputEl=document.createElement("input");r.type="text",r.placeholder=this.options.placeholder,r.addEventListener("keydown",o(function(t){return t.target.value?void(t.metaKey||[9,27,37,39,13,38,40].indexOf(t.keyCode)!==-1||this._queryFromInput(t.target.value)):this._clearEl.classList.remove("active")}.bind(this)),200),r.addEventListener("change",function(e){e.target.value&&this._clearEl.classList.add("active");var n=this._typeahead.selected;if(n){if(this.options.flyTo)if(n.bbox&&n.context&&n.context.length<=3||n.bbox&&!n.context){var r=n.bbox;t.fitBounds([[r[0],r[1]],[r[2],r[3]]])}else t.flyTo({center:n.center,zoom:this.options.zoom});this._input=n,this.fire("result",{result:n})}}.bind(this));var s=document.createElement("div");s.classList.add("geocoder-pin-right");var a=this._clearEl=document.createElement("button");a.className="geocoder-icon geocoder-icon-close",a.addEventListener("click",this._clear.bind(this));var c=this._loadingEl=document.createElement("span");return c.className="geocoder-icon geocoder-icon-loading",s.appendChild(a),s.appendChild(c),e.appendChild(n),e.appendChild(r),e.appendChild(s),this.container.appendChild(e),this.options.container&&(this.options.position=!1),this._typeahead=new i(r,[],{filter:!1}),this._typeahead.getItemValue=function(t){return t.place_name},e},_geocode:function(t,e){this._loadingEl.classList.add("active"),this.fire("loading");var n=[];this.options.proximity&&n.push("proximity="+this.options.proximity.join()),this.options.bbox&&n.push("bbox="+this.options.bbox.join()),this.options.country&&n.push("country="+this.options.country),this.options.types&&n.push("types="+this.options.types);var r=this.options.accessToken?this.options.accessToken:mapboxgl.accessToken;n.push("access_token="+r),this.request.abort(),this.request.open("GET",c+encodeURIComponent(t.trim())+".json?"+n.join("&"),!0),this.request.onload=function(){if(this._loadingEl.classList.remove("active"),this.request.status>=200&&this.request.status<400){var t=JSON.parse(this.request.responseText);return t.features.length?this._clearEl.classList.add("active"):(this._clearEl.classList.remove("active"),this._typeahead.selected=null),this.fire("results",{results:t.features}),this._typeahead.update(t.features),e(t.features)}this.fire("error",{error:JSON.parse(this.request.responseText).message})}.bind(this),this.request.onerror=function(){this._loadingEl.classList.remove("active"),this.fire("error",{error:JSON.parse(this.request.responseText).message})}.bind(this),this.request.send()},_queryFromInput:function(t){t=t.trim(),t||this._clear(),t.length>2&&this._geocode(t,function(t){this._results=t}.bind(this))},_change:function(){var t=document.createEvent("HTMLEvents");t.initEvent("change",!0,!1),this._inputEl.dispatchEvent(t)},_query:function(t){t&&("object"==typeof t&&t.length&&(t=[mapboxgl.util.wrap(t[0],-180,180),mapboxgl.util.wrap(t[1],-180,180)].join()),this._geocode(t,function(t){if(t.length){var e=t[0];this._results=t,this._typeahead.selected=e,this._inputEl.value=e.place_name,this._change()}}.bind(this)))},_setInput:function(t){t&&("object"==typeof t&&t.length&&(t=[mapboxgl.util.wrap(t[0],-180,180),mapboxgl.util.wrap(t[1],-180,180)].join()),this._inputEl.value=t,this._input=null,this._typeahead.selected=null,this._typeahead.clear(),this._change())},_clear:function(){this._input=null,this._inputEl.value="",this._typeahead.selected=null,this._typeahead.clear(),this._change(),this._inputEl.focus(),this._clearEl.classList.remove("active"),this.fire("clear")},getResult:function(){return this._input},query:function(t){return this._query(t),this},setInput:function(t){return this._setInput(t),this},on:function(t,e){return this._ev.on(t,e),this},fire:function(t,e){return this._ev.emit(t,e),this},off:function(t,e){return this._ev.removeListener(t,e),this}}),window.mapboxgl?mapboxgl.Geocoder=r:"undefined"!=typeof e&&(e.exports=r)},{events:2,"lodash.debounce":7,suggestions:30,xtend:37}],21:[function(t,e,n){"use strict";function r(t,e){t=Math.round(t*e),t<<=1,t<0&&(t=~t);for(var n="";t>=32;)n+=String.fromCharCode((32|31&t)+63),t>>=5;return n+=String.fromCharCode(t+63)}function i(t){for(var e=[],n=0;n<t.length;n++)e.push(t[n].slice().reverse());return e}var o={};o.decode=function(t,e){for(var n,r,i=0,o=0,s=0,a=[],c=0,u=0,l=null,f=Math.pow(10,e||5);i<t.length;){l=null,c=0,u=0;do l=t.charCodeAt(i++)-63,u|=(31&l)<<c,c+=5;while(l>=32);n=1&u?~(u>>1):u>>1,c=u=0;do l=t.charCodeAt(i++)-63,u|=(31&l)<<c,c+=5;while(l>=32);r=1&u?~(u>>1):u>>1,o+=n,s+=r,a.push([o/f,s/f])}return a},o.encode=function(t,e){if(!t.length)return"";for(var n=Math.pow(10,e||5),i=r(t[0][0],n)+r(t[0][1],n),o=1;o<t.length;o++){var s=t[o],a=t[o-1];i+=r(s[0]-a[0],n),i+=r(s[1]-a[1],n)}return i},o.fromGeoJSON=function(t,e){if(t&&"Feature"===t.type&&(t=t.geometry),!t||"LineString"!==t.type)throw new Error("Input must be a GeoJSON LineString");return o.encode(i(t.coordinates),e)},o.toGeoJSON=function(t,e){var n=o.decode(t,e);return{type:"LineString",coordinates:i(n)
-}},"object"==typeof e&&e.exports&&(e.exports=o)},{}],22:[function(t,e,n){"use strict";function r(t){return function(e){var n=e.dispatch,r=e.getState;return function(e){return function(i){return"function"==typeof i?i(n,r,t):e(i)}}}}n.__esModule=!0;var i=r();i.withExtraArgument=r,n["default"]=i},{}],23:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function i(){for(var t=arguments.length,e=Array(t),n=0;n<t;n++)e[n]=arguments[n];return function(t){return function(n,r,i){var s=t(n,r,i),c=s.dispatch,u=[],l={getState:s.getState,dispatch:function(t){return c(t)}};return u=e.map(function(t){return t(l)}),c=a["default"].apply(void 0,u)(s.dispatch),o({},s,{dispatch:c})}}}n.__esModule=!0;var o=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var n=arguments[e];for(var r in n)Object.prototype.hasOwnProperty.call(n,r)&&(t[r]=n[r])}return t};n["default"]=i;var s=t("./compose"),a=r(s)},{"./compose":26}],24:[function(t,e,n){"use strict";function r(t,e){return function(){return e(t.apply(void 0,arguments))}}function i(t,e){if("function"==typeof t)return r(t,e);if("object"!=typeof t||null===t)throw new Error("bindActionCreators expected an object or a function, instead received "+(null===t?"null":typeof t)+'. Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');for(var n=Object.keys(t),i={},o=0;o<n.length;o++){var s=n[o],a=t[s];"function"==typeof a&&(i[s]=r(a,e))}return i}n.__esModule=!0,n["default"]=i},{}],25:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function i(t,e){var n=e&&e.type,r=n&&'"'+n.toString()+'"'||"an action";return"Given action "+r+', reducer "'+t+'" returned undefined. To ignore an action, you must explicitly return the previous state.'}function o(t){Object.keys(t).forEach(function(e){var n=t[e],r=n(void 0,{type:a.ActionTypes.INIT});if("undefined"==typeof r)throw new Error('Reducer "'+e+'" returned undefined during initialization. If the state passed to the reducer is undefined, you must explicitly return the initial state. The initial state may not be undefined.');var i="@@redux/PROBE_UNKNOWN_ACTION_"+Math.random().toString(36).substring(7).split("").join(".");if("undefined"==typeof n(void 0,{type:i}))throw new Error('Reducer "'+e+'" returned undefined when probed with a random type. '+("Don't try to handle "+a.ActionTypes.INIT+' or other actions in "redux/*" ')+"namespace. They are considered private. Instead, you must return the current state for any unknown actions, unless it is undefined, in which case you must return the initial state, regardless of the action type. The initial state may not be undefined.")})}function s(t){for(var e=Object.keys(t),n={},r=0;r<e.length;r++){var s=e[r];"function"==typeof t[s]&&(n[s]=t[s])}var a,c=Object.keys(n);try{o(n)}catch(u){a=u}return function(){var t=arguments.length<=0||void 0===arguments[0]?{}:arguments[0],e=arguments[1];if(a)throw a;for(var r=!1,o={},s=0;s<c.length;s++){var u=c[s],l=n[u],f=t[u],p=l(f,e);if("undefined"==typeof p){var d=i(u,e);throw new Error(d)}o[u]=p,r=r||p!==f}return r?o:t}}n.__esModule=!0,n["default"]=s;var a=t("./createStore"),c=t("lodash/isPlainObject"),u=(r(c),t("./utils/warning"));r(u)},{"./createStore":27,"./utils/warning":29,"lodash/isPlainObject":19}],26:[function(t,e,n){"use strict";function r(){for(var t=arguments.length,e=Array(t),n=0;n<t;n++)e[n]=arguments[n];if(0===e.length)return function(t){return t};var r=function(){var t=e[e.length-1],n=e.slice(0,-1);return{v:function(){return n.reduceRight(function(t,e){return e(t)},t.apply(void 0,arguments))}}}();return"object"==typeof r?r.v:void 0}n.__esModule=!0,n["default"]=r},{}],27:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function i(t,e,n){function r(){g===v&&(g=v.slice())}function o(){return y}function a(t){if("function"!=typeof t)throw new Error("Expected listener to be a function.");var e=!0;return r(),g.push(t),function(){if(e){e=!1,r();var n=g.indexOf(t);g.splice(n,1)}}}function l(t){if(!(0,s["default"])(t))throw new Error("Actions must be plain objects. Use custom middleware for async actions.");if("undefined"==typeof t.type)throw new Error('Actions may not have an undefined "type" property. Have you misspelled a constant?');if(m)throw new Error("Reducers may not dispatch actions.");try{m=!0,y=h(y,t)}finally{m=!1}for(var e=v=g,n=0;n<e.length;n++)e[n]();return t}function f(t){if("function"!=typeof t)throw new Error("Expected the nextReducer to be a function.");h=t,l({type:u.INIT})}function p(){var t,e=a;return t={subscribe:function(t){function n(){t.next&&t.next(o())}if("object"!=typeof t)throw new TypeError("Expected the observer to be an object.");n();var r=e(n);return{unsubscribe:r}}},t[c["default"]]=function(){return this},t}var d;if("function"==typeof e&&"undefined"==typeof n&&(n=e,e=void 0),"undefined"!=typeof n){if("function"!=typeof n)throw new Error("Expected the enhancer to be a function.");return n(i)(t,e)}if("function"!=typeof t)throw new Error("Expected the reducer to be a function.");var h=t,y=e,v=[],g=v,m=!1;return l({type:u.INIT}),d={dispatch:l,subscribe:a,getState:o,replaceReducer:f},d[c["default"]]=p,d}n.__esModule=!0,n.ActionTypes=void 0,n["default"]=i;var o=t("lodash/isPlainObject"),s=r(o),a=t("symbol-observable"),c=r(a),u=n.ActionTypes={INIT:"@@redux/INIT"}},{"lodash/isPlainObject":19,"symbol-observable":33}],28:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}n.__esModule=!0,n.compose=n.applyMiddleware=n.bindActionCreators=n.combineReducers=n.createStore=void 0;var i=t("./createStore"),o=r(i),s=t("./combineReducers"),a=r(s),c=t("./bindActionCreators"),u=r(c),l=t("./applyMiddleware"),f=r(l),p=t("./compose"),d=r(p),h=t("./utils/warning");r(h);n.createStore=o["default"],n.combineReducers=a["default"],n.bindActionCreators=u["default"],n.applyMiddleware=f["default"],n.compose=d["default"]},{"./applyMiddleware":23,"./bindActionCreators":24,"./combineReducers":25,"./compose":26,"./createStore":27,"./utils/warning":29}],29:[function(t,e,n){"use strict";function r(t){"undefined"!=typeof console&&"function"==typeof console.error&&console.error(t);try{throw new Error(t)}catch(e){}}n.__esModule=!0,n["default"]=r},{}],30:[function(t,e,n){"use strict";var r=t("./src/suggestions");window.Suggestions=e.exports=r},{"./src/suggestions":32}],31:[function(t,e,n){"Use strict";var r=function(t){return this.component=t,this.items=[],this.active=0,this.element=document.createElement("ul"),this.element.className="suggestions",t.el.parentNode.insertBefore(this.element,t.el.nextSibling),this};r.prototype.show=function(){this.element.style.display="block"},r.prototype.hide=function(){this.element.style.display="none"},r.prototype.add=function(t){this.items.push(t)},r.prototype.clear=function(){this.items=[],this.active=0},r.prototype.isEmpty=function(){return!this.items.length},r.prototype.draw=function(){if(this.element.innerHTML="",0===this.items.length)return void this.hide();for(var t=0;t<this.items.length;t++)this.drawItem(this.items[t],this.active===t);this.show()},r.prototype.drawItem=function(t,e){var n=document.createElement("li"),r=document.createElement("a");e&&(n.className+=" active"),r.innerHTML=t.string,n.appendChild(r),this.element.appendChild(n),n.addEventListener("mousedown",function(){this.handleMouseDown.call(this,t)}.bind(this))},r.prototype.handleMouseDown=function(t){this.component.value(t.original),this.clear(),this.draw()},r.prototype.move=function(t){this.active=t,this.draw()},r.prototype.previous=function(){this.move(0===this.active?this.items.length-1:this.active-1)},r.prototype.next=function(){this.move(this.active===this.items.length-1?0:this.active+1)},e.exports=r},{}],32:[function(t,e,n){"use strict";var r=t("xtend"),i=t("fuzzy"),o=t("./list"),s=function(t,e,n){return n=n||{},this.options=r({minLength:2,limit:5,filter:!0},n),this.el=t,this.data=e||[],this.list=new o(this),this.query="",this.selected=null,this.list.draw(),this.el.addEventListener("keyup",function(t){this.handleKeyUp(t.keyCode)}.bind(this),!1),this.el.addEventListener("keydown",function(t){this.handleKeyDown(t)}.bind(this)),this.el.addEventListener("focus",function(){this.handleFocus()}.bind(this)),this.el.addEventListener("blur",function(){this.handleBlur()}.bind(this)),this};s.prototype.handleKeyUp=function(t){if(40!==t&&38!==t&&27!==t&&13!==t&&9!==t)return this.query=this.normalize(this.el.value),this.list.clear(),this.query.length<this.options.minLength?void this.list.draw():void this.getCandidates(function(t){for(var e=0;e<t.length&&(this.list.add(t[e]),e!==this.options.limit-1);e++);this.list.draw()}.bind(this))},s.prototype.handleKeyDown=function(t){switch(t.keyCode){case 13:case 9:this.list.isEmpty()||(this.value(this.list.items[this.list.active].original),this.list.hide());break;case 27:this.list.isEmpty()||this.list.hide();break;case 38:this.list.previous();break;case 40:this.list.next()}},s.prototype.handleBlur=function(){this.list.hide()},s.prototype.handleFocus=function(){this.list.isEmpty()||this.list.show()},s.prototype.update=function(t){this.data=t,this.list.draw()},s.prototype.clear=function(){this.data=[],this.list.clear()},s.prototype.normalize=function(t){return t=t.toLowerCase()},s.prototype.match=function(t,e){return t.indexOf(e)>-1},s.prototype.value=function(t){if(this.selected=t,this.el.value=this.getItemValue(t),document.createEvent){var e=document.createEvent("HTMLEvents");e.initEvent("change",!0,!1),this.el.dispatchEvent(e)}else this.el.fireEvent("onchange")},s.prototype.getCandidates=function(t){var e={pre:"<strong>",post:"</strong>",extract:function(t){return this.getItemValue(t)}.bind(this)},n=this.options.filter?i.filter(this.query,this.data,e):this.data.map(function(t){return{original:t,string:this.getItemValue(t).replace(new RegExp("("+this.query+")","ig"),function(t,e){return"<strong>"+e+"</strong>"})}}.bind(this));t(n)},s.prototype.getItemValue=function(t){return t},e.exports=s},{"./list":31,fuzzy:3,xtend:37}],33:[function(t,e,n){(function(n){"use strict";e.exports=t("./ponyfill")(n||window||this)}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./ponyfill":34}],34:[function(t,e,n){"use strict";e.exports=function(t){var e,n=t.Symbol;return"function"==typeof n?n.observable?e=n.observable:(e=n("observable"),n.observable=e):e="@@observable",e}},{}],35:[function(t,e,n){var r=t("turf-meta").coordEach;e.exports=function(t){var e=[1/0,1/0,-(1/0),-(1/0)];return r(t,function(t){e[0]>t[0]&&(e[0]=t[0]),e[1]>t[1]&&(e[1]=t[1]),e[2]<t[0]&&(e[2]=t[0]),e[3]<t[1]&&(e[3]=t[1])}),e}},{"turf-meta":36}],36:[function(t,e,n){function r(t,e,n){var r,i,o,s,a,c,u,f,p,d=0,h="FeatureCollection"===t.type,y="Feature"===t.type,v=h?t.features.length:1;for(r=0;r<v;r++)for(f=h?t.features[r].geometry:y?t.geometry:t,p="GeometryCollection"===f.type,c=p?f.geometries.length:1,s=0;s<c;s++)if(a=p?f.geometries[s]:f,u=a.coordinates,d=!n||"Polygon"!==a.type&&"MultiPolygon"!==a.type?0:1,"Point"===a.type)e(u);else if("LineString"===a.type||"MultiPoint"===a.type)for(i=0;i<u.length;i++)e(u[i]);else if("Polygon"===a.type||"MultiLineString"===a.type)for(i=0;i<u.length;i++)for(o=0;o<u[i].length-d;o++)e(u[i][o]);else{if("MultiPolygon"!==a.type)throw new Error("Unknown Geometry Type");for(i=0;i<u.length;i++)for(o=0;o<u[i].length;o++)for(l=0;l<u[i][o].length-d;l++)e(u[i][o][l])}}function i(t,e,n,i){return r(t,function(t){n=e(n,t)},i),n}function o(t,e){var n;switch(t.type){case"FeatureCollection":for(features=t.features,n=0;n<t.features.length;n++)e(t.features[n].properties);break;case"Feature":e(t.properties)}}function s(t,e,n){return o(t,function(t){n=e(n,t)}),n}e.exports.coordEach=r,e.exports.coordReduce=i,e.exports.propEach=o,e.exports.propReduce=s},{}],37:[function(t,e,n){function r(){for(var t={},e=0;e<arguments.length;e++){var n=arguments[e];for(var r in n)i.call(n,r)&&(t[r]=n[r])}return t}e.exports=r;var i=Object.prototype.hasOwnProperty},{}],38:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function i(t){if(t&&t.__esModule)return t;var e={};if(null!=t)for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n]);return e["default"]=t,e}function o(t){return function(e){var n=P["default"].createPoint(t,{id:"origin","marker-symbol":"A"});e({type:M.ORIGIN,origin:n}),e(A("origin",{feature:n}))}}function s(t){return function(e){var n=P["default"].createPoint(t,{id:"destination","marker-symbol":"B"});e({type:M.DESTINATION,destination:n}),e(A("destination",{feature:n}))}}function a(t){return function(e){e({type:M.DIRECTIONS,directions:t}),e(A("route",{route:t}))}}function c(t){return{type:M.WAYPOINTS,waypoints:t}}function u(t){return{type:M.HOVER_MARKER,hoverMarker:t}}function l(){var t=this;return function(e,n){var r=n(),i=(r.api,r.accessToken),c=r.routeIndex,u=(r.profile,f(n),{geometry:"polyline",instructions:"text",alternatives:!0,steps:!0});u.access_token=i?i:mapboxgl.accessToken,F.abort(),F.open("GET",API+encodeURIComponent(q.trim())+".json?"+u.join("&"),!0),F.onload=function(){if(t._loadingEl.classList.remove("active"),!(F.status>=200&&F.status<400))return e(a([])),e(d(JSON.parse(F.responseText).message));JSON.parse(F.responseText);e(d(null)),F.routes[c]||e(O(0)),e(a(F.routes)),e(o(F.origin.geometry.coordinates)),e(s(F.destination.geometry.coordinates))},F.onerror=function(){return e(a([])),e(d(JSON.parse(F.responseText).message))},F.send()}}function f(t){var e=t(),n=e.origin,r=e.destination,i=e.waypoints,o=[];return o=o.concat(n.geometry.coordinates),o.push(";"),i.length&&i.forEach(function(t){o=o.concat(t.geometry.coordinates),o.push(";")}),o=o.concat(r.geometry.coordinates),encodeURIComponent(o.join())}function p(t){var e={id:"waypoint"};return Object.assign(t,{properties:t.properties?Object.assign(t.properties,e):e})}function d(t){return function(e){e({type:"ERROR",error:t}),t&&e(A("error",{error:t}))}}function h(t){return{type:M.ORIGIN_QUERY,query:t}}function y(t){return{type:M.DESTINATION_QUERY,query:t}}function v(t){return{type:M.ORIGIN_FROM_COORDINATES,coordinates:t}}function g(t){return{type:M.DESTINATION_FROM_COORDINATES,coordinates:t}}function m(){return function(t){t({type:M.ORIGIN_CLEAR}),t(A("clear",{type:"origin"})),t(d(null))}}function b(){return function(t){t({type:M.DESTINATION_CLEAR}),t(A("clear",{type:"destination"})),t(d(null))}}function _(t){return{type:M.SET_OPTIONS,options:t}}function w(t){return function(e){var n=t?P["default"].createPoint(t,{id:"hover"}):{};e(u(n))}}function O(t){return{type:M.ROUTE_INDEX,routeIndex:t}}function E(t){return function(e,n){var r=n(),i=r.destination;e(o(t)),i.geometry&&e(l())}}function x(t){return function(e,n){var r=n(),i=r.origin;e(s(t)),i.geometry&&e(l())}}function j(t){return function(e,n){var r=n(),i=r.origin,o=r.destination;e({type:M.DIRECTIONS_PROFILE,profile:t}),e(A("profile",{profile:t})),i.geometry&&o.geometry&&e(l())}}function I(){return function(t,e){var n=e();n.destination.geometry&&t(o(n.destination.geometry.coordinates)),n.origin.geometry&&t(s(n.origin.geometry.coordinates)),n.origin.geometry&&n.destination.geometry&&t(l())}}function S(t){return function(e){return P["default"].validCoords(t)||(t=[P["default"].wrap(t[0]),P["default"].wrap(t[1])]),isNaN(t[0])&&isNaN(t[1])?e(d(new Error("Coordinates are not valid"))):(e(v(t)),void e(E(t)))}}function T(t){return function(e){return P["default"].validCoords(t)||(t=[P["default"].wrap(t[0]),P["default"].wrap(t[1])]),isNaN(t[0])&&isNaN(t[1])?e(d(new Error("Coordinates are not valid"))):(e(x(t)),void e(g(t)))}}function C(t,e){return function(n,r){var i=r(),o=i.destination,s=i.waypoints;s.splice(t,0,p(e)),n(c(s)),o.geometry&&n(l())}}function N(t,e){return function(n,r){var i=r(),o=i.destination,s=i.waypoints;s[t]=p(e),n(c(s)),o.geometry&&n(l())}}function R(t){return function(e,n){var r=n(),i=r.destination,o=r.waypoints;o=o.filter(function(e){return!P["default"].coordinateMatch(e,t)}),e(c(o)),i.geometry&&e(l())}}function k(t,e){return function(n,r){var i=r(),o=i.events;return o[t]=o[t]||[],o[t].push(e),{type:M.EVENTS,events:o}}}function A(t,e){var n=this;return function(r,i){var o=i(),s=o.events;if(!s[t])return{type:M.EVENTS,events:s};for(var a=s[t].slice(),c=0;c<a.length;c++)a[c].call(n,e)}}Object.defineProperty(n,"__esModule",{value:!0}),n.queryOrigin=h,n.queryDestination=y,n.queryOriginCoordinates=v,n.queryDestinationCoordinates=g,n.clearOrigin=m,n.clearDestination=b,n.setOptions=_,n.hoverMarker=w,n.setRouteIndex=O,n.createOrigin=E,n.createDestination=x,n.setProfile=j,n.reverse=I,n.setOriginFromCoordinates=S,n.setDestinationFromCoordinates=T,n.addWaypoint=C,n.setWaypoint=N,n.removeWaypoint=R,n.eventSubscribe=k,n.eventEmit=A;var L=t("../constants/action_types"),M=i(L),D=t("../utils"),P=r(D),F=new XMLHttpRequest},{"../constants/action_types":39,"../utils":45}],39:[function(t,e,n){"use strict";Object.defineProperty(n,"__esModule",{value:!0});n.DESTINATION="DESTINATION",n.DESTINATION_CLEAR="DESTINATION_CLEAR",n.DESTINATION_QUERY="DESTINATION_QUERY",n.DESTINATION_FROM_COORDINATES="DESTINATION_FROM_COORDINATES",n.DIRECTIONS="DIRECTIONS",n.DIRECTIONS_PROFILE="DIRECTIONS_PROFILE",n.EVENTS="EVENTS",n.ERROR="ERROR",n.HOVER_MARKER="HOVER_MARKER",n.ORIGIN="ORIGIN",n.ORIGIN_CLEAR="ORIGIN_CLEAR",n.ORIGIN_QUERY="ORIGIN_QUERY",n.ORIGIN_FROM_COORDINATES="ORIGIN_FROM_COORDINATES",n.ROUTE_INDEX="ROUTE_INDEX",n.SET_OPTIONS="SET_OPTIONS",n.WAYPOINTS="WAYPOINTS"},{}],40:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function i(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(n,"__esModule",{value:!0});var o=function(){function t(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}return function(e,n,r){return n&&t(e.prototype,n),r&&t(e,r),e}}();t("mapbox-gl-geocoder");var s=t("lodash.template"),a=r(s),c=t("lodash.isequal"),u=r(c),l=t("turf-extent"),f=r(l),p=(0,a["default"])("<div class='mapbox-directions-component mapbox-directions-inputs'>\n  <div class='mapbox-directions-component-keyline'>\n    <div class='mapbox-directions-origin'>\n      <label class='mapbox-form-label'>\n        <span class='directions-icon directions-icon-depart'></span>\n      </label>\n      <div id='mapbox-directions-origin-input'></div>\n    </div>\n\n    <button\n      class='directions-icon directions-icon-reverse directions-reverse js-reverse-inputs'\n      title='Reverse origin &amp; destination'>\n    </button>\n\n    <div class='mapbox-directions-destination'>\n      <label class='mapbox-form-label'>\n        <span class='directions-icon directions-icon-arrive'></span>\n      </label>\n      <div id='mapbox-directions-destination-input'></div>\n    </div>\n  </div>\n\n  <div class='mapbox-directions-profile mapbox-directions-component-keyline mapbox-directions-clearfix'>\n    <input\n      id='mapbox-directions-profile-driving'\n      type='radio'\n      name='profile'\n      <% if (profile === 'driving') { %>checked<% } %>\n    />\n    <label for='mapbox-directions-profile-driving'>Driving</label>\n    <input\n      id='mapbox-directions-profile-walking'\n      type='radio'\n      name='profile'\n      <% if (profile === 'walking') { %>checked<% } %>\n    />\n    <label for='mapbox-directions-profile-walking'>Walking</label>\n    <input\n      id='mapbox-directions-profile-cycling'\n      type='radio'\n      name='profile'\n      <% if (profile === 'cycling') { %>checked<% } %>\n    />\n    <label for='mapbox-directions-profile-cycling'>Cycling</label>\n  </div>\n</div>\n"),d=function(){function t(e,n,r,o){i(this,t);var s=n.getState(),a=s.originQuery,c=s.destinationQuery,u=s.profile;e.innerHTML=p({originQuery:a,destinationQuery:c,profile:u}),this.container=e,this.actions=r,this.store=n,this.map=o,this.onAdd(),this.render()}return o(t,[{key:"animateToCoordinates",value:function(t,e){var n=this.store.getState(),r=n.origin,i=n.destination;if(r.geometry&&i.geometry&&!(0,u["default"])(r.geometry,i.geometry)){var o=(0,f["default"])({type:"FeatureCollection",features:[r,i]});this.map.fitBounds([[o[0],o[1]],[o[2],o[3]]],{padding:80})}else this.map.flyTo({center:e})}},{key:"onAdd",value:function(){var t=this,e=this.actions,n=e.clearOrigin,r=e.clearDestination,i=e.createOrigin,o=e.createDestination,s=e.setProfile,a=e.reverse;this.originInput=new mapboxgl.Geocoder({flyTo:!1,placeholder:"Choose a starting place",container:this.container.querySelector("#mapbox-directions-origin-input")}),this.map.addControl(this.originInput),this.destinationInput=new mapboxgl.Geocoder({flyTo:!1,placeholder:"Choose destination",container:this.container.querySelector("#mapbox-directions-destination-input")}),this.map.addControl(this.destinationInput),this.originInput.on("result",function(e){var n=e.result.center;i(n),t.animateToCoordinates("origin",n)}),this.originInput.on("clear",n),this.destinationInput.on("result",function(e){var n=e.result.center;o(n),t.animateToCoordinates("destination",n)}),this.destinationInput.on("clear",r);var c=this.container.querySelectorAll('input[type="radio"]');Array.prototype.forEach.call(c,function(t){t.addEventListener("change",function(){s(t.id.split("-").pop())})}),this.container.querySelector(".js-reverse-inputs").addEventListener("click",function(){var e=t.store.getState(),n=e.origin,r=e.destination;n&&t.actions.queryDestination(n.geometry.coordinates),r&&t.actions.queryOrigin(r.geometry.coordinates),a()})}},{key:"render",value:function(){var t=this;this.store.subscribe(function(){var e=t.store.getState(),n=e.originQuery,r=e.destinationQuery,i=e.originQueryCoordinates,o=e.destinationQueryCoordinates;n&&(t.originInput.query(n),t.actions.queryOrigin(null)),r&&(t.destinationInput.query(r),t.actions.queryDestination(null)),i&&(t.originInput.setInput(i),t.animateToCoordinates("origin",i),t.actions.queryOriginCoordinates(null)),o&&(t.destinationInput.setInput(o),t.animateToCoordinates("destination",o),t.actions.queryDestinationCoordinates(null))})}}]),t}();n["default"]=d},{"lodash.isequal":9,"lodash.template":13,"mapbox-gl-geocoder":20,"turf-extent":35}],41:[function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{"default":t}}function i(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(n,"__esModule",{value:!0});var o=function(){function t(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}return function(e,n,r){return n&&t(e.prototype,n),r&&t(e,r),e}}(),s=t("../utils"),a=r(s),c=t("lodash.template"),u=r(c),l=t("lodash.isequal"),f=r(l),p=(0,u["default"])("<div class='directions-control directions-control-directions'>\n  <div class='mapbox-directions-component mapbox-directions-route-summary<% if (routes > 1) { %> mapbox-directions-multiple<% } %>'>\n    <% if (routes > 1) { %>\n    <div class='mapbox-directions-routes mapbox-directions-clearfix'>\n      <% for (var i = 0; i < routes; i++) { %>\n        <input type='radio' name='routes' id='<%= i %>' <% if (i === routeIndex) { %>checked<% } %>>\n        <label for='<%= i %>' class='mapbox-directions-route'><%= i + 1 %></label>\n      <% } %>\n    </div>\n    <% } %>\n    <h1><%- duration %></h1>\n    <span><%- distance %></span>\n  </div>\n\n  <div class='mapbox-directions-instructions'>\n    <ol class='mapbox-directions-steps'>\n      <% steps.forEach(function(step) { %>\n        <%\n          var distance = step.distance ? format(step.distance) : false;\n          var icon = step.maneuver.type.replace(/\\s+/g, '-').toLowerCase();\n          var lng = step.maneuver.location.coordinates[0];\n          var lat = step.maneuver.location.coordinates[1];\n        %>\n        <li\n          data-lat='<%= lat %>'\n          data-lng='<%= lng %>'\n          class='mapbox-directions-step'>\n          <span class='directions-icon directions-icon-<%= icon %>'></span>\n          <div class='mapbox-directions-step-maneuver'>\n            <%= step.maneuver.instruction %>\n          </div>\n          <% if (step.distance) { %>\n            <div class='mapbox-directions-step-distance'>\n              <%= distance %>\n            </div>\n          <% } %>\n        </li>\n      <% }); %>\n    </ol>\n  </div>\n</div>\n"),d=(0,u["default"])("<div class='directions-control directions-control-directions'>\n  <div class='mapbox-directions-error'>\n    <%= error %>\n  </div>\n</div>\n"),h=function(){function t(e,n,r,o){i(this,t),this.container=e,this.actions=r,this.store=n,this.map=o,this.directions={},this.render()}return o(t,[{key:"render",value:function(){var t=this;this.store.subscribe(function(){var e=t.actions,n=e.hoverMarker,r=e.setRouteIndex,i=t.store.getState(),o=i.routeIndex,s=i.unit,c=i.directions,u=i.error,l=!(0,f["default"])(c[o],t.directions);if(u)return void(t.container.innerHTML=d({error:u}));if(c.length&&l){var h=t.directions=c[o];t.container.innerHTML=p({routeIndex:o,routes:c.length,steps:h.steps,format:a["default"].format[s],duration:a["default"].format[s](h.distance),distance:a["default"].format.duration(h.duration)});var y=t.container.querySelectorAll(".mapbox-directions-step");Array.prototype.forEach.call(y,function(e){var r=e.getAttribute("data-lng"),i=e.getAttribute("data-lat");e.addEventListener("mouseover",function(){n([r,i])}),e.addEventListener("mouseout",function(){n(null)}),e.addEventListener("click",function(){t.map.flyTo({center:[r,i],zoom:16})})});var v=t.container.querySelectorAll('input[type="radio"]');Array.prototype.forEach.call(v,function(t){t.addEventListener("change",function(t){r(parseInt(t.target.id,10))})})}else t.container.innerHTML&&l&&(t.container.innerHTML="")})}}]),t}();n["default"]=h},{"../utils":45,"lodash.isequal":9,"lodash.template":13}],42:[function(t,e,n){"use strict";function r(t){if(t&&t.__esModule)return t;var e={};if(null!=t)for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n]);return e["default"]=t,e}function i(t){return t&&t.__esModule?t:{"default":t}}function o(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function s(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function a(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)}Object.defineProperty(n,"__esModule",{value:!0});var c=function(){function t(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}return function(e,n,r){return n&&t(e.prototype,n),r&&t(e,r),e}}(),u=t("redux"),l=t("redux-thunk"),f=i(l),p=t("polyline"),d=t("./utils"),h=i(d),y=t("./reducers"),v=i(y),g=t("./actions"),m=r(g),b=t("./directions_style"),_=i(b),w=t("./controls/inputs"),O=i(w),E=t("./controls/instructions"),x=i(E);if(!mapboxgl)throw new Error("include mapboxgl before mapbox-gl-directions.js");var j=(0,u.applyMiddleware)(f["default"])(u.createStore),I=j(v["default"]),S=function(t){function e(t){o(this,e);var n=s(this,Object.getPrototypeOf(e).call(this));return n.actions=(0,u.bindActionCreators)(m,I.dispatch),n.actions.setOptions(t||{}),n.onDragDown=n._onDragDown.bind(n),n.onDragMove=n._onDragMove.bind(n),n.onDragUp=n._onDragUp.bind(n),n.move=n._move.bind(n),n.onClick=n._onClick.bind(n),n}return a(e,t),c(e,[{key:"onAdd",value:function(t){var e=this;this.map=t;var n=I.getState(),r=n.container,i=n.controls;this.container=r?"string"==typeof r?document.getElementById(r):r:this.map.getContainer();var o=document.createElement("div");o.className="directions-control directions-control-inputs",new O["default"](o,I,this.actions,this.map);var s=document.createElement("div");s.className="directions-control-directions-container",new x["default"](s,I,{hoverMarker:this.actions.hoverMarker,setRouteIndex:this.actions.setRouteIndex},this.map),i.inputs&&this.container.appendChild(o),i.instructions&&this.container.appendChild(s),this.subscribedActions(),this.map.on("style.load",function(){return e.mapState()})}},{key:"mapState",value:function(){var t=this,e=I.getState(),n=e.profile,r=e.styles,i=e.interactive;this.actions.eventEmit("profile",{profile:n});var o=new mapboxgl.GeoJSONSource({data:{type:"FeatureCollection",features:[]}});this.map.addSource("directions",o),_["default"].forEach(function(e){return t.map.addLayer(e)}),r&&r.length&&r.forEach(function(e){return t.map.addLayer(e)}),i&&(this.map.on("mousedown",this.onDragDown),this.map.on("mousemove",this.move),this.map.on("click",this.onClick),this.map.on("touchstart",this.move),this.map.on("touchstart",this.onDragDown))}},{key:"subscribedActions",value:function(){var t=this;I.subscribe(function(){var e=I.getState(),n=e.origin,r=e.destination,i=e.hoverMarker,o=e.directions,s=e.routeIndex,a={type:"FeatureCollection",features:[n,r,i].filter(function(t){return t.geometry})};o.length&&o.forEach(function(t,e){var n={geometry:{type:"LineString",coordinates:(0,p.decode)(t.geometry,6).map(function(t){return t.reverse()})},properties:{"route-index":e,route:e===s?"selected":"alternate"}};a.features.push(n),e===s&&t.steps.forEach(function(t){"waypoint"===t.maneuver.type&&a.features.push({type:"Feature",geometry:t.maneuver.location,properties:{id:"waypoint"}})})}),t.map.style&&t.map.getSource("directions").setData(a)})}},{key:"_onClick",value:function(t){var e=this,n=I.getState(),r=n.origin,i=[t.lngLat.lng,t.lngLat.lat];if(r.geometry){var o=this.map.queryRenderedFeatures(t.point,{layers:["directions-origin-point","directions-destination-point","directions-waypoint-point","directions-route-line-alt"]});if(o.length){if(o.forEach(function(t){"directions-waypoint-point"===t.layer.id&&e.actions.removeWaypoint(t)}),"alternate"===o[0].properties.route){var s=o[0].properties["route-index"];this.actions.setRouteIndex(s)}}else this.actions.setDestinationFromCoordinates(i),this.map.flyTo({center:i})}else this.actions.setOriginFromCoordinates(i)}},{key:"_move",value:function(t){var e=this,n=I.getState(),r=n.hoverMarker,i=this.map.queryRenderedFeatures(t.point,{layers:["directions-route-line-alt","directions-route-line","directions-origin-point","directions-destination-point","directions-hover-point"]});this.map.getCanvas().style.cursor=i.length?"pointer":"",i.length?(this.isCursorOverPoint=i[0],this.map.dragPan.disable(),i.forEach(function(n){"directions-route-line"===n.layer.id?e.actions.hoverMarker([t.lngLat.lng,t.lngLat.lat]):r.geometry&&e.actions.hoverMarker(null)})):this.isCursorOverPoint&&(this.isCursorOverPoint=!1,this.map.dragPan.enable())}},{key:"_onDragDown",value:function(){this.isCursorOverPoint&&(this.isDragging=this.isCursorOverPoint,this.map.getCanvas().style.cursor="grab",this.map.on("mousemove",this.onDragMove),this.map.on("mouseup",this.onDragUp),this.map.on("touchmove",this.onDragMove),this.map.on("touchend",this.onDragUp))}},{key:"_onDragMove",value:function(t){if(this.isDragging){var e=[t.lngLat.lng,t.lngLat.lat];switch(this.isDragging.layer.id){case"directions-origin-point":this.actions.createOrigin(e);break;case"directions-destination-point":this.actions.createDestination(e);break;case"directions-hover-point":this.actions.hoverMarker(e)}}}},{key:"_onDragUp",value:function(){if(this.isDragging){var t=I.getState(),e=t.hoverMarker,n=t.origin,r=t.destination;switch(this.isDragging.layer.id){case"directions-origin-point":this.actions.setOriginFromCoordinates(n.geometry.coordinates);break;case"directions-destination-point":this.actions.setDestinationFromCoordinates(r.geometry.coordinates);break;case"directions-hover-point":
-e.geometry&&!h["default"].coordinateMatch(this.isDragging,e)&&this.actions.addWaypoint(0,e)}this.isDragging=!1,this.map.getCanvas().style.cursor="",this.map.off("touchmove",this.onDragMove),this.map.off("touchend",this.onDragUp),this.map.off("mousemove",this.onDragMove),this.map.off("mouseup",this.onDragUp)}}},{key:"interactive",value:function(t){return t?(this.map.on("touchstart",this.move),this.map.on("touchstart",this.onDragDown),this.map.on("mousedown",this.onDragDown),this.map.on("mousemove",this.move),this.map.on("click",this.onClick)):(this.map.off("touchstart",this.move),this.map.off("touchstart",this.onDragDown),this.map.off("mousedown",this.onDragDown),this.map.off("mousemove",this.move),this.map.off("click",this.onClick)),this}},{key:"getOrigin",value:function(){return I.getState().origin}},{key:"setOrigin",value:function(t){return"string"==typeof t?this.actions.queryOrigin(t):this.actions.setOriginFromCoordinates(t),this}},{key:"getDestination",value:function(){return I.getState().destination}},{key:"setDestination",value:function(t){return"string"==typeof t?this.actions.queryDestination(t):this.actions.setDestinationFromCoordinates(t),this}},{key:"reverse",value:function(){return this.actions.reverse(),this}},{key:"addWaypoint",value:function(t,e){return e.type||(e=h["default"].createPoint(e,{id:"waypoint"})),this.actions.addWaypoint(t,e),this}},{key:"setWaypoint",value:function(t,e){return e.type||(e=h["default"].createPoint(e,{id:"waypoint"})),this.actions.setWaypoint(t,e),this}},{key:"removeWaypoint",value:function(t){var e=I.getState(),n=e.waypoints;return this.actions.removeWaypoint(n[t]),this}},{key:"getWaypoints",value:function(){return I.getState().waypoints}},{key:"on",value:function(t,e){return this.actions.eventSubscribe(t,e),this}}]),e}(mapboxgl.Control);n["default"]=S},{"./actions":38,"./controls/inputs":40,"./controls/instructions":41,"./directions_style":43,"./reducers":44,"./utils":45,polyline:21,redux:28,"redux-thunk":22}],43:[function(t,e,n){"use strict";Object.defineProperty(n,"__esModule",{value:!0});var r=[{id:"directions-route-line-alt",type:"line",source:"directions",layout:{"line-cap":"round","line-join":"round"},paint:{"line-color":"#bbb","line-width":4},filter:["all",["in","$type","LineString"],["in","route","alternate"]]},{id:"directions-route-line",type:"line",source:"directions",layout:{"line-cap":"round","line-join":"round"},paint:{"line-color":"#3bb2d0","line-width":4},filter:["all",["in","$type","LineString"],["in","route","selected"]]},{id:"directions-hover-point-casing",type:"circle",source:"directions",paint:{"circle-radius":8,"circle-color":"#fff"},filter:["all",["in","$type","Point"],["in","id","hover"]]},{id:"directions-hover-point",type:"circle",source:"directions",paint:{"circle-radius":6,"circle-color":"#3bb2d0"},filter:["all",["in","$type","Point"],["in","id","hover"]]},{id:"directions-waypoint-point-casing",type:"circle",source:"directions",paint:{"circle-radius":8,"circle-color":"#fff"},filter:["all",["in","$type","Point"],["in","id","waypoint"]]},{id:"directions-waypoint-point",type:"circle",source:"directions",paint:{"circle-radius":6,"circle-color":"#8a8bc9"},filter:["all",["in","$type","Point"],["in","id","waypoint"]]},{id:"directions-origin-point",type:"circle",source:"directions",paint:{"circle-radius":18,"circle-color":"#3bb2d0"},filter:["all",["in","$type","Point"],["in","marker-symbol","A"]]},{id:"directions-origin-label",type:"symbol",source:"directions",layout:{"text-field":"A","text-font":["Open Sans Bold","Arial Unicode MS Bold"],"text-size":12},paint:{"text-color":"#fff"},filter:["all",["in","$type","Point"],["in","marker-symbol","A"]]},{id:"directions-destination-point",type:"circle",source:"directions",paint:{"circle-radius":18,"circle-color":"#8a8bc9"},filter:["all",["in","$type","Point"],["in","marker-symbol","B"]]},{id:"directions-destination-label",type:"symbol",source:"directions",layout:{"text-field":"B","text-font":["Open Sans Bold","Arial Unicode MS Bold"],"text-size":12},paint:{"text-color":"#fff"},filter:["all",["in","$type","Point"],["in","marker-symbol","B"]]}];n["default"]=r},{}],44:[function(t,e,n){"use strict";function r(t){if(t&&t.__esModule)return t;var e={};if(null!=t)for(var n in t)Object.prototype.hasOwnProperty.call(t,n)&&(e[n]=t[n]);return e["default"]=t,e}function i(){var t=arguments.length<=0||void 0===arguments[0]?a:arguments[0],e=arguments[1];switch(e.type){case s.SET_OPTIONS:return Object.assign({},t,e.options);case s.DIRECTIONS_PROFILE:return Object.assign({},t,{profile:e.profile});case s.ORIGIN:return Object.assign({},t,{origin:e.origin,hoverMarker:{}});case s.DESTINATION:return Object.assign({},t,{destination:e.destination,hoverMarker:{}});case s.HOVER_MARKER:return Object.assign({},t,{hoverMarker:e.hoverMarker});case s.WAYPOINTS:return Object.assign({},t,{waypoints:e.waypoints});case s.ORIGIN_QUERY:return Object.assign({},t,{originQuery:e.query});case s.DESTINATION_QUERY:return Object.assign({},t,{destinationQuery:e.query});case s.ORIGIN_FROM_COORDINATES:return Object.assign({},t,{originQueryCoordinates:e.coordinates});case s.DESTINATION_FROM_COORDINATES:return Object.assign({},t,{destinationQueryCoordinates:e.coordinates});case s.ORIGIN_CLEAR:return Object.assign({},t,{origin:{},originQuery:"",waypoints:[],directions:[]});case s.DESTINATION_CLEAR:return Object.assign({},t,{destination:{},destinationQuery:"",waypoints:[],directions:[]});case s.DIRECTIONS:return Object.assign({},t,{directions:e.directions});case s.ROUTE_INDEX:return Object.assign({},t,{routeIndex:e.routeIndex});case s.ERROR:return Object.assign({},t,{error:e.error});default:return t}}Object.defineProperty(n,"__esModule",{value:!0});var o=t("../constants/action_types.js"),s=r(o),a={api:"https://api.mapbox.com/v4/directions/",profile:"driving",unit:"imperial",proximity:!1,styles:[],controls:{inputs:!0,instructions:!0},interactive:!0,events:{},origin:{},destination:{},hoverMarker:{},waypoints:[],originQuery:null,destinationQuery:null,originQueryCoordinates:null,destinationQueryCoordinates:null,directions:[],routeIndex:0};n["default"]=i},{"../constants/action_types.js":39}],45:[function(t,e,n){"use strict";function r(t){return t[0]>=-180&&t[0]<=180&&t[1]>=-90&&t[1]<=90}function i(t,e){return t=t.geometry.coordinates,e=e.geometry.coordinates,t.join()===e.join()||t[0].toFixed(3)===e[0].toFixed(3)&&t[1].toFixed(3)===e[1].toFixed(3)}function o(t){var e=360,n=((t- -180)%e+e)%e+-180;return n===-180?180:n}function s(t,e){return{type:"Feature",geometry:{type:"Point",coordinates:t},properties:e?e:{}}}Object.defineProperty(n,"__esModule",{value:!0});var a={duration:function(t){var e=Math.floor(t/60),n=Math.floor(e/60);return t%=60,e%=60,0===n&&0===e?t+"s":0===n?e+"min":n+"h "+e+"min"},imperial:function(t){var e=t/1609.344;return e>=100?e.toFixed(0)+"mi":e>=10?e.toFixed(1)+"mi":e>=.1?e.toFixed(2)+"mi":(5280*e).toFixed(0)+"ft"},metric:function(t){return t>=1e5?(t/1e3).toFixed(0)+"km":t>=1e4?(t/1e3).toFixed(1)+"km":t>=100?(t/1e3).toFixed(2)+"km":t.toFixed(0)+"m"}};n["default"]={format:a,coordinateMatch:i,createPoint:s,validCoords:r,wrap:o}},{}]},{},[1]);
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+var _directions = require('./src/directions');
+
+var _directions2 = _interopRequireDefault(_directions);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+if (window.mapboxgl) {
+  mapboxgl.Directions = _directions2.default;
+} else if (typeof module !== 'undefined') {
+  module.exports = _directions2.default;
+} /**
+   * A directions component using Mapbox Directions APi
+   * @class mapboxgl.Directions
+   *
+   * @param {Object} options
+   * @param {Array} [options.styles] Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
+   * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
+   * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
+   * @param {String} [options.profile="driving"] Routing profile to use. Options: `driving`, `walking`, `cycling`
+   * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
+   * @param {string|Element} options.container HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
+   * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
+   * @param {Object} [options.controls]
+   * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.
+   * @param {Boolean} [options.controls.instructions=true] Hide or display the instructions control.
+   * @example
+   * var directions = new mapboxgl.Directions({
+   *   container: 'directions',
+   *   unit: 'metric',
+   *   profile: 'walking'
+   * });
+   *
+   * map.addControl(directions);
+   * @return {Directions} `this`
+   */
+
+},{"./src/directions":42}],2:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+function EventEmitter() {
+  this._events = this._events || {};
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+EventEmitter.defaultMaxListeners = 10;
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function(n) {
+  if (!isNumber(n) || n < 0 || isNaN(n))
+    throw TypeError('n must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+EventEmitter.prototype.emit = function(type) {
+  var er, handler, len, args, i, listeners;
+
+  if (!this._events)
+    this._events = {};
+
+  // If there is no 'error' event listener then throw.
+  if (type === 'error') {
+    if (!this._events.error ||
+        (isObject(this._events.error) && !this._events.error.length)) {
+      er = arguments[1];
+      if (er instanceof Error) {
+        throw er; // Unhandled 'error' event
+      } else {
+        // At least give some kind of context to the user
+        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+        err.context = er;
+        throw err;
+      }
+    }
+  }
+
+  handler = this._events[type];
+
+  if (isUndefined(handler))
+    return false;
+
+  if (isFunction(handler)) {
+    switch (arguments.length) {
+      // fast cases
+      case 1:
+        handler.call(this);
+        break;
+      case 2:
+        handler.call(this, arguments[1]);
+        break;
+      case 3:
+        handler.call(this, arguments[1], arguments[2]);
+        break;
+      // slower
+      default:
+        args = Array.prototype.slice.call(arguments, 1);
+        handler.apply(this, args);
+    }
+  } else if (isObject(handler)) {
+    args = Array.prototype.slice.call(arguments, 1);
+    listeners = handler.slice();
+    len = listeners.length;
+    for (i = 0; i < len; i++)
+      listeners[i].apply(this, args);
+  }
+
+  return true;
+};
+
+EventEmitter.prototype.addListener = function(type, listener) {
+  var m;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events)
+    this._events = {};
+
+  // To avoid recursion in the case that type === "newListener"! Before
+  // adding it to the listeners, first emit "newListener".
+  if (this._events.newListener)
+    this.emit('newListener', type,
+              isFunction(listener.listener) ?
+              listener.listener : listener);
+
+  if (!this._events[type])
+    // Optimize the case of one listener. Don't need the extra array object.
+    this._events[type] = listener;
+  else if (isObject(this._events[type]))
+    // If we've already got an array, just append.
+    this._events[type].push(listener);
+  else
+    // Adding the second element, need to change to array.
+    this._events[type] = [this._events[type], listener];
+
+  // Check for listener leak
+  if (isObject(this._events[type]) && !this._events[type].warned) {
+    if (!isUndefined(this._maxListeners)) {
+      m = this._maxListeners;
+    } else {
+      m = EventEmitter.defaultMaxListeners;
+    }
+
+    if (m && m > 0 && this._events[type].length > m) {
+      this._events[type].warned = true;
+      console.error('(node) warning: possible EventEmitter memory ' +
+                    'leak detected. %d listeners added. ' +
+                    'Use emitter.setMaxListeners() to increase limit.',
+                    this._events[type].length);
+      if (typeof console.trace === 'function') {
+        // not supported in IE 10
+        console.trace();
+      }
+    }
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.once = function(type, listener) {
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  var fired = false;
+
+  function g() {
+    this.removeListener(type, g);
+
+    if (!fired) {
+      fired = true;
+      listener.apply(this, arguments);
+    }
+  }
+
+  g.listener = listener;
+  this.on(type, g);
+
+  return this;
+};
+
+// emits a 'removeListener' event iff the listener was removed
+EventEmitter.prototype.removeListener = function(type, listener) {
+  var list, position, length, i;
+
+  if (!isFunction(listener))
+    throw TypeError('listener must be a function');
+
+  if (!this._events || !this._events[type])
+    return this;
+
+  list = this._events[type];
+  length = list.length;
+  position = -1;
+
+  if (list === listener ||
+      (isFunction(list.listener) && list.listener === listener)) {
+    delete this._events[type];
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+
+  } else if (isObject(list)) {
+    for (i = length; i-- > 0;) {
+      if (list[i] === listener ||
+          (list[i].listener && list[i].listener === listener)) {
+        position = i;
+        break;
+      }
+    }
+
+    if (position < 0)
+      return this;
+
+    if (list.length === 1) {
+      list.length = 0;
+      delete this._events[type];
+    } else {
+      list.splice(position, 1);
+    }
+
+    if (this._events.removeListener)
+      this.emit('removeListener', type, listener);
+  }
+
+  return this;
+};
+
+EventEmitter.prototype.removeAllListeners = function(type) {
+  var key, listeners;
+
+  if (!this._events)
+    return this;
+
+  // not listening for removeListener, no need to emit
+  if (!this._events.removeListener) {
+    if (arguments.length === 0)
+      this._events = {};
+    else if (this._events[type])
+      delete this._events[type];
+    return this;
+  }
+
+  // emit removeListener for all listeners on all events
+  if (arguments.length === 0) {
+    for (key in this._events) {
+      if (key === 'removeListener') continue;
+      this.removeAllListeners(key);
+    }
+    this.removeAllListeners('removeListener');
+    this._events = {};
+    return this;
+  }
+
+  listeners = this._events[type];
+
+  if (isFunction(listeners)) {
+    this.removeListener(type, listeners);
+  } else if (listeners) {
+    // LIFO order
+    while (listeners.length)
+      this.removeListener(type, listeners[listeners.length - 1]);
+  }
+  delete this._events[type];
+
+  return this;
+};
+
+EventEmitter.prototype.listeners = function(type) {
+  var ret;
+  if (!this._events || !this._events[type])
+    ret = [];
+  else if (isFunction(this._events[type]))
+    ret = [this._events[type]];
+  else
+    ret = this._events[type].slice();
+  return ret;
+};
+
+EventEmitter.prototype.listenerCount = function(type) {
+  if (this._events) {
+    var evlistener = this._events[type];
+
+    if (isFunction(evlistener))
+      return 1;
+    else if (evlistener)
+      return evlistener.length;
+  }
+  return 0;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  return emitter.listenerCount(type);
+};
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+},{}],3:[function(require,module,exports){
+/*
+ * Fuzzy
+ * https://github.com/myork/fuzzy
+ *
+ * Copyright (c) 2012 Matt York
+ * Licensed under the MIT license.
+ */
+
+(function() {
+
+var root = this;
+
+var fuzzy = {};
+
+// Use in node or in browser
+if (typeof exports !== 'undefined') {
+  module.exports = fuzzy;
+} else {
+  root.fuzzy = fuzzy;
+}
+
+// Return all elements of `array` that have a fuzzy
+// match against `pattern`.
+fuzzy.simpleFilter = function(pattern, array) {
+  return array.filter(function(string) {
+    return fuzzy.test(pattern, string);
+  });
+};
+
+// Does `pattern` fuzzy match `string`?
+fuzzy.test = function(pattern, string) {
+  return fuzzy.match(pattern, string) !== null;
+};
+
+// If `pattern` matches `string`, wrap each matching character
+// in `opts.pre` and `opts.post`. If no match, return null
+fuzzy.match = function(pattern, string, opts) {
+  opts = opts || {};
+  var patternIdx = 0
+    , result = []
+    , len = string.length
+    , totalScore = 0
+    , currScore = 0
+    // prefix
+    , pre = opts.pre || ''
+    // suffix
+    , post = opts.post || ''
+    // String to compare against. This might be a lowercase version of the
+    // raw string
+    , compareString =  opts.caseSensitive && string || string.toLowerCase()
+    , ch, compareChar;
+
+  pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
+
+  // For each character in the string, either add it to the result
+  // or wrap in template if it's the next string in the pattern
+  for(var idx = 0; idx < len; idx++) {
+    ch = string[idx];
+    if(compareString[idx] === pattern[patternIdx]) {
+      ch = pre + ch + post;
+      patternIdx += 1;
+
+      // consecutive characters should increase the score more than linearly
+      currScore += 1 + currScore;
+    } else {
+      currScore = 0;
+    }
+    totalScore += currScore;
+    result[result.length] = ch;
+  }
+
+  // return rendered string if we have a match for every char
+  if(patternIdx === pattern.length) {
+    return {rendered: result.join(''), score: totalScore};
+  }
+
+  return null;
+};
+
+// The normal entry point. Filters `arr` for matches against `pattern`.
+// It returns an array with matching values of the type:
+//
+//     [{
+//         string:   '<b>lah' // The rendered string
+//       , index:    2        // The index of the element in `arr`
+//       , original: 'blah'   // The original element in `arr`
+//     }]
+//
+// `opts` is an optional argument bag. Details:
+//
+//    opts = {
+//        // string to put before a matching character
+//        pre:     '<b>'
+//
+//        // string to put after matching character
+//      , post:    '</b>'
+//
+//        // Optional function. Input is an entry in the given arr`,
+//        // output should be the string to test `pattern` against.
+//        // In this example, if `arr = [{crying: 'koala'}]` we would return
+//        // 'koala'.
+//      , extract: function(arg) { return arg.crying; }
+//    }
+fuzzy.filter = function(pattern, arr, opts) {
+  opts = opts || {};
+  return arr
+    .reduce(function(prev, element, idx, arr) {
+      var str = element;
+      if(opts.extract) {
+        str = opts.extract(element);
+      }
+      var rendered = fuzzy.match(pattern, str, opts);
+      if(rendered != null) {
+        prev[prev.length] = {
+            string: rendered.rendered
+          , score: rendered.score
+          , index: idx
+          , original: element
+        };
+      }
+      return prev;
+    }, [])
+
+    // Sort by score. Browsers are inconsistent wrt stable/unstable
+    // sorting, so force stable by using the index in the case of tie.
+    // See http://ofb.net/~sethml/is-sort-stable.html
+    .sort(function(a,b) {
+      var compare = b.score - a.score;
+      if(compare) return compare;
+      return a.index - b.index;
+    });
+};
+
+
+}());
+
+
+},{}],4:[function(require,module,exports){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** Used to match template delimiters. */
+var reInterpolate = /<%=([\s\S]+?)%>/g;
+
+module.exports = reInterpolate;
+
+},{}],5:[function(require,module,exports){
+(function (global){
+/**
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** Used to determine if values are of the language type `Object`. */
+var objectTypes = {
+  'function': true,
+  'object': true
+};
+
+/** Detect free variable `exports`. */
+var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
+  ? exports
+  : undefined;
+
+/** Detect free variable `module`. */
+var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
+  ? module
+  : undefined;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+
+/** Detect free variable `self`. */
+var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+
+/** Detect free variable `window`. */
+var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+
+/** Detect `this` as the global object. */
+var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+
+/**
+ * Used as a reference to the global object.
+ *
+ * The `this` value is used if it's the global object to avoid Greasemonkey's
+ * restricted `window` object, otherwise the `window` object is used.
+ */
+var root = freeGlobal ||
+  ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
+    freeSelf || thisGlobal || Function('return this')();
+
+/**
+ * Checks if `value` is a global object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+ */
+function checkGlobal(value) {
+  return (value && value.Object === Object) ? value : null;
+}
+
+module.exports = root;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],6:[function(require,module,exports){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+var keysIn = require('lodash.keysin'),
+    rest = require('lodash.rest');
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]';
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/**
+ * Assigns `value` to `key` of `object` if the existing value is not equivalent
+ * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * for equality comparisons.
+ *
+ * @private
+ * @param {Object} object The object to modify.
+ * @param {string} key The key of the property to assign.
+ * @param {*} value The value to assign.
+ */
+function assignValue(object, key, value) {
+  var objValue = object[key];
+  if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) ||
+      (value === undefined && !(key in object))) {
+    object[key] = value;
+  }
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Copies properties of `source` to `object`.
+ *
+ * @private
+ * @param {Object} source The object to copy properties from.
+ * @param {Array} props The property identifiers to copy.
+ * @param {Object} [object={}] The object to copy properties to.
+ * @param {Function} [customizer] The function to customize copied values.
+ * @returns {Object} Returns `object`.
+ */
+function copyObject(source, props, object, customizer) {
+  object || (object = {});
+
+  var index = -1,
+      length = props.length;
+
+  while (++index < length) {
+    var key = props[index];
+
+    var newValue = customizer
+      ? customizer(object[key], source[key], key, object, source)
+      : source[key];
+
+    assignValue(object, key, newValue);
+  }
+  return object;
+}
+
+/**
+ * Creates a function like `_.assign`.
+ *
+ * @private
+ * @param {Function} assigner The function to assign values.
+ * @returns {Function} Returns the new assigner function.
+ */
+function createAssigner(assigner) {
+  return rest(function(object, sources) {
+    var index = -1,
+        length = sources.length,
+        customizer = length > 1 ? sources[length - 1] : undefined,
+        guard = length > 2 ? sources[2] : undefined;
+
+    customizer = (assigner.length > 3 && typeof customizer == 'function')
+      ? (length--, customizer)
+      : undefined;
+
+    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+      customizer = length < 3 ? undefined : customizer;
+      length = 1;
+    }
+    object = Object(object);
+    while (++index < length) {
+      var source = sources[index];
+      if (source) {
+        assigner(object, source, index, customizer);
+      }
+    }
+    return object;
+  });
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a
+ * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
+ * Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
+
+/**
+ * Checks if the given arguments are from an iteratee call.
+ *
+ * @private
+ * @param {*} value The potential iteratee value argument.
+ * @param {*} index The potential iteratee index or key argument.
+ * @param {*} object The potential iteratee object argument.
+ * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
+ *  else `false`.
+ */
+function isIterateeCall(value, index, object) {
+  if (!isObject(object)) {
+    return false;
+  }
+  var type = typeof index;
+  if (type == 'number'
+        ? (isArrayLike(object) && isIndex(index, object.length))
+        : (type == 'string' && index in object)
+      ) {
+    return eq(object[index], value);
+  }
+  return false;
+}
+
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ * var other = { 'user': 'fred' };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && isLength(getLength(value)) && !isFunction(value);
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length,
+ *  else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * This method is like `_.assignIn` except that it accepts `customizer`
+ * which is invoked to produce the assigned values. If `customizer` returns
+ * `undefined`, assignment is handled by the method instead. The `customizer`
+ * is invoked with five arguments: (objValue, srcValue, key, object, source).
+ *
+ * **Note:** This method mutates `object`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @alias extendWith
+ * @category Object
+ * @param {Object} object The destination object.
+ * @param {...Object} sources The source objects.
+ * @param {Function} [customizer] The function to customize assigned values.
+ * @returns {Object} Returns `object`.
+ * @see _.assignWith
+ * @example
+ *
+ * function customizer(objValue, srcValue) {
+ *   return _.isUndefined(objValue) ? srcValue : objValue;
+ * }
+ *
+ * var defaults = _.partialRight(_.assignInWith, customizer);
+ *
+ * defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+ * // => { 'a': 1, 'b': 2 }
+ */
+var assignInWith = createAssigner(function(object, source, srcIndex, customizer) {
+  copyObject(source, keysIn(source), object, customizer);
+});
+
+module.exports = assignInWith;
+
+},{"lodash.keysin":11,"lodash.rest":12}],7:[function(require,module,exports){
+/**
+ * lodash 4.0.6 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used as references for various `Number` constants. */
+var NAN = 0 / 0;
+
+/** `Object#toString` result references. */
+var funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    symbolTag = '[object Symbol]';
+
+/** Used to match leading and trailing whitespace. */
+var reTrim = /^\s+|\s+$/g;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max,
+    nativeMin = Math.min;
+
+/**
+ * Gets the timestamp of the number of milliseconds that have elapsed since
+ * the Unix epoch (1 January 1970 00:00:00 UTC).
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @type {Function}
+ * @category Date
+ * @returns {number} Returns the timestamp.
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => Logs the number of milliseconds it took for the deferred function to be invoked.
+ */
+var now = Date.now;
+
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed `func` invocations and a `flush` method to immediately invoke them.
+ * Provide an options object to indicate whether `func` should be invoked on
+ * the leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+ * with the last arguments provided to the debounced function. Subsequent calls
+ * to the debounced function return the result of the last `func` invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is invoked
+ * on the trailing edge of the timeout only if the debounced function is
+ * invoked more than once during the `wait` timeout.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=false]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {number} [options.maxWait]
+ *  The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // Avoid costly calculations while the window size is in flux.
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ *
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+ * jQuery(element).on('click', _.debounce(sendMail, 300, {
+ *   'leading': true,
+ *   'trailing': false
+ * }));
+ *
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+ * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+ * var source = new EventSource('/stream');
+ * jQuery(source).on('message', debounced);
+ *
+ * // Cancel the trailing debounced invocation.
+ * jQuery(window).on('popstate', debounced.cancel);
+ */
+function debounce(func, wait, options) {
+  var lastArgs,
+      lastThis,
+      maxWait,
+      result,
+      timerId,
+      lastCallTime = 0,
+      lastInvokeTime = 0,
+      leading = false,
+      maxing = false,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  wait = toNumber(wait) || 0;
+  if (isObject(options)) {
+    leading = !!options.leading;
+    maxing = 'maxWait' in options;
+    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+
+  function invokeFunc(time) {
+    var args = lastArgs,
+        thisArg = lastThis;
+
+    lastArgs = lastThis = undefined;
+    lastInvokeTime = time;
+    result = func.apply(thisArg, args);
+    return result;
+  }
+
+  function leadingEdge(time) {
+    // Reset any `maxWait` timer.
+    lastInvokeTime = time;
+    // Start the timer for the trailing edge.
+    timerId = setTimeout(timerExpired, wait);
+    // Invoke the leading edge.
+    return leading ? invokeFunc(time) : result;
+  }
+
+  function remainingWait(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime,
+        result = wait - timeSinceLastCall;
+
+    return maxing ? nativeMin(result, maxWait - timeSinceLastInvoke) : result;
+  }
+
+  function shouldInvoke(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime;
+
+    // Either this is the first call, activity has stopped and we're at the
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
+    return (!lastCallTime || (timeSinceLastCall >= wait) ||
+      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+  }
+
+  function timerExpired() {
+    var time = now();
+    if (shouldInvoke(time)) {
+      return trailingEdge(time);
+    }
+    // Restart the timer.
+    timerId = setTimeout(timerExpired, remainingWait(time));
+  }
+
+  function trailingEdge(time) {
+    clearTimeout(timerId);
+    timerId = undefined;
+
+    // Only invoke if we have `lastArgs` which means `func` has been
+    // debounced at least once.
+    if (trailing && lastArgs) {
+      return invokeFunc(time);
+    }
+    lastArgs = lastThis = undefined;
+    return result;
+  }
+
+  function cancel() {
+    if (timerId !== undefined) {
+      clearTimeout(timerId);
+    }
+    lastCallTime = lastInvokeTime = 0;
+    lastArgs = lastThis = timerId = undefined;
+  }
+
+  function flush() {
+    return timerId === undefined ? result : trailingEdge(now());
+  }
+
+  function debounced() {
+    var time = now(),
+        isInvoking = shouldInvoke(time);
+
+    lastArgs = arguments;
+    lastThis = this;
+    lastCallTime = time;
+
+    if (isInvoking) {
+      if (timerId === undefined) {
+        return leadingEdge(lastCallTime);
+      }
+      if (maxing) {
+        // Handle invocations in a tight loop.
+        clearTimeout(timerId);
+        timerId = setTimeout(timerExpired, wait);
+        return invokeFunc(lastCallTime);
+      }
+    }
+    if (timerId === undefined) {
+      timerId = setTimeout(timerExpired, wait);
+    }
+    return result;
+  }
+  debounced.cancel = cancel;
+  debounced.flush = flush;
+  return debounced;
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3);
+ * // => 3
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3');
+ * // => 3
+ */
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return NAN;
+  }
+  if (isObject(value)) {
+    var other = isFunction(value.valueOf) ? value.valueOf() : value;
+    value = isObject(other) ? (other + '') : other;
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+  value = value.replace(reTrim, '');
+  var isBinary = reIsBinary.test(value);
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+module.exports = debounce;
+
+},{}],8:[function(require,module,exports){
+/**
+ * lodash 4.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var toString = require('lodash.tostring');
+
+/** Used to match HTML entities and HTML characters. */
+var reUnescapedHtml = /[&<>"'`]/g,
+    reHasUnescapedHtml = RegExp(reUnescapedHtml.source);
+
+/** Used to map characters to HTML entities. */
+var htmlEscapes = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+  '`': '&#96;'
+};
+
+/**
+ * Used by `_.escape` to convert characters to HTML entities.
+ *
+ * @private
+ * @param {string} chr The matched character to escape.
+ * @returns {string} Returns the escaped character.
+ */
+function escapeHtmlChar(chr) {
+  return htmlEscapes[chr];
+}
+
+/**
+ * Converts the characters "&", "<", ">", '"', "'", and "\`" in `string` to
+ * their corresponding HTML entities.
+ *
+ * **Note:** No other characters are escaped. To escape additional
+ * characters use a third-party library like [_he_](https://mths.be/he).
+ *
+ * Though the ">" character is escaped for symmetry, characters like
+ * ">" and "/" don't need escaping in HTML and have no special meaning
+ * unless they're part of a tag or unquoted attribute value.
+ * See [Mathias Bynens's article](https://mathiasbynens.be/notes/ambiguous-ampersands)
+ * (under "semi-related fun fact") for more details.
+ *
+ * Backticks are escaped because in IE < 9, they can break out of
+ * attribute values or HTML comments. See [#59](https://html5sec.org/#59),
+ * [#102](https://html5sec.org/#102), [#108](https://html5sec.org/#108), and
+ * [#133](https://html5sec.org/#133) of the [HTML5 Security Cheatsheet](https://html5sec.org/)
+ * for more details.
+ *
+ * When working with HTML you should always [quote attribute values](http://wonko.com/post/html-escaping)
+ * to reduce XSS vectors.
+ *
+ * @static
+ * @memberOf _
+ * @category String
+ * @param {string} [string=''] The string to escape.
+ * @returns {string} Returns the escaped string.
+ * @example
+ *
+ * _.escape('fred, barney, & pebbles');
+ * // => 'fred, barney, &amp; pebbles'
+ */
+function escape(string) {
+  string = toString(string);
+  return (string && reHasUnescapedHtml.test(string))
+    ? string.replace(reUnescapedHtml, escapeHtmlChar)
+    : string;
+}
+
+module.exports = escape;
+
+},{"lodash.tostring":15}],9:[function(require,module,exports){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+var keys = require('lodash.keys'),
+    root = require('lodash._root');
+
+/** Used as the size to enable large array optimizations. */
+var LARGE_ARRAY_SIZE = 200;
+
+/** Used to stand-in for `undefined` hash values. */
+var HASH_UNDEFINED = '__lodash_hash_undefined__';
+
+/** Used to compose bitmasks for comparison styles. */
+var UNORDERED_COMPARE_FLAG = 1,
+    PARTIAL_COMPARE_FLAG = 2;
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    arrayTag = '[object Array]',
+    boolTag = '[object Boolean]',
+    dateTag = '[object Date]',
+    errorTag = '[object Error]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    mapTag = '[object Map]',
+    numberTag = '[object Number]',
+    objectTag = '[object Object]',
+    promiseTag = '[object Promise]',
+    regexpTag = '[object RegExp]',
+    setTag = '[object Set]',
+    stringTag = '[object String]',
+    symbolTag = '[object Symbol]',
+    weakMapTag = '[object WeakMap]';
+
+var arrayBufferTag = '[object ArrayBuffer]',
+    dataViewTag = '[object DataView]',
+    float32Tag = '[object Float32Array]',
+    float64Tag = '[object Float64Array]',
+    int8Tag = '[object Int8Array]',
+    int16Tag = '[object Int16Array]',
+    int32Tag = '[object Int32Array]',
+    uint8Tag = '[object Uint8Array]',
+    uint8ClampedTag = '[object Uint8ClampedArray]',
+    uint16Tag = '[object Uint16Array]',
+    uint32Tag = '[object Uint32Array]';
+
+/**
+ * Used to match `RegExp`
+ * [syntax characters](http://ecma-international.org/ecma-262/6.0/#sec-patterns).
+ */
+var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+
+/** Used to detect host constructors (Safari). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/** Used to identify `toStringTag` values of typed arrays. */
+var typedArrayTags = {};
+typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+typedArrayTags[uint32Tag] = true;
+typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+typedArrayTags[dataViewTag] = typedArrayTags[dateTag] =
+typedArrayTags[errorTag] = typedArrayTags[funcTag] =
+typedArrayTags[mapTag] = typedArrayTags[numberTag] =
+typedArrayTags[objectTag] = typedArrayTags[regexpTag] =
+typedArrayTags[setTag] = typedArrayTags[stringTag] =
+typedArrayTags[weakMapTag] = false;
+
+/**
+ * A specialized version of `_.some` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {boolean} Returns `true` if any element passes the predicate check,
+ *  else `false`.
+ */
+function arraySome(array, predicate) {
+  var index = -1,
+      length = array.length;
+
+  while (++index < length) {
+    if (predicate(array[index], index, array)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Checks if `value` is a host object in IE < 9.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+ */
+function isHostObject(value) {
+  // Many host objects are `Object` objects that can coerce to strings
+  // despite having improperly defined `toString` methods.
+  var result = false;
+  if (value != null && typeof value.toString != 'function') {
+    try {
+      result = !!(value + '');
+    } catch (e) {}
+  }
+  return result;
+}
+
+/**
+ * Converts `map` to its key-value pairs.
+ *
+ * @private
+ * @param {Object} map The map to convert.
+ * @returns {Array} Returns the key-value pairs.
+ */
+function mapToArray(map) {
+  var index = -1,
+      result = Array(map.size);
+
+  map.forEach(function(value, key) {
+    result[++index] = [key, value];
+  });
+  return result;
+}
+
+/**
+ * Converts `set` to an array of its values.
+ *
+ * @private
+ * @param {Object} set The set to convert.
+ * @returns {Array} Returns the values.
+ */
+function setToArray(set) {
+  var index = -1,
+      result = Array(set.size);
+
+  set.forEach(function(value) {
+    result[++index] = value;
+  });
+  return result;
+}
+
+/** Used for built-in method references. */
+var arrayProto = Array.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = Function.prototype.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  funcToString.call(hasOwnProperty).replace(reRegExpChar, '\\$&')
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/** Built-in value references. */
+var Symbol = root.Symbol,
+    Uint8Array = root.Uint8Array,
+    splice = arrayProto.splice;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeGetPrototype = Object.getPrototypeOf;
+
+/* Built-in method references that are verified to be native. */
+var DataView = getNative(root, 'DataView'),
+    Map = getNative(root, 'Map'),
+    Promise = getNative(root, 'Promise'),
+    Set = getNative(root, 'Set'),
+    WeakMap = getNative(root, 'WeakMap'),
+    nativeCreate = getNative(Object, 'create');
+
+/** Used to detect maps, sets, and weakmaps. */
+var dataViewCtorString = toSource(DataView),
+    mapCtorString = toSource(Map),
+    promiseCtorString = toSource(Promise),
+    setCtorString = toSource(Set),
+    weakMapCtorString = toSource(WeakMap);
+
+/** Used to convert symbols to primitives and strings. */
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolValueOf = symbolProto ? symbolProto.valueOf : undefined;
+
+/**
+ * Creates a hash object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function Hash(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the hash.
+ *
+ * @private
+ * @name clear
+ * @memberOf Hash
+ */
+function hashClear() {
+  this.__data__ = nativeCreate ? nativeCreate(null) : {};
+}
+
+/**
+ * Removes `key` and its value from the hash.
+ *
+ * @private
+ * @name delete
+ * @memberOf Hash
+ * @param {Object} hash The hash to modify.
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function hashDelete(key) {
+  return this.has(key) && delete this.__data__[key];
+}
+
+/**
+ * Gets the hash value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf Hash
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function hashGet(key) {
+  var data = this.__data__;
+  if (nativeCreate) {
+    var result = data[key];
+    return result === HASH_UNDEFINED ? undefined : result;
+  }
+  return hasOwnProperty.call(data, key) ? data[key] : undefined;
+}
+
+/**
+ * Checks if a hash value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf Hash
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function hashHas(key) {
+  var data = this.__data__;
+  return nativeCreate ? data[key] !== undefined : hasOwnProperty.call(data, key);
+}
+
+/**
+ * Sets the hash `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf Hash
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the hash instance.
+ */
+function hashSet(key, value) {
+  var data = this.__data__;
+  data[key] = (nativeCreate && value === undefined) ? HASH_UNDEFINED : value;
+  return this;
+}
+
+// Add methods to `Hash`.
+Hash.prototype.clear = hashClear;
+Hash.prototype['delete'] = hashDelete;
+Hash.prototype.get = hashGet;
+Hash.prototype.has = hashHas;
+Hash.prototype.set = hashSet;
+
+/**
+ * Creates an list cache object.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function ListCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the list cache.
+ *
+ * @private
+ * @name clear
+ * @memberOf ListCache
+ */
+function listCacheClear() {
+  this.__data__ = [];
+}
+
+/**
+ * Removes `key` and its value from the list cache.
+ *
+ * @private
+ * @name delete
+ * @memberOf ListCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function listCacheDelete(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    return false;
+  }
+  var lastIndex = data.length - 1;
+  if (index == lastIndex) {
+    data.pop();
+  } else {
+    splice.call(data, index, 1);
+  }
+  return true;
+}
+
+/**
+ * Gets the list cache value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf ListCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function listCacheGet(key) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  return index < 0 ? undefined : data[index][1];
+}
+
+/**
+ * Checks if a list cache value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf ListCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function listCacheHas(key) {
+  return assocIndexOf(this.__data__, key) > -1;
+}
+
+/**
+ * Sets the list cache `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf ListCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the list cache instance.
+ */
+function listCacheSet(key, value) {
+  var data = this.__data__,
+      index = assocIndexOf(data, key);
+
+  if (index < 0) {
+    data.push([key, value]);
+  } else {
+    data[index][1] = value;
+  }
+  return this;
+}
+
+// Add methods to `ListCache`.
+ListCache.prototype.clear = listCacheClear;
+ListCache.prototype['delete'] = listCacheDelete;
+ListCache.prototype.get = listCacheGet;
+ListCache.prototype.has = listCacheHas;
+ListCache.prototype.set = listCacheSet;
+
+/**
+ * Creates a map cache object to store key-value pairs.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function MapCache(entries) {
+  var index = -1,
+      length = entries ? entries.length : 0;
+
+  this.clear();
+  while (++index < length) {
+    var entry = entries[index];
+    this.set(entry[0], entry[1]);
+  }
+}
+
+/**
+ * Removes all key-value entries from the map.
+ *
+ * @private
+ * @name clear
+ * @memberOf MapCache
+ */
+function mapCacheClear() {
+  this.__data__ = {
+    'hash': new Hash,
+    'map': new (Map || ListCache),
+    'string': new Hash
+  };
+}
+
+/**
+ * Removes `key` and its value from the map.
+ *
+ * @private
+ * @name delete
+ * @memberOf MapCache
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function mapCacheDelete(key) {
+  return getMapData(this, key)['delete'](key);
+}
+
+/**
+ * Gets the map value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf MapCache
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function mapCacheGet(key) {
+  return getMapData(this, key).get(key);
+}
+
+/**
+ * Checks if a map value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf MapCache
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function mapCacheHas(key) {
+  return getMapData(this, key).has(key);
+}
+
+/**
+ * Sets the map `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf MapCache
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the map cache instance.
+ */
+function mapCacheSet(key, value) {
+  getMapData(this, key).set(key, value);
+  return this;
+}
+
+// Add methods to `MapCache`.
+MapCache.prototype.clear = mapCacheClear;
+MapCache.prototype['delete'] = mapCacheDelete;
+MapCache.prototype.get = mapCacheGet;
+MapCache.prototype.has = mapCacheHas;
+MapCache.prototype.set = mapCacheSet;
+
+/**
+ *
+ * Creates an array cache object to store unique values.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [values] The values to cache.
+ */
+function SetCache(values) {
+  var index = -1,
+      length = values ? values.length : 0;
+
+  this.__data__ = new MapCache;
+  while (++index < length) {
+    this.add(values[index]);
+  }
+}
+
+/**
+ * Adds `value` to the array cache.
+ *
+ * @private
+ * @name add
+ * @memberOf SetCache
+ * @alias push
+ * @param {*} value The value to cache.
+ * @returns {Object} Returns the cache instance.
+ */
+function setCacheAdd(value) {
+  this.__data__.set(value, HASH_UNDEFINED);
+  return this;
+}
+
+/**
+ * Checks if `value` is in the array cache.
+ *
+ * @private
+ * @name has
+ * @memberOf SetCache
+ * @param {*} value The value to search for.
+ * @returns {number} Returns `true` if `value` is found, else `false`.
+ */
+function setCacheHas(value) {
+  return this.__data__.has(value);
+}
+
+// Add methods to `SetCache`.
+SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+SetCache.prototype.has = setCacheHas;
+
+/**
+ * Creates a stack cache object to store key-value pairs.
+ *
+ * @private
+ * @constructor
+ * @param {Array} [entries] The key-value pairs to cache.
+ */
+function Stack(entries) {
+  this.__data__ = new ListCache(entries);
+}
+
+/**
+ * Removes all key-value entries from the stack.
+ *
+ * @private
+ * @name clear
+ * @memberOf Stack
+ */
+function stackClear() {
+  this.__data__ = new ListCache;
+}
+
+/**
+ * Removes `key` and its value from the stack.
+ *
+ * @private
+ * @name delete
+ * @memberOf Stack
+ * @param {string} key The key of the value to remove.
+ * @returns {boolean} Returns `true` if the entry was removed, else `false`.
+ */
+function stackDelete(key) {
+  return this.__data__['delete'](key);
+}
+
+/**
+ * Gets the stack value for `key`.
+ *
+ * @private
+ * @name get
+ * @memberOf Stack
+ * @param {string} key The key of the value to get.
+ * @returns {*} Returns the entry value.
+ */
+function stackGet(key) {
+  return this.__data__.get(key);
+}
+
+/**
+ * Checks if a stack value for `key` exists.
+ *
+ * @private
+ * @name has
+ * @memberOf Stack
+ * @param {string} key The key of the entry to check.
+ * @returns {boolean} Returns `true` if an entry for `key` exists, else `false`.
+ */
+function stackHas(key) {
+  return this.__data__.has(key);
+}
+
+/**
+ * Sets the stack `key` to `value`.
+ *
+ * @private
+ * @name set
+ * @memberOf Stack
+ * @param {string} key The key of the value to set.
+ * @param {*} value The value to set.
+ * @returns {Object} Returns the stack cache instance.
+ */
+function stackSet(key, value) {
+  var cache = this.__data__;
+  if (cache instanceof ListCache && cache.__data__.length == LARGE_ARRAY_SIZE) {
+    cache = this.__data__ = new MapCache(cache.__data__);
+  }
+  cache.set(key, value);
+  return this;
+}
+
+// Add methods to `Stack`.
+Stack.prototype.clear = stackClear;
+Stack.prototype['delete'] = stackDelete;
+Stack.prototype.get = stackGet;
+Stack.prototype.has = stackHas;
+Stack.prototype.set = stackSet;
+
+/**
+ * Gets the index at which the `key` is found in `array` of key-value pairs.
+ *
+ * @private
+ * @param {Array} array The array to search.
+ * @param {*} key The key to search for.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function assocIndexOf(array, key) {
+  var length = array.length;
+  while (length--) {
+    if (eq(array[length][0], key)) {
+      return length;
+    }
+  }
+  return -1;
+}
+
+/**
+ * The base implementation of `_.has` without support for deep paths.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} key The key to check.
+ * @returns {boolean} Returns `true` if `key` exists, else `false`.
+ */
+function baseHas(object, key) {
+  // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`,
+  // that are composed entirely of index properties, return `false` for
+  // `hasOwnProperty` checks of them.
+  return hasOwnProperty.call(object, key) ||
+    (typeof object == 'object' && key in object && getPrototype(object) === null);
+}
+
+/**
+ * The base implementation of `_.isEqual` which supports partial comparisons
+ * and tracks traversed objects.
+ *
+ * @private
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @param {Function} [customizer] The function to customize comparisons.
+ * @param {boolean} [bitmask] The bitmask of comparison flags.
+ *  The bitmask may be composed of the following flags:
+ *     1 - Unordered comparison
+ *     2 - Partial comparison
+ * @param {Object} [stack] Tracks traversed `value` and `other` objects.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ */
+function baseIsEqual(value, other, customizer, bitmask, stack) {
+  if (value === other) {
+    return true;
+  }
+  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+    return value !== value && other !== other;
+  }
+  return baseIsEqualDeep(value, other, baseIsEqual, customizer, bitmask, stack);
+}
+
+/**
+ * A specialized version of `baseIsEqual` for arrays and objects which performs
+ * deep comparisons and tracks traversed objects enabling objects with circular
+ * references to be compared.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Function} [customizer] The function to customize comparisons.
+ * @param {number} [bitmask] The bitmask of comparison flags. See `baseIsEqual`
+ *  for more details.
+ * @param {Object} [stack] Tracks traversed `object` and `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function baseIsEqualDeep(object, other, equalFunc, customizer, bitmask, stack) {
+  var objIsArr = isArray(object),
+      othIsArr = isArray(other),
+      objTag = arrayTag,
+      othTag = arrayTag;
+
+  if (!objIsArr) {
+    objTag = getTag(object);
+    objTag = objTag == argsTag ? objectTag : objTag;
+  }
+  if (!othIsArr) {
+    othTag = getTag(other);
+    othTag = othTag == argsTag ? objectTag : othTag;
+  }
+  var objIsObj = objTag == objectTag && !isHostObject(object),
+      othIsObj = othTag == objectTag && !isHostObject(other),
+      isSameTag = objTag == othTag;
+
+  if (isSameTag && !objIsObj) {
+    stack || (stack = new Stack);
+    return (objIsArr || isTypedArray(object))
+      ? equalArrays(object, other, equalFunc, customizer, bitmask, stack)
+      : equalByTag(object, other, objTag, equalFunc, customizer, bitmask, stack);
+  }
+  if (!(bitmask & PARTIAL_COMPARE_FLAG)) {
+    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+    if (objIsWrapped || othIsWrapped) {
+      var objUnwrapped = objIsWrapped ? object.value() : object,
+          othUnwrapped = othIsWrapped ? other.value() : other;
+
+      stack || (stack = new Stack);
+      return equalFunc(objUnwrapped, othUnwrapped, customizer, bitmask, stack);
+    }
+  }
+  if (!isSameTag) {
+    return false;
+  }
+  stack || (stack = new Stack);
+  return equalObjects(object, other, equalFunc, customizer, bitmask, stack);
+}
+
+/**
+ * A specialized version of `baseIsEqualDeep` for arrays with support for
+ * partial deep comparisons.
+ *
+ * @private
+ * @param {Array} array The array to compare.
+ * @param {Array} other The other array to compare.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
+ *  for more details.
+ * @param {Object} stack Tracks traversed `array` and `other` objects.
+ * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
+ */
+function equalArrays(array, other, equalFunc, customizer, bitmask, stack) {
+  var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
+      arrLength = array.length,
+      othLength = other.length;
+
+  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
+    return false;
+  }
+  // Assume cyclic values are equal.
+  var stacked = stack.get(array);
+  if (stacked) {
+    return stacked == other;
+  }
+  var index = -1,
+      result = true,
+      seen = (bitmask & UNORDERED_COMPARE_FLAG) ? new SetCache : undefined;
+
+  stack.set(array, other);
+
+  // Ignore non-index properties.
+  while (++index < arrLength) {
+    var arrValue = array[index],
+        othValue = other[index];
+
+    if (customizer) {
+      var compared = isPartial
+        ? customizer(othValue, arrValue, index, other, array, stack)
+        : customizer(arrValue, othValue, index, array, other, stack);
+    }
+    if (compared !== undefined) {
+      if (compared) {
+        continue;
+      }
+      result = false;
+      break;
+    }
+    // Recursively compare arrays (susceptible to call stack limits).
+    if (seen) {
+      if (!arraySome(other, function(othValue, othIndex) {
+            if (!seen.has(othIndex) &&
+                (arrValue === othValue || equalFunc(arrValue, othValue, customizer, bitmask, stack))) {
+              return seen.add(othIndex);
+            }
+          })) {
+        result = false;
+        break;
+      }
+    } else if (!(
+          arrValue === othValue ||
+            equalFunc(arrValue, othValue, customizer, bitmask, stack)
+        )) {
+      result = false;
+      break;
+    }
+  }
+  stack['delete'](array);
+  return result;
+}
+
+/**
+ * A specialized version of `baseIsEqualDeep` for comparing objects of
+ * the same `toStringTag`.
+ *
+ * **Note:** This function only supports comparing values with tags of
+ * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {string} tag The `toStringTag` of the objects to compare.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
+ *  for more details.
+ * @param {Object} stack Tracks traversed `object` and `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function equalByTag(object, other, tag, equalFunc, customizer, bitmask, stack) {
+  switch (tag) {
+    case dataViewTag:
+      if ((object.byteLength != other.byteLength) ||
+          (object.byteOffset != other.byteOffset)) {
+        return false;
+      }
+      object = object.buffer;
+      other = other.buffer;
+
+    case arrayBufferTag:
+      if ((object.byteLength != other.byteLength) ||
+          !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
+        return false;
+      }
+      return true;
+
+    case boolTag:
+    case dateTag:
+      // Coerce dates and booleans to numbers, dates to milliseconds and
+      // booleans to `1` or `0` treating invalid dates coerced to `NaN` as
+      // not equal.
+      return +object == +other;
+
+    case errorTag:
+      return object.name == other.name && object.message == other.message;
+
+    case numberTag:
+      // Treat `NaN` vs. `NaN` as equal.
+      return (object != +object) ? other != +other : object == +other;
+
+    case regexpTag:
+    case stringTag:
+      // Coerce regexes to strings and treat strings, primitives and objects,
+      // as equal. See http://www.ecma-international.org/ecma-262/6.0/#sec-regexp.prototype.tostring
+      // for more details.
+      return object == (other + '');
+
+    case mapTag:
+      var convert = mapToArray;
+
+    case setTag:
+      var isPartial = bitmask & PARTIAL_COMPARE_FLAG;
+      convert || (convert = setToArray);
+
+      if (object.size != other.size && !isPartial) {
+        return false;
+      }
+      // Assume cyclic values are equal.
+      var stacked = stack.get(object);
+      if (stacked) {
+        return stacked == other;
+      }
+      bitmask |= UNORDERED_COMPARE_FLAG;
+      stack.set(object, other);
+
+      // Recursively compare objects (susceptible to call stack limits).
+      return equalArrays(convert(object), convert(other), equalFunc, customizer, bitmask, stack);
+
+    case symbolTag:
+      if (symbolValueOf) {
+        return symbolValueOf.call(object) == symbolValueOf.call(other);
+      }
+  }
+  return false;
+}
+
+/**
+ * A specialized version of `baseIsEqualDeep` for objects with support for
+ * partial deep comparisons.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Function} customizer The function to customize comparisons.
+ * @param {number} bitmask The bitmask of comparison flags. See `baseIsEqual`
+ *  for more details.
+ * @param {Object} stack Tracks traversed `object` and `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function equalObjects(object, other, equalFunc, customizer, bitmask, stack) {
+  var isPartial = bitmask & PARTIAL_COMPARE_FLAG,
+      objProps = keys(object),
+      objLength = objProps.length,
+      othProps = keys(other),
+      othLength = othProps.length;
+
+  if (objLength != othLength && !isPartial) {
+    return false;
+  }
+  var index = objLength;
+  while (index--) {
+    var key = objProps[index];
+    if (!(isPartial ? key in other : baseHas(other, key))) {
+      return false;
+    }
+  }
+  // Assume cyclic values are equal.
+  var stacked = stack.get(object);
+  if (stacked) {
+    return stacked == other;
+  }
+  var result = true;
+  stack.set(object, other);
+
+  var skipCtor = isPartial;
+  while (++index < objLength) {
+    key = objProps[index];
+    var objValue = object[key],
+        othValue = other[key];
+
+    if (customizer) {
+      var compared = isPartial
+        ? customizer(othValue, objValue, key, other, object, stack)
+        : customizer(objValue, othValue, key, object, other, stack);
+    }
+    // Recursively compare objects (susceptible to call stack limits).
+    if (!(compared === undefined
+          ? (objValue === othValue || equalFunc(objValue, othValue, customizer, bitmask, stack))
+          : compared
+        )) {
+      result = false;
+      break;
+    }
+    skipCtor || (skipCtor = key == 'constructor');
+  }
+  if (result && !skipCtor) {
+    var objCtor = object.constructor,
+        othCtor = other.constructor;
+
+    // Non `Object` object instances with different constructors are not equal.
+    if (objCtor != othCtor &&
+        ('constructor' in object && 'constructor' in other) &&
+        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+      result = false;
+    }
+  }
+  stack['delete'](object);
+  return result;
+}
+
+/**
+ * Gets the data for `map`.
+ *
+ * @private
+ * @param {Object} map The map to query.
+ * @param {string} key The reference key.
+ * @returns {*} Returns the map data.
+ */
+function getMapData(map, key) {
+  var data = map.__data__;
+  return isKeyable(key)
+    ? data[typeof key == 'string' ? 'string' : 'hash']
+    : data.map;
+}
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = object[key];
+  return isNative(value) ? value : undefined;
+}
+
+/**
+ * Gets the `[[Prototype]]` of `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {null|Object} Returns the `[[Prototype]]`.
+ */
+function getPrototype(value) {
+  return nativeGetPrototype(Object(value));
+}
+
+/**
+ * Gets the `toStringTag` of `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function getTag(value) {
+  return objectToString.call(value);
+}
+
+// Fallback for data views, maps, sets, and weak maps in IE 11,
+// for data views in Edge, and promises in Node.js.
+if ((DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag) ||
+    (Map && getTag(new Map) != mapTag) ||
+    (Promise && getTag(Promise.resolve()) != promiseTag) ||
+    (Set && getTag(new Set) != setTag) ||
+    (WeakMap && getTag(new WeakMap) != weakMapTag)) {
+  getTag = function(value) {
+    var result = objectToString.call(value),
+        Ctor = result == objectTag ? value.constructor : undefined,
+        ctorString = Ctor ? toSource(Ctor) : undefined;
+
+    if (ctorString) {
+      switch (ctorString) {
+        case dataViewCtorString: return dataViewTag;
+        case mapCtorString: return mapTag;
+        case promiseCtorString: return promiseTag;
+        case setCtorString: return setTag;
+        case weakMapCtorString: return weakMapTag;
+      }
+    }
+    return result;
+  };
+}
+
+/**
+ * Checks if `value` is suitable for use as unique object key.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is suitable, else `false`.
+ */
+function isKeyable(value) {
+  var type = typeof value;
+  return (type == 'string' || type == 'number' || type == 'symbol' || type == 'boolean')
+    ? (value !== '__proto__')
+    : (value === null);
+}
+
+/**
+ * Converts `func` to its source code.
+ *
+ * @private
+ * @param {Function} func The function to process.
+ * @returns {string} Returns the source code.
+ */
+function toSource(func) {
+  if (func != null) {
+    try {
+      return funcToString.call(func);
+    } catch (e) {}
+    try {
+      return (func + '');
+    } catch (e) {}
+  }
+  return '';
+}
+
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ * var other = { 'user': 'fred' };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @type {Function}
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Performs a deep comparison between two values to determine if they are
+ * equivalent.
+ *
+ * **Note:** This method supports comparing arrays, array buffers, booleans,
+ * date objects, error objects, maps, numbers, `Object` objects, regexes,
+ * sets, strings, symbols, and typed arrays. `Object` objects are compared
+ * by their own, not inherited, enumerable properties. Functions and DOM
+ * nodes are **not** supported.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent,
+ *  else `false`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ * var other = { 'user': 'fred' };
+ *
+ * _.isEqual(object, other);
+ * // => true
+ *
+ * object === other;
+ * // => false
+ */
+function isEqual(value, other) {
+  return baseIsEqual(value, other);
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length,
+ *  else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is a native function.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function,
+ *  else `false`.
+ * @example
+ *
+ * _.isNative(Array.prototype.push);
+ * // => true
+ *
+ * _.isNative(_);
+ * // => false
+ */
+function isNative(value) {
+  if (!isObject(value)) {
+    return false;
+  }
+  var pattern = (isFunction(value) || isHostObject(value)) ? reIsNative : reIsHostCtor;
+  return pattern.test(toSource(value));
+}
+
+/**
+ * Checks if `value` is classified as a typed array.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isTypedArray(new Uint8Array);
+ * // => true
+ *
+ * _.isTypedArray([]);
+ * // => false
+ */
+function isTypedArray(value) {
+  return isObjectLike(value) &&
+    isLength(value.length) && !!typedArrayTags[objectToString.call(value)];
+}
+
+module.exports = isEqual;
+
+},{"lodash._root":5,"lodash.keys":10}],10:[function(require,module,exports){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    stringTag = '[object String]';
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/**
+ * The base implementation of `_.times` without support for iteratee shorthands
+ * or max array length checks.
+ *
+ * @private
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
+ */
+function baseTimes(n, iteratee) {
+  var index = -1,
+      result = Array(n);
+
+  while (++index < n) {
+    result[index] = iteratee(index);
+  }
+  return result;
+}
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Built-in value references. */
+var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeGetPrototype = Object.getPrototypeOf,
+    nativeKeys = Object.keys;
+
+/**
+ * The base implementation of `_.has` without support for deep paths.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array|string} key The key to check.
+ * @returns {boolean} Returns `true` if `key` exists, else `false`.
+ */
+function baseHas(object, key) {
+  // Avoid a bug in IE 10-11 where objects with a [[Prototype]] of `null`,
+  // that are composed entirely of index properties, return `false` for
+  // `hasOwnProperty` checks of them.
+  return hasOwnProperty.call(object, key) ||
+    (typeof object == 'object' && key in object && getPrototype(object) === null);
+}
+
+/**
+ * The base implementation of `_.keys` which doesn't skip the constructor
+ * property of prototypes or treat sparse arrays as dense.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function baseKeys(object) {
+  return nativeKeys(Object(object));
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a
+ * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
+ * Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Gets the `[[Prototype]]` of `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {null|Object} Returns the `[[Prototype]]`.
+ */
+function getPrototype(value) {
+  return nativeGetPrototype(Object(value));
+}
+
+/**
+ * Creates an array of index keys for `object` values of arrays,
+ * `arguments` objects, and strings, otherwise `null` is returned.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array|null} Returns index keys, else `null`.
+ */
+function indexKeys(object) {
+  var length = object ? object.length : undefined;
+  if (isLength(length) &&
+      (isArray(object) || isString(object) || isArguments(object))) {
+    return baseTimes(length, String);
+  }
+  return null;
+}
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
+
+/**
+ * Checks if `value` is likely a prototype object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+ */
+function isPrototype(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+  return value === proto;
+}
+
+/**
+ * Checks if `value` is likely an `arguments` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isArguments(function() { return arguments; }());
+ * // => true
+ *
+ * _.isArguments([1, 2, 3]);
+ * // => false
+ */
+function isArguments(value) {
+  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @type {Function}
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && isLength(getLength(value)) && !isFunction(value);
+}
+
+/**
+ * This method is like `_.isArrayLike` except that it also checks if `value`
+ * is an object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array-like object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArrayLikeObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLikeObject(document.body.children);
+ * // => true
+ *
+ * _.isArrayLikeObject('abc');
+ * // => false
+ *
+ * _.isArrayLikeObject(_.noop);
+ * // => false
+ */
+function isArrayLikeObject(value) {
+  return isObjectLike(value) && isArrayLike(value);
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length,
+ *  else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `String` primitive or object.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isString('abc');
+ * // => true
+ *
+ * _.isString(1);
+ * // => false
+ */
+function isString(value) {
+  return typeof value == 'string' ||
+    (!isArray(value) && isObjectLike(value) && objectToString.call(value) == stringTag);
+}
+
+/**
+ * Creates an array of the own enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects. See the
+ * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
+ * for more details.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keys(new Foo);
+ * // => ['a', 'b'] (iteration order is not guaranteed)
+ *
+ * _.keys('hi');
+ * // => ['0', '1']
+ */
+function keys(object) {
+  var isProto = isPrototype(object);
+  if (!(isProto || isArrayLike(object))) {
+    return baseKeys(object);
+  }
+  var indexes = indexKeys(object),
+      skipIndexes = !!indexes,
+      result = indexes || [],
+      length = result.length;
+
+  for (var key in object) {
+    if (baseHas(object, key) &&
+        !(skipIndexes && (key == 'length' || isIndex(key, length))) &&
+        !(isProto && key == 'constructor')) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = keys;
+
+},{}],11:[function(require,module,exports){
+(function (global){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    stringTag = '[object String]';
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/** Used to determine if values are of the language type `Object`. */
+var objectTypes = {
+  'function': true,
+  'object': true
+};
+
+/** Detect free variable `exports`. */
+var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
+  ? exports
+  : undefined;
+
+/** Detect free variable `module`. */
+var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
+  ? module
+  : undefined;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+
+/** Detect free variable `self`. */
+var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+
+/** Detect free variable `window`. */
+var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+
+/** Detect `this` as the global object. */
+var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+
+/**
+ * Used as a reference to the global object.
+ *
+ * The `this` value is used if it's the global object to avoid Greasemonkey's
+ * restricted `window` object, otherwise the `window` object is used.
+ */
+var root = freeGlobal ||
+  ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
+    freeSelf || thisGlobal || Function('return this')();
+
+/**
+ * The base implementation of `_.times` without support for iteratee shorthands
+ * or max array length checks.
+ *
+ * @private
+ * @param {number} n The number of times to invoke `iteratee`.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the array of results.
+ */
+function baseTimes(n, iteratee) {
+  var index = -1,
+      result = Array(n);
+
+  while (++index < n) {
+    result[index] = iteratee(index);
+  }
+  return result;
+}
+
+/**
+ * Checks if `value` is a global object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+ */
+function checkGlobal(value) {
+  return (value && value.Object === Object) ? value : null;
+}
+
+/**
+ * Converts `iterator` to an array.
+ *
+ * @private
+ * @param {Object} iterator The iterator to convert.
+ * @returns {Array} Returns the converted array.
+ */
+function iteratorToArray(iterator) {
+  var data,
+      result = [];
+
+  while (!(data = iterator.next()).done) {
+    result.push(data.value);
+  }
+  return result;
+}
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Built-in value references. */
+var Reflect = root.Reflect,
+    enumerate = Reflect ? Reflect.enumerate : undefined,
+    propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+/**
+ * The base implementation of `_.keysIn` which doesn't skip the constructor
+ * property of prototypes or treat sparse arrays as dense.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function baseKeysIn(object) {
+  object = object == null ? object : Object(object);
+
+  var result = [];
+  for (var key in object) {
+    result.push(key);
+  }
+  return result;
+}
+
+// Fallback for IE < 9 with es6-shim.
+if (enumerate && !propertyIsEnumerable.call({ 'valueOf': 1 }, 'valueOf')) {
+  baseKeysIn = function(object) {
+    return iteratorToArray(enumerate(object));
+  };
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a
+ * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
+ * Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Creates an array of index keys for `object` values of arrays,
+ * `arguments` objects, and strings, otherwise `null` is returned.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array|null} Returns index keys, else `null`.
+ */
+function indexKeys(object) {
+  var length = object ? object.length : undefined;
+  if (isLength(length) &&
+      (isArray(object) || isString(object) || isArguments(object))) {
+    return baseTimes(length, String);
+  }
+  return null;
+}
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
+
+/**
+ * Checks if `value` is likely a prototype object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a prototype, else `false`.
+ */
+function isPrototype(value) {
+  var Ctor = value && value.constructor,
+      proto = (typeof Ctor == 'function' && Ctor.prototype) || objectProto;
+
+  return value === proto;
+}
+
+/**
+ * Checks if `value` is likely an `arguments` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isArguments(function() { return arguments; }());
+ * // => true
+ *
+ * _.isArguments([1, 2, 3]);
+ * // => false
+ */
+function isArguments(value) {
+  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @type {Function}
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(document.body.children);
+ * // => false
+ *
+ * _.isArray('abc');
+ * // => false
+ *
+ * _.isArray(_.noop);
+ * // => false
+ */
+var isArray = Array.isArray;
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && isLength(getLength(value)) && !isFunction(value);
+}
+
+/**
+ * This method is like `_.isArrayLike` except that it also checks if `value`
+ * is an object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an array-like object,
+ *  else `false`.
+ * @example
+ *
+ * _.isArrayLikeObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLikeObject(document.body.children);
+ * // => true
+ *
+ * _.isArrayLikeObject('abc');
+ * // => false
+ *
+ * _.isArrayLikeObject(_.noop);
+ * // => false
+ */
+function isArrayLikeObject(value) {
+  return isObjectLike(value) && isArrayLike(value);
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length,
+ *  else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `String` primitive or object.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isString('abc');
+ * // => true
+ *
+ * _.isString(1);
+ * // => false
+ */
+function isString(value) {
+  return typeof value == 'string' ||
+    (!isArray(value) && isObjectLike(value) && objectToString.call(value) == stringTag);
+}
+
+/**
+ * Creates an array of the own and inherited enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keysIn(new Foo);
+ * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+ */
+function keysIn(object) {
+  var index = -1,
+      isProto = isPrototype(object),
+      props = baseKeysIn(object),
+      propsLength = props.length,
+      indexes = indexKeys(object),
+      skipIndexes = !!indexes,
+      result = indexes || [],
+      length = result.length;
+
+  while (++index < propsLength) {
+    var key = props[index];
+    if (!(skipIndexes && (key == 'length' || isIndex(key, length))) &&
+        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = keysIn;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],12:[function(require,module,exports){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0,
+    MAX_INTEGER = 1.7976931348623157e+308,
+    NAN = 0 / 0;
+
+/** `Object#toString` result references. */
+var funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    symbolTag = '[object Symbol]';
+
+/** Used to match leading and trailing whitespace. */
+var reTrim = /^\s+|\s+$/g;
+
+/** Used to detect bad signed hexadecimal string values. */
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+/** Used to detect binary string values. */
+var reIsBinary = /^0b[01]+$/i;
+
+/** Used to detect octal string values. */
+var reIsOctal = /^0o[0-7]+$/i;
+
+/** Built-in method references without a dependency on `root`. */
+var freeParseInt = parseInt;
+
+/**
+ * A faster alternative to `Function#apply`, this function invokes `func`
+ * with the `this` binding of `thisArg` and the arguments of `args`.
+ *
+ * @private
+ * @param {Function} func The function to invoke.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {Array} args The arguments to invoke `func` with.
+ * @returns {*} Returns the result of `func`.
+ */
+function apply(func, thisArg, args) {
+  var length = args.length;
+  switch (length) {
+    case 0: return func.call(thisArg);
+    case 1: return func.call(thisArg, args[0]);
+    case 2: return func.call(thisArg, args[0], args[1]);
+    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+
+/**
+ * Creates a function that invokes `func` with the `this` binding of the
+ * created function and arguments from `start` and beyond provided as
+ * an array.
+ *
+ * **Note:** This method is based on the
+ * [rest parameter](https://mdn.io/rest_parameters).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Function
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var say = _.rest(function(what, names) {
+ *   return what + ' ' + _.initial(names).join(', ') +
+ *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
+ * });
+ *
+ * say('hello', 'fred', 'barney', 'pebbles');
+ * // => 'hello fred, barney, & pebbles'
+ */
+function rest(func, start) {
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  start = nativeMax(start === undefined ? (func.length - 1) : toInteger(start), 0);
+  return function() {
+    var args = arguments,
+        index = -1,
+        length = nativeMax(args.length - start, 0),
+        array = Array(length);
+
+    while (++index < length) {
+      array[index] = args[start + index];
+    }
+    switch (start) {
+      case 0: return func.call(this, array);
+      case 1: return func.call(this, args[0], array);
+      case 2: return func.call(this, args[0], args[1], array);
+    }
+    var otherArgs = Array(start + 1);
+    index = -1;
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = array;
+    return apply(func, this, otherArgs);
+  };
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
+ * Converts `value` to a finite number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.12.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted number.
+ * @example
+ *
+ * _.toFinite(3.2);
+ * // => 3.2
+ *
+ * _.toFinite(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toFinite(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toFinite('3.2');
+ * // => 3.2
+ */
+function toFinite(value) {
+  if (!value) {
+    return value === 0 ? value : 0;
+  }
+  value = toNumber(value);
+  if (value === INFINITY || value === -INFINITY) {
+    var sign = (value < 0 ? -1 : 1);
+    return sign * MAX_INTEGER;
+  }
+  return value === value ? value : 0;
+}
+
+/**
+ * Converts `value` to an integer.
+ *
+ * **Note:** This function is loosely based on
+ * [`ToInteger`](http://www.ecma-international.org/ecma-262/6.0/#sec-tointeger).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted integer.
+ * @example
+ *
+ * _.toInteger(3.2);
+ * // => 3
+ *
+ * _.toInteger(Number.MIN_VALUE);
+ * // => 0
+ *
+ * _.toInteger(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toInteger('3.2');
+ * // => 3
+ */
+function toInteger(value) {
+  var result = toFinite(value),
+      remainder = result % 1;
+
+  return result === result ? (remainder ? result - remainder : result) : 0;
+}
+
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3.2);
+ * // => 3.2
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3.2');
+ * // => 3.2
+ */
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return NAN;
+  }
+  if (isObject(value)) {
+    var other = isFunction(value.valueOf) ? value.valueOf() : value;
+    value = isObject(other) ? (other + '') : other;
+  }
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+  value = value.replace(reTrim, '');
+  var isBinary = reIsBinary.test(value);
+  return (isBinary || reIsOctal.test(value))
+    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+    : (reIsBadHex.test(value) ? NAN : +value);
+}
+
+module.exports = rest;
+
+},{}],13:[function(require,module,exports){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+var assignInWith = require('lodash.assigninwith'),
+    keys = require('lodash.keys'),
+    reInterpolate = require('lodash._reinterpolate'),
+    rest = require('lodash.rest'),
+    templateSettings = require('lodash.templatesettings'),
+    toString = require('lodash.tostring');
+
+/** Used as references for various `Number` constants. */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/** `Object#toString` result references. */
+var errorTag = '[object Error]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]';
+
+/** Used to match empty string literals in compiled template source. */
+var reEmptyStringLeading = /\b__p \+= '';/g,
+    reEmptyStringMiddle = /\b(__p \+=) '' \+/g,
+    reEmptyStringTrailing = /(__e\(.*?\)|\b__t\)) \+\n'';/g;
+
+/**
+ * Used to match
+ * [ES template delimiters](http://ecma-international.org/ecma-262/6.0/#sec-template-literal-lexical-components).
+ */
+var reEsTemplate = /\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g;
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^(?:0|[1-9]\d*)$/;
+
+/** Used to ensure capturing order of template delimiters. */
+var reNoMatch = /($^)/;
+
+/** Used to match unescaped characters in compiled string literals. */
+var reUnescapedString = /['\n\r\u2028\u2029\\]/g;
+
+/** Used to escape characters for inclusion in compiled string literals. */
+var stringEscapes = {
+  '\\': '\\',
+  "'": "'",
+  '\n': 'n',
+  '\r': 'r',
+  '\u2028': 'u2028',
+  '\u2029': 'u2029'
+};
+
+/**
+ * A faster alternative to `Function#apply`, this function invokes `func`
+ * with the `this` binding of `thisArg` and the arguments of `args`.
+ *
+ * @private
+ * @param {Function} func The function to invoke.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {Array} args The arguments to invoke `func` with.
+ * @returns {*} Returns the result of `func`.
+ */
+function apply(func, thisArg, args) {
+  var length = args.length;
+  switch (length) {
+    case 0: return func.call(thisArg);
+    case 1: return func.call(thisArg, args[0]);
+    case 2: return func.call(thisArg, args[0], args[1]);
+    case 3: return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
+
+/**
+ * A specialized version of `_.map` for arrays without support for iteratee
+ * shorthands.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function arrayMap(array, iteratee) {
+  var index = -1,
+      length = array.length,
+      result = Array(length);
+
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
+  }
+  return result;
+}
+
+/**
+ * The base implementation of `_.values` and `_.valuesIn` which creates an
+ * array of `object` property values corresponding to the property names
+ * of `props`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array} props The property names to get values for.
+ * @returns {Object} Returns the array of property values.
+ */
+function baseValues(object, props) {
+  return arrayMap(props, function(key) {
+    return object[key];
+  });
+}
+
+/**
+ * Used by `_.template` to escape characters for inclusion in compiled string literals.
+ *
+ * @private
+ * @param {string} chr The matched character to escape.
+ * @returns {string} Returns the escaped character.
+ */
+function escapeStringChar(chr) {
+  return '\\' + stringEscapes[chr];
+}
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/**
+ * Used by `_.defaults` to customize its `_.assignIn` use.
+ *
+ * @private
+ * @param {*} objValue The destination value.
+ * @param {*} srcValue The source value.
+ * @param {string} key The key of the property to assign.
+ * @param {Object} object The parent object of `objValue`.
+ * @returns {*} Returns the value to assign.
+ */
+function assignInDefaults(objValue, srcValue, key, object) {
+  if (objValue === undefined ||
+      (eq(objValue, objectProto[key]) && !hasOwnProperty.call(object, key))) {
+    return srcValue;
+  }
+  return objValue;
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new accessor function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a
+ * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
+ * Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return !!length &&
+    (typeof value == 'number' || reIsUint.test(value)) &&
+    (value > -1 && value % 1 == 0 && value < length);
+}
+
+/**
+ * Checks if the given arguments are from an iteratee call.
+ *
+ * @private
+ * @param {*} value The potential iteratee value argument.
+ * @param {*} index The potential iteratee index or key argument.
+ * @param {*} object The potential iteratee object argument.
+ * @returns {boolean} Returns `true` if the arguments are from an iteratee call,
+ *  else `false`.
+ */
+function isIterateeCall(value, index, object) {
+  if (!isObject(object)) {
+    return false;
+  }
+  var type = typeof index;
+  if (type == 'number'
+        ? (isArrayLike(object) && isIndex(index, object.length))
+        : (type == 'string' && index in object)
+      ) {
+    return eq(object[index], value);
+  }
+  return false;
+}
+
+/**
+ * Performs a
+ * [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+ * comparison between two values to determine if they are equivalent.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ * var other = { 'user': 'fred' };
+ *
+ * _.eq(object, object);
+ * // => true
+ *
+ * _.eq(object, other);
+ * // => false
+ *
+ * _.eq('a', 'a');
+ * // => true
+ *
+ * _.eq('a', Object('a'));
+ * // => false
+ *
+ * _.eq(NaN, NaN);
+ * // => true
+ */
+function eq(value, other) {
+  return value === other || (value !== value && other !== other);
+}
+
+/**
+ * Checks if `value` is array-like. A value is considered array-like if it's
+ * not a function and has a `value.length` that's an integer greater than or
+ * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ * @example
+ *
+ * _.isArrayLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isArrayLike(document.body.children);
+ * // => true
+ *
+ * _.isArrayLike('abc');
+ * // => true
+ *
+ * _.isArrayLike(_.noop);
+ * // => false
+ */
+function isArrayLike(value) {
+  return value != null && isLength(getLength(value)) && !isFunction(value);
+}
+
+/**
+ * Checks if `value` is an `Error`, `EvalError`, `RangeError`, `ReferenceError`,
+ * `SyntaxError`, `TypeError`, or `URIError` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an error object,
+ *  else `false`.
+ * @example
+ *
+ * _.isError(new Error);
+ * // => true
+ *
+ * _.isError(Error);
+ * // => false
+ */
+function isError(value) {
+  if (!isObjectLike(value)) {
+    return false;
+  }
+  return (objectToString.call(value) == errorTag) ||
+    (typeof value.message == 'string' && typeof value.name == 'string');
+}
+
+/**
+ * Checks if `value` is classified as a `Function` object.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isFunction(_);
+ * // => true
+ *
+ * _.isFunction(/abc/);
+ * // => false
+ */
+function isFunction(value) {
+  // The use of `Object#toString` avoids issues with the `typeof` operator
+  // in Safari 8 which returns 'object' for typed array and weak map constructors,
+  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+  var tag = isObject(value) ? objectToString.call(value) : '';
+  return tag == funcTag || tag == genTag;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is loosely based on
+ * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length,
+ *  else `false`.
+ * @example
+ *
+ * _.isLength(3);
+ * // => true
+ *
+ * _.isLength(Number.MIN_VALUE);
+ * // => false
+ *
+ * _.isLength(Infinity);
+ * // => false
+ *
+ * _.isLength('3');
+ * // => false
+ */
+function isLength(value) {
+  return typeof value == 'number' &&
+    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is the
+ * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+ * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(_.noop);
+ * // => true
+ *
+ * _.isObject(null);
+ * // => false
+ */
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Creates a compiled template function that can interpolate data properties
+ * in "interpolate" delimiters, HTML-escape interpolated data properties in
+ * "escape" delimiters, and execute JavaScript in "evaluate" delimiters. Data
+ * properties may be accessed as free variables in the template. If a setting
+ * object is given, it takes precedence over `_.templateSettings` values.
+ *
+ * **Note:** In the development build `_.template` utilizes
+ * [sourceURLs](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl)
+ * for easier debugging.
+ *
+ * For more information on precompiling templates see
+ * [lodash's custom builds documentation](https://lodash.com/custom-builds).
+ *
+ * For more information on Chrome extension sandboxes see
+ * [Chrome's extensions documentation](https://developer.chrome.com/extensions/sandboxingEval).
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category String
+ * @param {string} [string=''] The template string.
+ * @param {Object} [options={}] The options object.
+ * @param {RegExp} [options.escape=_.templateSettings.escape]
+ *  The HTML "escape" delimiter.
+ * @param {RegExp} [options.evaluate=_.templateSettings.evaluate]
+ *  The "evaluate" delimiter.
+ * @param {Object} [options.imports=_.templateSettings.imports]
+ *  An object to import into the template as free variables.
+ * @param {RegExp} [options.interpolate=_.templateSettings.interpolate]
+ *  The "interpolate" delimiter.
+ * @param {string} [options.sourceURL='templateSources[n]']
+ *  The sourceURL of the compiled template.
+ * @param {string} [options.variable='obj']
+ *  The data object variable name.
+ * @param- {Object} [guard] Enables use as an iteratee for methods like `_.map`.
+ * @returns {Function} Returns the compiled template function.
+ * @example
+ *
+ * // Use the "interpolate" delimiter to create a compiled template.
+ * var compiled = _.template('hello <%= user %>!');
+ * compiled({ 'user': 'fred' });
+ * // => 'hello fred!'
+ *
+ * // Use the HTML "escape" delimiter to escape data property values.
+ * var compiled = _.template('<b><%- value %></b>');
+ * compiled({ 'value': '<script>' });
+ * // => '<b>&lt;script&gt;</b>'
+ *
+ * // Use the "evaluate" delimiter to execute JavaScript and generate HTML.
+ * var compiled = _.template('<% _.forEach(users, function(user) { %><li><%- user %></li><% }); %>');
+ * compiled({ 'users': ['fred', 'barney'] });
+ * // => '<li>fred</li><li>barney</li>'
+ *
+ * // Use the internal `print` function in "evaluate" delimiters.
+ * var compiled = _.template('<% print("hello " + user); %>!');
+ * compiled({ 'user': 'barney' });
+ * // => 'hello barney!'
+ *
+ * // Use the ES delimiter as an alternative to the default "interpolate" delimiter.
+ * var compiled = _.template('hello ${ user }!');
+ * compiled({ 'user': 'pebbles' });
+ * // => 'hello pebbles!'
+ *
+ * // Use backslashes to treat delimiters as plain text.
+ * var compiled = _.template('<%= "\\<%- value %\\>" %>');
+ * compiled({ 'value': 'ignored' });
+ * // => '<%- value %>'
+ *
+ * // Use the `imports` option to import `jQuery` as `jq`.
+ * var text = '<% jq.each(users, function(user) { %><li><%- user %></li><% }); %>';
+ * var compiled = _.template(text, { 'imports': { 'jq': jQuery } });
+ * compiled({ 'users': ['fred', 'barney'] });
+ * // => '<li>fred</li><li>barney</li>'
+ *
+ * // Use the `sourceURL` option to specify a custom sourceURL for the template.
+ * var compiled = _.template('hello <%= user %>!', { 'sourceURL': '/basic/greeting.jst' });
+ * compiled(data);
+ * // => Find the source of "greeting.jst" under the Sources tab or Resources panel of the web inspector.
+ *
+ * // Use the `variable` option to ensure a with-statement isn't used in the compiled template.
+ * var compiled = _.template('hi <%= data.user %>!', { 'variable': 'data' });
+ * compiled.source;
+ * // => function(data) {
+ * //   var __t, __p = '';
+ * //   __p += 'hi ' + ((__t = ( data.user )) == null ? '' : __t) + '!';
+ * //   return __p;
+ * // }
+ *
+ * // Use custom template delimiters.
+ * _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+ * var compiled = _.template('hello {{ user }}!');
+ * compiled({ 'user': 'mustache' });
+ * // => 'hello mustache!'
+ *
+ * // Use the `source` property to inline compiled templates for meaningful
+ * // line numbers in error messages and stack traces.
+ * fs.writeFileSync(path.join(process.cwd(), 'jst.js'), '\
+ *   var JST = {\
+ *     "main": ' + _.template(mainText).source + '\
+ *   };\
+ * ');
+ */
+function template(string, options, guard) {
+  // Based on John Resig's `tmpl` implementation
+  // (http://ejohn.org/blog/javascript-micro-templating/)
+  // and Laura Doktorova's doT.js (https://github.com/olado/doT).
+  var settings = templateSettings.imports._.templateSettings || templateSettings;
+
+  if (guard && isIterateeCall(string, options, guard)) {
+    options = undefined;
+  }
+  string = toString(string);
+  options = assignInWith({}, options, settings, assignInDefaults);
+
+  var imports = assignInWith({}, options.imports, settings.imports, assignInDefaults),
+      importsKeys = keys(imports),
+      importsValues = baseValues(imports, importsKeys);
+
+  var isEscaping,
+      isEvaluating,
+      index = 0,
+      interpolate = options.interpolate || reNoMatch,
+      source = "__p += '";
+
+  // Compile the regexp to match each delimiter.
+  var reDelimiters = RegExp(
+    (options.escape || reNoMatch).source + '|' +
+    interpolate.source + '|' +
+    (interpolate === reInterpolate ? reEsTemplate : reNoMatch).source + '|' +
+    (options.evaluate || reNoMatch).source + '|$'
+  , 'g');
+
+  // Use a sourceURL for easier debugging.
+  var sourceURL = 'sourceURL' in options ? '//# sourceURL=' + options.sourceURL + '\n' : '';
+
+  string.replace(reDelimiters, function(match, escapeValue, interpolateValue, esTemplateValue, evaluateValue, offset) {
+    interpolateValue || (interpolateValue = esTemplateValue);
+
+    // Escape characters that can't be included in string literals.
+    source += string.slice(index, offset).replace(reUnescapedString, escapeStringChar);
+
+    // Replace delimiters with snippets.
+    if (escapeValue) {
+      isEscaping = true;
+      source += "' +\n__e(" + escapeValue + ") +\n'";
+    }
+    if (evaluateValue) {
+      isEvaluating = true;
+      source += "';\n" + evaluateValue + ";\n__p += '";
+    }
+    if (interpolateValue) {
+      source += "' +\n((__t = (" + interpolateValue + ")) == null ? '' : __t) +\n'";
+    }
+    index = offset + match.length;
+
+    // The JS engine embedded in Adobe products needs `match` returned in
+    // order to produce the correct `offset` value.
+    return match;
+  });
+
+  source += "';\n";
+
+  // If `variable` is not specified wrap a with-statement around the generated
+  // code to add the data object to the top of the scope chain.
+  var variable = options.variable;
+  if (!variable) {
+    source = 'with (obj) {\n' + source + '\n}\n';
+  }
+  // Cleanup code by stripping empty strings.
+  source = (isEvaluating ? source.replace(reEmptyStringLeading, '') : source)
+    .replace(reEmptyStringMiddle, '$1')
+    .replace(reEmptyStringTrailing, '$1;');
+
+  // Frame code as the function body.
+  source = 'function(' + (variable || 'obj') + ') {\n' +
+    (variable
+      ? ''
+      : 'obj || (obj = {});\n'
+    ) +
+    "var __t, __p = ''" +
+    (isEscaping
+       ? ', __e = _.escape'
+       : ''
+    ) +
+    (isEvaluating
+      ? ', __j = Array.prototype.join;\n' +
+        "function print() { __p += __j.call(arguments, '') }\n"
+      : ';\n'
+    ) +
+    source +
+    'return __p\n}';
+
+  var result = attempt(function() {
+    return Function(importsKeys, sourceURL + 'return ' + source)
+      .apply(undefined, importsValues);
+  });
+
+  // Provide the compiled function's source by its `toString` method or
+  // the `source` property as a convenience for inlining compiled templates.
+  result.source = source;
+  if (isError(result)) {
+    throw result;
+  }
+  return result;
+}
+
+/**
+ * Attempts to invoke `func`, returning either the result or the caught error
+ * object. Any additional arguments are provided to `func` when it's invoked.
+ *
+ * @static
+ * @memberOf _
+ * @since 3.0.0
+ * @category Util
+ * @param {Function} func The function to attempt.
+ * @param {...*} [args] The arguments to invoke `func` with.
+ * @returns {*} Returns the `func` result or error object.
+ * @example
+ *
+ * // Avoid throwing errors for invalid selectors.
+ * var elements = _.attempt(function(selector) {
+ *   return document.querySelectorAll(selector);
+ * }, '>_>');
+ *
+ * if (_.isError(elements)) {
+ *   elements = [];
+ * }
+ */
+var attempt = rest(function(func, args) {
+  try {
+    return apply(func, undefined, args);
+  } catch (e) {
+    return isError(e) ? e : new Error(e);
+  }
+});
+
+module.exports = template;
+
+},{"lodash._reinterpolate":4,"lodash.assigninwith":6,"lodash.keys":10,"lodash.rest":12,"lodash.templatesettings":14,"lodash.tostring":15}],14:[function(require,module,exports){
+/**
+ * lodash 4.0.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var escape = require('lodash.escape'),
+    reInterpolate = require('lodash._reinterpolate');
+
+/** Used to match template delimiters. */
+var reEscape = /<%-([\s\S]+?)%>/g,
+    reEvaluate = /<%([\s\S]+?)%>/g;
+
+/**
+ * By default, the template delimiters used by lodash are like those in
+ * embedded Ruby (ERB). Change the following template settings to use
+ * alternative delimiters.
+ *
+ * @static
+ * @memberOf _
+ * @type {Object}
+ */
+var templateSettings = {
+
+  /**
+   * Used to detect `data` property values to be HTML-escaped.
+   *
+   * @memberOf _.templateSettings
+   * @type {RegExp}
+   */
+  'escape': reEscape,
+
+  /**
+   * Used to detect code to be evaluated.
+   *
+   * @memberOf _.templateSettings
+   * @type {RegExp}
+   */
+  'evaluate': reEvaluate,
+
+  /**
+   * Used to detect `data` property values to inject.
+   *
+   * @memberOf _.templateSettings
+   * @type {RegExp}
+   */
+  'interpolate': reInterpolate,
+
+  /**
+   * Used to reference the data object in the template text.
+   *
+   * @memberOf _.templateSettings
+   * @type {string}
+   */
+  'variable': '',
+
+  /**
+   * Used to import variables into the compiled template.
+   *
+   * @memberOf _.templateSettings
+   * @type {Object}
+   */
+  'imports': {
+
+    /**
+     * A reference to the `lodash` function.
+     *
+     * @memberOf _.templateSettings.imports
+     * @type {Function}
+     */
+    '_': { 'escape': escape }
+  }
+};
+
+module.exports = templateSettings;
+
+},{"lodash._reinterpolate":4,"lodash.escape":8}],15:[function(require,module,exports){
+(function (global){
+/**
+ * lodash (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright jQuery Foundation and other contributors <https://jquery.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/** Used as references for various `Number` constants. */
+var INFINITY = 1 / 0;
+
+/** `Object#toString` result references. */
+var symbolTag = '[object Symbol]';
+
+/** Used to determine if values are of the language type `Object`. */
+var objectTypes = {
+  'function': true,
+  'object': true
+};
+
+/** Detect free variable `exports`. */
+var freeExports = (objectTypes[typeof exports] && exports && !exports.nodeType)
+  ? exports
+  : undefined;
+
+/** Detect free variable `module`. */
+var freeModule = (objectTypes[typeof module] && module && !module.nodeType)
+  ? module
+  : undefined;
+
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = checkGlobal(freeExports && freeModule && typeof global == 'object' && global);
+
+/** Detect free variable `self`. */
+var freeSelf = checkGlobal(objectTypes[typeof self] && self);
+
+/** Detect free variable `window`. */
+var freeWindow = checkGlobal(objectTypes[typeof window] && window);
+
+/** Detect `this` as the global object. */
+var thisGlobal = checkGlobal(objectTypes[typeof this] && this);
+
+/**
+ * Used as a reference to the global object.
+ *
+ * The `this` value is used if it's the global object to avoid Greasemonkey's
+ * restricted `window` object, otherwise the `window` object is used.
+ */
+var root = freeGlobal ||
+  ((freeWindow !== (thisGlobal && thisGlobal.window)) && freeWindow) ||
+    freeSelf || thisGlobal || Function('return this')();
+
+/**
+ * Checks if `value` is a global object.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {null|Object} Returns `value` if it's a global object, else `null`.
+ */
+function checkGlobal(value) {
+  return (value && value.Object === Object) ? value : null;
+}
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+/** Used to convert symbols to primitives and strings. */
+var symbolProto = Symbol ? Symbol.prototype : undefined,
+    symbolToString = symbolProto ? symbolProto.toString : undefined;
+
+/**
+ * The base implementation of `_.toString` which doesn't convert nullish
+ * values to empty strings.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  // Exit early for strings to avoid a performance hit in some environments.
+  if (typeof value == 'string') {
+    return value;
+  }
+  if (isSymbol(value)) {
+    return symbolToString ? symbolToString.call(value) : '';
+  }
+  var result = (value + '');
+  return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result;
+}
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Symbol` primitive or object.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified,
+ *  else `false`.
+ * @example
+ *
+ * _.isSymbol(Symbol.iterator);
+ * // => true
+ *
+ * _.isSymbol('abc');
+ * // => false
+ */
+function isSymbol(value) {
+  return typeof value == 'symbol' ||
+    (isObjectLike(value) && objectToString.call(value) == symbolTag);
+}
+
+/**
+ * Converts `value` to a string. An empty string is returned for `null`
+ * and `undefined` values. The sign of `-0` is preserved.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ * @example
+ *
+ * _.toString(null);
+ * // => ''
+ *
+ * _.toString(-0);
+ * // => '-0'
+ *
+ * _.toString([1, 2, 3]);
+ * // => '1,2,3'
+ */
+function toString(value) {
+  return value == null ? '' : baseToString(value);
+}
+
+module.exports = toString;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],16:[function(require,module,exports){
+/* Built-in method references for those with the same name as other `lodash` methods. */
+var nativeGetPrototype = Object.getPrototypeOf;
+
+/**
+ * Gets the `[[Prototype]]` of `value`.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {null|Object} Returns the `[[Prototype]]`.
+ */
+function getPrototype(value) {
+  return nativeGetPrototype(Object(value));
+}
+
+module.exports = getPrototype;
+
+},{}],17:[function(require,module,exports){
+/**
+ * Checks if `value` is a host object in IE < 9.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+ */
+function isHostObject(value) {
+  // Many host objects are `Object` objects that can coerce to strings
+  // despite having improperly defined `toString` methods.
+  var result = false;
+  if (value != null && typeof value.toString != 'function') {
+    try {
+      result = !!(value + '');
+    } catch (e) {}
+  }
+  return result;
+}
+
+module.exports = isHostObject;
+
+},{}],18:[function(require,module,exports){
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+},{}],19:[function(require,module,exports){
+var getPrototype = require('./_getPrototype'),
+    isHostObject = require('./_isHostObject'),
+    isObjectLike = require('./isObjectLike');
+
+/** `Object#toString` result references. */
+var objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = Function.prototype.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to infer the `Object` constructor. */
+var objectCtorString = funcToString.call(Object);
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/**
+ * Checks if `value` is a plain object, that is, an object created by the
+ * `Object` constructor or one with a `[[Prototype]]` of `null`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.8.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a plain object,
+ *  else `false`.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * _.isPlainObject(new Foo);
+ * // => false
+ *
+ * _.isPlainObject([1, 2, 3]);
+ * // => false
+ *
+ * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * // => true
+ *
+ * _.isPlainObject(Object.create(null));
+ * // => true
+ */
+function isPlainObject(value) {
+  if (!isObjectLike(value) ||
+      objectToString.call(value) != objectTag || isHostObject(value)) {
+    return false;
+  }
+  var proto = getPrototype(value);
+  if (proto === null) {
+    return true;
+  }
+  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return (typeof Ctor == 'function' &&
+    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+}
+
+module.exports = isPlainObject;
+
+},{"./_getPrototype":16,"./_isHostObject":17,"./isObjectLike":18}],20:[function(require,module,exports){
+'use strict';
+
+/* global mapboxgl */
+if (!mapboxgl) throw new Error('include mapboxgl before mapbox-gl-geocoder.js');
+
+var Typeahead = require('suggestions');
+var debounce = require('lodash.debounce');
+var extend = require('xtend');
+var EventEmitter = require('events').EventEmitter;
+
+// Mapbox Geocoder version
+var API = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
+
+/**
+ * A geocoder component using Mapbox Geocoding APi
+ * @class mapboxgl.Geocoder
+ *
+ * @param {Object} options
+ * @param {String} [options.position="top-right"] A string indicating the control's position on the map. Options are `top-right`, `top-left`, `bottom-right`, `bottom-left`
+ * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
+ * @param {string|element} options.container html element to initialize the map in (or element id as string). if no container is passed map.getcontainer() is used instead.
+ * @param {Array<Array<number>>} options.proximity If set, search results closer to these coordinates will be given higher priority.
+ * @param {Array<Array<number>>} options.bbox Limit results to a given bounding box provided as `[minX, minY, maxX, maxY]`.
+ * @param {Number} [options.zoom=16] On geocoded result what zoom level should the map animate to.
+ * @param {Boolean} [options.flyTo=true] If false, animating the map to a selected result is disabled.
+ * @param {String} [options.placeholder="Search"] Override the default placeholder attribute value.
+ * @param {string} options.types a comma seperated list of types that filter results to match those specified. See https://www.mapbox.com/developers/api/geocoding/#filter-type for available types.
+ * @param {string} options.country a comma seperated list of country codes to limit results to specified country or countries.
+ * @example
+ * var geocoder = new mapboxgl.Geocoder();
+ * map.addControl(geocoder);
+ * @return {Geocoder} `this`
+ */
+function Geocoder(options) {
+  this._ev = new EventEmitter();
+  this.options = extend({}, this.options, options);
+}
+
+Geocoder.prototype = mapboxgl.util.inherit(mapboxgl.Control, {
+
+  options: {
+    position: 'top-left',
+    placeholder: 'Search',
+    zoom: 16,
+    flyTo: true
+  },
+
+  onAdd: function(map) {
+    this.request = new XMLHttpRequest();
+
+    this.container = this.options.container ?
+      typeof this.options.container === 'string' ?
+      document.getElementById(this.options.container) :
+      this.options.container :
+      map.getContainer();
+
+    // Template
+    var el = document.createElement('div');
+    el.className = 'mapboxgl-ctrl-geocoder';
+
+    var icon = document.createElement('span');
+    icon.className = 'geocoder-icon geocoder-icon-search';
+
+    var input = this._inputEl = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = this.options.placeholder;
+
+    input.addEventListener('keydown', debounce(function(e) {
+      if (!e.target.value) return this._clearEl.classList.remove('active');
+
+      // TAB, ESC, LEFT, RIGHT, ENTER, UP, DOWN
+      if (e.metaKey || [9, 27, 37, 39, 13, 38, 40].indexOf(e.keyCode) !== -1) return;
+      this._queryFromInput(e.target.value);
+    }.bind(this)), 200);
+
+    input.addEventListener('change', function(e) {
+      if (e.target.value) this._clearEl.classList.add('active');
+
+      var selected = this._typeahead.selected;
+      if (selected) {
+        if (this.options.flyTo) {
+          if (selected.bbox && selected.context && selected.context.length <= 3 ||
+              selected.bbox && !selected.context) {
+            var bbox = selected.bbox;
+            map.fitBounds([[bbox[0], bbox[1]],[bbox[2], bbox[3]]]);
+          } else {
+            map.flyTo({
+              center: selected.center,
+              zoom: this.options.zoom
+            });
+          }
+        }
+        this._input = selected;
+        this.fire('result', { result: selected });
+      }
+    }.bind(this));
+
+    var actions = document.createElement('div');
+    actions.classList.add('geocoder-pin-right');
+
+    var clear = this._clearEl = document.createElement('button');
+    clear.className = 'geocoder-icon geocoder-icon-close';
+    clear.addEventListener('click', this._clear.bind(this));
+
+    var loading = this._loadingEl = document.createElement('span');
+    loading.className = 'geocoder-icon geocoder-icon-loading';
+
+    actions.appendChild(clear);
+    actions.appendChild(loading);
+
+    el.appendChild(icon);
+    el.appendChild(input);
+    el.appendChild(actions);
+
+    this.container.appendChild(el);
+
+    // Override the control being added to control containers
+    if (this.options.container) this.options.position = false;
+
+    this._typeahead = new Typeahead(input, [], { filter: false });
+    this._typeahead.getItemValue = function(item) { return item.place_name; };
+
+    return el;
+  },
+
+  _geocode: function(q, callback) {
+    this._loadingEl.classList.add('active');
+    this.fire('loading');
+
+    var options = [];
+    if (this.options.proximity) options.push('proximity=' + this.options.proximity.join());
+    if (this.options.bbox) options.push('bbox=' + this.options.bbox.join());
+    if (this.options.country) options.push('country=' + this.options.country);
+    if (this.options.types) options.push('types=' + this.options.types);
+
+    var accessToken = this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
+    options.push('access_token=' + accessToken);
+
+    this.request.abort();
+    this.request.open('GET', API + encodeURIComponent(q.trim()) + '.json?' + options.join('&'), true);
+    this.request.onload = function() {
+      this._loadingEl.classList.remove('active');
+      if (this.request.status >= 200 && this.request.status < 400) {
+        var data = JSON.parse(this.request.responseText);
+        if (data.features.length) {
+          this._clearEl.classList.add('active');
+        } else {
+          this._clearEl.classList.remove('active');
+          this._typeahead.selected = null;
+        }
+
+        this.fire('results', { results: data.features });
+        this._typeahead.update(data.features);
+        return callback(data.features);
+      } else {
+        this.fire('error', { error: JSON.parse(this.request.responseText).message });
+      }
+    }.bind(this);
+
+    this.request.onerror = function() {
+      this._loadingEl.classList.remove('active');
+      this.fire('error', { error: JSON.parse(this.request.responseText).message });
+    }.bind(this);
+
+    this.request.send();
+  },
+
+  _queryFromInput: function(q) {
+    q = q.trim();
+    if (!q) this._clear();
+    if (q.length > 2) {
+      this._geocode(q, function(results) {
+        this._results = results;
+      }.bind(this));
+    }
+  },
+
+  _change: function() {
+    var onChange = document.createEvent('HTMLEvents');
+    onChange.initEvent('change', true, false);
+    this._inputEl.dispatchEvent(onChange);
+  },
+
+  _query: function(input) {
+    if (!input) return;
+    if (typeof input === 'object' && input.length) {
+      input = [
+        mapboxgl.util.wrap(input[0], -180, 180),
+        mapboxgl.util.wrap(input[1], -180, 180)
+      ].join();
+    }
+
+    this._geocode(input, function(results) {
+      if (!results.length) return;
+      var result = results[0];
+      this._results = results;
+      this._typeahead.selected = result;
+      this._inputEl.value = result.place_name;
+      this._change();
+    }.bind(this));
+  },
+
+  _setInput: function(input) {
+    if (!input) return;
+    if (typeof input === 'object' && input.length) {
+      input = [
+        mapboxgl.util.wrap(input[0], -180, 180),
+        mapboxgl.util.wrap(input[1], -180, 180)
+      ].join();
+    }
+
+    // Set input value to passed value and clear everything else.
+    this._inputEl.value = input;
+    this._input = null;
+    this._typeahead.selected = null;
+    this._typeahead.clear();
+    this._change();
+  },
+
+  _clear: function() {
+    this._input = null;
+    this._inputEl.value = '';
+    this._typeahead.selected = null;
+    this._typeahead.clear();
+    this._change();
+    this._inputEl.focus();
+    this._clearEl.classList.remove('active');
+    this.fire('clear');
+  },
+
+  /**
+   * Return the input
+   * @returns {Object} input
+   */
+  getResult: function() {
+    return this._input;
+  },
+
+  /**
+   * Set & query the input
+   * @param {Array|String} query An array of coordinates [lng, lat] or location name as a string.
+   * @returns {Geocoder} this
+   */
+  query: function(query) {
+    this._query(query);
+    return this;
+  },
+
+  /**
+   * Set input
+   * @param {Array|String} value An array of coordinates [lng, lat] or location name as a string. Calling this function just sets the input and does not trigger an API request.
+   * @returns {Geocoder} this
+   */
+  setInput: function(value) {
+    this._setInput(value);
+    return this;
+  },
+
+  /**
+   * Subscribe to events that happen within the plugin.
+   * @param {String} type name of event. Available events and the data passed into their respective event objects are:
+   *
+   * - __clear__ `Emitted when the input is cleared`
+   * - __loading__ `Emitted when the geocoder is looking up a query`
+   * - __results__ `{ results } Fired when the geocoder returns a response`
+   * - __result__ `{ result } Fired when input is set`
+   * - __error__ `{ error } Error as string
+   * @param {Function} fn function that's called when the event is emitted.
+   * @returns {Geocoder} this;
+   */
+  on: function(type, fn) {
+    this._ev.on(type, fn);
+    return this;
+  },
+
+  /**
+   * Fire an event
+   * @param {String} type event name.
+   * @param {Object} data event data to pass to the function subscribed.
+   * @returns {Geocoder} this
+   */
+  fire: function(type, data) {
+    this._ev.emit(type, data);
+    return this;
+  },
+
+  /**
+   * Remove an event
+   * @returns {Geocoder} this
+   * @param {String} type Event name.
+   * @param {Function} fn Function that should unsubscribe to the event emitted.
+   */
+  off: function(type, fn) {
+    this._ev.removeListener(type, fn);
+    return this;
+  }
+});
+
+if (window.mapboxgl) {
+  mapboxgl.Geocoder = Geocoder;
+} else if (typeof module !== 'undefined') {
+  module.exports = Geocoder;
+}
+
+},{"events":2,"lodash.debounce":7,"suggestions":30,"xtend":37}],21:[function(require,module,exports){
+'use strict';
+
+/**
+ * Based off of [the offical Google document](https://developers.google.com/maps/documentation/utilities/polylinealgorithm)
+ *
+ * Some parts from [this implementation](http://facstaff.unca.edu/mcmcclur/GoogleMaps/EncodePolyline/PolylineEncoder.js)
+ * by [Mark McClure](http://facstaff.unca.edu/mcmcclur/)
+ *
+ * @module polyline
+ */
+
+var polyline = {};
+
+function encode(coordinate, factor) {
+    coordinate = Math.round(coordinate * factor);
+    coordinate <<= 1;
+    if (coordinate < 0) {
+        coordinate = ~coordinate;
+    }
+    var output = '';
+    while (coordinate >= 0x20) {
+        output += String.fromCharCode((0x20 | (coordinate & 0x1f)) + 63);
+        coordinate >>= 5;
+    }
+    output += String.fromCharCode(coordinate + 63);
+    return output;
+}
+
+/**
+ * Decodes to a [latitude, longitude] coordinates array.
+ *
+ * This is adapted from the implementation in Project-OSRM.
+ *
+ * @param {String} str
+ * @param {Number} precision
+ * @returns {Array}
+ *
+ * @see https://github.com/Project-OSRM/osrm-frontend/blob/master/WebContent/routing/OSRM.RoutingGeometry.js
+ */
+polyline.decode = function(str, precision) {
+    var index = 0,
+        lat = 0,
+        lng = 0,
+        coordinates = [],
+        shift = 0,
+        result = 0,
+        byte = null,
+        latitude_change,
+        longitude_change,
+        factor = Math.pow(10, precision || 5);
+
+    // Coordinates have variable length when encoded, so just keep
+    // track of whether we've hit the end of the string. In each
+    // loop iteration, a single coordinate is decoded.
+    while (index < str.length) {
+
+        // Reset shift, result, and byte
+        byte = null;
+        shift = 0;
+        result = 0;
+
+        do {
+            byte = str.charCodeAt(index++) - 63;
+            result |= (byte & 0x1f) << shift;
+            shift += 5;
+        } while (byte >= 0x20);
+
+        latitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
+
+        shift = result = 0;
+
+        do {
+            byte = str.charCodeAt(index++) - 63;
+            result |= (byte & 0x1f) << shift;
+            shift += 5;
+        } while (byte >= 0x20);
+
+        longitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
+
+        lat += latitude_change;
+        lng += longitude_change;
+
+        coordinates.push([lat / factor, lng / factor]);
+    }
+
+    return coordinates;
+};
+
+/**
+ * Encodes the given [latitude, longitude] coordinates array.
+ *
+ * @param {Array.<Array.<Number>>} coordinates
+ * @param {Number} precision
+ * @returns {String}
+ */
+polyline.encode = function(coordinates, precision) {
+    if (!coordinates.length) { return ''; }
+
+    var factor = Math.pow(10, precision || 5),
+        output = encode(coordinates[0][0], factor) + encode(coordinates[0][1], factor);
+
+    for (var i = 1; i < coordinates.length; i++) {
+        var a = coordinates[i], b = coordinates[i - 1];
+        output += encode(a[0] - b[0], factor);
+        output += encode(a[1] - b[1], factor);
+    }
+
+    return output;
+};
+
+function flipped(coords) {
+    var flipped = [];
+    for (var i = 0; i < coords.length; i++) {
+        flipped.push(coords[i].slice().reverse());
+    }
+    return flipped;
+}
+
+/**
+ * Encodes a GeoJSON LineString feature/geometry.
+ *
+ * @param {Object} geojson
+ * @param {Number} precision
+ * @returns {String}
+ */
+polyline.fromGeoJSON = function(geojson, precision) {
+    if (geojson && geojson.type === 'Feature') {
+        geojson = geojson.geometry;
+    }
+    if (!geojson || geojson.type !== 'LineString') {
+        throw new Error('Input must be a GeoJSON LineString');
+    }
+    return polyline.encode(flipped(geojson.coordinates), precision);
+};
+
+/**
+ * Decodes to a GeoJSON LineString geometry.
+ *
+ * @param {String} str
+ * @param {Number} precision
+ * @returns {Object}
+ */
+polyline.toGeoJSON = function(str, precision) {
+    var coords = polyline.decode(str, precision);
+    return {
+        type: 'LineString',
+        coordinates: flipped(coords)
+    };
+};
+
+if (typeof module === 'object' && module.exports) {
+    module.exports = polyline;
+}
+
+},{}],22:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+function createThunkMiddleware(extraArgument) {
+  return function (_ref) {
+    var dispatch = _ref.dispatch;
+    var getState = _ref.getState;
+    return function (next) {
+      return function (action) {
+        if (typeof action === 'function') {
+          return action(dispatch, getState, extraArgument);
+        }
+
+        return next(action);
+      };
+    };
+  };
+}
+
+var thunk = createThunkMiddleware();
+thunk.withExtraArgument = createThunkMiddleware;
+
+exports['default'] = thunk;
+},{}],23:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+exports["default"] = applyMiddleware;
+
+var _compose = require('./compose');
+
+var _compose2 = _interopRequireDefault(_compose);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+/**
+ * Creates a store enhancer that applies middleware to the dispatch method
+ * of the Redux store. This is handy for a variety of tasks, such as expressing
+ * asynchronous actions in a concise manner, or logging every action payload.
+ *
+ * See `redux-thunk` package as an example of the Redux middleware.
+ *
+ * Because middleware is potentially asynchronous, this should be the first
+ * store enhancer in the composition chain.
+ *
+ * Note that each middleware will be given the `dispatch` and `getState` functions
+ * as named arguments.
+ *
+ * @param {...Function} middlewares The middleware chain to be applied.
+ * @returns {Function} A store enhancer applying the middleware.
+ */
+function applyMiddleware() {
+  for (var _len = arguments.length, middlewares = Array(_len), _key = 0; _key < _len; _key++) {
+    middlewares[_key] = arguments[_key];
+  }
+
+  return function (createStore) {
+    return function (reducer, initialState, enhancer) {
+      var store = createStore(reducer, initialState, enhancer);
+      var _dispatch = store.dispatch;
+      var chain = [];
+
+      var middlewareAPI = {
+        getState: store.getState,
+        dispatch: function dispatch(action) {
+          return _dispatch(action);
+        }
+      };
+      chain = middlewares.map(function (middleware) {
+        return middleware(middlewareAPI);
+      });
+      _dispatch = _compose2["default"].apply(undefined, chain)(store.dispatch);
+
+      return _extends({}, store, {
+        dispatch: _dispatch
+      });
+    };
+  };
+}
+},{"./compose":26}],24:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports["default"] = bindActionCreators;
+function bindActionCreator(actionCreator, dispatch) {
+  return function () {
+    return dispatch(actionCreator.apply(undefined, arguments));
+  };
+}
+
+/**
+ * Turns an object whose values are action creators, into an object with the
+ * same keys, but with every function wrapped into a `dispatch` call so they
+ * may be invoked directly. This is just a convenience method, as you can call
+ * `store.dispatch(MyActionCreators.doSomething())` yourself just fine.
+ *
+ * For convenience, you can also pass a single function as the first argument,
+ * and get a function in return.
+ *
+ * @param {Function|Object} actionCreators An object whose values are action
+ * creator functions. One handy way to obtain it is to use ES6 `import * as`
+ * syntax. You may also pass a single function.
+ *
+ * @param {Function} dispatch The `dispatch` function available on your Redux
+ * store.
+ *
+ * @returns {Function|Object} The object mimicking the original object, but with
+ * every action creator wrapped into the `dispatch` call. If you passed a
+ * function as `actionCreators`, the return value will also be a single
+ * function.
+ */
+function bindActionCreators(actionCreators, dispatch) {
+  if (typeof actionCreators === 'function') {
+    return bindActionCreator(actionCreators, dispatch);
+  }
+
+  if (typeof actionCreators !== 'object' || actionCreators === null) {
+    throw new Error('bindActionCreators expected an object or a function, instead received ' + (actionCreators === null ? 'null' : typeof actionCreators) + '. ' + 'Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?');
+  }
+
+  var keys = Object.keys(actionCreators);
+  var boundActionCreators = {};
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var actionCreator = actionCreators[key];
+    if (typeof actionCreator === 'function') {
+      boundActionCreators[key] = bindActionCreator(actionCreator, dispatch);
+    }
+  }
+  return boundActionCreators;
+}
+},{}],25:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports["default"] = combineReducers;
+
+var _createStore = require('./createStore');
+
+var _isPlainObject = require('lodash/isPlainObject');
+
+var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+var _warning = require('./utils/warning');
+
+var _warning2 = _interopRequireDefault(_warning);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function getUndefinedStateErrorMessage(key, action) {
+  var actionType = action && action.type;
+  var actionName = actionType && '"' + actionType.toString() + '"' || 'an action';
+
+  return 'Given action ' + actionName + ', reducer "' + key + '" returned undefined. ' + 'To ignore an action, you must explicitly return the previous state.';
+}
+
+function getUnexpectedStateShapeWarningMessage(inputState, reducers, action) {
+  var reducerKeys = Object.keys(reducers);
+  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'initialState argument passed to createStore' : 'previous state received by the reducer';
+
+  if (reducerKeys.length === 0) {
+    return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
+  }
+
+  if (!(0, _isPlainObject2["default"])(inputState)) {
+    return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
+  }
+
+  var unexpectedKeys = Object.keys(inputState).filter(function (key) {
+    return !reducers.hasOwnProperty(key);
+  });
+
+  if (unexpectedKeys.length > 0) {
+    return 'Unexpected ' + (unexpectedKeys.length > 1 ? 'keys' : 'key') + ' ' + ('"' + unexpectedKeys.join('", "') + '" found in ' + argumentName + '. ') + 'Expected to find one of the known reducer keys instead: ' + ('"' + reducerKeys.join('", "') + '". Unexpected keys will be ignored.');
+  }
+}
+
+function assertReducerSanity(reducers) {
+  Object.keys(reducers).forEach(function (key) {
+    var reducer = reducers[key];
+    var initialState = reducer(undefined, { type: _createStore.ActionTypes.INIT });
+
+    if (typeof initialState === 'undefined') {
+      throw new Error('Reducer "' + key + '" returned undefined during initialization. ' + 'If the state passed to the reducer is undefined, you must ' + 'explicitly return the initial state. The initial state may ' + 'not be undefined.');
+    }
+
+    var type = '@@redux/PROBE_UNKNOWN_ACTION_' + Math.random().toString(36).substring(7).split('').join('.');
+    if (typeof reducer(undefined, { type: type }) === 'undefined') {
+      throw new Error('Reducer "' + key + '" returned undefined when probed with a random type. ' + ('Don\'t try to handle ' + _createStore.ActionTypes.INIT + ' or other actions in "redux/*" ') + 'namespace. They are considered private. Instead, you must return the ' + 'current state for any unknown actions, unless it is undefined, ' + 'in which case you must return the initial state, regardless of the ' + 'action type. The initial state may not be undefined.');
+    }
+  });
+}
+
+/**
+ * Turns an object whose values are different reducer functions, into a single
+ * reducer function. It will call every child reducer, and gather their results
+ * into a single state object, whose keys correspond to the keys of the passed
+ * reducer functions.
+ *
+ * @param {Object} reducers An object whose values correspond to different
+ * reducer functions that need to be combined into one. One handy way to obtain
+ * it is to use ES6 `import * as reducers` syntax. The reducers may never return
+ * undefined for any action. Instead, they should return their initial state
+ * if the state passed to them was undefined, and the current state for any
+ * unrecognized action.
+ *
+ * @returns {Function} A reducer function that invokes every reducer inside the
+ * passed object, and builds a state object with the same shape.
+ */
+function combineReducers(reducers) {
+  var reducerKeys = Object.keys(reducers);
+  var finalReducers = {};
+  for (var i = 0; i < reducerKeys.length; i++) {
+    var key = reducerKeys[i];
+    if (typeof reducers[key] === 'function') {
+      finalReducers[key] = reducers[key];
+    }
+  }
+  var finalReducerKeys = Object.keys(finalReducers);
+
+  var sanityError;
+  try {
+    assertReducerSanity(finalReducers);
+  } catch (e) {
+    sanityError = e;
+  }
+
+  return function combination() {
+    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+    var action = arguments[1];
+
+    if (sanityError) {
+      throw sanityError;
+    }
+
+    if ("production" !== 'production') {
+      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action);
+      if (warningMessage) {
+        (0, _warning2["default"])(warningMessage);
+      }
+    }
+
+    var hasChanged = false;
+    var nextState = {};
+    for (var i = 0; i < finalReducerKeys.length; i++) {
+      var key = finalReducerKeys[i];
+      var reducer = finalReducers[key];
+      var previousStateForKey = state[key];
+      var nextStateForKey = reducer(previousStateForKey, action);
+      if (typeof nextStateForKey === 'undefined') {
+        var errorMessage = getUndefinedStateErrorMessage(key, action);
+        throw new Error(errorMessage);
+      }
+      nextState[key] = nextStateForKey;
+      hasChanged = hasChanged || nextStateForKey !== previousStateForKey;
+    }
+    return hasChanged ? nextState : state;
+  };
+}
+},{"./createStore":27,"./utils/warning":29,"lodash/isPlainObject":19}],26:[function(require,module,exports){
+"use strict";
+
+exports.__esModule = true;
+exports["default"] = compose;
+/**
+ * Composes single-argument functions from right to left. The rightmost
+ * function can take multiple arguments as it provides the signature for
+ * the resulting composite function.
+ *
+ * @param {...Function} funcs The functions to compose.
+ * @returns {Function} A function obtained by composing the argument functions
+ * from right to left. For example, compose(f, g, h) is identical to doing
+ * (...args) => f(g(h(...args))).
+ */
+
+function compose() {
+  for (var _len = arguments.length, funcs = Array(_len), _key = 0; _key < _len; _key++) {
+    funcs[_key] = arguments[_key];
+  }
+
+  if (funcs.length === 0) {
+    return function (arg) {
+      return arg;
+    };
+  } else {
+    var _ret = function () {
+      var last = funcs[funcs.length - 1];
+      var rest = funcs.slice(0, -1);
+      return {
+        v: function v() {
+          return rest.reduceRight(function (composed, f) {
+            return f(composed);
+          }, last.apply(undefined, arguments));
+        }
+      };
+    }();
+
+    if (typeof _ret === "object") return _ret.v;
+  }
+}
+},{}],27:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports.ActionTypes = undefined;
+exports["default"] = createStore;
+
+var _isPlainObject = require('lodash/isPlainObject');
+
+var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+
+var _symbolObservable = require('symbol-observable');
+
+var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+/**
+ * These are private action types reserved by Redux.
+ * For any unknown actions, you must return the current state.
+ * If the current state is undefined, you must return the initial state.
+ * Do not reference these action types directly in your code.
+ */
+var ActionTypes = exports.ActionTypes = {
+  INIT: '@@redux/INIT'
+};
+
+/**
+ * Creates a Redux store that holds the state tree.
+ * The only way to change the data in the store is to call `dispatch()` on it.
+ *
+ * There should only be a single store in your app. To specify how different
+ * parts of the state tree respond to actions, you may combine several reducers
+ * into a single reducer function by using `combineReducers`.
+ *
+ * @param {Function} reducer A function that returns the next state tree, given
+ * the current state tree and the action to handle.
+ *
+ * @param {any} [initialState] The initial state. You may optionally specify it
+ * to hydrate the state from the server in universal apps, or to restore a
+ * previously serialized user session.
+ * If you use `combineReducers` to produce the root reducer function, this must be
+ * an object with the same shape as `combineReducers` keys.
+ *
+ * @param {Function} enhancer The store enhancer. You may optionally specify it
+ * to enhance the store with third-party capabilities such as middleware,
+ * time travel, persistence, etc. The only store enhancer that ships with Redux
+ * is `applyMiddleware()`.
+ *
+ * @returns {Store} A Redux store that lets you read the state, dispatch actions
+ * and subscribe to changes.
+ */
+function createStore(reducer, initialState, enhancer) {
+  var _ref2;
+
+  if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
+    enhancer = initialState;
+    initialState = undefined;
+  }
+
+  if (typeof enhancer !== 'undefined') {
+    if (typeof enhancer !== 'function') {
+      throw new Error('Expected the enhancer to be a function.');
+    }
+
+    return enhancer(createStore)(reducer, initialState);
+  }
+
+  if (typeof reducer !== 'function') {
+    throw new Error('Expected the reducer to be a function.');
+  }
+
+  var currentReducer = reducer;
+  var currentState = initialState;
+  var currentListeners = [];
+  var nextListeners = currentListeners;
+  var isDispatching = false;
+
+  function ensureCanMutateNextListeners() {
+    if (nextListeners === currentListeners) {
+      nextListeners = currentListeners.slice();
+    }
+  }
+
+  /**
+   * Reads the state tree managed by the store.
+   *
+   * @returns {any} The current state tree of your application.
+   */
+  function getState() {
+    return currentState;
+  }
+
+  /**
+   * Adds a change listener. It will be called any time an action is dispatched,
+   * and some part of the state tree may potentially have changed. You may then
+   * call `getState()` to read the current state tree inside the callback.
+   *
+   * You may call `dispatch()` from a change listener, with the following
+   * caveats:
+   *
+   * 1. The subscriptions are snapshotted just before every `dispatch()` call.
+   * If you subscribe or unsubscribe while the listeners are being invoked, this
+   * will not have any effect on the `dispatch()` that is currently in progress.
+   * However, the next `dispatch()` call, whether nested or not, will use a more
+   * recent snapshot of the subscription list.
+   *
+   * 2. The listener should not expect to see all state changes, as the state
+   * might have been updated multiple times during a nested `dispatch()` before
+   * the listener is called. It is, however, guaranteed that all subscribers
+   * registered before the `dispatch()` started will be called with the latest
+   * state by the time it exits.
+   *
+   * @param {Function} listener A callback to be invoked on every dispatch.
+   * @returns {Function} A function to remove this change listener.
+   */
+  function subscribe(listener) {
+    if (typeof listener !== 'function') {
+      throw new Error('Expected listener to be a function.');
+    }
+
+    var isSubscribed = true;
+
+    ensureCanMutateNextListeners();
+    nextListeners.push(listener);
+
+    return function unsubscribe() {
+      if (!isSubscribed) {
+        return;
+      }
+
+      isSubscribed = false;
+
+      ensureCanMutateNextListeners();
+      var index = nextListeners.indexOf(listener);
+      nextListeners.splice(index, 1);
+    };
+  }
+
+  /**
+   * Dispatches an action. It is the only way to trigger a state change.
+   *
+   * The `reducer` function, used to create the store, will be called with the
+   * current state tree and the given `action`. Its return value will
+   * be considered the **next** state of the tree, and the change listeners
+   * will be notified.
+   *
+   * The base implementation only supports plain object actions. If you want to
+   * dispatch a Promise, an Observable, a thunk, or something else, you need to
+   * wrap your store creating function into the corresponding middleware. For
+   * example, see the documentation for the `redux-thunk` package. Even the
+   * middleware will eventually dispatch plain object actions using this method.
+   *
+   * @param {Object} action A plain object representing “what changed”. It is
+   * a good idea to keep actions serializable so you can record and replay user
+   * sessions, or use the time travelling `redux-devtools`. An action must have
+   * a `type` property which may not be `undefined`. It is a good idea to use
+   * string constants for action types.
+   *
+   * @returns {Object} For convenience, the same action object you dispatched.
+   *
+   * Note that, if you use a custom middleware, it may wrap `dispatch()` to
+   * return something else (for example, a Promise you can await).
+   */
+  function dispatch(action) {
+    if (!(0, _isPlainObject2["default"])(action)) {
+      throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
+    }
+
+    if (typeof action.type === 'undefined') {
+      throw new Error('Actions may not have an undefined "type" property. ' + 'Have you misspelled a constant?');
+    }
+
+    if (isDispatching) {
+      throw new Error('Reducers may not dispatch actions.');
+    }
+
+    try {
+      isDispatching = true;
+      currentState = currentReducer(currentState, action);
+    } finally {
+      isDispatching = false;
+    }
+
+    var listeners = currentListeners = nextListeners;
+    for (var i = 0; i < listeners.length; i++) {
+      listeners[i]();
+    }
+
+    return action;
+  }
+
+  /**
+   * Replaces the reducer currently used by the store to calculate the state.
+   *
+   * You might need this if your app implements code splitting and you want to
+   * load some of the reducers dynamically. You might also need this if you
+   * implement a hot reloading mechanism for Redux.
+   *
+   * @param {Function} nextReducer The reducer for the store to use instead.
+   * @returns {void}
+   */
+  function replaceReducer(nextReducer) {
+    if (typeof nextReducer !== 'function') {
+      throw new Error('Expected the nextReducer to be a function.');
+    }
+
+    currentReducer = nextReducer;
+    dispatch({ type: ActionTypes.INIT });
+  }
+
+  /**
+   * Interoperability point for observable/reactive libraries.
+   * @returns {observable} A minimal observable of state changes.
+   * For more information, see the observable proposal:
+   * https://github.com/zenparsing/es-observable
+   */
+  function observable() {
+    var _ref;
+
+    var outerSubscribe = subscribe;
+    return _ref = {
+      /**
+       * The minimal observable subscription method.
+       * @param {Object} observer Any object that can be used as an observer.
+       * The observer object should have a `next` method.
+       * @returns {subscription} An object with an `unsubscribe` method that can
+       * be used to unsubscribe the observable from the store, and prevent further
+       * emission of values from the observable.
+       */
+
+      subscribe: function subscribe(observer) {
+        if (typeof observer !== 'object') {
+          throw new TypeError('Expected the observer to be an object.');
+        }
+
+        function observeState() {
+          if (observer.next) {
+            observer.next(getState());
+          }
+        }
+
+        observeState();
+        var unsubscribe = outerSubscribe(observeState);
+        return { unsubscribe: unsubscribe };
+      }
+    }, _ref[_symbolObservable2["default"]] = function () {
+      return this;
+    }, _ref;
+  }
+
+  // When a store is created, an "INIT" action is dispatched so that every
+  // reducer returns their initial state. This effectively populates
+  // the initial state tree.
+  dispatch({ type: ActionTypes.INIT });
+
+  return _ref2 = {
+    dispatch: dispatch,
+    subscribe: subscribe,
+    getState: getState,
+    replaceReducer: replaceReducer
+  }, _ref2[_symbolObservable2["default"]] = observable, _ref2;
+}
+},{"lodash/isPlainObject":19,"symbol-observable":33}],28:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
+
+var _createStore = require('./createStore');
+
+var _createStore2 = _interopRequireDefault(_createStore);
+
+var _combineReducers = require('./combineReducers');
+
+var _combineReducers2 = _interopRequireDefault(_combineReducers);
+
+var _bindActionCreators = require('./bindActionCreators');
+
+var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
+
+var _applyMiddleware = require('./applyMiddleware');
+
+var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
+
+var _compose = require('./compose');
+
+var _compose2 = _interopRequireDefault(_compose);
+
+var _warning = require('./utils/warning');
+
+var _warning2 = _interopRequireDefault(_warning);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+/*
+* This is a dummy function to check if the function name has been altered by minification.
+* If the function has been minified and NODE_ENV !== 'production', warn the user.
+*/
+function isCrushed() {}
+
+if ("production" !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+  (0, _warning2["default"])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
+}
+
+exports.createStore = _createStore2["default"];
+exports.combineReducers = _combineReducers2["default"];
+exports.bindActionCreators = _bindActionCreators2["default"];
+exports.applyMiddleware = _applyMiddleware2["default"];
+exports.compose = _compose2["default"];
+},{"./applyMiddleware":23,"./bindActionCreators":24,"./combineReducers":25,"./compose":26,"./createStore":27,"./utils/warning":29}],29:[function(require,module,exports){
+'use strict';
+
+exports.__esModule = true;
+exports["default"] = warning;
+/**
+ * Prints a warning in the console if it exists.
+ *
+ * @param {String} message The warning message.
+ * @returns {void}
+ */
+function warning(message) {
+  /* eslint-disable no-console */
+  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+    console.error(message);
+  }
+  /* eslint-enable no-console */
+  try {
+    // This error was thrown as a convenience so that if you enable
+    // "break on all exceptions" in your console,
+    // it would pause the execution at this line.
+    throw new Error(message);
+    /* eslint-disable no-empty */
+  } catch (e) {}
+  /* eslint-enable no-empty */
+}
+},{}],30:[function(require,module,exports){
+'use strict';
+
+/**
+ * A typeahead component for inputs
+ * @class Suggestions
+ *
+ * @param {HTMLInputElement} el A valid HTML input element
+ * @param {Array} data An array of data used for results
+ * @param {Object} options
+ * @param {Number} [options.limit=5] Max number of results to display in the auto suggest list.
+ * @param {Number} [options.minLength=2] Number of characters typed into an input to trigger suggestions.
+ * @return {Suggestions} `this`
+ * @example
+ * // in the browser
+ * var input = document.querySelector('input');
+ * var data = [
+ *   'Roy Eldridge',
+ *   'Roy Hargrove',
+ *   'Rex Stewart'
+ * ];
+ *
+ * new Suggestions(input, data);
+ *
+ * // with options
+ * var input = document.querySelector('input');
+ * var data = [{
+ *   name: 'Roy Eldridge',
+ *   year: 1911
+ * }, {
+ *   name: 'Roy Hargrove',
+ *   year: 1969
+ * }, {
+ *   name: 'Rex Stewart',
+ *   year: 1907
+ * }];
+ *
+ * var typeahead = new Suggestions(input, data, {
+ *   filter: false, // Disable filtering
+ *   minLength: 3, // Number of characters typed into an input to trigger suggestions.
+ *   limit: 3 //  Max number of results to display.
+ * });
+ *
+ * // As we're passing an object of an arrays as data, override
+ * // `getItemValue` by specifying the specific property to search on.
+ * typeahead.getItemValue = function(item) { return item.name };
+ *
+ * input.addEventListener('change', function() {
+ *   console.log(typeahead.selected); // Current selected item.
+ * });
+ *
+ * // With browserify
+ * var Suggestions = require('suggestions');
+ *
+ * new Suggestions(input, data);
+ */
+var Suggestions = require('./src/suggestions');
+window.Suggestions = module.exports = Suggestions;
+
+},{"./src/suggestions":32}],31:[function(require,module,exports){
+'Use strict';
+
+var List = function(component) {
+  this.component = component;
+  this.items = [];
+  this.active = 0;
+  this.element = document.createElement('ul');
+  this.element.className = 'suggestions';
+
+  component.el.parentNode.insertBefore(this.element, component.el.nextSibling);
+  return this;
+};
+
+List.prototype.show = function() {
+  this.element.style.display = 'block';
+};
+
+List.prototype.hide = function() {
+  this.element.style.display = 'none';
+};
+
+List.prototype.add = function(item) {
+  this.items.push(item);
+};
+
+List.prototype.clear = function() {
+  this.items = [];
+  this.active = 0;
+};
+
+List.prototype.isEmpty = function() {
+  return !this.items.length;
+};
+
+List.prototype.draw = function() {
+  this.element.innerHTML = '';
+
+  if (this.items.length === 0) {
+    this.hide();
+    return;
+  }
+
+  for (var i = 0; i < this.items.length; i++) {
+    this.drawItem(this.items[i], this.active === i);
+  }
+
+  this.show();
+};
+
+List.prototype.drawItem = function(item, active) {
+  var li = document.createElement('li'),
+    a = document.createElement('a');
+
+  if (active) li.className += ' active';
+
+  a.innerHTML = item.string;
+
+  li.appendChild(a);
+  this.element.appendChild(li);
+
+  li.addEventListener('mousedown', function() {
+    this.handleMouseDown.call(this, item);
+  }.bind(this));
+};
+
+List.prototype.handleMouseDown = function(item) {
+  this.component.value(item.original);
+  this.clear();
+  this.draw();
+};
+
+List.prototype.move = function(index) {
+  this.active = index;
+  this.draw();
+};
+
+List.prototype.previous = function() {
+  this.move(this.active === 0 ? this.items.length - 1 : this.active - 1);
+};
+
+List.prototype.next = function() {
+  this.move(this.active === this.items.length - 1 ? 0 : this.active + 1);
+};
+
+module.exports = List;
+
+},{}],32:[function(require,module,exports){
+'use strict';
+
+var extend = require('xtend');
+var fuzzy = require('fuzzy');
+var List = require('./list');
+
+var Suggestions = function(el, data, options) {
+  options = options || {};
+
+  this.options = extend({
+    minLength: 2,
+    limit: 5,
+    filter: true
+  }, options);
+
+  this.el = el;
+  this.data = data || [];
+  this.list = new List(this);
+
+  this.query = '';
+  this.selected = null;
+
+  this.list.draw();
+
+  this.el.addEventListener('keyup', function(e) {
+    this.handleKeyUp(e.keyCode);
+  }.bind(this), false);
+
+  this.el.addEventListener('keydown', function(e) {
+    this.handleKeyDown(e);
+  }.bind(this));
+
+  this.el.addEventListener('focus', function() {
+    this.handleFocus();
+  }.bind(this));
+
+  this.el.addEventListener('blur', function() {
+    this.handleBlur();
+  }.bind(this));
+
+  return this;
+};
+
+Suggestions.prototype.handleKeyUp = function(keyCode) {
+  // 40 - DOWN
+  // 38 - UP
+  // 27 - ESC
+  // 13 - ENTER
+  // 9 - TAB
+
+  if (keyCode === 40 ||
+      keyCode === 38 ||
+      keyCode === 27 ||
+      keyCode === 13 ||
+      keyCode === 9) return;
+
+  this.query = this.normalize(this.el.value);
+
+  this.list.clear();
+
+  if (this.query.length < this.options.minLength) {
+    this.list.draw();
+    return;
+  }
+
+  this.getCandidates(function(data) {
+    for (var i = 0; i < data.length; i++) {
+      this.list.add(data[i]);
+      if (i === (this.options.limit - 1)) break;
+    }
+    this.list.draw();
+  }.bind(this));
+};
+
+Suggestions.prototype.handleKeyDown = function(e) {
+  switch (e.keyCode) {
+    case 13: // ENTER
+    case 9:  // TAB
+      if (!this.list.isEmpty()) {
+        this.value(this.list.items[this.list.active].original);
+        this.list.hide();
+      }
+    break;
+    case 27: // ESC
+      if (!this.list.isEmpty()) this.list.hide();
+    break;
+    case 38: // UP
+      this.list.previous();
+    break;
+    case 40: // DOWN
+      this.list.next();
+    break;
+  }
+};
+
+Suggestions.prototype.handleBlur = function() {
+  this.list.hide();
+};
+
+Suggestions.prototype.handleFocus = function() {
+  if (!this.list.isEmpty()) this.list.show();
+};
+
+/**
+ * Update data previously passed
+ *
+ * @param {Array} revisedData
+ */
+Suggestions.prototype.update = function(revisedData) {
+  this.data = revisedData;
+  this.list.draw();
+};
+
+/**
+ * Clears data
+ */
+Suggestions.prototype.clear = function() {
+  this.data = [];
+  this.list.clear();
+};
+
+/**
+ * Normalize the results list and input value for matching
+ *
+ * @param {String} value
+ * @return {String}
+ */
+Suggestions.prototype.normalize = function(value) {
+  value = value.toLowerCase();
+  return value;
+};
+
+/**
+ * Evaluates whether an array item qualifies as a match with the current query
+ *
+ * @param {String} candidate a possible item from the array passed
+ * @param {String} query the current query
+ * @return {Boolean}
+ */
+Suggestions.prototype.match = function(candidate, query) {
+  return candidate.indexOf(query) > -1;
+};
+
+Suggestions.prototype.value = function(value) {
+  this.selected = value;
+  this.el.value = this.getItemValue(value);
+
+  if (document.createEvent) {
+    var e = document.createEvent('HTMLEvents');
+    e.initEvent('change', true, false);
+    this.el.dispatchEvent(e);
+  } else {
+    this.el.fireEvent('onchange');
+  }
+};
+
+Suggestions.prototype.getCandidates = function(callback) {
+  var options = {
+    pre: '<strong>',
+    post: '</strong>',
+    extract: function(d) { return this.getItemValue(d); }.bind(this)
+  };
+
+  var results = this.options.filter ?
+    fuzzy.filter(this.query, this.data, options) :
+    this.data.map(function(d) {
+      return {
+        original: d,
+        string: this.getItemValue(d).replace(new RegExp('(' + this.query + ')', 'ig'), function($1, match) {
+          return '<strong>' + match + '</strong>';
+        })
+      };
+    }.bind(this));
+
+  callback(results);
+};
+
+/**
+ * For a given item in the data array, return what should be used as the candidate string
+ *
+ * @param {Object|String} item an item from the data array
+ * @return {String} item
+ */
+Suggestions.prototype.getItemValue = function(item) {
+  return item;
+};
+
+module.exports = Suggestions;
+
+},{"./list":31,"fuzzy":3,"xtend":37}],33:[function(require,module,exports){
+(function (global){
+/* global window */
+'use strict';
+
+module.exports = require('./ponyfill')(global || window || this);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./ponyfill":34}],34:[function(require,module,exports){
+'use strict';
+
+module.exports = function symbolObservablePonyfill(root) {
+	var result;
+	var Symbol = root.Symbol;
+
+	if (typeof Symbol === 'function') {
+		if (Symbol.observable) {
+			result = Symbol.observable;
+		} else {
+			result = Symbol('observable');
+			Symbol.observable = result;
+		}
+	} else {
+		result = '@@observable';
+	}
+
+	return result;
+};
+
+},{}],35:[function(require,module,exports){
+var each = require('turf-meta').coordEach;
+
+/**
+ * Takes any {@link GeoJSON} object, calculates the extent of all input features, and returns a bounding box.
+ *
+ * @module turf/extent
+ * @category measurement
+ * @param {GeoJSON} input any valid GeoJSON Object
+ * @return {Array<number>} the bounding box of `input` given
+ * as an array in WSEN order (west, south, east, north)
+ * @example
+ * var input = {
+ *   "type": "FeatureCollection",
+ *   "features": [
+ *     {
+ *       "type": "Feature",
+ *       "properties": {},
+ *       "geometry": {
+ *         "type": "Point",
+ *         "coordinates": [114.175329, 22.2524]
+ *       }
+ *     }, {
+ *       "type": "Feature",
+ *       "properties": {},
+ *       "geometry": {
+ *         "type": "Point",
+ *         "coordinates": [114.170007, 22.267969]
+ *       }
+ *     }, {
+ *       "type": "Feature",
+ *       "properties": {},
+ *       "geometry": {
+ *         "type": "Point",
+ *         "coordinates": [114.200649, 22.274641]
+ *       }
+ *     }, {
+ *       "type": "Feature",
+ *       "properties": {},
+ *       "geometry": {
+ *         "type": "Point",
+ *         "coordinates": [114.186744, 22.265745]
+ *       }
+ *     }
+ *   ]
+ * };
+ *
+ * var bbox = turf.extent(input);
+ *
+ * var bboxPolygon = turf.bboxPolygon(bbox);
+ *
+ * var resultFeatures = input.features.concat(bboxPolygon);
+ * var result = {
+ *   "type": "FeatureCollection",
+ *   "features": resultFeatures
+ * };
+ *
+ * //=result
+ */
+module.exports = function(layer) {
+    var extent = [Infinity, Infinity, -Infinity, -Infinity];
+    each(layer, function(coord) {
+      if (extent[0] > coord[0]) extent[0] = coord[0];
+      if (extent[1] > coord[1]) extent[1] = coord[1];
+      if (extent[2] < coord[0]) extent[2] = coord[0];
+      if (extent[3] < coord[1]) extent[3] = coord[1];
+    });
+    return extent;
+};
+
+},{"turf-meta":36}],36:[function(require,module,exports){
+/**
+ * Lazily iterate over coordinates in any GeoJSON object, similar to
+ * Array.forEach.
+ *
+ * @param {Object} layer any GeoJSON object
+ * @param {Function} callback a method that takes (value)
+ * @param {boolean=} excludeWrapCoord whether or not to include
+ * the final coordinate of LinearRings that wraps the ring in its iteration.
+ * @example
+ * var point = { type: 'Point', coordinates: [0, 0] };
+ * coordEach(point, function(coords) {
+ *   // coords is equal to [0, 0]
+ * });
+ */
+function coordEach(layer, callback, excludeWrapCoord) {
+  var i, j, k, g, geometry, stopG, coords,
+    geometryMaybeCollection,
+    wrapShrink = 0,
+    isGeometryCollection,
+    isFeatureCollection = layer.type === 'FeatureCollection',
+    isFeature = layer.type === 'Feature',
+    stop = isFeatureCollection ? layer.features.length : 1;
+
+  // This logic may look a little weird. The reason why it is that way
+  // is because it's trying to be fast. GeoJSON supports multiple kinds
+  // of objects at its root: FeatureCollection, Features, Geometries.
+  // This function has the responsibility of handling all of them, and that
+  // means that some of the `for` loops you see below actually just don't apply
+  // to certain inputs. For instance, if you give this just a
+  // Point geometry, then both loops are short-circuited and all we do
+  // is gradually rename the input until it's called 'geometry'.
+  //
+  // This also aims to allocate as few resources as possible: just a
+  // few numbers and booleans, rather than any temporary arrays as would
+  // be required with the normalization approach.
+  for (i = 0; i < stop; i++) {
+
+    geometryMaybeCollection = (isFeatureCollection ? layer.features[i].geometry :
+        (isFeature ? layer.geometry : layer));
+    isGeometryCollection = geometryMaybeCollection.type === 'GeometryCollection';
+    stopG = isGeometryCollection ? geometryMaybeCollection.geometries.length : 1;
+
+    for (g = 0; g < stopG; g++) {
+
+      geometry = isGeometryCollection ?
+          geometryMaybeCollection.geometries[g] : geometryMaybeCollection;
+      coords = geometry.coordinates;
+
+      wrapShrink = (excludeWrapCoord &&
+        (geometry.type === 'Polygon' || geometry.type === 'MultiPolygon')) ?
+        1 : 0;
+
+      if (geometry.type === 'Point') {
+        callback(coords);
+      } else if (geometry.type === 'LineString' || geometry.type === 'MultiPoint') {
+        for (j = 0; j < coords.length; j++) callback(coords[j]);
+      } else if (geometry.type === 'Polygon' || geometry.type === 'MultiLineString') {
+        for (j = 0; j < coords.length; j++)
+          for (k = 0; k < coords[j].length - wrapShrink; k++)
+            callback(coords[j][k]);
+      } else if (geometry.type === 'MultiPolygon') {
+        for (j = 0; j < coords.length; j++)
+          for (k = 0; k < coords[j].length; k++)
+            for (l = 0; l < coords[j][k].length - wrapShrink; l++)
+              callback(coords[j][k][l]);
+      } else {
+        throw new Error('Unknown Geometry Type');
+      }
+    }
+  }
+}
+module.exports.coordEach = coordEach;
+
+/**
+ * Lazily reduce coordinates in any GeoJSON object into a single value,
+ * similar to how Array.reduce works. However, in this case we lazily run
+ * the reduction, so an array of all coordinates is unnecessary.
+ *
+ * @param {Object} layer any GeoJSON object
+ * @param {Function} callback a method that takes (memo, value) and returns
+ * a new memo
+ * @param {boolean=} excludeWrapCoord whether or not to include
+ * the final coordinate of LinearRings that wraps the ring in its iteration.
+ * @param {*} memo the starting value of memo: can be any type.
+ */
+function coordReduce(layer, callback, memo, excludeWrapCoord) {
+  coordEach(layer, function(coord) {
+    memo = callback(memo, coord);
+  }, excludeWrapCoord);
+  return memo;
+}
+module.exports.coordReduce = coordReduce;
+
+/**
+ * Lazily iterate over property objects in any GeoJSON object, similar to
+ * Array.forEach.
+ *
+ * @param {Object} layer any GeoJSON object
+ * @param {Function} callback a method that takes (value)
+ * @example
+ * var point = { type: 'Feature', geometry: null, properties: { foo: 1 } };
+ * propEach(point, function(props) {
+ *   // props is equal to { foo: 1}
+ * });
+ */
+function propEach(layer, callback) {
+  var i;
+  switch (layer.type) {
+      case 'FeatureCollection':
+        features = layer.features;
+        for (i = 0; i < layer.features.length; i++) {
+            callback(layer.features[i].properties);
+        }
+        break;
+      case 'Feature':
+        callback(layer.properties);
+        break;
+  }
+}
+module.exports.propEach = propEach;
+
+/**
+ * Lazily reduce properties in any GeoJSON object into a single value,
+ * similar to how Array.reduce works. However, in this case we lazily run
+ * the reduction, so an array of all properties is unnecessary.
+ *
+ * @param {Object} layer any GeoJSON object
+ * @param {Function} callback a method that takes (memo, coord) and returns
+ * a new memo
+ * @param {*} memo the starting value of memo: can be any type.
+ */
+function propReduce(layer, callback, memo) {
+  propEach(layer, function(prop) {
+    memo = callback(memo, prop);
+  });
+  return memo;
+}
+module.exports.propReduce = propReduce;
+
+},{}],37:[function(require,module,exports){
+module.exports = extend
+
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+function extend() {
+    var target = {}
+
+    for (var i = 0; i < arguments.length; i++) {
+        var source = arguments[i]
+
+        for (var key in source) {
+            if (hasOwnProperty.call(source, key)) {
+                target[key] = source[key]
+            }
+        }
+    }
+
+    return target
+}
+
+},{}],38:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.queryOrigin = queryOrigin;
+exports.queryDestination = queryDestination;
+exports.queryOriginCoordinates = queryOriginCoordinates;
+exports.queryDestinationCoordinates = queryDestinationCoordinates;
+exports.clearOrigin = clearOrigin;
+exports.clearDestination = clearDestination;
+exports.setOptions = setOptions;
+exports.hoverMarker = hoverMarker;
+exports.setRouteIndex = setRouteIndex;
+exports.createOrigin = createOrigin;
+exports.createDestination = createDestination;
+exports.setProfile = setProfile;
+exports.reverse = reverse;
+exports.setOriginFromCoordinates = setOriginFromCoordinates;
+exports.setDestinationFromCoordinates = setDestinationFromCoordinates;
+exports.addWaypoint = addWaypoint;
+exports.setWaypoint = setWaypoint;
+exports.removeWaypoint = removeWaypoint;
+exports.eventSubscribe = eventSubscribe;
+exports.eventEmit = eventEmit;
+
+var _action_types = require('../constants/action_types');
+
+var types = _interopRequireWildcard(_action_types);
+
+var _utils = require('../utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var request = new XMLHttpRequest();
+
+function originPoint(coordinates) {
+  return function (dispatch) {
+    var origin = _utils2.default.createPoint(coordinates, {
+      id: 'origin',
+      'marker-symbol': 'A'
+    });
+
+    dispatch({ type: types.ORIGIN, origin: origin });
+    dispatch(eventEmit('origin', { feature: origin }));
+  };
+}
+
+function destinationPoint(coordinates) {
+  return function (dispatch) {
+    var destination = _utils2.default.createPoint(coordinates, {
+      id: 'destination',
+      'marker-symbol': 'B'
+    });
+
+    dispatch({ type: types.DESTINATION, destination: destination });
+    dispatch(eventEmit('destination', { feature: destination }));
+  };
+}
+
+function setDirections(directions) {
+  return function (dispatch) {
+    dispatch({
+      type: types.DIRECTIONS,
+      directions: directions
+    });
+    dispatch(eventEmit('route', { route: directions }));
+  };
+}
+
+function updateWaypoints(waypoints) {
+  return {
+    type: types.WAYPOINTS,
+    waypoints: waypoints
+  };
+}
+
+function setHoverMarker(feature) {
+  return {
+    type: types.HOVER_MARKER,
+    hoverMarker: feature
+  };
+}
+
+function fetchDirections() {
+  return function (dispatch, getState) {
+    var _getState = getState();
+
+    var api = _getState.api;
+    var accessToken = _getState.accessToken;
+    var routeIndex = _getState.routeIndex;
+    var profile = _getState.profile;
+
+    var query = buildDirectionsQuery(getState);
+
+    // Request params
+    var options = [];
+    options.push('geometry=polyline');
+    options.push('instructions=text');
+    options.push('alternatives=true');
+    options.push('steps=true');
+
+    var token = accessToken ? accessToken : mapboxgl.accessToken;
+    options.push('access_token=' + token);
+
+    request.abort();
+    request.open('GET', api + 'mapbox.' + profile + '/' + query + '.json?' + options.join('&'), true);
+
+    request.onload = function () {
+      if (request.status >= 200 && request.status < 400) {
+        var data = JSON.parse(request.responseText);
+        if (data.error) {
+          dispatch(setDirections([]));
+          return dispatch(setError(data.error));
+        }
+
+        dispatch(setError(null));
+        if (!data.routes[routeIndex]) dispatch(setRouteIndex(0));
+        dispatch(setDirections(data.routes));
+
+        // Revise origin / destination points
+        dispatch(originPoint(data.origin.geometry.coordinates));
+        dispatch(destinationPoint(data.destination.geometry.coordinates));
+      } else {
+        dispatch(setDirections([]));
+        return dispatch(setError(JSON.parse(request.responseText).message));
+      }
+    };
+
+    request.onerror = function () {
+      dispatch(setDirections([]));
+      return dispatch(setError(JSON.parse(request.responseText).message));
+    };
+
+    request.send();
+  };
+}
+
+/*
+ * Build query used to fetch directions
+ *
+ * @param {Function} state
+ */
+function buildDirectionsQuery(state) {
+  var _state = state();
+
+  var origin = _state.origin;
+  var destination = _state.destination;
+  var waypoints = _state.waypoints;
+
+
+  var query = [];
+  query = query.concat(origin.geometry.coordinates);
+  query.push(';');
+
+  // Add any waypoints.
+  if (waypoints.length) {
+    waypoints.forEach(function (waypoint) {
+      query = query.concat(waypoint.geometry.coordinates);
+      query.push(';');
+    });
+  }
+
+  query = query.concat(destination.geometry.coordinates);
+  return encodeURIComponent(query.join());
+}
+
+function normalizeWaypoint(waypoint) {
+  var properties = { id: 'waypoint' };
+  return Object.assign(waypoint, {
+    properties: waypoint.properties ? Object.assign(waypoint.properties, properties) : properties
+  });
+}
+
+function setError(error) {
+  return function (dispatch) {
+    dispatch({
+      type: 'ERROR',
+      error: error
+    });
+    if (error) dispatch(eventEmit('error', { error: error }));
+  };
+}
+
+function queryOrigin(query) {
+  return {
+    type: types.ORIGIN_QUERY,
+    query: query
+  };
+}
+
+function queryDestination(query) {
+  return {
+    type: types.DESTINATION_QUERY,
+    query: query
+  };
+}
+
+function queryOriginCoordinates(coords) {
+  return {
+    type: types.ORIGIN_FROM_COORDINATES,
+    coordinates: coords
+  };
+}
+
+function queryDestinationCoordinates(coords) {
+  return {
+    type: types.DESTINATION_FROM_COORDINATES,
+    coordinates: coords
+  };
+}
+
+function clearOrigin() {
+  return function (dispatch) {
+    dispatch({
+      type: types.ORIGIN_CLEAR
+    });
+    dispatch(eventEmit('clear', { type: 'origin' }));
+    dispatch(setError(null));
+  };
+}
+
+function clearDestination() {
+  return function (dispatch) {
+    dispatch({
+      type: types.DESTINATION_CLEAR
+    });
+    dispatch(eventEmit('clear', { type: 'destination' }));
+    dispatch(setError(null));
+  };
+}
+
+function setOptions(options) {
+  return {
+    type: types.SET_OPTIONS,
+    options: options
+  };
+}
+
+function hoverMarker(coordinates) {
+  return function (dispatch) {
+    var feature = coordinates ? _utils2.default.createPoint(coordinates, { id: 'hover' }) : {};
+    dispatch(setHoverMarker(feature));
+  };
+}
+
+function setRouteIndex(routeIndex) {
+  return {
+    type: types.ROUTE_INDEX,
+    routeIndex: routeIndex
+  };
+}
+
+function createOrigin(coordinates) {
+  return function (dispatch, getState) {
+    var _getState2 = getState();
+
+    var destination = _getState2.destination;
+
+    dispatch(originPoint(coordinates));
+    if (destination.geometry) dispatch(fetchDirections());
+  };
+}
+
+function createDestination(coordinates) {
+  return function (dispatch, getState) {
+    var _getState3 = getState();
+
+    var origin = _getState3.origin;
+
+    dispatch(destinationPoint(coordinates));
+    if (origin.geometry) dispatch(fetchDirections());
+  };
+}
+
+function setProfile(profile) {
+  return function (dispatch, getState) {
+    var _getState4 = getState();
+
+    var origin = _getState4.origin;
+    var destination = _getState4.destination;
+
+    dispatch({ type: types.DIRECTIONS_PROFILE, profile: profile });
+    dispatch(eventEmit('profile', { profile: profile }));
+    if (origin.geometry && destination.geometry) dispatch(fetchDirections());
+  };
+}
+
+function reverse() {
+  return function (dispatch, getState) {
+    var state = getState();
+    if (state.destination.geometry) dispatch(originPoint(state.destination.geometry.coordinates));
+    if (state.origin.geometry) dispatch(destinationPoint(state.origin.geometry.coordinates));
+    if (state.origin.geometry && state.destination.geometry) dispatch(fetchDirections());
+  };
+}
+
+/*
+ * Set origin from coordinates
+ *
+ * @param {Array<number>} coordinates [lng, lat] array.
+ */
+function setOriginFromCoordinates(coords) {
+  return function (dispatch) {
+    if (!_utils2.default.validCoords(coords)) coords = [_utils2.default.wrap(coords[0]), _utils2.default.wrap(coords[1])];
+    if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
+    dispatch(queryOriginCoordinates(coords));
+    dispatch(createOrigin(coords));
+  };
+}
+
+/*
+ * Set destination from coordinates
+ *
+ * @param {Array<number>} coords [lng, lat] array.
+ */
+function setDestinationFromCoordinates(coords) {
+  return function (dispatch) {
+    if (!_utils2.default.validCoords(coords)) coords = [_utils2.default.wrap(coords[0]), _utils2.default.wrap(coords[1])];
+    if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
+    dispatch(createDestination(coords));
+    dispatch(queryDestinationCoordinates(coords));
+  };
+}
+
+function addWaypoint(index, waypoint) {
+  return function (dispatch, getState) {
+    var _getState5 = getState();
+
+    var destination = _getState5.destination;
+    var waypoints = _getState5.waypoints;
+
+    waypoints.splice(index, 0, normalizeWaypoint(waypoint));
+    dispatch(updateWaypoints(waypoints));
+    if (destination.geometry) dispatch(fetchDirections());
+  };
+}
+
+function setWaypoint(index, waypoint) {
+  return function (dispatch, getState) {
+    var _getState6 = getState();
+
+    var destination = _getState6.destination;
+    var waypoints = _getState6.waypoints;
+
+    waypoints[index] = normalizeWaypoint(waypoint);
+    dispatch(updateWaypoints(waypoints));
+    if (destination.geometry) dispatch(fetchDirections());
+  };
+}
+
+function removeWaypoint(waypoint) {
+  return function (dispatch, getState) {
+    var _getState7 = getState();
+
+    var destination = _getState7.destination;
+    var waypoints = _getState7.waypoints;
+
+    waypoints = waypoints.filter(function (way) {
+      return !_utils2.default.coordinateMatch(way, waypoint);
+    });
+
+    dispatch(updateWaypoints(waypoints));
+    if (destination.geometry) dispatch(fetchDirections());
+  };
+}
+
+function eventSubscribe(type, fn) {
+  return function (dispatch, getState) {
+    var _getState8 = getState();
+
+    var events = _getState8.events;
+
+    events[type] = events[type] || [];
+    events[type].push(fn);
+    return {
+      type: types.EVENTS,
+      events: events
+    };
+  };
+}
+
+function eventEmit(type, data) {
+  var _this = this;
+
+  return function (dispatch, getState) {
+    var _getState9 = getState();
+
+    var events = _getState9.events;
+
+
+    if (!events[type]) {
+      return {
+        type: types.EVENTS,
+        events: events
+      };
+    }
+
+    var listeners = events[type].slice();
+
+    for (var i = 0; i < listeners.length; i++) {
+      listeners[i].call(_this, data);
+    }
+  };
+}
+
+},{"../constants/action_types":39,"../utils":45}],39:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var DESTINATION = exports.DESTINATION = 'DESTINATION';
+var DESTINATION_CLEAR = exports.DESTINATION_CLEAR = 'DESTINATION_CLEAR';
+var DESTINATION_QUERY = exports.DESTINATION_QUERY = 'DESTINATION_QUERY';
+var DESTINATION_FROM_COORDINATES = exports.DESTINATION_FROM_COORDINATES = 'DESTINATION_FROM_COORDINATES';
+var DIRECTIONS = exports.DIRECTIONS = 'DIRECTIONS';
+var DIRECTIONS_PROFILE = exports.DIRECTIONS_PROFILE = 'DIRECTIONS_PROFILE';
+var EVENTS = exports.EVENTS = 'EVENTS';
+var ERROR = exports.ERROR = 'ERROR';
+var HOVER_MARKER = exports.HOVER_MARKER = 'HOVER_MARKER';
+var ORIGIN = exports.ORIGIN = 'ORIGIN';
+var ORIGIN_CLEAR = exports.ORIGIN_CLEAR = 'ORIGIN_CLEAR';
+var ORIGIN_QUERY = exports.ORIGIN_QUERY = 'ORIGIN_QUERY';
+var ORIGIN_FROM_COORDINATES = exports.ORIGIN_FROM_COORDINATES = 'ORIGIN_FROM_COORDINATES';
+var ROUTE_INDEX = exports.ROUTE_INDEX = 'ROUTE_INDEX';
+var SET_OPTIONS = exports.SET_OPTIONS = 'SET_OPTIONS';
+var WAYPOINTS = exports.WAYPOINTS = 'WAYPOINTS';
+
+},{}],40:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+require('mapbox-gl-geocoder');
+
+var _lodash = require('lodash.template');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _lodash3 = require('lodash.isequal');
+
+var _lodash4 = _interopRequireDefault(_lodash3);
+
+var _turfExtent = require('turf-extent');
+
+var _turfExtent2 = _interopRequireDefault(_turfExtent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+ // substack/brfs#39
+var tmpl = (0, _lodash2.default)("<div class='mapbox-directions-component mapbox-directions-inputs'>\n  <div class='mapbox-directions-component-keyline'>\n    <div class='mapbox-directions-origin'>\n      <label class='mapbox-form-label'>\n        <span class='directions-icon directions-icon-depart'></span>\n      </label>\n      <div id='mapbox-directions-origin-input'></div>\n    </div>\n\n    <button\n      class='directions-icon directions-icon-reverse directions-reverse js-reverse-inputs'\n      title='Reverse origin &amp; destination'>\n    </button>\n\n    <div class='mapbox-directions-destination'>\n      <label class='mapbox-form-label'>\n        <span class='directions-icon directions-icon-arrive'></span>\n      </label>\n      <div id='mapbox-directions-destination-input'></div>\n    </div>\n  </div>\n\n  <div class='mapbox-directions-profile mapbox-directions-component-keyline mapbox-directions-clearfix'>\n    <input\n      id='mapbox-directions-profile-driving'\n      type='radio'\n      name='profile'\n      <% if (profile === 'driving') { %>checked<% } %>\n    />\n    <label for='mapbox-directions-profile-driving'>Driving</label>\n    <input\n      id='mapbox-directions-profile-walking'\n      type='radio'\n      name='profile'\n      <% if (profile === 'walking') { %>checked<% } %>\n    />\n    <label for='mapbox-directions-profile-walking'>Walking</label>\n    <input\n      id='mapbox-directions-profile-cycling'\n      type='radio'\n      name='profile'\n      <% if (profile === 'cycling') { %>checked<% } %>\n    />\n    <label for='mapbox-directions-profile-cycling'>Cycling</label>\n  </div>\n</div>\n");
+
+/**
+ * Inputs controller
+ *
+ * @param {HTMLElement} el Summary parent container
+ * @param {Object} store A redux store
+ * @param {Object} actions Actions an element can dispatch
+ * @param {Object} map The mapboxgl instance
+ * @private
+ */
+
+var Inputs = function () {
+  function Inputs(el, store, actions, map) {
+    _classCallCheck(this, Inputs);
+
+    var _store$getState = store.getState();
+
+    var originQuery = _store$getState.originQuery;
+    var destinationQuery = _store$getState.destinationQuery;
+    var profile = _store$getState.profile;
+
+
+    el.innerHTML = tmpl({
+      originQuery: originQuery,
+      destinationQuery: destinationQuery,
+      profile: profile
+    });
+
+    this.container = el;
+    this.actions = actions;
+    this.store = store;
+    this.map = map;
+
+    this.onAdd();
+    this.render();
+  }
+
+  _createClass(Inputs, [{
+    key: 'animateToCoordinates',
+    value: function animateToCoordinates(mode, coords) {
+      var _store$getState2 = this.store.getState();
+
+      var origin = _store$getState2.origin;
+      var destination = _store$getState2.destination;
+
+
+      if (origin.geometry && destination.geometry && !(0, _lodash4.default)(origin.geometry, destination.geometry)) {
+
+        // Animate map to fit bounds.
+        var bb = (0, _turfExtent2.default)({
+          type: 'FeatureCollection',
+          features: [origin, destination]
+        });
+
+        this.map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
+      } else {
+        this.map.flyTo({ center: coords });
+      }
+    }
+  }, {
+    key: 'onAdd',
+    value: function onAdd() {
+      var _this = this;
+
+      var _actions = this.actions;
+      var clearOrigin = _actions.clearOrigin;
+      var clearDestination = _actions.clearDestination;
+      var createOrigin = _actions.createOrigin;
+      var createDestination = _actions.createDestination;
+      var setProfile = _actions.setProfile;
+      var reverse = _actions.reverse;
+
+      var _store$getState3 = this.store.getState();
+
+      var geocoder = _store$getState3.geocoder;
+
+
+      this.originInput = new mapboxgl.Geocoder(Object.assign({}, {
+        flyTo: false,
+        placeholder: 'Choose a starting place',
+        container: this.container.querySelector('#mapbox-directions-origin-input')
+      }, geocoder));
+
+      this.map.addControl(this.originInput);
+
+      this.destinationInput = new mapboxgl.Geocoder(Object.assign({}, {
+        flyTo: false,
+        placeholder: 'Choose destination',
+        container: this.container.querySelector('#mapbox-directions-destination-input')
+      }, geocoder));
+
+      this.map.addControl(this.destinationInput);
+
+      this.originInput.on('result', function (e) {
+        var coords = e.result.center;
+        createOrigin(coords);
+        _this.animateToCoordinates('origin', coords);
+      });
+
+      this.originInput.on('clear', clearOrigin);
+
+      this.destinationInput.on('result', function (e) {
+        var coords = e.result.center;
+        createDestination(coords);
+        _this.animateToCoordinates('destination', coords);
+      });
+
+      this.destinationInput.on('clear', clearDestination);
+
+      // Driving / Walking / Cycling profiles
+      var profiles = this.container.querySelectorAll('input[type="radio"]');
+      Array.prototype.forEach.call(profiles, function (el) {
+        el.addEventListener('change', function () {
+          setProfile(el.id.split('-').pop());
+        });
+      });
+
+      // Reversing Origin / Destination
+      this.container.querySelector('.js-reverse-inputs').addEventListener('click', function () {
+        var _store$getState4 = _this.store.getState();
+
+        var origin = _store$getState4.origin;
+        var destination = _store$getState4.destination;
+
+        if (origin) _this.actions.queryDestination(origin.geometry.coordinates);
+        if (destination) _this.actions.queryOrigin(destination.geometry.coordinates);
+        reverse();
+      });
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
+      this.store.subscribe(function () {
+        var _store$getState5 = _this2.store.getState();
+
+        var originQuery = _store$getState5.originQuery;
+        var destinationQuery = _store$getState5.destinationQuery;
+        var originQueryCoordinates = _store$getState5.originQueryCoordinates;
+        var destinationQueryCoordinates = _store$getState5.destinationQueryCoordinates;
+
+
+        if (originQuery) {
+          _this2.originInput.query(originQuery);
+          _this2.actions.queryOrigin(null);
+        }
+
+        if (destinationQuery) {
+          _this2.destinationInput.query(destinationQuery);
+          _this2.actions.queryDestination(null);
+        }
+
+        if (originQueryCoordinates) {
+          _this2.originInput.setInput(originQueryCoordinates);
+          _this2.animateToCoordinates('origin', originQueryCoordinates);
+          _this2.actions.queryOriginCoordinates(null);
+        }
+
+        if (destinationQueryCoordinates) {
+          _this2.destinationInput.setInput(destinationQueryCoordinates);
+          _this2.animateToCoordinates('destination', destinationQueryCoordinates);
+          _this2.actions.queryDestinationCoordinates(null);
+        }
+      });
+    }
+  }]);
+
+  return Inputs;
+}();
+
+exports.default = Inputs;
+
+},{"lodash.isequal":9,"lodash.template":13,"mapbox-gl-geocoder":20,"turf-extent":35}],41:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _utils = require('../utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
+var _lodash = require('lodash.template');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+var _lodash3 = require('lodash.isequal');
+
+var _lodash4 = _interopRequireDefault(_lodash3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+ // substack/brfs#39
+var instructionsTemplate = (0, _lodash2.default)("<div class='directions-control directions-control-directions'>\n  <div class='mapbox-directions-component mapbox-directions-route-summary<% if (routes > 1) { %> mapbox-directions-multiple<% } %>'>\n    <% if (routes > 1) { %>\n    <div class='mapbox-directions-routes mapbox-directions-clearfix'>\n      <% for (var i = 0; i < routes; i++) { %>\n        <input type='radio' name='routes' id='<%= i %>' <% if (i === routeIndex) { %>checked<% } %>>\n        <label for='<%= i %>' class='mapbox-directions-route'><%= i + 1 %></label>\n      <% } %>\n    </div>\n    <% } %>\n    <h1><%- duration %></h1>\n    <span><%- distance %></span>\n  </div>\n\n  <div class='mapbox-directions-instructions'>\n    <ol class='mapbox-directions-steps'>\n      <% steps.forEach(function(step) { %>\n        <%\n          var distance = step.distance ? format(step.distance) : false;\n          var icon = step.maneuver.type.replace(/\\s+/g, '-').toLowerCase();\n          var lng = step.maneuver.location.coordinates[0];\n          var lat = step.maneuver.location.coordinates[1];\n        %>\n        <li\n          data-lat='<%= lat %>'\n          data-lng='<%= lng %>'\n          class='mapbox-directions-step'>\n          <span class='directions-icon directions-icon-<%= icon %>'></span>\n          <div class='mapbox-directions-step-maneuver'>\n            <%= step.maneuver.instruction %>\n          </div>\n          <% if (step.distance) { %>\n            <div class='mapbox-directions-step-distance'>\n              <%= distance %>\n            </div>\n          <% } %>\n        </li>\n      <% }); %>\n    </ol>\n  </div>\n</div>\n");
+var errorTemplate = (0, _lodash2.default)("<div class='directions-control directions-control-directions'>\n  <div class='mapbox-directions-error'>\n    <%= error %>\n  </div>\n</div>\n");
+
+/**
+ * Summary/Instructions controller
+ *
+ * @param {HTMLElement} el Summary parent container
+ * @param {Object} store A redux store
+ * @param {Object} actions Actions an element can dispatch
+ * @param {Object} map The mapboxgl instance
+ * @private
+ */
+
+var Instructions = function () {
+  function Instructions(el, store, actions, map) {
+    _classCallCheck(this, Instructions);
+
+    this.container = el;
+    this.actions = actions;
+    this.store = store;
+    this.map = map;
+    this.directions = {};
+    this.render();
+  }
+
+  _createClass(Instructions, [{
+    key: 'render',
+    value: function render() {
+      var _this = this;
+
+      this.store.subscribe(function () {
+        var _actions = _this.actions;
+        var hoverMarker = _actions.hoverMarker;
+        var setRouteIndex = _actions.setRouteIndex;
+
+        var _store$getState = _this.store.getState();
+
+        var routeIndex = _store$getState.routeIndex;
+        var unit = _store$getState.unit;
+        var directions = _store$getState.directions;
+        var error = _store$getState.error;
+
+        var shouldRender = !(0, _lodash4.default)(directions[routeIndex], _this.directions);
+
+        if (error) {
+          _this.container.innerHTML = errorTemplate({ error: error });
+          return;
+        }
+
+        if (directions.length && shouldRender) {
+          var direction = _this.directions = directions[routeIndex];
+          _this.container.innerHTML = instructionsTemplate({
+            routeIndex: routeIndex,
+            routes: directions.length,
+            steps: direction.steps,
+            format: _utils2.default.format[unit],
+            duration: _utils2.default.format[unit](direction.distance),
+            distance: _utils2.default.format.duration(direction.duration)
+          });
+
+          var steps = _this.container.querySelectorAll('.mapbox-directions-step');
+
+          Array.prototype.forEach.call(steps, function (el) {
+            var lng = el.getAttribute('data-lng');
+            var lat = el.getAttribute('data-lat');
+
+            el.addEventListener('mouseover', function () {
+              hoverMarker([lng, lat]);
+            });
+
+            el.addEventListener('mouseout', function () {
+              hoverMarker(null);
+            });
+
+            el.addEventListener('click', function () {
+              _this.map.flyTo({
+                center: [lng, lat],
+                zoom: 16
+              });
+            });
+          });
+
+          var routes = _this.container.querySelectorAll('input[type="radio"]');
+          Array.prototype.forEach.call(routes, function (el) {
+            el.addEventListener('change', function (e) {
+              setRouteIndex(parseInt(e.target.id, 10));
+            });
+          });
+        } else if (_this.container.innerHTML && shouldRender) {
+          _this.container.innerHTML = '';
+        }
+      });
+    }
+  }]);
+
+  return Instructions;
+}();
+
+exports.default = Instructions;
+
+},{"../utils":45,"lodash.isequal":9,"lodash.template":13}],42:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _redux = require('redux');
+
+var _reduxThunk = require('redux-thunk');
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+var _polyline = require('polyline');
+
+var _utils = require('./utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
+var _reducers = require('./reducers');
+
+var _reducers2 = _interopRequireDefault(_reducers);
+
+var _actions = require('./actions');
+
+var actions = _interopRequireWildcard(_actions);
+
+var _directions_style = require('./directions_style');
+
+var _directions_style2 = _interopRequireDefault(_directions_style);
+
+var _inputs = require('./controls/inputs');
+
+var _inputs2 = _interopRequireDefault(_inputs);
+
+var _instructions = require('./controls/instructions');
+
+var _instructions2 = _interopRequireDefault(_instructions);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+if (!mapboxgl) throw new Error('include mapboxgl before mapbox-gl-directions.js');
+
+var storeWithMiddleware = (0, _redux.applyMiddleware)(_reduxThunk2.default)(_redux.createStore);
+var store = storeWithMiddleware(_reducers2.default);
+
+// State object management via redux
+
+
+// Controls
+
+var Directions = function (_mapboxgl$Control) {
+  _inherits(Directions, _mapboxgl$Control);
+
+  function Directions(options) {
+    _classCallCheck(this, Directions);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Directions).call(this));
+
+    _this.actions = (0, _redux.bindActionCreators)(actions, store.dispatch);
+    _this.actions.setOptions(options || {});
+
+    _this.onDragDown = _this._onDragDown.bind(_this);
+    _this.onDragMove = _this._onDragMove.bind(_this);
+    _this.onDragUp = _this._onDragUp.bind(_this);
+    _this.move = _this._move.bind(_this);
+    _this.onClick = _this._onClick.bind(_this);
+    return _this;
+  }
+
+  _createClass(Directions, [{
+    key: 'onAdd',
+    value: function onAdd(map) {
+      var _this2 = this;
+
+      this.map = map;
+
+      var _store$getState = store.getState();
+
+      var container = _store$getState.container;
+      var controls = _store$getState.controls;
+
+
+      this.container = container ? typeof container === 'string' ? document.getElementById(container) : container : this.map.getContainer();
+
+      // Add controls to the page
+      var inputEl = document.createElement('div');
+      inputEl.className = 'directions-control directions-control-inputs';
+      new _inputs2.default(inputEl, store, this.actions, this.map);
+
+      var directionsEl = document.createElement('div');
+      directionsEl.className = 'directions-control-directions-container';
+
+      new _instructions2.default(directionsEl, store, {
+        hoverMarker: this.actions.hoverMarker,
+        setRouteIndex: this.actions.setRouteIndex
+      }, this.map);
+
+      if (controls.inputs) this.container.appendChild(inputEl);
+      if (controls.instructions) this.container.appendChild(directionsEl);
+
+      this.subscribedActions();
+      this.map.on('style.load', function () {
+        return _this2.mapState();
+      });
+    }
+  }, {
+    key: 'mapState',
+    value: function mapState() {
+      var _this3 = this;
+
+      var _store$getState2 = store.getState();
+
+      var profile = _store$getState2.profile;
+      var styles = _store$getState2.styles;
+      var interactive = _store$getState2.interactive;
+
+      // Emit any default or option set config
+
+      this.actions.eventEmit('profile', { profile: profile });
+
+      var geojson = new mapboxgl.GeoJSONSource({
+        data: {
+          type: 'FeatureCollection',
+          features: []
+        }
+      });
+
+      // Add and set data theme layer/style
+      this.map.addSource('directions', geojson);
+
+      // Add direction specific styles to the map
+      _directions_style2.default.forEach(function (style) {
+        return _this3.map.addLayer(style);
+      });
+
+      if (styles && styles.length) styles.forEach(function (style) {
+        return _this3.map.addLayer(style);
+      });
+
+      if (interactive) {
+        this.map.on('mousedown', this.onDragDown);
+        this.map.on('mousemove', this.move);
+        this.map.on('click', this.onClick);
+
+        this.map.on('touchstart', this.move);
+        this.map.on('touchstart', this.onDragDown);
+      }
+    }
+  }, {
+    key: 'subscribedActions',
+    value: function subscribedActions() {
+      var _this4 = this;
+
+      store.subscribe(function () {
+        var _store$getState3 = store.getState();
+
+        var origin = _store$getState3.origin;
+        var destination = _store$getState3.destination;
+        var hoverMarker = _store$getState3.hoverMarker;
+        var directions = _store$getState3.directions;
+        var routeIndex = _store$getState3.routeIndex;
+
+
+        var geojson = {
+          type: 'FeatureCollection',
+          features: [origin, destination, hoverMarker].filter(function (d) {
+            return d.geometry;
+          })
+        };
+
+        if (directions.length) {
+          directions.forEach(function (feature, index) {
+
+            var lineString = {
+              geometry: {
+                type: 'LineString',
+                coordinates: (0, _polyline.decode)(feature.geometry, 6).map(function (c) {
+                  return c.reverse();
+                })
+              },
+              properties: {
+                'route-index': index,
+                route: index === routeIndex ? 'selected' : 'alternate'
+              }
+            };
+
+            geojson.features.push(lineString);
+
+            if (index === routeIndex) {
+              // Collect any possible waypoints from steps
+              feature.steps.forEach(function (d) {
+                if (d.maneuver.type === 'waypoint') {
+                  geojson.features.push({
+                    type: 'Feature',
+                    geometry: d.maneuver.location,
+                    properties: {
+                      id: 'waypoint'
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+
+        if (_this4.map.style) _this4.map.getSource('directions').setData(geojson);
+      });
+    }
+  }, {
+    key: '_onClick',
+    value: function _onClick(e) {
+      var _this5 = this;
+
+      var _store$getState4 = store.getState();
+
+      var origin = _store$getState4.origin;
+
+      var coords = [e.lngLat.lng, e.lngLat.lat];
+
+      if (!origin.geometry) {
+        this.actions.setOriginFromCoordinates(coords);
+      } else {
+
+        var features = this.map.queryRenderedFeatures(e.point, {
+          layers: ['directions-origin-point', 'directions-destination-point', 'directions-waypoint-point', 'directions-route-line-alt']
+        });
+
+        if (features.length) {
+
+          // Remove any waypoints
+          features.forEach(function (f) {
+            if (f.layer.id === 'directions-waypoint-point') {
+              _this5.actions.removeWaypoint(f);
+            }
+          });
+
+          if (features[0].properties.route === 'alternate') {
+            var index = features[0].properties['route-index'];
+            this.actions.setRouteIndex(index);
+          }
+        } else {
+          this.actions.setDestinationFromCoordinates(coords);
+          this.map.flyTo({ center: coords });
+        }
+      }
+    }
+  }, {
+    key: '_move',
+    value: function _move(e) {
+      var _this6 = this;
+
+      var _store$getState5 = store.getState();
+
+      var hoverMarker = _store$getState5.hoverMarker;
+
+
+      var features = this.map.queryRenderedFeatures(e.point, {
+        layers: ['directions-route-line-alt', 'directions-route-line', 'directions-origin-point', 'directions-destination-point', 'directions-hover-point']
+      });
+
+      this.map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+
+      if (features.length) {
+        this.isCursorOverPoint = features[0];
+        this.map.dragPan.disable();
+
+        // Add a possible waypoint marker when hovering over the active route line
+        features.forEach(function (feature) {
+          if (feature.layer.id === 'directions-route-line') {
+            _this6.actions.hoverMarker([e.lngLat.lng, e.lngLat.lat]);
+          } else if (hoverMarker.geometry) {
+            _this6.actions.hoverMarker(null);
+          }
+        });
+      } else if (this.isCursorOverPoint) {
+        this.isCursorOverPoint = false;
+        this.map.dragPan.enable();
+      }
+    }
+  }, {
+    key: '_onDragDown',
+    value: function _onDragDown() {
+      if (!this.isCursorOverPoint) return;
+      this.isDragging = this.isCursorOverPoint;
+      this.map.getCanvas().style.cursor = 'grab';
+
+      this.map.on('mousemove', this.onDragMove);
+      this.map.on('mouseup', this.onDragUp);
+
+      this.map.on('touchmove', this.onDragMove);
+      this.map.on('touchend', this.onDragUp);
+    }
+  }, {
+    key: '_onDragMove',
+    value: function _onDragMove(e) {
+      if (!this.isDragging) return;
+
+      var coords = [e.lngLat.lng, e.lngLat.lat];
+      switch (this.isDragging.layer.id) {
+        case 'directions-origin-point':
+          this.actions.createOrigin(coords);
+          break;
+        case 'directions-destination-point':
+          this.actions.createDestination(coords);
+          break;
+        case 'directions-hover-point':
+          this.actions.hoverMarker(coords);
+          break;
+      }
+    }
+  }, {
+    key: '_onDragUp',
+    value: function _onDragUp() {
+      if (!this.isDragging) return;
+
+      var _store$getState6 = store.getState();
+
+      var hoverMarker = _store$getState6.hoverMarker;
+      var origin = _store$getState6.origin;
+      var destination = _store$getState6.destination;
+
+
+      switch (this.isDragging.layer.id) {
+        case 'directions-origin-point':
+          this.actions.setOriginFromCoordinates(origin.geometry.coordinates);
+          break;
+        case 'directions-destination-point':
+          this.actions.setDestinationFromCoordinates(destination.geometry.coordinates);
+          break;
+        case 'directions-hover-point':
+          // Add waypoint if a sufficent amount of dragging has occurred.
+          if (hoverMarker.geometry && !_utils2.default.coordinateMatch(this.isDragging, hoverMarker)) {
+            this.actions.addWaypoint(0, hoverMarker);
+          }
+          break;
+      }
+
+      this.isDragging = false;
+      this.map.getCanvas().style.cursor = '';
+
+      this.map.off('touchmove', this.onDragMove);
+      this.map.off('touchend', this.onDragUp);
+
+      this.map.off('mousemove', this.onDragMove);
+      this.map.off('mouseup', this.onDragUp);
+    }
+
+    // API Methods
+    // ============================
+
+    /**
+     * Turn on or off interactivity
+     * @param {Boolean} state sets interactivity based on a state of `true` or `false`.
+     * @returns {Directions} this
+     */
+
+  }, {
+    key: 'interactive',
+    value: function interactive(state) {
+      if (state) {
+        this.map.on('touchstart', this.move);
+        this.map.on('touchstart', this.onDragDown);
+
+        this.map.on('mousedown', this.onDragDown);
+        this.map.on('mousemove', this.move);
+        this.map.on('click', this.onClick);
+      } else {
+        this.map.off('touchstart', this.move);
+        this.map.off('touchstart', this.onDragDown);
+
+        this.map.off('mousedown', this.onDragDown);
+        this.map.off('mousemove', this.move);
+        this.map.off('click', this.onClick);
+      }
+
+      return this;
+    }
+
+    /**
+     * Returns the origin of the current route.
+     * @returns {Object} origin
+     */
+
+  }, {
+    key: 'getOrigin',
+    value: function getOrigin() {
+      return store.getState().origin;
+    }
+
+    /**
+     * Sets origin. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+     * to have run.
+     * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
+     * @returns {Directions} this
+     */
+
+  }, {
+    key: 'setOrigin',
+    value: function setOrigin(query) {
+      if (typeof query === 'string') {
+        this.actions.queryOrigin(query);
+      } else {
+        this.actions.setOriginFromCoordinates(query);
+      }
+
+      return this;
+    }
+
+    /**
+     * Returns the destination of the current route.
+     * @returns {Object} destination
+     */
+
+  }, {
+    key: 'getDestination',
+    value: function getDestination() {
+      return store.getState().destination;
+    }
+
+    /**
+     * Sets destination. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+     * to have run.
+     * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
+     * @returns {Directions} this
+     */
+
+  }, {
+    key: 'setDestination',
+    value: function setDestination(query) {
+      if (typeof query === 'string') {
+        this.actions.queryDestination(query);
+      } else {
+        this.actions.setDestinationFromCoordinates(query);
+      }
+
+      return this;
+    }
+
+    /**
+     * Swap the origin and destination.
+     * @returns {Directions} this
+     */
+
+  }, {
+    key: 'reverse',
+    value: function reverse() {
+      this.actions.reverse();
+      return this;
+    }
+
+    /**
+     * Add a waypoint to the route. _Note:_ calling this method requires the
+     * [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load) to have run.
+     * @param {Number} index position waypoint should be placed in the waypoint array
+     * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or [lng, lat] coordinates.
+     * @returns {Directions} this;
+     */
+
+  }, {
+    key: 'addWaypoint',
+    value: function addWaypoint(index, waypoint) {
+      if (!waypoint.type) waypoint = _utils2.default.createPoint(waypoint, { id: 'waypoint' });
+      this.actions.addWaypoint(index, waypoint);
+      return this;
+    }
+
+    /**
+     * Change the waypoint at a given index in the route. _Note:_ calling this
+     * method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+     * to have run.
+     * @param {Number} index indexed position of the waypoint to update
+     * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or [lng, lat] coordinates.
+     * @returns {Directions} this;
+     */
+
+  }, {
+    key: 'setWaypoint',
+    value: function setWaypoint(index, waypoint) {
+      if (!waypoint.type) waypoint = _utils2.default.createPoint(waypoint, { id: 'waypoint' });
+      this.actions.setWaypoint(index, waypoint);
+      return this;
+    }
+
+    /**
+     * Remove a waypoint from the route.
+     * @param {Number} index position in the waypoints array.
+     * @returns {Directions} this;
+     */
+
+  }, {
+    key: 'removeWaypoint',
+    value: function removeWaypoint(index) {
+      var _store$getState7 = store.getState();
+
+      var waypoints = _store$getState7.waypoints;
+
+      this.actions.removeWaypoint(waypoints[index]);
+      return this;
+    }
+
+    /**
+     * Fetch all current waypoints in a route.
+     * @returns {Array} waypoints
+     */
+
+  }, {
+    key: 'getWaypoints',
+    value: function getWaypoints() {
+      return store.getState().waypoints;
+    }
+
+    /**
+     * Subscribe to events that happen within the plugin.
+     * @param {String} type name of event. Available events and the data passed into their respective event objects are:
+     *
+     * - __clear__ `{ type: } Type is one of 'origin' or 'destination'`
+     * - __loading__ `{ type: } Type is one of 'origin' or 'destination'`
+     * - __profile__ `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
+     * - __origin__ `{ feature } Fired when origin is set`
+     * - __destination__ `{ feature } Fired when destination is set`
+     * - __route__ `{ route } Fired when a route is updated`
+     * - __error__ `{ error } Error as string
+     * @param {Function} fn function that's called when the event is emitted.
+     * @returns {Directions} this;
+     */
+
+  }, {
+    key: 'on',
+    value: function on(type, fn) {
+      this.actions.eventSubscribe(type, fn);
+      return this;
+    }
+  }]);
+
+  return Directions;
+}(mapboxgl.Control);
+
+exports.default = Directions;
+
+},{"./actions":38,"./controls/inputs":40,"./controls/instructions":41,"./directions_style":43,"./reducers":44,"./utils":45,"polyline":21,"redux":28,"redux-thunk":22}],43:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var style = [{
+  'id': 'directions-route-line-alt',
+  'type': 'line',
+  'source': 'directions',
+  'layout': {
+    'line-cap': 'round',
+    'line-join': 'round'
+  },
+  'paint': {
+    'line-color': '#bbb',
+    'line-width': 4
+  },
+  'filter': ['all', ['in', '$type', 'LineString'], ['in', 'route', 'alternate']]
+}, {
+  'id': 'directions-route-line',
+  'type': 'line',
+  'source': 'directions',
+  'layout': {
+    'line-cap': 'round',
+    'line-join': 'round'
+  },
+  'paint': {
+    'line-color': '#3bb2d0',
+    'line-width': 4
+  },
+  'filter': ['all', ['in', '$type', 'LineString'], ['in', 'route', 'selected']]
+}, {
+  'id': 'directions-hover-point-casing',
+  'type': 'circle',
+  'source': 'directions',
+  'paint': {
+    'circle-radius': 8,
+    'circle-color': '#fff'
+  },
+  'filter': ['all', ['in', '$type', 'Point'], ['in', 'id', 'hover']]
+}, {
+  'id': 'directions-hover-point',
+  'type': 'circle',
+  'source': 'directions',
+  'paint': {
+    'circle-radius': 6,
+    'circle-color': '#3bb2d0'
+  },
+  'filter': ['all', ['in', '$type', 'Point'], ['in', 'id', 'hover']]
+}, {
+  'id': 'directions-waypoint-point-casing',
+  'type': 'circle',
+  'source': 'directions',
+  'paint': {
+    'circle-radius': 8,
+    'circle-color': '#fff'
+  },
+  'filter': ['all', ['in', '$type', 'Point'], ['in', 'id', 'waypoint']]
+}, {
+  'id': 'directions-waypoint-point',
+  'type': 'circle',
+  'source': 'directions',
+  'paint': {
+    'circle-radius': 6,
+    'circle-color': '#8a8bc9'
+  },
+  'filter': ['all', ['in', '$type', 'Point'], ['in', 'id', 'waypoint']]
+}, {
+  'id': 'directions-origin-point',
+  'type': 'circle',
+  'source': 'directions',
+  'paint': {
+    'circle-radius': 18,
+    'circle-color': '#3bb2d0'
+  },
+  'filter': ['all', ['in', '$type', 'Point'], ['in', 'marker-symbol', 'A']]
+}, {
+  'id': 'directions-origin-label',
+  'type': 'symbol',
+  'source': 'directions',
+  'layout': {
+    'text-field': 'A',
+    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+    'text-size': 12
+  },
+  'paint': {
+    'text-color': '#fff'
+  },
+  'filter': ['all', ['in', '$type', 'Point'], ['in', 'marker-symbol', 'A']]
+}, {
+  'id': 'directions-destination-point',
+  'type': 'circle',
+  'source': 'directions',
+  'paint': {
+    'circle-radius': 18,
+    'circle-color': '#8a8bc9'
+  },
+  'filter': ['all', ['in', '$type', 'Point'], ['in', 'marker-symbol', 'B']]
+}, {
+  'id': 'directions-destination-label',
+  'type': 'symbol',
+  'source': 'directions',
+  'layout': {
+    'text-field': 'B',
+    'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+    'text-size': 12
+  },
+  'paint': {
+    'text-color': '#fff'
+  },
+  'filter': ['all', ['in', '$type', 'Point'], ['in', 'marker-symbol', 'B']]
+}];
+
+exports.default = style;
+
+},{}],44:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _action_types = require('../constants/action_types.js');
+
+var types = _interopRequireWildcard(_action_types);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var initialState = {
+  // Options set on initialization
+  api: 'https://api.mapbox.com/v4/directions/',
+  profile: 'driving',
+  unit: 'imperial',
+  proximity: false,
+  styles: [],
+
+  // UI controls
+  controls: {
+    inputs: true,
+    instructions: true
+  },
+
+  // Optional setting to pass options available to mapbox-gl-geocoder
+  geocoder: {},
+
+  interactive: true,
+
+  // Container for client registered events
+  events: {},
+
+  // Marker feature drawn on the map at any point.
+  origin: {},
+  destination: {},
+  hoverMarker: {},
+  waypoints: [],
+
+  // User input strings or result returned from geocoder
+  originQuery: null,
+  destinationQuery: null,
+  originQueryCoordinates: null,
+  destinationQueryCoordinates: null,
+
+  // Directions data
+  directions: [],
+  routeIndex: 0
+};
+
+function data() {
+  var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+  var action = arguments[1];
+
+  switch (action.type) {
+    case types.SET_OPTIONS:
+      return Object.assign({}, state, action.options);
+
+    case types.DIRECTIONS_PROFILE:
+      return Object.assign({}, state, {
+        profile: action.profile
+      });
+
+    case types.ORIGIN:
+      return Object.assign({}, state, {
+        origin: action.origin,
+        hoverMarker: {}
+      });
+
+    case types.DESTINATION:
+      return Object.assign({}, state, {
+        destination: action.destination,
+        hoverMarker: {}
+      });
+
+    case types.HOVER_MARKER:
+      return Object.assign({}, state, {
+        hoverMarker: action.hoverMarker
+      });
+
+    case types.WAYPOINTS:
+      return Object.assign({}, state, {
+        waypoints: action.waypoints
+      });
+
+    case types.ORIGIN_QUERY:
+      return Object.assign({}, state, {
+        originQuery: action.query
+      });
+
+    case types.DESTINATION_QUERY:
+      return Object.assign({}, state, {
+        destinationQuery: action.query
+      });
+
+    case types.ORIGIN_FROM_COORDINATES:
+      return Object.assign({}, state, {
+        originQueryCoordinates: action.coordinates
+      });
+
+    case types.DESTINATION_FROM_COORDINATES:
+      return Object.assign({}, state, {
+        destinationQueryCoordinates: action.coordinates
+      });
+
+    case types.ORIGIN_CLEAR:
+      return Object.assign({}, state, {
+        origin: {},
+        originQuery: '',
+        waypoints: [],
+        directions: []
+      });
+
+    case types.DESTINATION_CLEAR:
+      return Object.assign({}, state, {
+        destination: {},
+        destinationQuery: '',
+        waypoints: [],
+        directions: []
+      });
+
+    case types.DIRECTIONS:
+      return Object.assign({}, state, {
+        directions: action.directions
+      });
+
+    case types.ROUTE_INDEX:
+      return Object.assign({}, state, {
+        routeIndex: action.routeIndex
+      });
+
+    case types.ERROR:
+      return Object.assign({}, state, {
+        error: action.error
+      });
+
+    default:
+      return state;
+  }
+}
+
+exports.default = data;
+
+},{"../constants/action_types.js":39}],45:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+function validCoords(coords) {
+  return coords[0] >= -180 && coords[0] <= 180 && coords[1] >= -90 && coords[1] <= 90;
+}
+
+function coordinateMatch(a, b) {
+  a = a.geometry.coordinates;
+  b = b.geometry.coordinates;
+  return a.join() === b.join() || a[0].toFixed(3) === b[0].toFixed(3) && a[1].toFixed(3) === b[1].toFixed(3);
+}
+
+function wrap(n) {
+  var d = 180 - -180;
+  var w = ((n - -180) % d + d) % d + -180;
+  return w === -180 ? 180 : w;
+}
+
+function createPoint(coordinates, properties) {
+  return {
+    type: 'Feature',
+    geometry: {
+      type: 'Point',
+      coordinates: coordinates
+    },
+    properties: properties ? properties : {}
+  };
+}
+
+var format = {
+  duration: function duration(s) {
+    var m = Math.floor(s / 60),
+        h = Math.floor(m / 60);
+    s %= 60;
+    m %= 60;
+    if (h === 0 && m === 0) return s + 's';
+    if (h === 0) return m + 'min';
+    return h + 'h ' + m + 'min';
+  },
+  imperial: function imperial(m) {
+    var mi = m / 1609.344;
+    if (mi >= 100) return mi.toFixed(0) + 'mi';
+    if (mi >= 10) return mi.toFixed(1) + 'mi';
+    if (mi >= 0.1) return mi.toFixed(2) + 'mi';
+    return (mi * 5280).toFixed(0) + 'ft';
+  },
+  metric: function metric(m) {
+    if (m >= 100000) return (m / 1000).toFixed(0) + 'km';
+    if (m >= 10000) return (m / 1000).toFixed(1) + 'km';
+    if (m >= 100) return (m / 1000).toFixed(2) + 'km';
+    return m.toFixed(0) + 'm';
+  }
+};
+
+exports.default = { format: format, coordinateMatch: coordinateMatch, createPoint: createPoint, validCoords: validCoords, wrap: wrap };
+
+},{}]},{},[1]);

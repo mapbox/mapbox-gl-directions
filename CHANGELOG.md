@@ -8,6 +8,7 @@
 - [feature] Allow controls to be removed on initialization.
 - [internal] Refactor out native DOM and use registered mapbox-gl-js ones.
 - [internal] Remove custom implementation of a geocoder and use mapbox-gl-geocoder.
+- [internal] Use plain XMLHttpRequest for direction queries.
 
 ## 2.0.0
 

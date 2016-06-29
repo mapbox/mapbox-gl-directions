@@ -12,7 +12,7 @@
   "scripts": {
     "prepublish": "npm run build",
     "start": "NODE_ENV=development budo example/index.js:example/bundle.js --live",
-    "build": "NODE_ENV=production browserify index.js | uglifyjs -c -m > dist/mapbox-gl-directions.js",
+    "build": "NODE_ENV=production browserify index.js > dist/mapbox-gl-directions.js",
     "test": "NODE_ENV=test npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
     "docs": "documentation build --format=md > API.md",
     "lint": "eslint --no-eslintrc -c .eslintrc index.js src"
@@ -49,8 +49,7 @@
     "mapbox-gl": "^0.20.1",
     "smokestack": "^3.3.1",
     "tap-status": "^1.0.1",
-    "tape": "^4.6.0",
-    "uglify-js": "^2.6.4"
+    "tape": "^4.6.0"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.6",
