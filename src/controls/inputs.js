@@ -63,19 +63,21 @@ export default class Inputs {
       reverse
     } = this.actions;
 
-    this.originInput = new mapboxgl.Geocoder({
+    const { geocoder } = this.store.getState();
+
+    this.originInput = new mapboxgl.Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose a starting place',
       container: this.container.querySelector('#mapbox-directions-origin-input')
-    });
+    }, geocoder));
 
     this.map.addControl(this.originInput);
 
-    this.destinationInput = new mapboxgl.Geocoder({
+    this.destinationInput = new mapboxgl.Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose destination',
       container: this.container.querySelector('#mapbox-directions-destination-input')
-    });
+    }, geocoder));
 
     this.map.addControl(this.destinationInput);
 

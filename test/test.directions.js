@@ -20,7 +20,11 @@ test('directions', (tt) => {
   });
 
   tt.test('set/get inputs', t => {
-    setup({ proximity: [-79.45, 43.65] });
+    setup({
+      geocoder: {
+        proximity: [-79.45, 43.65]
+      }
+    });
 
     directions.setOrigin('Queen Street');
     directions.setDestination([-77, 41]);
@@ -37,7 +41,7 @@ test('directions', (tt) => {
 
     directions.on('route', once((e) => {
       t.ok(e.route, 'routing data was passed');
-        t.end();
+      t.end();
     }));
 
   });

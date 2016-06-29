@@ -1,7 +1,6 @@
 import * as types from '../constants/action_types';
 import utils from '../utils';
-import request from 'request';
-let getDirections;
+const request = new XMLHttpRequest();
 
 function originPoint(coordinates) {
   return (dispatch) => {
@@ -53,47 +52,49 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    if (getDirections) getDirections.abort();
     const { api, accessToken, routeIndex, profile } = getState();
     const query = buildDirectionsQuery(getState);
 
-    var options = {
-      geometry: 'polyline',
-      instructions: 'text',
-      alternatives: true,
-      steps: true
+    // Request params
+    var options = [];
+    options.push('geometry=polyline');
+    options.push('instructions=text');
+    options.push('alternatives=true');
+    options.push('steps=true');
+
+    var token = accessToken ? accessToken : mapboxgl.accessToken;
+    options.push('access_token=' + token);
+
+    request.abort();
+    request.open('GET', `${api}mapbox.${profile}/${query}.json?${options.join('&')}`, true);
+
+    request.onload = () => {
+      if (request.status >= 200 && request.status < 400) {
+        var data = JSON.parse(request.responseText);
+        if (data.error) {
+          dispatch(setDirections([]));
+          return dispatch(setError(data.error));
+        }
+
+        dispatch(setError(null));
+        if (!data.routes[routeIndex]) dispatch(setRouteIndex(0));
+        dispatch(setDirections(data.routes));
+
+        // Revise origin / destination points
+        dispatch(originPoint(data.origin.geometry.coordinates));
+        dispatch(destinationPoint(data.destination.geometry.coordinates));
+      } else {
+        dispatch(setDirections([]));
+        return dispatch(setError(JSON.parse(request.responseText).message));
+      }
     };
 
-    options.access_token = accessToken ? accessToken : mapboxgl.accessToken;
+    request.onerror = () => {
+      dispatch(setDirections([]));
+      return dispatch(setError(JSON.parse(request.responseText).message));
+    };
 
-    getDirections = request({
-      url: `${api}mapbox.${profile}/${query}.json`,
-      qs: options,
-      json: true
-    }, function(err, res, body) {
-      if (err) {
-        dispatch(setDirections([]));
-        return dispatch(setError(err.message));
-      }
-
-      if (body.message) {
-        dispatch(setDirections([]));
-        return dispatch(setError(body.message));
-      }
-
-      if (body.error) {
-        dispatch(setDirections([]));
-        return dispatch(setError(body.error));
-      }
-
-      dispatch(setError(null));
-      if (!body.routes[routeIndex]) dispatch(setRouteIndex(0));
-      dispatch(setDirections(body.routes));
-
-      // Revise origin / destination points
-      dispatch(originPoint(body.origin.geometry.coordinates));
-      dispatch(destinationPoint(body.destination.geometry.coordinates));
-    });
+    request.send();
   };
 }
 

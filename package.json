@@ -56,11 +56,10 @@
     "lodash.debounce": "^4.0.6",
     "lodash.isequal": "^4.2.0",
     "lodash.template": "^4.2.5",
-    "mapbox-gl-geocoder": "^1.2.0",
+    "mapbox-gl-geocoder": "^1.3.0",
     "polyline": "^0.2.0",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
-    "request": "^2.72.0",
     "turf-extent": "^1.0.4"
   }
 }

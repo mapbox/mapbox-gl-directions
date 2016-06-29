@@ -14,6 +14,9 @@ const initialState = {
     instructions: true
   },
 
+  // Optional setting to pass options available to mapbox-gl-geocoder
+  geocoder: {},
+
   interactive: true,
 
   // Container for client registered events
