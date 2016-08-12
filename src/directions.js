@@ -65,12 +65,13 @@ export default class Directions extends mapboxgl.Control {
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });
 
-    const geojson = new mapboxgl.GeoJSONSource({
+    const geojson = {
+      type: 'geojson',
       data: {
         type: 'FeatureCollection',
         features: []
       }
-    });
+    };
 
     // Add and set data theme layer/style
     this.map.addSource('directions', geojson);
