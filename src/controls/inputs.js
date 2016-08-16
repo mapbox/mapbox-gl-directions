@@ -1,4 +1,4 @@
-import 'mapbox-gl-geocoder';
+import Geocoder from './geocoder';
 import template from 'lodash.template';
 import isEqual from 'lodash.isequal';
 import extent from 'turf-extent';
@@ -65,7 +65,7 @@ export default class Inputs {
 
     const { geocoder } = this.store.getState();
 
-    this.originInput = new mapboxgl.Geocoder(Object.assign({}, {
+    this.originInput = new Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose a starting place',
       container: this.container.querySelector('#mapbox-directions-origin-input')
@@ -73,7 +73,7 @@ export default class Inputs {
 
     this.map.addControl(this.originInput);
 
-    this.destinationInput = new mapboxgl.Geocoder(Object.assign({}, {
+    this.destinationInput = new Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose destination',
       container: this.container.querySelector('#mapbox-directions-destination-input')

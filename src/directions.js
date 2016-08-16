@@ -1,5 +1,3 @@
-if (!mapboxgl) throw new Error('include mapboxgl before mapbox-gl-directions.js');
-
 import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
 import { decode } from 'polyline';
@@ -17,10 +15,9 @@ import directionsStyle from './directions_style';
 import Inputs from './controls/inputs';
 import Instructions from './controls/instructions';
 
-export default class Directions extends mapboxgl.Control {
+export default class Directions {
 
   constructor(options) {
-    super();
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
 
@@ -29,6 +26,23 @@ export default class Directions extends mapboxgl.Control {
     this.onDragUp = this._onDragUp.bind(this);
     this.move = this._move.bind(this);
     this.onClick = this._onClick.bind(this);
+  }
+
+  addTo(map) {
+      this._map = map;
+      var container = this._container = this.onAdd(map);
+      if (this.options && this.options.position) {
+          var pos = this.options.position;
+          var corner = map._controlCorners[pos];
+          container.className += ' mapboxgl-ctrl';
+          if (pos.indexOf('bottom') !== -1) {
+              corner.insertBefore(container, corner.firstChild);
+          } else {
+              corner.appendChild(container);
+          }
+      }
+
+      return this;
   }
 
   onAdd(map) {
@@ -57,6 +71,17 @@ export default class Directions extends mapboxgl.Control {
 
     this.subscribedActions();
     this.map.on('style.load', () => this.mapState());
+  }
+
+  /**
+   * Removes the control from the map it has been added to.
+   *
+   * @returns {Control} `this`
+   */
+  remove() {
+      this.container.parentNode.removeChild(this.container);
+      this.map = null;
+      return this;
   }
 
   mapState() {
