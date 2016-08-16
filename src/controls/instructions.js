@@ -20,7 +20,7 @@ export default class Instructions {
     this.container = el;
     this.actions = actions;
     this.store = store;
-    this.map = map;
+    this._map = map;
     this.directions = {};
     this.render();
   }
@@ -62,7 +62,7 @@ export default class Instructions {
           });
 
           el.addEventListener('click', () => {
-            this.map.flyTo({
+            this._map.flyTo({
               center: [lng, lat],
               zoom: 16
             });

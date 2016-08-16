@@ -6293,7 +6293,7 @@ var Inputs = function () {
     this.container = el;
     this.actions = actions;
     this.store = store;
-    this.map = map;
+    this._map = map;
 
     this.onAdd();
     this.render();
@@ -6316,9 +6316,9 @@ var Inputs = function () {
           features: [origin, destination]
         });
 
-        this.map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
+        this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
       } else {
-        this.map.flyTo({ center: coords });
+        this._map.flyTo({ center: coords });
       }
     }
   }, {
@@ -6345,7 +6345,7 @@ var Inputs = function () {
         container: this.container.querySelector('#mapbox-directions-origin-input')
       }, geocoder));
 
-      this.map.addControl(this.originInput);
+      this._map.addControl(this.originInput);
 
       this.destinationInput = new _geocoder2.default(Object.assign({}, {
         flyTo: false,
@@ -6353,7 +6353,7 @@ var Inputs = function () {
         container: this.container.querySelector('#mapbox-directions-destination-input')
       }, geocoder));
 
-      this.map.addControl(this.destinationInput);
+      this._map.addControl(this.destinationInput);
 
       this.originInput.on('result', function (e) {
         var coords = e.result.center;
@@ -6481,7 +6481,7 @@ var Instructions = function () {
     this.container = el;
     this.actions = actions;
     this.store = store;
-    this.map = map;
+    this._map = map;
     this.directions = {};
     this.render();
   }
@@ -6536,7 +6536,7 @@ var Instructions = function () {
             });
 
             el.addEventListener('click', function () {
-              _this.map.flyTo({
+              _this._map.flyTo({
                 center: [lng, lat],
                 zoom: 16
               });
@@ -6653,7 +6653,7 @@ var Directions = function () {
     value: function onAdd(map) {
       var _this = this;
 
-      this.map = map;
+      this._map = map;
 
       var _store$getState = store.getState();
 
@@ -6661,12 +6661,12 @@ var Directions = function () {
       var controls = _store$getState.controls;
 
 
-      this.container = container ? typeof container === 'string' ? document.getElementById(container) : container : this.map.getContainer();
+      this.container = container ? typeof container === 'string' ? document.getElementById(container) : container : this._map.getContainer();
 
       // Add controls to the page
       var inputEl = document.createElement('div');
       inputEl.className = 'directions-control directions-control-inputs';
-      new _inputs2.default(inputEl, store, this.actions, this.map);
+      new _inputs2.default(inputEl, store, this.actions, this._map);
 
       var directionsEl = document.createElement('div');
       directionsEl.className = 'directions-control-directions-container';
@@ -6674,13 +6674,13 @@ var Directions = function () {
       new _instructions2.default(directionsEl, store, {
         hoverMarker: this.actions.hoverMarker,
         setRouteIndex: this.actions.setRouteIndex
-      }, this.map);
+      }, this._map);
 
       if (controls.inputs) this.container.appendChild(inputEl);
       if (controls.instructions) this.container.appendChild(directionsEl);
 
       this.subscribedActions();
-      this.map.on('style.load', function () {
+      this._map.on('style.load', function () {
         return _this.mapState();
       });
     }
@@ -6695,7 +6695,7 @@ var Directions = function () {
     key: 'remove',
     value: function remove() {
       this.container.parentNode.removeChild(this.container);
-      this.map = null;
+      this._map = null;
       return this;
     }
   }, {
@@ -6721,24 +6721,24 @@ var Directions = function () {
       });
 
       // Add and set data theme layer/style
-      this.map.addSource('directions', geojson);
+      this._map.addSource('directions', geojson);
 
       // Add direction specific styles to the map
       _directions_style2.default.forEach(function (style) {
-        return _this2.map.addLayer(style);
+        return _this2._map.addLayer(style);
       });
 
       if (styles && styles.length) styles.forEach(function (style) {
-        return _this2.map.addLayer(style);
+        return _this2._map.addLayer(style);
       });
 
       if (interactive) {
-        this.map.on('mousedown', this.onDragDown);
-        this.map.on('mousemove', this.move);
-        this.map.on('click', this.onClick);
+        this._map.on('mousedown', this.onDragDown);
+        this._map.on('mousemove', this.move);
+        this._map.on('click', this.onClick);
 
-        this.map.on('touchstart', this.move);
-        this.map.on('touchstart', this.onDragDown);
+        this._map.on('touchstart', this.move);
+        this._map.on('touchstart', this.onDragDown);
       }
     }
   }, {
@@ -6798,7 +6798,7 @@ var Directions = function () {
           });
         }
 
-        if (_this3.map.style) _this3.map.getSource('directions').setData(geojson);
+        if (_this3._map.style) _this3._map.getSource('directions').setData(geojson);
       });
     }
   }, {
@@ -6816,7 +6816,7 @@ var Directions = function () {
         this.actions.setOriginFromCoordinates(coords);
       } else {
 
-        var features = this.map.queryRenderedFeatures(e.point, {
+        var features = this._map.queryRenderedFeatures(e.point, {
           layers: ['directions-origin-point', 'directions-destination-point', 'directions-waypoint-point', 'directions-route-line-alt']
         });
 
@@ -6835,7 +6835,7 @@ var Directions = function () {
           }
         } else {
           this.actions.setDestinationFromCoordinates(coords);
-          this.map.flyTo({ center: coords });
+          this._map.flyTo({ center: coords });
         }
       }
     }
@@ -6849,15 +6849,15 @@ var Directions = function () {
       var hoverMarker = _store$getState5.hoverMarker;
 
 
-      var features = this.map.queryRenderedFeatures(e.point, {
+      var features = this._map.queryRenderedFeatures(e.point, {
         layers: ['directions-route-line-alt', 'directions-route-line', 'directions-origin-point', 'directions-destination-point', 'directions-hover-point']
       });
 
-      this.map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+      this._map.getCanvas().style.cursor = features.length ? 'pointer' : '';
 
       if (features.length) {
         this.isCursorOverPoint = features[0];
-        this.map.dragPan.disable();
+        this._map.dragPan.disable();
 
         // Add a possible waypoint marker when hovering over the active route line
         features.forEach(function (feature) {
@@ -6869,7 +6869,7 @@ var Directions = function () {
         });
       } else if (this.isCursorOverPoint) {
         this.isCursorOverPoint = false;
-        this.map.dragPan.enable();
+        this._map.dragPan.enable();
       }
     }
   }, {
@@ -6877,13 +6877,13 @@ var Directions = function () {
     value: function _onDragDown() {
       if (!this.isCursorOverPoint) return;
       this.isDragging = this.isCursorOverPoint;
-      this.map.getCanvas().style.cursor = 'grab';
+      this._map.getCanvas().style.cursor = 'grab';
 
-      this.map.on('mousemove', this.onDragMove);
-      this.map.on('mouseup', this.onDragUp);
+      this._map.on('mousemove', this.onDragMove);
+      this._map.on('mouseup', this.onDragUp);
 
-      this.map.on('touchmove', this.onDragMove);
-      this.map.on('touchend', this.onDragUp);
+      this._map.on('touchmove', this.onDragMove);
+      this._map.on('touchend', this.onDragUp);
     }
   }, {
     key: '_onDragMove',
@@ -6931,13 +6931,13 @@ var Directions = function () {
       }
 
       this.isDragging = false;
-      this.map.getCanvas().style.cursor = '';
+      this._map.getCanvas().style.cursor = '';
 
-      this.map.off('touchmove', this.onDragMove);
-      this.map.off('touchend', this.onDragUp);
+      this._map.off('touchmove', this.onDragMove);
+      this._map.off('touchend', this.onDragUp);
 
-      this.map.off('mousemove', this.onDragMove);
-      this.map.off('mouseup', this.onDragUp);
+      this._map.off('mousemove', this.onDragMove);
+      this._map.off('mouseup', this.onDragUp);
     }
 
     // API Methods
@@ -6953,19 +6953,19 @@ var Directions = function () {
     key: 'interactive',
     value: function interactive(state) {
       if (state) {
-        this.map.on('touchstart', this.move);
-        this.map.on('touchstart', this.onDragDown);
+        this._map.on('touchstart', this.move);
+        this._map.on('touchstart', this.onDragDown);
 
-        this.map.on('mousedown', this.onDragDown);
-        this.map.on('mousemove', this.move);
-        this.map.on('click', this.onClick);
+        this._map.on('mousedown', this.onDragDown);
+        this._map.on('mousemove', this.move);
+        this._map.on('click', this.onClick);
       } else {
-        this.map.off('touchstart', this.move);
-        this.map.off('touchstart', this.onDragDown);
+        this._map.off('touchstart', this.move);
+        this._map.off('touchstart', this.onDragDown);
 
-        this.map.off('mousedown', this.onDragDown);
-        this.map.off('mousemove', this.move);
-        this.map.off('click', this.onClick);
+        this._map.off('mousedown', this.onDragDown);
+        this._map.off('mousemove', this.move);
+        this._map.off('click', this.onClick);
       }
 
       return this;

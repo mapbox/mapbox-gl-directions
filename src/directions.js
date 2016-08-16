@@ -46,17 +46,17 @@ export default class Directions {
   }
 
   onAdd(map) {
-    this.map = map;
+    this._map = map;
 
     const { container, controls } = store.getState();
 
     this.container = container ? typeof container === 'string' ?
-      document.getElementById(container) : container : this.map.getContainer();
+      document.getElementById(container) : container : this._map.getContainer();
 
     // Add controls to the page
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';
-    new Inputs(inputEl, store, this.actions, this.map);
+    new Inputs(inputEl, store, this.actions, this._map);
 
     const directionsEl = document.createElement('div');
     directionsEl.className = 'directions-control-directions-container';
@@ -64,13 +64,13 @@ export default class Directions {
     new Instructions(directionsEl, store, {
       hoverMarker: this.actions.hoverMarker,
       setRouteIndex: this.actions.setRouteIndex
-    }, this.map);
+    }, this._map);
 
     if (controls.inputs) this.container.appendChild(inputEl);
     if (controls.instructions) this.container.appendChild(directionsEl);
 
     this.subscribedActions();
-    this.map.on('style.load', () => this.mapState());
+    this._map.on('style.load', () => this.mapState());
   }
 
   /**
@@ -80,7 +80,7 @@ export default class Directions {
    */
   remove() {
       this.container.parentNode.removeChild(this.container);
-      this.map = null;
+      this._map = null;
       return this;
   }
 
@@ -98,20 +98,20 @@ export default class Directions {
     });
 
     // Add and set data theme layer/style
-    this.map.addSource('directions', geojson);
+    this._map.addSource('directions', geojson);
 
     // Add direction specific styles to the map
-    directionsStyle.forEach((style) => this.map.addLayer(style));
+    directionsStyle.forEach((style) => this._map.addLayer(style));
 
-    if (styles && styles.length) styles.forEach((style) => this.map.addLayer(style));
+    if (styles && styles.length) styles.forEach((style) => this._map.addLayer(style));
 
     if (interactive) {
-      this.map.on('mousedown', this.onDragDown);
-      this.map.on('mousemove', this.move);
-      this.map.on('click', this.onClick);
+      this._map.on('mousedown', this.onDragDown);
+      this._map.on('mousemove', this.move);
+      this._map.on('click', this.onClick);
 
-      this.map.on('touchstart', this.move);
-      this.map.on('touchstart', this.onDragDown);
+      this._map.on('touchstart', this.move);
+      this._map.on('touchstart', this.onDragDown);
     }
   }
 
@@ -172,7 +172,7 @@ export default class Directions {
         });
       }
 
-      if (this.map.style) this.map.getSource('directions').setData(geojson);
+      if (this._map.style) this._map.getSource('directions').setData(geojson);
     });
   }
 
@@ -184,7 +184,7 @@ export default class Directions {
       this.actions.setOriginFromCoordinates(coords);
     } else {
 
-      const features = this.map.queryRenderedFeatures(e.point, {
+      const features = this._map.queryRenderedFeatures(e.point, {
         layers: [
           'directions-origin-point',
           'directions-destination-point',
@@ -208,7 +208,7 @@ export default class Directions {
         }
       } else {
         this.actions.setDestinationFromCoordinates(coords);
-        this.map.flyTo({ center: coords });
+        this._map.flyTo({ center: coords });
       }
     }
   }
@@ -216,7 +216,7 @@ export default class Directions {
   _move(e) {
     const { hoverMarker } = store.getState();
 
-    const features = this.map.queryRenderedFeatures(e.point, {
+    const features = this._map.queryRenderedFeatures(e.point, {
       layers: [
         'directions-route-line-alt',
         'directions-route-line',
@@ -226,11 +226,11 @@ export default class Directions {
       ]
     });
 
-    this.map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+    this._map.getCanvas().style.cursor = features.length ? 'pointer' : '';
 
     if (features.length) {
       this.isCursorOverPoint = features[0];
-      this.map.dragPan.disable();
+      this._map.dragPan.disable();
 
       // Add a possible waypoint marker when hovering over the active route line
       features.forEach((feature) => {
@@ -243,20 +243,20 @@ export default class Directions {
 
     } else if (this.isCursorOverPoint) {
       this.isCursorOverPoint = false;
-      this.map.dragPan.enable();
+      this._map.dragPan.enable();
     }
   }
 
   _onDragDown() {
     if (!this.isCursorOverPoint) return;
     this.isDragging = this.isCursorOverPoint;
-    this.map.getCanvas().style.cursor = 'grab';
+    this._map.getCanvas().style.cursor = 'grab';
 
-    this.map.on('mousemove', this.onDragMove);
-    this.map.on('mouseup', this.onDragUp);
+    this._map.on('mousemove', this.onDragMove);
+    this._map.on('mouseup', this.onDragUp);
 
-    this.map.on('touchmove', this.onDragMove);
-    this.map.on('touchend', this.onDragUp);
+    this._map.on('touchmove', this.onDragMove);
+    this._map.on('touchend', this.onDragUp);
   }
 
   _onDragMove(e) {
@@ -297,13 +297,13 @@ export default class Directions {
     }
 
     this.isDragging = false;
-    this.map.getCanvas().style.cursor = '';
+    this._map.getCanvas().style.cursor = '';
 
-    this.map.off('touchmove', this.onDragMove);
-    this.map.off('touchend', this.onDragUp);
+    this._map.off('touchmove', this.onDragMove);
+    this._map.off('touchend', this.onDragUp);
 
-    this.map.off('mousemove', this.onDragMove);
-    this.map.off('mouseup', this.onDragUp);
+    this._map.off('mousemove', this.onDragMove);
+    this._map.off('mouseup', this.onDragUp);
   }
 
   // API Methods
@@ -316,19 +316,19 @@ export default class Directions {
    */
   interactive(state) {
     if (state) {
-      this.map.on('touchstart', this.move);
-      this.map.on('touchstart', this.onDragDown);
+      this._map.on('touchstart', this.move);
+      this._map.on('touchstart', this.onDragDown);
 
-      this.map.on('mousedown', this.onDragDown);
-      this.map.on('mousemove', this.move);
-      this.map.on('click', this.onClick);
+      this._map.on('mousedown', this.onDragDown);
+      this._map.on('mousemove', this.move);
+      this._map.on('click', this.onClick);
     } else {
-      this.map.off('touchstart', this.move);
-      this.map.off('touchstart', this.onDragDown);
+      this._map.off('touchstart', this.move);
+      this._map.off('touchstart', this.onDragDown);
 
-      this.map.off('mousedown', this.onDragDown);
-      this.map.off('mousemove', this.move);
-      this.map.off('click', this.onClick);
+      this._map.off('mousedown', this.onDragDown);
+      this._map.off('mousemove', this.move);
+      this._map.off('click', this.onClick);
     }
 
     return this;
