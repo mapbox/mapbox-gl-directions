@@ -27,6 +27,6 @@ import Directions from './src/directions';
 
 if (window.mapboxgl) {
   mapboxgl.Directions = Directions;
+} else if (typeof module !== 'undefined') {
+  module.exports = Directions;
 }
-
-export default Directions;
