@@ -172,7 +172,9 @@ export default class Directions {
         });
       }
 
-      if (this._map.style) this._map.getSource('directions').setData(geojson);
+      if (this._map.style && this._map.getSource('directions')) {
+        this._map.getSource('directions').setData(geojson);
+      }
     });
   }
 

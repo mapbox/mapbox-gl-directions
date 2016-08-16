@@ -6798,7 +6798,9 @@ var Directions = function () {
           });
         }
 
-        if (_this3._map.style) _this3._map.getSource('directions').setData(geojson);
+        if (_this3._map.style && _this3._map.getSource('directions')) {
+          _this3._map.getSource('directions').setData(geojson);
+        }
       });
     }
   }, {
