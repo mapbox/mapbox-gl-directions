@@ -6680,7 +6680,7 @@ var Directions = function () {
       if (controls.instructions) this.container.appendChild(directionsEl);
 
       this.subscribedActions();
-      this._map.on('style.load', function () {
+      if (this._map.loaded()) this.mapState();else this._map.on('load', function () {
         return _this.mapState();
       });
     }
@@ -6713,12 +6713,13 @@ var Directions = function () {
 
       this.actions.eventEmit('profile', { profile: profile });
 
-      var geojson = new mapboxgl.GeoJSONSource({
+      var geojson = {
+        type: 'geojson',
         data: {
           type: 'FeatureCollection',
           features: []
         }
-      });
+      };
 
       // Add and set data theme layer/style
       this._map.addSource('directions', geojson);

@@ -70,7 +70,8 @@ export default class Directions {
     if (controls.instructions) this.container.appendChild(directionsEl);
 
     this.subscribedActions();
-    this._map.on('style.load', () => this.mapState());
+    if (this._map.loaded()) this.mapState()
+    else this._map.on('load', () => this.mapState());
   }
 
   /**
@@ -90,12 +91,13 @@ export default class Directions {
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });
 
-    const geojson = new mapboxgl.GeoJSONSource({
+    const geojson = {
+      type: 'geojson',
       data: {
         type: 'FeatureCollection',
         features: []
       }
-    });
+    };
 
     // Add and set data theme layer/style
     this._map.addSource('directions', geojson);
