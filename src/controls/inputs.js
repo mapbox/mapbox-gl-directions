@@ -1,4 +1,4 @@
-import 'mapbox-gl-geocoder';
+import Geocoder from './geocoder';
 import template from 'lodash.template';
 import isEqual from 'lodash.isequal';
 import extent from 'turf-extent';
@@ -28,7 +28,7 @@ export default class Inputs {
     this.container = el;
     this.actions = actions;
     this.store = store;
-    this.map = map;
+    this._map = map;
 
     this.onAdd();
     this.render();
@@ -47,9 +47,9 @@ export default class Inputs {
         features: [origin, destination]
       });
 
-      this.map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
+      this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
     } else {
-      this.map.flyTo({ center: coords });
+      this._map.flyTo({ center: coords });
     }
   }
 
@@ -65,21 +65,21 @@ export default class Inputs {
 
     const { geocoder } = this.store.getState();
 
-    this.originInput = new mapboxgl.Geocoder(Object.assign({}, {
+    this.originInput = new Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose a starting place',
       container: this.container.querySelector('#mapbox-directions-origin-input')
     }, geocoder));
 
-    this.map.addControl(this.originInput);
+    this._map.addControl(this.originInput);
 
-    this.destinationInput = new mapboxgl.Geocoder(Object.assign({}, {
+    this.destinationInput = new Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose destination',
       container: this.container.querySelector('#mapbox-directions-destination-input')
     }, geocoder));
 
-    this.map.addControl(this.destinationInput);
+    this._map.addControl(this.destinationInput);
 
     this.originInput.on('result', (e) => {
       const coords = e.result.center;

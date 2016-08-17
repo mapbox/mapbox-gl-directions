@@ -1,7 +1,8 @@
 'use strict';
 /* global mapboxgl */
 
-require('../index');
+var Directions = require('../index');
+
 mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
 var map = new mapboxgl.Map({
