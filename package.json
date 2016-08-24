@@ -1,6 +1,6 @@
 {
   "name": "mapbox-gl-directions",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
   "main": "dist/mapbox-gl-directions.js",
   "browserify": {
@@ -47,7 +47,7 @@
     "eslint": "^2.13.1",
     "json-loader": "0.5.4",
     "lodash.once": "^4.0.0",
-    "mapbox-gl": "^0.20.1",
+    "mapbox-gl": "^0.22.1",
     "smokestack": "^3.3.1",
     "tap-status": "^1.0.1",
     "tape": "^4.6.0",

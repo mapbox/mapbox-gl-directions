@@ -342,159 +342,6 @@ function isUndefined(arg) {
 }
 
 },{}],3:[function(require,module,exports){
-/*
- * Fuzzy
- * https://github.com/myork/fuzzy
- *
- * Copyright (c) 2012 Matt York
- * Licensed under the MIT license.
- */
-
-(function() {
-
-var root = this;
-
-var fuzzy = {};
-
-// Use in node or in browser
-if (typeof exports !== 'undefined') {
-  module.exports = fuzzy;
-} else {
-  root.fuzzy = fuzzy;
-}
-
-// Return all elements of `array` that have a fuzzy
-// match against `pattern`.
-fuzzy.simpleFilter = function(pattern, array) {
-  return array.filter(function(string) {
-    return fuzzy.test(pattern, string);
-  });
-};
-
-// Does `pattern` fuzzy match `string`?
-fuzzy.test = function(pattern, string) {
-  return fuzzy.match(pattern, string) !== null;
-};
-
-// If `pattern` matches `string`, wrap each matching character
-// in `opts.pre` and `opts.post`. If no match, return null
-fuzzy.match = function(pattern, string, opts) {
-  opts = opts || {};
-  var patternIdx = 0
-    , result = []
-    , len = string.length
-    , totalScore = 0
-    , currScore = 0
-    // prefix
-    , pre = opts.pre || ''
-    // suffix
-    , post = opts.post || ''
-    // String to compare against. This might be a lowercase version of the
-    // raw string
-    , compareString =  opts.caseSensitive && string || string.toLowerCase()
-    , ch, compareChar;
-
-  pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
-
-  // For each character in the string, either add it to the result
-  // or wrap in template if it's the next string in the pattern
-  for(var idx = 0; idx < len; idx++) {
-    ch = string[idx];
-    if(compareString[idx] === pattern[patternIdx]) {
-      ch = pre + ch + post;
-      patternIdx += 1;
-
-      // consecutive characters should increase the score more than linearly
-      currScore += 1 + currScore;
-    } else {
-      currScore = 0;
-    }
-    totalScore += currScore;
-    result[result.length] = ch;
-  }
-
-  // return rendered string if we have a match for every char
-  if(patternIdx === pattern.length) {
-    return {rendered: result.join(''), score: totalScore};
-  }
-
-  return null;
-};
-
-// The normal entry point. Filters `arr` for matches against `pattern`.
-// It returns an array with matching values of the type:
-//
-//     [{
-//         string:   '<b>lah' // The rendered string
-//       , index:    2        // The index of the element in `arr`
-//       , original: 'blah'   // The original element in `arr`
-//     }]
-//
-// `opts` is an optional argument bag. Details:
-//
-//    opts = {
-//        // string to put before a matching character
-//        pre:     '<b>'
-//
-//        // string to put after matching character
-//      , post:    '</b>'
-//
-//        // Optional function. Input is an entry in the given arr`,
-//        // output should be the string to test `pattern` against.
-//        // In this example, if `arr = [{crying: 'koala'}]` we would return
-//        // 'koala'.
-//      , extract: function(arg) { return arg.crying; }
-//    }
-fuzzy.filter = function(pattern, arr, opts) {
-  opts = opts || {};
-  return arr
-    .reduce(function(prev, element, idx, arr) {
-      var str = element;
-      if(opts.extract) {
-        str = opts.extract(element);
-      }
-      var rendered = fuzzy.match(pattern, str, opts);
-      if(rendered != null) {
-        prev[prev.length] = {
-            string: rendered.rendered
-          , score: rendered.score
-          , index: idx
-          , original: element
-        };
-      }
-      return prev;
-    }, [])
-
-    // Sort by score. Browsers are inconsistent wrt stable/unstable
-    // sorting, so force stable by using the index in the case of tie.
-    // See http://ofb.net/~sethml/is-sort-stable.html
-    .sort(function(a,b) {
-      var compare = b.score - a.score;
-      if(compare) return compare;
-      return a.index - b.index;
-    });
-};
-
-
-}());
-
-
-},{}],4:[function(require,module,exports){
-/**
- * lodash 3.0.0 (Custom Build) <https://lodash.com/>
- * Build: `lodash modern modularize exports="npm" -o ./`
- * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
- * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
- * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
- * Available under MIT license <https://lodash.com/license>
- */
-
-/** Used to match template delimiters. */
-var reInterpolate = /<%=([\s\S]+?)%>/g;
-
-module.exports = reInterpolate;
-
-},{}],5:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -875,7 +722,7 @@ function toNumber(value) {
 module.exports = debounce;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],6:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -2528,7 +2375,7 @@ function keys(object) {
 module.exports = isEqual;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -3664,7 +3511,22 @@ var attempt = baseRest(function(func, args) {
 module.exports = template;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._reinterpolate":4,"lodash.templatesettings":8}],8:[function(require,module,exports){
+},{"lodash._reinterpolate":6,"lodash.templatesettings":7}],6:[function(require,module,exports){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** Used to match template delimiters. */
+var reInterpolate = /<%=([\s\S]+?)%>/g;
+
+module.exports = reInterpolate;
+
+},{}],7:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -3948,157 +3810,7 @@ function escape(string) {
 module.exports = templateSettings;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._reinterpolate":4}],9:[function(require,module,exports){
-var overArg = require('./_overArg');
-
-/** Built-in value references. */
-var getPrototype = overArg(Object.getPrototypeOf, Object);
-
-module.exports = getPrototype;
-
-},{"./_overArg":11}],10:[function(require,module,exports){
-/**
- * Checks if `value` is a host object in IE < 9.
- *
- * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
- */
-function isHostObject(value) {
-  // Many host objects are `Object` objects that can coerce to strings
-  // despite having improperly defined `toString` methods.
-  var result = false;
-  if (value != null && typeof value.toString != 'function') {
-    try {
-      result = !!(value + '');
-    } catch (e) {}
-  }
-  return result;
-}
-
-module.exports = isHostObject;
-
-},{}],11:[function(require,module,exports){
-/**
- * Creates a unary function that invokes `func` with its argument transformed.
- *
- * @private
- * @param {Function} func The function to wrap.
- * @param {Function} transform The argument transform.
- * @returns {Function} Returns the new function.
- */
-function overArg(func, transform) {
-  return function(arg) {
-    return func(transform(arg));
-  };
-}
-
-module.exports = overArg;
-
-},{}],12:[function(require,module,exports){
-/**
- * Checks if `value` is object-like. A value is object-like if it's not `null`
- * and has a `typeof` result of "object".
- *
- * @static
- * @memberOf _
- * @since 4.0.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
- * @example
- *
- * _.isObjectLike({});
- * // => true
- *
- * _.isObjectLike([1, 2, 3]);
- * // => true
- *
- * _.isObjectLike(_.noop);
- * // => false
- *
- * _.isObjectLike(null);
- * // => false
- */
-function isObjectLike(value) {
-  return !!value && typeof value == 'object';
-}
-
-module.exports = isObjectLike;
-
-},{}],13:[function(require,module,exports){
-var getPrototype = require('./_getPrototype'),
-    isHostObject = require('./_isHostObject'),
-    isObjectLike = require('./isObjectLike');
-
-/** `Object#toString` result references. */
-var objectTag = '[object Object]';
-
-/** Used for built-in method references. */
-var funcProto = Function.prototype,
-    objectProto = Object.prototype;
-
-/** Used to resolve the decompiled source of functions. */
-var funcToString = funcProto.toString;
-
-/** Used to check objects for own properties. */
-var hasOwnProperty = objectProto.hasOwnProperty;
-
-/** Used to infer the `Object` constructor. */
-var objectCtorString = funcToString.call(Object);
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var objectToString = objectProto.toString;
-
-/**
- * Checks if `value` is a plain object, that is, an object created by the
- * `Object` constructor or one with a `[[Prototype]]` of `null`.
- *
- * @static
- * @memberOf _
- * @since 0.8.0
- * @category Lang
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
- * @example
- *
- * function Foo() {
- *   this.a = 1;
- * }
- *
- * _.isPlainObject(new Foo);
- * // => false
- *
- * _.isPlainObject([1, 2, 3]);
- * // => false
- *
- * _.isPlainObject({ 'x': 0, 'y': 0 });
- * // => true
- *
- * _.isPlainObject(Object.create(null));
- * // => true
- */
-function isPlainObject(value) {
-  if (!isObjectLike(value) ||
-      objectToString.call(value) != objectTag || isHostObject(value)) {
-    return false;
-  }
-  var proto = getPrototype(value);
-  if (proto === null) {
-    return true;
-  }
-  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-  return (typeof Ctor == 'function' &&
-    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
-}
-
-module.exports = isPlainObject;
-
-},{"./_getPrototype":9,"./_isHostObject":10,"./isObjectLike":12}],14:[function(require,module,exports){
+},{"lodash._reinterpolate":6}],8:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4253,7 +3965,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = polyline;
 }
 
-},{}],15:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4277,7 +3989,7 @@ var thunk = createThunkMiddleware();
 thunk.withExtraArgument = createThunkMiddleware;
 
 exports['default'] = thunk;
-},{}],16:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4336,7 +4048,7 @@ function applyMiddleware() {
     };
   };
 }
-},{"./compose":19}],17:[function(require,module,exports){
+},{"./compose":13}],11:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4388,7 +4100,7 @@ function bindActionCreators(actionCreators, dispatch) {
   }
   return boundActionCreators;
 }
-},{}],18:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4516,7 +4228,7 @@ function combineReducers(reducers) {
     return hasChanged ? nextState : state;
   };
 }
-},{"./createStore":20,"./utils/warning":22,"lodash/isPlainObject":13}],19:[function(require,module,exports){
+},{"./createStore":14,"./utils/warning":16,"lodash/isPlainObject":21}],13:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -4557,7 +4269,7 @@ function compose() {
     if (typeof _ret === "object") return _ret.v;
   }
 }
-},{}],20:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4820,7 +4532,7 @@ function createStore(reducer, initialState, enhancer) {
     replaceReducer: replaceReducer
   }, _ref2[_symbolObservable2["default"]] = observable, _ref2;
 }
-},{"lodash/isPlainObject":13,"symbol-observable":26}],21:[function(require,module,exports){
+},{"lodash/isPlainObject":21,"symbol-observable":22}],15:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4867,7 +4579,7 @@ exports.combineReducers = _combineReducers2["default"];
 exports.bindActionCreators = _bindActionCreators2["default"];
 exports.applyMiddleware = _applyMiddleware2["default"];
 exports.compose = _compose2["default"];
-},{"./applyMiddleware":16,"./bindActionCreators":17,"./combineReducers":18,"./compose":19,"./createStore":20,"./utils/warning":22}],22:[function(require,module,exports){
+},{"./applyMiddleware":10,"./bindActionCreators":11,"./combineReducers":12,"./compose":13,"./createStore":14,"./utils/warning":16}],16:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4893,7 +4605,186 @@ function warning(message) {
   } catch (e) {}
   /* eslint-enable no-empty */
 }
-},{}],23:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
+var overArg = require('./_overArg');
+
+/** Built-in value references. */
+var getPrototype = overArg(Object.getPrototypeOf, Object);
+
+module.exports = getPrototype;
+
+},{"./_overArg":19}],18:[function(require,module,exports){
+/**
+ * Checks if `value` is a host object in IE < 9.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+ */
+function isHostObject(value) {
+  // Many host objects are `Object` objects that can coerce to strings
+  // despite having improperly defined `toString` methods.
+  var result = false;
+  if (value != null && typeof value.toString != 'function') {
+    try {
+      result = !!(value + '');
+    } catch (e) {}
+  }
+  return result;
+}
+
+module.exports = isHostObject;
+
+},{}],19:[function(require,module,exports){
+/**
+ * Creates a unary function that invokes `func` with its argument transformed.
+ *
+ * @private
+ * @param {Function} func The function to wrap.
+ * @param {Function} transform The argument transform.
+ * @returns {Function} Returns the new function.
+ */
+function overArg(func, transform) {
+  return function(arg) {
+    return func(transform(arg));
+  };
+}
+
+module.exports = overArg;
+
+},{}],20:[function(require,module,exports){
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+module.exports = isObjectLike;
+
+},{}],21:[function(require,module,exports){
+var getPrototype = require('./_getPrototype'),
+    isHostObject = require('./_isHostObject'),
+    isObjectLike = require('./isObjectLike');
+
+/** `Object#toString` result references. */
+var objectTag = '[object Object]';
+
+/** Used for built-in method references. */
+var funcProto = Function.prototype,
+    objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var funcToString = funcProto.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/** Used to infer the `Object` constructor. */
+var objectCtorString = funcToString.call(Object);
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/**
+ * Checks if `value` is a plain object, that is, an object created by the
+ * `Object` constructor or one with a `[[Prototype]]` of `null`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.8.0
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a plain object, else `false`.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ * }
+ *
+ * _.isPlainObject(new Foo);
+ * // => false
+ *
+ * _.isPlainObject([1, 2, 3]);
+ * // => false
+ *
+ * _.isPlainObject({ 'x': 0, 'y': 0 });
+ * // => true
+ *
+ * _.isPlainObject(Object.create(null));
+ * // => true
+ */
+function isPlainObject(value) {
+  if (!isObjectLike(value) ||
+      objectToString.call(value) != objectTag || isHostObject(value)) {
+    return false;
+  }
+  var proto = getPrototype(value);
+  if (proto === null) {
+    return true;
+  }
+  var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return (typeof Ctor == 'function' &&
+    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+}
+
+module.exports = isPlainObject;
+
+},{"./_getPrototype":17,"./_isHostObject":18,"./isObjectLike":20}],22:[function(require,module,exports){
+(function (global){
+/* global window */
+'use strict';
+
+module.exports = require('./ponyfill')(global || window || this);
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./ponyfill":23}],23:[function(require,module,exports){
+'use strict';
+
+module.exports = function symbolObservablePonyfill(root) {
+	var result;
+	var Symbol = root.Symbol;
+
+	if (typeof Symbol === 'function') {
+		if (Symbol.observable) {
+			result = Symbol.observable;
+		} else {
+			result = Symbol('observable');
+			Symbol.observable = result;
+		}
+	} else {
+		result = '@@observable';
+	}
+
+	return result;
+};
+
+},{}],24:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4952,7 +4843,145 @@ function warning(message) {
 var Suggestions = require('./src/suggestions');
 window.Suggestions = module.exports = Suggestions;
 
-},{"./src/suggestions":25}],24:[function(require,module,exports){
+},{"./src/suggestions":27}],25:[function(require,module,exports){
+/*
+ * Fuzzy
+ * https://github.com/myork/fuzzy
+ *
+ * Copyright (c) 2012 Matt York
+ * Licensed under the MIT license.
+ */
+
+(function() {
+
+var root = this;
+
+var fuzzy = {};
+
+// Use in node or in browser
+if (typeof exports !== 'undefined') {
+  module.exports = fuzzy;
+} else {
+  root.fuzzy = fuzzy;
+}
+
+// Return all elements of `array` that have a fuzzy
+// match against `pattern`.
+fuzzy.simpleFilter = function(pattern, array) {
+  return array.filter(function(string) {
+    return fuzzy.test(pattern, string);
+  });
+};
+
+// Does `pattern` fuzzy match `string`?
+fuzzy.test = function(pattern, string) {
+  return fuzzy.match(pattern, string) !== null;
+};
+
+// If `pattern` matches `string`, wrap each matching character
+// in `opts.pre` and `opts.post`. If no match, return null
+fuzzy.match = function(pattern, string, opts) {
+  opts = opts || {};
+  var patternIdx = 0
+    , result = []
+    , len = string.length
+    , totalScore = 0
+    , currScore = 0
+    // prefix
+    , pre = opts.pre || ''
+    // suffix
+    , post = opts.post || ''
+    // String to compare against. This might be a lowercase version of the
+    // raw string
+    , compareString =  opts.caseSensitive && string || string.toLowerCase()
+    , ch, compareChar;
+
+  pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
+
+  // For each character in the string, either add it to the result
+  // or wrap in template if it's the next string in the pattern
+  for(var idx = 0; idx < len; idx++) {
+    ch = string[idx];
+    if(compareString[idx] === pattern[patternIdx]) {
+      ch = pre + ch + post;
+      patternIdx += 1;
+
+      // consecutive characters should increase the score more than linearly
+      currScore += 1 + currScore;
+    } else {
+      currScore = 0;
+    }
+    totalScore += currScore;
+    result[result.length] = ch;
+  }
+
+  // return rendered string if we have a match for every char
+  if(patternIdx === pattern.length) {
+    return {rendered: result.join(''), score: totalScore};
+  }
+
+  return null;
+};
+
+// The normal entry point. Filters `arr` for matches against `pattern`.
+// It returns an array with matching values of the type:
+//
+//     [{
+//         string:   '<b>lah' // The rendered string
+//       , index:    2        // The index of the element in `arr`
+//       , original: 'blah'   // The original element in `arr`
+//     }]
+//
+// `opts` is an optional argument bag. Details:
+//
+//    opts = {
+//        // string to put before a matching character
+//        pre:     '<b>'
+//
+//        // string to put after matching character
+//      , post:    '</b>'
+//
+//        // Optional function. Input is an entry in the given arr`,
+//        // output should be the string to test `pattern` against.
+//        // In this example, if `arr = [{crying: 'koala'}]` we would return
+//        // 'koala'.
+//      , extract: function(arg) { return arg.crying; }
+//    }
+fuzzy.filter = function(pattern, arr, opts) {
+  opts = opts || {};
+  return arr
+    .reduce(function(prev, element, idx, arr) {
+      var str = element;
+      if(opts.extract) {
+        str = opts.extract(element);
+      }
+      var rendered = fuzzy.match(pattern, str, opts);
+      if(rendered != null) {
+        prev[prev.length] = {
+            string: rendered.rendered
+          , score: rendered.score
+          , index: idx
+          , original: element
+        };
+      }
+      return prev;
+    }, [])
+
+    // Sort by score. Browsers are inconsistent wrt stable/unstable
+    // sorting, so force stable by using the index in the case of tie.
+    // See http://ofb.net/~sethml/is-sort-stable.html
+    .sort(function(a,b) {
+      var compare = b.score - a.score;
+      if(compare) return compare;
+      return a.index - b.index;
+    });
+};
+
+
+}());
+
+
+},{}],26:[function(require,module,exports){
 'Use strict';
 
 var List = function(component) {
@@ -5039,7 +5068,7 @@ List.prototype.next = function() {
 
 module.exports = List;
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 var extend = require('xtend');
@@ -5229,36 +5258,7 @@ Suggestions.prototype.getItemValue = function(item) {
 
 module.exports = Suggestions;
 
-},{"./list":24,"fuzzy":3,"xtend":30}],26:[function(require,module,exports){
-(function (global){
-/* global window */
-'use strict';
-
-module.exports = require('./ponyfill')(global || window || this);
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill":27}],27:[function(require,module,exports){
-'use strict';
-
-module.exports = function symbolObservablePonyfill(root) {
-	var result;
-	var Symbol = root.Symbol;
-
-	if (typeof Symbol === 'function') {
-		if (Symbol.observable) {
-			result = Symbol.observable;
-		} else {
-			result = Symbol('observable');
-			Symbol.observable = result;
-		}
-	} else {
-		result = '@@observable';
-	}
-
-	return result;
-};
-
-},{}],28:[function(require,module,exports){
+},{"./list":26,"fuzzy":25,"xtend":30}],28:[function(require,module,exports){
 var each = require('turf-meta').coordEach;
 
 /**
@@ -6231,7 +6231,7 @@ Geocoder.prototype = {
 
 module.exports = Geocoder;
 
-},{"events":2,"lodash.debounce":5,"suggestions":23,"xtend":30}],34:[function(require,module,exports){
+},{"events":2,"lodash.debounce":3,"suggestions":24,"xtend":30}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6435,7 +6435,7 @@ var Inputs = function () {
 
 exports.default = Inputs;
 
-},{"./geocoder":33,"lodash.isequal":6,"lodash.template":7,"turf-extent":28}],35:[function(require,module,exports){
+},{"./geocoder":33,"lodash.isequal":4,"lodash.template":5,"turf-extent":28}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6561,7 +6561,7 @@ var Instructions = function () {
 
 exports.default = Instructions;
 
-},{"../utils":39,"lodash.isequal":6,"lodash.template":7}],36:[function(require,module,exports){
+},{"../utils":39,"lodash.isequal":4,"lodash.template":5}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7135,7 +7135,7 @@ var Directions = function () {
 
 exports.default = Directions;
 
-},{"./actions":31,"./controls/inputs":34,"./controls/instructions":35,"./directions_style":37,"./reducers":38,"./utils":39,"polyline":14,"redux":21,"redux-thunk":15}],37:[function(require,module,exports){
+},{"./actions":31,"./controls/inputs":34,"./controls/instructions":35,"./directions_style":37,"./reducers":38,"./utils":39,"polyline":8,"redux":15,"redux-thunk":9}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

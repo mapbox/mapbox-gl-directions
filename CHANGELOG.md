@@ -1,3 +1,8 @@
+## 2.2.0
+- [feature] Defer mapboxgl dependency til runtime to support webpack async loading #86 https://github.com/mapbox/mapbox-gl-directions/pull/86
+- [bug] Fix mapboxgl.GeoJSONSource deprecation in gl-js v.22 and map.load race condition
+
+
 ## 2.1.0
 
 - [bug] Warn if mapboxgl is not present [#66](https://github.com/mapbox/mapbox-gl-directions/issues/66)
