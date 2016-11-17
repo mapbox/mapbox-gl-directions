@@ -37,7 +37,7 @@ if (window.mapboxgl) {
    * @return {Directions} `this`
    */
 
-},{"./src/directions":36}],2:[function(require,module,exports){
+},{"./src/directions":42}],2:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -3996,13 +3996,13 @@ exports.__esModule = true;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-exports["default"] = applyMiddleware;
+exports['default'] = applyMiddleware;
 
 var _compose = require('./compose');
 
 var _compose2 = _interopRequireDefault(_compose);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 /**
  * Creates a store enhancer that applies middleware to the dispatch method
@@ -4026,8 +4026,8 @@ function applyMiddleware() {
   }
 
   return function (createStore) {
-    return function (reducer, initialState, enhancer) {
-      var store = createStore(reducer, initialState, enhancer);
+    return function (reducer, preloadedState, enhancer) {
+      var store = createStore(reducer, preloadedState, enhancer);
       var _dispatch = store.dispatch;
       var chain = [];
 
@@ -4040,7 +4040,7 @@ function applyMiddleware() {
       chain = middlewares.map(function (middleware) {
         return middleware(middlewareAPI);
       });
-      _dispatch = _compose2["default"].apply(undefined, chain)(store.dispatch);
+      _dispatch = _compose2['default'].apply(undefined, chain)(store.dispatch);
 
       return _extends({}, store, {
         dispatch: _dispatch
@@ -4052,7 +4052,7 @@ function applyMiddleware() {
 'use strict';
 
 exports.__esModule = true;
-exports["default"] = bindActionCreators;
+exports['default'] = bindActionCreators;
 function bindActionCreator(actionCreator, dispatch) {
   return function () {
     return dispatch(actionCreator.apply(undefined, arguments));
@@ -4104,7 +4104,7 @@ function bindActionCreators(actionCreators, dispatch) {
 'use strict';
 
 exports.__esModule = true;
-exports["default"] = combineReducers;
+exports['default'] = combineReducers;
 
 var _createStore = require('./createStore');
 
@@ -4116,7 +4116,7 @@ var _warning = require('./utils/warning');
 
 var _warning2 = _interopRequireDefault(_warning);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 function getUndefinedStateErrorMessage(key, action) {
   var actionType = action && action.type;
@@ -4125,20 +4125,24 @@ function getUndefinedStateErrorMessage(key, action) {
   return 'Given action ' + actionName + ', reducer "' + key + '" returned undefined. ' + 'To ignore an action, you must explicitly return the previous state.';
 }
 
-function getUnexpectedStateShapeWarningMessage(inputState, reducers, action) {
+function getUnexpectedStateShapeWarningMessage(inputState, reducers, action, unexpectedKeyCache) {
   var reducerKeys = Object.keys(reducers);
-  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'initialState argument passed to createStore' : 'previous state received by the reducer';
+  var argumentName = action && action.type === _createStore.ActionTypes.INIT ? 'preloadedState argument passed to createStore' : 'previous state received by the reducer';
 
   if (reducerKeys.length === 0) {
     return 'Store does not have a valid reducer. Make sure the argument passed ' + 'to combineReducers is an object whose values are reducers.';
   }
 
-  if (!(0, _isPlainObject2["default"])(inputState)) {
+  if (!(0, _isPlainObject2['default'])(inputState)) {
     return 'The ' + argumentName + ' has unexpected type of "' + {}.toString.call(inputState).match(/\s([a-z|A-Z]+)/)[1] + '". Expected argument to be an object with the following ' + ('keys: "' + reducerKeys.join('", "') + '"');
   }
 
   var unexpectedKeys = Object.keys(inputState).filter(function (key) {
-    return !reducers.hasOwnProperty(key);
+    return !reducers.hasOwnProperty(key) && !unexpectedKeyCache[key];
+  });
+
+  unexpectedKeys.forEach(function (key) {
+    unexpectedKeyCache[key] = true;
   });
 
   if (unexpectedKeys.length > 0) {
@@ -4183,11 +4187,22 @@ function combineReducers(reducers) {
   var finalReducers = {};
   for (var i = 0; i < reducerKeys.length; i++) {
     var key = reducerKeys[i];
+
+    if ("production" !== 'production') {
+      if (typeof reducers[key] === 'undefined') {
+        (0, _warning2['default'])('No reducer provided for key "' + key + '"');
+      }
+    }
+
     if (typeof reducers[key] === 'function') {
       finalReducers[key] = reducers[key];
     }
   }
   var finalReducerKeys = Object.keys(finalReducers);
+
+  if ("production" !== 'production') {
+    var unexpectedKeyCache = {};
+  }
 
   var sanityError;
   try {
@@ -4205,9 +4220,9 @@ function combineReducers(reducers) {
     }
 
     if ("production" !== 'production') {
-      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action);
+      var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action, unexpectedKeyCache);
       if (warningMessage) {
-        (0, _warning2["default"])(warningMessage);
+        (0, _warning2['default'])(warningMessage);
       }
     }
 
@@ -4228,7 +4243,7 @@ function combineReducers(reducers) {
     return hasChanged ? nextState : state;
   };
 }
-},{"./createStore":14,"./utils/warning":16,"lodash/isPlainObject":21}],13:[function(require,module,exports){
+},{"./createStore":14,"./utils/warning":16,"lodash/isPlainObject":26}],13:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -4253,28 +4268,26 @@ function compose() {
     return function (arg) {
       return arg;
     };
-  } else {
-    var _ret = function () {
-      var last = funcs[funcs.length - 1];
-      var rest = funcs.slice(0, -1);
-      return {
-        v: function v() {
-          return rest.reduceRight(function (composed, f) {
-            return f(composed);
-          }, last.apply(undefined, arguments));
-        }
-      };
-    }();
-
-    if (typeof _ret === "object") return _ret.v;
   }
+
+  if (funcs.length === 1) {
+    return funcs[0];
+  }
+
+  var last = funcs[funcs.length - 1];
+  var rest = funcs.slice(0, -1);
+  return function () {
+    return rest.reduceRight(function (composed, f) {
+      return f(composed);
+    }, last.apply(undefined, arguments));
+  };
 }
 },{}],14:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
 exports.ActionTypes = undefined;
-exports["default"] = createStore;
+exports['default'] = createStore;
 
 var _isPlainObject = require('lodash/isPlainObject');
 
@@ -4284,7 +4297,7 @@ var _symbolObservable = require('symbol-observable');
 
 var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 /**
  * These are private action types reserved by Redux.
@@ -4307,7 +4320,7 @@ var ActionTypes = exports.ActionTypes = {
  * @param {Function} reducer A function that returns the next state tree, given
  * the current state tree and the action to handle.
  *
- * @param {any} [initialState] The initial state. You may optionally specify it
+ * @param {any} [preloadedState] The initial state. You may optionally specify it
  * to hydrate the state from the server in universal apps, or to restore a
  * previously serialized user session.
  * If you use `combineReducers` to produce the root reducer function, this must be
@@ -4321,12 +4334,12 @@ var ActionTypes = exports.ActionTypes = {
  * @returns {Store} A Redux store that lets you read the state, dispatch actions
  * and subscribe to changes.
  */
-function createStore(reducer, initialState, enhancer) {
+function createStore(reducer, preloadedState, enhancer) {
   var _ref2;
 
-  if (typeof initialState === 'function' && typeof enhancer === 'undefined') {
-    enhancer = initialState;
-    initialState = undefined;
+  if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+    enhancer = preloadedState;
+    preloadedState = undefined;
   }
 
   if (typeof enhancer !== 'undefined') {
@@ -4334,7 +4347,7 @@ function createStore(reducer, initialState, enhancer) {
       throw new Error('Expected the enhancer to be a function.');
     }
 
-    return enhancer(createStore)(reducer, initialState);
+    return enhancer(createStore)(reducer, preloadedState);
   }
 
   if (typeof reducer !== 'function') {
@@ -4342,7 +4355,7 @@ function createStore(reducer, initialState, enhancer) {
   }
 
   var currentReducer = reducer;
-  var currentState = initialState;
+  var currentState = preloadedState;
   var currentListeners = [];
   var nextListeners = currentListeners;
   var isDispatching = false;
@@ -4434,7 +4447,7 @@ function createStore(reducer, initialState, enhancer) {
    * return something else (for example, a Promise you can await).
    */
   function dispatch(action) {
-    if (!(0, _isPlainObject2["default"])(action)) {
+    if (!(0, _isPlainObject2['default'])(action)) {
       throw new Error('Actions must be plain objects. ' + 'Use custom middleware for async actions.');
     }
 
@@ -4499,7 +4512,6 @@ function createStore(reducer, initialState, enhancer) {
        * be used to unsubscribe the observable from the store, and prevent further
        * emission of values from the observable.
        */
-
       subscribe: function subscribe(observer) {
         if (typeof observer !== 'object') {
           throw new TypeError('Expected the observer to be an object.');
@@ -4515,7 +4527,7 @@ function createStore(reducer, initialState, enhancer) {
         var unsubscribe = outerSubscribe(observeState);
         return { unsubscribe: unsubscribe };
       }
-    }, _ref[_symbolObservable2["default"]] = function () {
+    }, _ref[_symbolObservable2['default']] = function () {
       return this;
     }, _ref;
   }
@@ -4530,9 +4542,9 @@ function createStore(reducer, initialState, enhancer) {
     subscribe: subscribe,
     getState: getState,
     replaceReducer: replaceReducer
-  }, _ref2[_symbolObservable2["default"]] = observable, _ref2;
+  }, _ref2[_symbolObservable2['default']] = observable, _ref2;
 }
-},{"lodash/isPlainObject":21,"symbol-observable":22}],15:[function(require,module,exports){
+},{"lodash/isPlainObject":26,"symbol-observable":27}],15:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4562,7 +4574,7 @@ var _warning = require('./utils/warning');
 
 var _warning2 = _interopRequireDefault(_warning);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 /*
 * This is a dummy function to check if the function name has been altered by minification.
@@ -4571,19 +4583,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
 function isCrushed() {}
 
 if ("production" !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
-  (0, _warning2["default"])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
+  (0, _warning2['default'])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
 }
 
-exports.createStore = _createStore2["default"];
-exports.combineReducers = _combineReducers2["default"];
-exports.bindActionCreators = _bindActionCreators2["default"];
-exports.applyMiddleware = _applyMiddleware2["default"];
-exports.compose = _compose2["default"];
+exports.createStore = _createStore2['default'];
+exports.combineReducers = _combineReducers2['default'];
+exports.bindActionCreators = _bindActionCreators2['default'];
+exports.applyMiddleware = _applyMiddleware2['default'];
+exports.compose = _compose2['default'];
 },{"./applyMiddleware":10,"./bindActionCreators":11,"./combineReducers":12,"./compose":13,"./createStore":14,"./utils/warning":16}],16:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
-exports["default"] = warning;
+exports['default'] = warning;
 /**
  * Prints a warning in the console if it exists.
  *
@@ -4606,6 +4618,53 @@ function warning(message) {
   /* eslint-enable no-empty */
 }
 },{}],17:[function(require,module,exports){
+var root = require('./_root');
+
+/** Built-in value references. */
+var Symbol = root.Symbol;
+
+module.exports = Symbol;
+
+},{"./_root":24}],18:[function(require,module,exports){
+var Symbol = require('./_Symbol'),
+    getRawTag = require('./_getRawTag'),
+    objectToString = require('./_objectToString');
+
+/** `Object#toString` result references. */
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * The base implementation of `getTag` without fallbacks for buggy environments.
+ *
+ * @private
+ * @param {*} value The value to query.
+ * @returns {string} Returns the `toStringTag`.
+ */
+function baseGetTag(value) {
+  if (value == null) {
+    return value === undefined ? undefinedTag : nullTag;
+  }
+  value = Object(value);
+  return (symToStringTag && symToStringTag in value)
+    ? getRawTag(value)
+    : objectToString(value);
+}
+
+module.exports = baseGetTag;
+
+},{"./_Symbol":17,"./_getRawTag":21,"./_objectToString":22}],19:[function(require,module,exports){
+(function (global){
+/** Detect free variable `global` from Node.js. */
+var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
+
+module.exports = freeGlobal;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],20:[function(require,module,exports){
 var overArg = require('./_overArg');
 
 /** Built-in value references. */
@@ -4613,29 +4672,79 @@ var getPrototype = overArg(Object.getPrototypeOf, Object);
 
 module.exports = getPrototype;
 
-},{"./_overArg":19}],18:[function(require,module,exports){
+},{"./_overArg":23}],21:[function(require,module,exports){
+var Symbol = require('./_Symbol');
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
 /**
- * Checks if `value` is a host object in IE < 9.
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/** Built-in value references. */
+var symToStringTag = Symbol ? Symbol.toStringTag : undefined;
+
+/**
+ * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
  *
  * @private
- * @param {*} value The value to check.
- * @returns {boolean} Returns `true` if `value` is a host object, else `false`.
+ * @param {*} value The value to query.
+ * @returns {string} Returns the raw `toStringTag`.
  */
-function isHostObject(value) {
-  // Many host objects are `Object` objects that can coerce to strings
-  // despite having improperly defined `toString` methods.
-  var result = false;
-  if (value != null && typeof value.toString != 'function') {
-    try {
-      result = !!(value + '');
-    } catch (e) {}
+function getRawTag(value) {
+  var isOwn = hasOwnProperty.call(value, symToStringTag),
+      tag = value[symToStringTag];
+
+  try {
+    value[symToStringTag] = undefined;
+    var unmasked = true;
+  } catch (e) {}
+
+  var result = nativeObjectToString.call(value);
+  if (unmasked) {
+    if (isOwn) {
+      value[symToStringTag] = tag;
+    } else {
+      delete value[symToStringTag];
+    }
   }
   return result;
 }
 
-module.exports = isHostObject;
+module.exports = getRawTag;
 
-},{}],19:[function(require,module,exports){
+},{"./_Symbol":17}],22:[function(require,module,exports){
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the
+ * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var nativeObjectToString = objectProto.toString;
+
+/**
+ * Converts `value` to a string using `Object.prototype.toString`.
+ *
+ * @private
+ * @param {*} value The value to convert.
+ * @returns {string} Returns the converted string.
+ */
+function objectToString(value) {
+  return nativeObjectToString.call(value);
+}
+
+module.exports = objectToString;
+
+},{}],23:[function(require,module,exports){
 /**
  * Creates a unary function that invokes `func` with its argument transformed.
  *
@@ -4652,7 +4761,18 @@ function overArg(func, transform) {
 
 module.exports = overArg;
 
-},{}],20:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
+var freeGlobal = require('./_freeGlobal');
+
+/** Detect free variable `self`. */
+var freeSelf = typeof self == 'object' && self && self.Object === Object && self;
+
+/** Used as a reference to the global object. */
+var root = freeGlobal || freeSelf || Function('return this')();
+
+module.exports = root;
+
+},{"./_freeGlobal":19}],25:[function(require,module,exports){
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
@@ -4678,14 +4798,14 @@ module.exports = overArg;
  * // => false
  */
 function isObjectLike(value) {
-  return !!value && typeof value == 'object';
+  return value != null && typeof value == 'object';
 }
 
 module.exports = isObjectLike;
 
-},{}],21:[function(require,module,exports){
-var getPrototype = require('./_getPrototype'),
-    isHostObject = require('./_isHostObject'),
+},{}],26:[function(require,module,exports){
+var baseGetTag = require('./_baseGetTag'),
+    getPrototype = require('./_getPrototype'),
     isObjectLike = require('./isObjectLike');
 
 /** `Object#toString` result references. */
@@ -4703,13 +4823,6 @@ var hasOwnProperty = objectProto.hasOwnProperty;
 
 /** Used to infer the `Object` constructor. */
 var objectCtorString = funcToString.call(Object);
-
-/**
- * Used to resolve the
- * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
- * of values.
- */
-var objectToString = objectProto.toString;
 
 /**
  * Checks if `value` is a plain object, that is, an object created by the
@@ -4740,8 +4853,7 @@ var objectToString = objectProto.toString;
  * // => true
  */
 function isPlainObject(value) {
-  if (!isObjectLike(value) ||
-      objectToString.call(value) != objectTag || isHostObject(value)) {
+  if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
     return false;
   }
   var proto = getPrototype(value);
@@ -4749,33 +4861,64 @@ function isPlainObject(value) {
     return true;
   }
   var Ctor = hasOwnProperty.call(proto, 'constructor') && proto.constructor;
-  return (typeof Ctor == 'function' &&
-    Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString);
+  return typeof Ctor == 'function' && Ctor instanceof Ctor &&
+    funcToString.call(Ctor) == objectCtorString;
 }
 
 module.exports = isPlainObject;
 
-},{"./_getPrototype":17,"./_isHostObject":18,"./isObjectLike":20}],22:[function(require,module,exports){
+},{"./_baseGetTag":18,"./_getPrototype":20,"./isObjectLike":25}],27:[function(require,module,exports){
+module.exports = require('./lib/index');
+
+},{"./lib/index":28}],28:[function(require,module,exports){
 (function (global){
-/* global window */
 'use strict';
 
-module.exports = require('./ponyfill')(global || window || this);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
+var _ponyfill = require('./ponyfill');
+
+var _ponyfill2 = _interopRequireDefault(_ponyfill);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+var root; /* global window */
+
+
+if (typeof self !== 'undefined') {
+  root = self;
+} else if (typeof window !== 'undefined') {
+  root = window;
+} else if (typeof global !== 'undefined') {
+  root = global;
+} else if (typeof module !== 'undefined') {
+  root = module;
+} else {
+  root = Function('return this')();
+}
+
+var result = (0, _ponyfill2['default'])(root);
+exports['default'] = result;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill":23}],23:[function(require,module,exports){
+},{"./ponyfill":29}],29:[function(require,module,exports){
 'use strict';
 
-module.exports = function symbolObservablePonyfill(root) {
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports['default'] = symbolObservablePonyfill;
+function symbolObservablePonyfill(root) {
 	var result;
-	var Symbol = root.Symbol;
+	var _Symbol = root.Symbol;
 
-	if (typeof Symbol === 'function') {
-		if (Symbol.observable) {
-			result = Symbol.observable;
+	if (typeof _Symbol === 'function') {
+		if (_Symbol.observable) {
+			result = _Symbol.observable;
 		} else {
-			result = Symbol('observable');
-			Symbol.observable = result;
+			result = _Symbol('observable');
+			_Symbol.observable = result;
 		}
 	} else {
 		result = '@@observable';
@@ -4783,8 +4926,7 @@ module.exports = function symbolObservablePonyfill(root) {
 
 	return result;
 };
-
-},{}],24:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4843,7 +4985,7 @@ module.exports = function symbolObservablePonyfill(root) {
 var Suggestions = require('./src/suggestions');
 window.Suggestions = module.exports = Suggestions;
 
-},{"./src/suggestions":27}],25:[function(require,module,exports){
+},{"./src/suggestions":33}],31:[function(require,module,exports){
 /*
  * Fuzzy
  * https://github.com/myork/fuzzy
@@ -4868,23 +5010,23 @@ if (typeof exports !== 'undefined') {
 // Return all elements of `array` that have a fuzzy
 // match against `pattern`.
 fuzzy.simpleFilter = function(pattern, array) {
-  return array.filter(function(string) {
-    return fuzzy.test(pattern, string);
+  return array.filter(function(str) {
+    return fuzzy.test(pattern, str);
   });
 };
 
-// Does `pattern` fuzzy match `string`?
-fuzzy.test = function(pattern, string) {
-  return fuzzy.match(pattern, string) !== null;
+// Does `pattern` fuzzy match `str`?
+fuzzy.test = function(pattern, str) {
+  return fuzzy.match(pattern, str) !== null;
 };
 
-// If `pattern` matches `string`, wrap each matching character
+// If `pattern` matches `str`, wrap each matching character
 // in `opts.pre` and `opts.post`. If no match, return null
-fuzzy.match = function(pattern, string, opts) {
+fuzzy.match = function(pattern, str, opts) {
   opts = opts || {};
   var patternIdx = 0
     , result = []
-    , len = string.length
+    , len = str.length
     , totalScore = 0
     , currScore = 0
     // prefix
@@ -4893,15 +5035,15 @@ fuzzy.match = function(pattern, string, opts) {
     , post = opts.post || ''
     // String to compare against. This might be a lowercase version of the
     // raw string
-    , compareString =  opts.caseSensitive && string || string.toLowerCase()
-    , ch, compareChar;
+    , compareString =  opts.caseSensitive && str || str.toLowerCase()
+    , ch;
 
   pattern = opts.caseSensitive && pattern || pattern.toLowerCase();
 
   // For each character in the string, either add it to the result
   // or wrap in template if it's the next string in the pattern
   for(var idx = 0; idx < len; idx++) {
-    ch = string[idx];
+    ch = str[idx];
     if(compareString[idx] === pattern[patternIdx]) {
       ch = pre + ch + post;
       patternIdx += 1;
@@ -4917,6 +5059,8 @@ fuzzy.match = function(pattern, string, opts) {
 
   // return rendered string if we have a match for every char
   if(patternIdx === pattern.length) {
+    // if the string is an exact match with pattern, totalScore should be maxed
+    totalScore = (compareString === pattern) ? Infinity : totalScore;
     return {rendered: result.join(''), score: totalScore};
   }
 
@@ -4948,6 +5092,12 @@ fuzzy.match = function(pattern, string, opts) {
 //      , extract: function(arg) { return arg.crying; }
 //    }
 fuzzy.filter = function(pattern, arr, opts) {
+  if(!arr || arr.length === 0) {
+    return [];
+  }
+  if (typeof pattern !== 'string') {
+    return arr;
+  }
   opts = opts || {};
   return arr
     .reduce(function(prev, element, idx, arr) {
@@ -4981,7 +5131,7 @@ fuzzy.filter = function(pattern, arr, opts) {
 }());
 
 
-},{}],26:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'Use strict';
 
 var List = function(component) {
@@ -5068,7 +5218,7 @@ List.prototype.next = function() {
 
 module.exports = List;
 
-},{}],27:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 'use strict';
 
 var extend = require('xtend');
@@ -5258,7 +5408,7 @@ Suggestions.prototype.getItemValue = function(item) {
 
 module.exports = Suggestions;
 
-},{"./list":26,"fuzzy":25,"xtend":30}],28:[function(require,module,exports){
+},{"./list":32,"fuzzy":31,"xtend":36}],34:[function(require,module,exports){
 var each = require('turf-meta').coordEach;
 
 /**
@@ -5328,7 +5478,7 @@ module.exports = function(layer) {
     return extent;
 };
 
-},{"turf-meta":29}],29:[function(require,module,exports){
+},{"turf-meta":35}],35:[function(require,module,exports){
 /**
  * Lazily iterate over coordinates in any GeoJSON object, similar to
  * Array.forEach.
@@ -5468,7 +5618,7 @@ function propReduce(layer, callback, memo) {
 }
 module.exports.propReduce = propReduce;
 
-},{}],30:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -5489,7 +5639,7 @@ function extend() {
     return target
 }
 
-},{}],31:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5580,12 +5730,11 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return function (dispatch, getState) {
-    var _getState = getState();
-
-    var api = _getState.api;
-    var accessToken = _getState.accessToken;
-    var routeIndex = _getState.routeIndex;
-    var profile = _getState.profile;
+    var _getState = getState(),
+        api = _getState.api,
+        accessToken = _getState.accessToken,
+        routeIndex = _getState.routeIndex,
+        profile = _getState.profile;
 
     var query = buildDirectionsQuery(getState);
 
@@ -5638,12 +5787,10 @@ function fetchDirections() {
  * @param {Function} state
  */
 function buildDirectionsQuery(state) {
-  var _state = state();
-
-  var origin = _state.origin;
-  var destination = _state.destination;
-  var waypoints = _state.waypoints;
-
+  var _state = state(),
+      origin = _state.origin,
+      destination = _state.destination,
+      waypoints = _state.waypoints;
 
   var query = [];
   query = query.concat(origin.geometry.coordinates);
@@ -5749,9 +5896,8 @@ function setRouteIndex(routeIndex) {
 
 function createOrigin(coordinates) {
   return function (dispatch, getState) {
-    var _getState2 = getState();
-
-    var destination = _getState2.destination;
+    var _getState2 = getState(),
+        destination = _getState2.destination;
 
     dispatch(originPoint(coordinates));
     if (destination.geometry) dispatch(fetchDirections());
@@ -5760,9 +5906,8 @@ function createOrigin(coordinates) {
 
 function createDestination(coordinates) {
   return function (dispatch, getState) {
-    var _getState3 = getState();
-
-    var origin = _getState3.origin;
+    var _getState3 = getState(),
+        origin = _getState3.origin;
 
     dispatch(destinationPoint(coordinates));
     if (origin.geometry) dispatch(fetchDirections());
@@ -5771,10 +5916,9 @@ function createDestination(coordinates) {
 
 function setProfile(profile) {
   return function (dispatch, getState) {
-    var _getState4 = getState();
-
-    var origin = _getState4.origin;
-    var destination = _getState4.destination;
+    var _getState4 = getState(),
+        origin = _getState4.origin,
+        destination = _getState4.destination;
 
     dispatch({ type: types.DIRECTIONS_PROFILE, profile: profile });
     dispatch(eventEmit('profile', { profile: profile }));
@@ -5821,10 +5965,9 @@ function setDestinationFromCoordinates(coords) {
 
 function addWaypoint(index, waypoint) {
   return function (dispatch, getState) {
-    var _getState5 = getState();
-
-    var destination = _getState5.destination;
-    var waypoints = _getState5.waypoints;
+    var _getState5 = getState(),
+        destination = _getState5.destination,
+        waypoints = _getState5.waypoints;
 
     waypoints.splice(index, 0, normalizeWaypoint(waypoint));
     dispatch(updateWaypoints(waypoints));
@@ -5834,10 +5977,9 @@ function addWaypoint(index, waypoint) {
 
 function setWaypoint(index, waypoint) {
   return function (dispatch, getState) {
-    var _getState6 = getState();
-
-    var destination = _getState6.destination;
-    var waypoints = _getState6.waypoints;
+    var _getState6 = getState(),
+        destination = _getState6.destination,
+        waypoints = _getState6.waypoints;
 
     waypoints[index] = normalizeWaypoint(waypoint);
     dispatch(updateWaypoints(waypoints));
@@ -5847,10 +5989,9 @@ function setWaypoint(index, waypoint) {
 
 function removeWaypoint(waypoint) {
   return function (dispatch, getState) {
-    var _getState7 = getState();
-
-    var destination = _getState7.destination;
-    var waypoints = _getState7.waypoints;
+    var _getState7 = getState(),
+        destination = _getState7.destination,
+        waypoints = _getState7.waypoints;
 
     waypoints = waypoints.filter(function (way) {
       return !_utils2.default.coordinateMatch(way, waypoint);
@@ -5863,9 +6004,8 @@ function removeWaypoint(waypoint) {
 
 function eventSubscribe(type, fn) {
   return function (dispatch, getState) {
-    var _getState8 = getState();
-
-    var events = _getState8.events;
+    var _getState8 = getState(),
+        events = _getState8.events;
 
     events[type] = events[type] || [];
     events[type].push(fn);
@@ -5880,10 +6020,8 @@ function eventEmit(type, data) {
   var _this = this;
 
   return function (dispatch, getState) {
-    var _getState9 = getState();
-
-    var events = _getState9.events;
-
+    var _getState9 = getState(),
+        events = _getState9.events;
 
     if (!events[type]) {
       return {
@@ -5900,7 +6038,7 @@ function eventEmit(type, data) {
   };
 }
 
-},{"../constants/action_types":32,"../utils":39}],32:[function(require,module,exports){
+},{"../constants/action_types":38,"../utils":45}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5923,10 +6061,10 @@ var ROUTE_INDEX = exports.ROUTE_INDEX = 'ROUTE_INDEX';
 var SET_OPTIONS = exports.SET_OPTIONS = 'SET_OPTIONS';
 var WAYPOINTS = exports.WAYPOINTS = 'WAYPOINTS';
 
-},{}],33:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var Typeahead = require('suggestions');
 var debounce = require('lodash.debounce');
@@ -6231,7 +6369,7 @@ Geocoder.prototype = {
 
 module.exports = Geocoder;
 
-},{"events":2,"lodash.debounce":3,"suggestions":24,"xtend":30}],34:[function(require,module,exports){
+},{"events":2,"lodash.debounce":3,"suggestions":30,"xtend":36}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6277,12 +6415,10 @@ var Inputs = function () {
   function Inputs(el, store, actions, map) {
     _classCallCheck(this, Inputs);
 
-    var _store$getState = store.getState();
-
-    var originQuery = _store$getState.originQuery;
-    var destinationQuery = _store$getState.destinationQuery;
-    var profile = _store$getState.profile;
-
+    var _store$getState = store.getState(),
+        originQuery = _store$getState.originQuery,
+        destinationQuery = _store$getState.destinationQuery,
+        profile = _store$getState.profile;
 
     el.innerHTML = tmpl({
       originQuery: originQuery,
@@ -6302,11 +6438,9 @@ var Inputs = function () {
   _createClass(Inputs, [{
     key: 'animateToCoordinates',
     value: function animateToCoordinates(mode, coords) {
-      var _store$getState2 = this.store.getState();
-
-      var origin = _store$getState2.origin;
-      var destination = _store$getState2.destination;
-
+      var _store$getState2 = this.store.getState(),
+          origin = _store$getState2.origin,
+          destination = _store$getState2.destination;
 
       if (origin.geometry && destination.geometry && !(0, _lodash4.default)(origin.geometry, destination.geometry)) {
 
@@ -6326,18 +6460,16 @@ var Inputs = function () {
     value: function onAdd() {
       var _this = this;
 
-      var _actions = this.actions;
-      var clearOrigin = _actions.clearOrigin;
-      var clearDestination = _actions.clearDestination;
-      var createOrigin = _actions.createOrigin;
-      var createDestination = _actions.createDestination;
-      var setProfile = _actions.setProfile;
-      var reverse = _actions.reverse;
+      var _actions = this.actions,
+          clearOrigin = _actions.clearOrigin,
+          clearDestination = _actions.clearDestination,
+          createOrigin = _actions.createOrigin,
+          createDestination = _actions.createDestination,
+          setProfile = _actions.setProfile,
+          reverse = _actions.reverse;
 
-      var _store$getState3 = this.store.getState();
-
-      var geocoder = _store$getState3.geocoder;
-
+      var _store$getState3 = this.store.getState(),
+          geocoder = _store$getState3.geocoder;
 
       this.originInput = new _geocoder2.default(Object.assign({}, {
         flyTo: false,
@@ -6381,10 +6513,9 @@ var Inputs = function () {
 
       // Reversing Origin / Destination
       this.container.querySelector('.js-reverse-inputs').addEventListener('click', function () {
-        var _store$getState4 = _this.store.getState();
-
-        var origin = _store$getState4.origin;
-        var destination = _store$getState4.destination;
+        var _store$getState4 = _this.store.getState(),
+            origin = _store$getState4.origin,
+            destination = _store$getState4.destination;
 
         if (origin) _this.actions.queryDestination(origin.geometry.coordinates);
         if (destination) _this.actions.queryOrigin(destination.geometry.coordinates);
@@ -6397,13 +6528,11 @@ var Inputs = function () {
       var _this2 = this;
 
       this.store.subscribe(function () {
-        var _store$getState5 = _this2.store.getState();
-
-        var originQuery = _store$getState5.originQuery;
-        var destinationQuery = _store$getState5.destinationQuery;
-        var originQueryCoordinates = _store$getState5.originQueryCoordinates;
-        var destinationQueryCoordinates = _store$getState5.destinationQueryCoordinates;
-
+        var _store$getState5 = _this2.store.getState(),
+            originQuery = _store$getState5.originQuery,
+            destinationQuery = _store$getState5.destinationQuery,
+            originQueryCoordinates = _store$getState5.originQueryCoordinates,
+            destinationQueryCoordinates = _store$getState5.destinationQueryCoordinates;
 
         if (originQuery) {
           _this2.originInput.query(originQuery);
@@ -6435,7 +6564,7 @@ var Inputs = function () {
 
 exports.default = Inputs;
 
-},{"./geocoder":33,"lodash.isequal":4,"lodash.template":5,"turf-extent":28}],35:[function(require,module,exports){
+},{"./geocoder":39,"lodash.isequal":4,"lodash.template":5,"turf-extent":34}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6492,16 +6621,15 @@ var Instructions = function () {
       var _this = this;
 
       this.store.subscribe(function () {
-        var _actions = _this.actions;
-        var hoverMarker = _actions.hoverMarker;
-        var setRouteIndex = _actions.setRouteIndex;
+        var _actions = _this.actions,
+            hoverMarker = _actions.hoverMarker,
+            setRouteIndex = _actions.setRouteIndex;
 
-        var _store$getState = _this.store.getState();
-
-        var routeIndex = _store$getState.routeIndex;
-        var unit = _store$getState.unit;
-        var directions = _store$getState.directions;
-        var error = _store$getState.error;
+        var _store$getState = _this.store.getState(),
+            routeIndex = _store$getState.routeIndex,
+            unit = _store$getState.unit,
+            directions = _store$getState.directions,
+            error = _store$getState.error;
 
         var shouldRender = !(0, _lodash4.default)(directions[routeIndex], _this.directions);
 
@@ -6561,7 +6689,7 @@ var Instructions = function () {
 
 exports.default = Instructions;
 
-},{"../utils":39,"lodash.isequal":4,"lodash.template":5}],36:[function(require,module,exports){
+},{"../utils":45,"lodash.isequal":4,"lodash.template":5}],42:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6655,11 +6783,9 @@ var Directions = function () {
 
       this._map = map;
 
-      var _store$getState = store.getState();
-
-      var container = _store$getState.container;
-      var controls = _store$getState.controls;
-
+      var _store$getState = store.getState(),
+          container = _store$getState.container,
+          controls = _store$getState.controls;
 
       this.container = container ? typeof container === 'string' ? document.getElementById(container) : container : this._map.getContainer();
 
@@ -6703,13 +6829,13 @@ var Directions = function () {
     value: function mapState() {
       var _this2 = this;
 
-      var _store$getState2 = store.getState();
-
-      var profile = _store$getState2.profile;
-      var styles = _store$getState2.styles;
-      var interactive = _store$getState2.interactive;
+      var _store$getState2 = store.getState(),
+          profile = _store$getState2.profile,
+          styles = _store$getState2.styles,
+          interactive = _store$getState2.interactive;
 
       // Emit any default or option set config
+
 
       this.actions.eventEmit('profile', { profile: profile });
 
@@ -6748,14 +6874,12 @@ var Directions = function () {
       var _this3 = this;
 
       store.subscribe(function () {
-        var _store$getState3 = store.getState();
-
-        var origin = _store$getState3.origin;
-        var destination = _store$getState3.destination;
-        var hoverMarker = _store$getState3.hoverMarker;
-        var directions = _store$getState3.directions;
-        var routeIndex = _store$getState3.routeIndex;
-
+        var _store$getState3 = store.getState(),
+            origin = _store$getState3.origin,
+            destination = _store$getState3.destination,
+            hoverMarker = _store$getState3.hoverMarker,
+            directions = _store$getState3.directions,
+            routeIndex = _store$getState3.routeIndex;
 
         var geojson = {
           type: 'FeatureCollection',
@@ -6809,9 +6933,8 @@ var Directions = function () {
     value: function _onClick(e) {
       var _this4 = this;
 
-      var _store$getState4 = store.getState();
-
-      var origin = _store$getState4.origin;
+      var _store$getState4 = store.getState(),
+          origin = _store$getState4.origin;
 
       var coords = [e.lngLat.lng, e.lngLat.lat];
 
@@ -6847,10 +6970,8 @@ var Directions = function () {
     value: function _move(e) {
       var _this5 = this;
 
-      var _store$getState5 = store.getState();
-
-      var hoverMarker = _store$getState5.hoverMarker;
-
+      var _store$getState5 = store.getState(),
+          hoverMarker = _store$getState5.hoverMarker;
 
       var features = this._map.queryRenderedFeatures(e.point, {
         layers: ['directions-route-line-alt', 'directions-route-line', 'directions-origin-point', 'directions-destination-point', 'directions-hover-point']
@@ -6911,12 +7032,10 @@ var Directions = function () {
     value: function _onDragUp() {
       if (!this.isDragging) return;
 
-      var _store$getState6 = store.getState();
-
-      var hoverMarker = _store$getState6.hoverMarker;
-      var origin = _store$getState6.origin;
-      var destination = _store$getState6.destination;
-
+      var _store$getState6 = store.getState(),
+          hoverMarker = _store$getState6.hoverMarker,
+          origin = _store$getState6.origin,
+          destination = _store$getState6.destination;
 
       switch (this.isDragging.layer.id) {
         case 'directions-origin-point':
@@ -7088,9 +7207,8 @@ var Directions = function () {
   }, {
     key: 'removeWaypoint',
     value: function removeWaypoint(index) {
-      var _store$getState7 = store.getState();
-
-      var waypoints = _store$getState7.waypoints;
+      var _store$getState7 = store.getState(),
+          waypoints = _store$getState7.waypoints;
 
       this.actions.removeWaypoint(waypoints[index]);
       return this;
@@ -7135,7 +7253,7 @@ var Directions = function () {
 
 exports.default = Directions;
 
-},{"./actions":31,"./controls/inputs":34,"./controls/instructions":35,"./directions_style":37,"./reducers":38,"./utils":39,"polyline":8,"redux":15,"redux-thunk":9}],37:[function(require,module,exports){
+},{"./actions":37,"./controls/inputs":40,"./controls/instructions":41,"./directions_style":43,"./reducers":44,"./utils":45,"polyline":8,"redux":15,"redux-thunk":9}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7251,7 +7369,7 @@ var style = [{
 
 exports.default = style;
 
-},{}],38:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7304,7 +7422,7 @@ var initialState = {
 };
 
 function data() {
-  var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
   var action = arguments[1];
 
   switch (action.type) {
@@ -7396,7 +7514,7 @@ function data() {
 
 exports.default = data;
 
-},{"../constants/action_types.js":32}],39:[function(require,module,exports){
+},{"../constants/action_types.js":38}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

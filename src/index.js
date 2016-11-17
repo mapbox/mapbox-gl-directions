@@ -23,10 +23,6 @@
  * map.addControl(directions);
  * @return {Directions} `this`
  */
-import Directions from './src/directions';
+import MapboxDirections from './directions';
 
-if (window.mapboxgl) {
-  mapboxgl.Directions = Directions;
-} else if (typeof module !== 'undefined') {
-  module.exports = Directions;
-}
+module.exports = MapboxDirections;

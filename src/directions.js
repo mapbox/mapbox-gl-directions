@@ -20,38 +20,41 @@ export default class Directions {
   constructor(options) {
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
+    this.options = options || {};
 
     this.onDragDown = this._onDragDown.bind(this);
     this.onDragMove = this._onDragMove.bind(this);
     this.onDragUp = this._onDragUp.bind(this);
     this.move = this._move.bind(this);
     this.onClick = this._onClick.bind(this);
+
+    console.log('main constructor', this);
   }
 
-  addTo(map) {
-      this._map = map;
-      var container = this._container = this.onAdd(map);
-      if (this.options && this.options.position) {
-          var pos = this.options.position;
-          var corner = map._controlCorners[pos];
-          container.className += ' mapboxgl-ctrl';
-          if (pos.indexOf('bottom') !== -1) {
-              corner.insertBefore(container, corner.firstChild);
-          } else {
-              corner.appendChild(container);
-          }
-      }
+  // addTo(map) {
+  //     this._map = map;
+  //     var container = this._container = this.onAdd(map);
+  //     if (this.options && this.options.position) {
+  //         var pos = this.options.position;
+  //         var corner = map._controlCorners[pos];
+  //         container.className += ' mapboxgl-ctrl';
+  //         if (pos.indexOf('bottom') !== -1) {
+  //             corner.insertBefore(container, corner.firstChild);
+  //         } else {
+  //             corner.appendChild(container);
+  //         }
+  //     }
 
-      return this;
-  }
+  //     return this;
+  // }
 
   onAdd(map) {
     this._map = map;
 
     const { container, controls } = store.getState();
 
-    this.container = container ? typeof container === 'string' ?
-      document.getElementById(container) : container : this._map.getContainer();
+    // this.container = container ? typeof container === 'string' ?
+    //   document.getElementById(container) : container : this._map.getContainer();
 
     // Add controls to the page
     const inputEl = document.createElement('div');
