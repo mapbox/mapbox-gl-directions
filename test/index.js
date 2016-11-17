@@ -2,7 +2,7 @@
 
 const test = require('tape');
 window.mapboxgl = require('mapbox-gl');
-require('../index');
+require('../src/index');
 
 mapboxgl.accessToken = process.env.MapboxAccessToken;
 

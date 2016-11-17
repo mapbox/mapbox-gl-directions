@@ -27,8 +27,6 @@ export default class Directions {
     this.onDragUp = this._onDragUp.bind(this);
     this.move = this._move.bind(this);
     this.onClick = this._onClick.bind(this);
-
-    console.log('main constructor', this);
   }
 
   // addTo(map) {
@@ -50,11 +48,12 @@ export default class Directions {
 
   onAdd(map) {
     this._map = map;
+    console.log(this._map);
 
-    const { container, controls } = store.getState();
+    const { controls } = store.getState();
 
-    // this.container = container ? typeof container === 'string' ?
-    //   document.getElementById(container) : container : this._map.getContainer();
+    var el = document.createElement('div');
+    el.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
 
     // Add controls to the page
     const inputEl = document.createElement('div');
@@ -69,12 +68,14 @@ export default class Directions {
       setRouteIndex: this.actions.setRouteIndex
     }, this._map);
 
-    if (controls.inputs) this.container.appendChild(inputEl);
-    if (controls.instructions) this.container.appendChild(directionsEl);
+    if (controls.inputs) el.appendChild(inputEl);
+    if (controls.instructions) el.appendChild(directionsEl);
 
     this.subscribedActions();
     if (this._map.loaded()) this.mapState()
     else this._map.on('load', () => this.mapState());
+
+    return el;
   }
 
   /**
@@ -357,6 +358,7 @@ export default class Directions {
    */
   setOrigin(query) {
     if (typeof query === 'string') {
+      console.log('this is a query');
       this.actions.queryOrigin(query);
     } else {
       this.actions.setOriginFromCoordinates(query);

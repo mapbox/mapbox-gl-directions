@@ -5,6 +5,8 @@ var debounce = require('lodash.debounce');
 var extend = require('xtend');
 var EventEmitter = require('events').EventEmitter;
 
+import utils from '../utils'
+
 // Mapbox Geocoder version
 var API = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
 
@@ -36,30 +38,14 @@ function Geocoder(options) {
 Geocoder.prototype = {
 
   options: {
-    position: 'top-left',
     placeholder: 'Search',
     zoom: 16,
     flyTo: true
   },
 
-  addTo: function (map) {
-      this._map = map;
-      var container = this._container = this.onAdd(map);
-      if (this.options && this.options.position) {
-          var pos = this.options.position;
-          var corner = map._controlCorners[pos];
-          container.className += ' mapboxgl-ctrl';
-          if (pos.indexOf('bottom') !== -1) {
-              corner.insertBefore(container, corner.firstChild);
-          } else {
-              corner.appendChild(container);
-          }
-      }
-
-      return this;
-  },
-
   onAdd: function(map) {
+    this._map = map;
+
     this.request = new XMLHttpRequest();
 
     this.container = this.options.container ?
@@ -141,6 +127,8 @@ Geocoder.prototype = {
     this._loadingEl.classList.add('active');
     this.fire('loading');
 
+    console.log('geocoder this', this);
+
     var options = [];
     if (this.options.proximity) options.push('proximity=' + this.options.proximity.join());
     if (this.options.bbox) options.push('bbox=' + this.options.bbox.join());
@@ -199,8 +187,8 @@ Geocoder.prototype = {
     if (!input) return;
     if (typeof input === 'object' && input.length) {
       input = [
-        mapboxgl.util.wrap(input[0], -180, 180),
-        mapboxgl.util.wrap(input[1], -180, 180)
+        utils.wrap(input[0]),
+        utils.wrap(input[1])
       ].join();
     }
 
@@ -218,8 +206,8 @@ Geocoder.prototype = {
     if (!input) return;
     if (typeof input === 'object' && input.length) {
       input = [
-        mapboxgl.util.wrap(input[0], -180, 180),
-        mapboxgl.util.wrap(input[1], -180, 180)
+        utils.wrap(input[0]),
+        utils.wrap(input[1])
       ].join();
     }
 

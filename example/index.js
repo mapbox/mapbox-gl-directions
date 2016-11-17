@@ -5,11 +5,15 @@ var insertCss = require('insert-css');
 var fs = require('fs');
 mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
+// var directionsDiv = document.body.appendChild(document.createElement('div'));
+// directionsDiv.id = 'directions';
+
+insertCss(fs.readFileSync('./dist/mapbox-gl-directions.css', 'utf8'));
 insertCss(fs.readFileSync('./node_modules/mapbox-gl/dist/mapbox-gl.css', 'utf8'));
 var mapDiv = document.body.appendChild(document.createElement('div'));
 mapDiv.style = 'position:absolute;top:0;right:0;left:0;bottom:0;';
 
-var map = new mapboxgl.Map({
+var map = window.map = new mapboxgl.Map({
   hash: true,
   container: mapDiv,
   style: 'mapbox://styles/mapbox/streets-v9',
@@ -18,8 +22,6 @@ var map = new mapboxgl.Map({
 });
 
 // ui
-// var button = document.body.appendChild(document.createElement('button'));
-// button.style = 'position:absolute;top:10px;left:10px;z-index:10;';
 var button = document.createElement('button');
 button.style = 'z-index:10;';
 button.textContent = 'click me';
@@ -30,7 +32,8 @@ var directions = new MapboxDirections({
   accessToken: window.localStorage.getItem('MapboxAccessToken'),
   unit: 'metric',
   profile: 'cycling',
-  container: 'directions'
+  container: 'directions',
+  instructions: false
 });
 window.directions = directions;
 
