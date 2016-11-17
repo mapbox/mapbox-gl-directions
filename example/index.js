@@ -1,6 +1,5 @@
 'use strict';
 var mapboxgl = require('mapbox-gl');
-var MapboxGeocoder = require('../src/index');
 var insertCss = require('insert-css');
 var fs = require('fs');
 mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
@@ -23,7 +22,6 @@ var map = window.map = new mapboxgl.Map({
 
 // ui
 var button = document.createElement('button');
-button.style = 'z-index:10;';
 button.textContent = 'click me';
 
 // directions
@@ -31,14 +29,12 @@ var MapboxDirections = require('../src/index');
 var directions = new MapboxDirections({
   accessToken: window.localStorage.getItem('MapboxAccessToken'),
   unit: 'metric',
-  profile: 'cycling',
-  container: 'directions',
-  instructions: false
+  profile: 'cycling'
 });
 window.directions = directions;
 
-map.getContainer().querySelector('.mapboxgl-ctrl-bottom-left').appendChild(button);
-map.addControl(directions);
+map.getContainer().querySelector('.mapboxgl-ctrl-top-right').appendChild(button);
+map.addControl(directions, 'top-left');
 
 map.on('load', () => {
   button.addEventListener('click', function() {

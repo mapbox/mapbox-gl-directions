@@ -1,43 +1,4 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.mapboxDirections = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-var _directions = require('./src/directions');
-
-var _directions2 = _interopRequireDefault(_directions);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-if (window.mapboxgl) {
-  mapboxgl.Directions = _directions2.default;
-} else if (typeof module !== 'undefined') {
-  module.exports = _directions2.default;
-} /**
-   * A directions component using Mapbox Directions APi
-   * @class mapboxgl.Directions
-   *
-   * @param {Object} options
-   * @param {Array} [options.styles] Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
-   * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
-   * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
-   * @param {String} [options.profile="driving"] Routing profile to use. Options: `driving`, `walking`, `cycling`
-   * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
-   * @param {string|Element} options.container HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
-   * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
-   * @param {Object} [options.controls]
-   * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.
-   * @param {Boolean} [options.controls.instructions=true] Hide or display the instructions control.
-   * @example
-   * var directions = new mapboxgl.Directions({
-   *   container: 'directions',
-   *   unit: 'metric',
-   *   profile: 'walking'
-   * });
-   *
-   * map.addControl(directions);
-   * @return {Directions} `this`
-   */
-
-},{"./src/directions":42}],2:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.MapboxDirections = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -341,7 +302,7 @@ function isUndefined(arg) {
   return arg === void 0;
 }
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -722,7 +683,7 @@ function toNumber(value) {
 module.exports = debounce;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -2375,7 +2336,7 @@ function keys(object) {
 module.exports = isEqual;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -3511,7 +3472,7 @@ var attempt = baseRest(function(func, args) {
 module.exports = template;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._reinterpolate":6,"lodash.templatesettings":7}],6:[function(require,module,exports){
+},{"lodash._reinterpolate":5,"lodash.templatesettings":6}],5:[function(require,module,exports){
 /**
  * lodash 3.0.0 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
@@ -3526,7 +3487,7 @@ var reInterpolate = /<%=([\s\S]+?)%>/g;
 
 module.exports = reInterpolate;
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 (function (global){
 /**
  * lodash (Custom Build) <https://lodash.com/>
@@ -3810,7 +3771,7 @@ function escape(string) {
 module.exports = templateSettings;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"lodash._reinterpolate":6}],8:[function(require,module,exports){
+},{"lodash._reinterpolate":5}],7:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3965,7 +3926,7 @@ if (typeof module === 'object' && module.exports) {
     module.exports = polyline;
 }
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -3989,7 +3950,7 @@ var thunk = createThunkMiddleware();
 thunk.withExtraArgument = createThunkMiddleware;
 
 exports['default'] = thunk;
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4048,7 +4009,7 @@ function applyMiddleware() {
     };
   };
 }
-},{"./compose":13}],11:[function(require,module,exports){
+},{"./compose":12}],10:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4100,7 +4061,7 @@ function bindActionCreators(actionCreators, dispatch) {
   }
   return boundActionCreators;
 }
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4243,7 +4204,7 @@ function combineReducers(reducers) {
     return hasChanged ? nextState : state;
   };
 }
-},{"./createStore":14,"./utils/warning":16,"lodash/isPlainObject":26}],13:[function(require,module,exports){
+},{"./createStore":13,"./utils/warning":15,"lodash/isPlainObject":25}],12:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -4282,7 +4243,7 @@ function compose() {
     }, last.apply(undefined, arguments));
   };
 }
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4544,7 +4505,7 @@ function createStore(reducer, preloadedState, enhancer) {
     replaceReducer: replaceReducer
   }, _ref2[_symbolObservable2['default']] = observable, _ref2;
 }
-},{"lodash/isPlainObject":26,"symbol-observable":27}],15:[function(require,module,exports){
+},{"lodash/isPlainObject":25,"symbol-observable":26}],14:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4591,7 +4552,7 @@ exports.combineReducers = _combineReducers2['default'];
 exports.bindActionCreators = _bindActionCreators2['default'];
 exports.applyMiddleware = _applyMiddleware2['default'];
 exports.compose = _compose2['default'];
-},{"./applyMiddleware":10,"./bindActionCreators":11,"./combineReducers":12,"./compose":13,"./createStore":14,"./utils/warning":16}],16:[function(require,module,exports){
+},{"./applyMiddleware":9,"./bindActionCreators":10,"./combineReducers":11,"./compose":12,"./createStore":13,"./utils/warning":15}],15:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -4617,7 +4578,7 @@ function warning(message) {
   } catch (e) {}
   /* eslint-enable no-empty */
 }
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var root = require('./_root');
 
 /** Built-in value references. */
@@ -4625,7 +4586,7 @@ var Symbol = root.Symbol;
 
 module.exports = Symbol;
 
-},{"./_root":24}],18:[function(require,module,exports){
+},{"./_root":23}],17:[function(require,module,exports){
 var Symbol = require('./_Symbol'),
     getRawTag = require('./_getRawTag'),
     objectToString = require('./_objectToString');
@@ -4656,7 +4617,7 @@ function baseGetTag(value) {
 
 module.exports = baseGetTag;
 
-},{"./_Symbol":17,"./_getRawTag":21,"./_objectToString":22}],19:[function(require,module,exports){
+},{"./_Symbol":16,"./_getRawTag":20,"./_objectToString":21}],18:[function(require,module,exports){
 (function (global){
 /** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
@@ -4664,7 +4625,7 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 module.exports = freeGlobal;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 var overArg = require('./_overArg');
 
 /** Built-in value references. */
@@ -4672,7 +4633,7 @@ var getPrototype = overArg(Object.getPrototypeOf, Object);
 
 module.exports = getPrototype;
 
-},{"./_overArg":23}],21:[function(require,module,exports){
+},{"./_overArg":22}],20:[function(require,module,exports){
 var Symbol = require('./_Symbol');
 
 /** Used for built-in method references. */
@@ -4720,7 +4681,7 @@ function getRawTag(value) {
 
 module.exports = getRawTag;
 
-},{"./_Symbol":17}],22:[function(require,module,exports){
+},{"./_Symbol":16}],21:[function(require,module,exports){
 /** Used for built-in method references. */
 var objectProto = Object.prototype;
 
@@ -4744,7 +4705,7 @@ function objectToString(value) {
 
 module.exports = objectToString;
 
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * Creates a unary function that invokes `func` with its argument transformed.
  *
@@ -4761,7 +4722,7 @@ function overArg(func, transform) {
 
 module.exports = overArg;
 
-},{}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var freeGlobal = require('./_freeGlobal');
 
 /** Detect free variable `self`. */
@@ -4772,7 +4733,7 @@ var root = freeGlobal || freeSelf || Function('return this')();
 
 module.exports = root;
 
-},{"./_freeGlobal":19}],25:[function(require,module,exports){
+},{"./_freeGlobal":18}],24:[function(require,module,exports){
 /**
  * Checks if `value` is object-like. A value is object-like if it's not `null`
  * and has a `typeof` result of "object".
@@ -4803,7 +4764,7 @@ function isObjectLike(value) {
 
 module.exports = isObjectLike;
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var baseGetTag = require('./_baseGetTag'),
     getPrototype = require('./_getPrototype'),
     isObjectLike = require('./isObjectLike');
@@ -4867,10 +4828,10 @@ function isPlainObject(value) {
 
 module.exports = isPlainObject;
 
-},{"./_baseGetTag":18,"./_getPrototype":20,"./isObjectLike":25}],27:[function(require,module,exports){
+},{"./_baseGetTag":17,"./_getPrototype":19,"./isObjectLike":24}],26:[function(require,module,exports){
 module.exports = require('./lib/index');
 
-},{"./lib/index":28}],28:[function(require,module,exports){
+},{"./lib/index":27}],27:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -4902,7 +4863,7 @@ if (typeof self !== 'undefined') {
 var result = (0, _ponyfill2['default'])(root);
 exports['default'] = result;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./ponyfill":29}],29:[function(require,module,exports){
+},{"./ponyfill":28}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4926,7 +4887,7 @@ function symbolObservablePonyfill(root) {
 
 	return result;
 };
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4985,7 +4946,7 @@ function symbolObservablePonyfill(root) {
 var Suggestions = require('./src/suggestions');
 window.Suggestions = module.exports = Suggestions;
 
-},{"./src/suggestions":33}],31:[function(require,module,exports){
+},{"./src/suggestions":32}],30:[function(require,module,exports){
 /*
  * Fuzzy
  * https://github.com/myork/fuzzy
@@ -5131,7 +5092,7 @@ fuzzy.filter = function(pattern, arr, opts) {
 }());
 
 
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'Use strict';
 
 var List = function(component) {
@@ -5218,7 +5179,7 @@ List.prototype.next = function() {
 
 module.exports = List;
 
-},{}],33:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 var extend = require('xtend');
@@ -5408,7 +5369,7 @@ Suggestions.prototype.getItemValue = function(item) {
 
 module.exports = Suggestions;
 
-},{"./list":32,"fuzzy":31,"xtend":36}],34:[function(require,module,exports){
+},{"./list":31,"fuzzy":30,"xtend":35}],33:[function(require,module,exports){
 var each = require('turf-meta').coordEach;
 
 /**
@@ -5478,7 +5439,7 @@ module.exports = function(layer) {
     return extent;
 };
 
-},{"turf-meta":35}],35:[function(require,module,exports){
+},{"turf-meta":34}],34:[function(require,module,exports){
 /**
  * Lazily iterate over coordinates in any GeoJSON object, similar to
  * Array.forEach.
@@ -5618,7 +5579,7 @@ function propReduce(layer, callback, memo) {
 }
 module.exports.propReduce = propReduce;
 
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -5639,7 +5600,7 @@ function extend() {
     return target
 }
 
-},{}],37:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5826,6 +5787,7 @@ function setError(error) {
 }
 
 function queryOrigin(query) {
+  console.log('querying origin');
   return {
     type: types.ORIGIN_QUERY,
     query: query
@@ -6038,7 +6000,7 @@ function eventEmit(type, data) {
   };
 }
 
-},{"../constants/action_types":38,"../utils":45}],38:[function(require,module,exports){
+},{"../constants/action_types":37,"../utils":45}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6061,10 +6023,16 @@ var ROUTE_INDEX = exports.ROUTE_INDEX = 'ROUTE_INDEX';
 var SET_OPTIONS = exports.SET_OPTIONS = 'SET_OPTIONS';
 var WAYPOINTS = exports.WAYPOINTS = 'WAYPOINTS';
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _utils = require('../utils');
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Typeahead = require('suggestions');
 var debounce = require('lodash.debounce');
@@ -6102,30 +6070,14 @@ function Geocoder(options) {
 Geocoder.prototype = {
 
   options: {
-    position: 'top-left',
     placeholder: 'Search',
     zoom: 16,
     flyTo: true
   },
 
-  addTo: function addTo(map) {
-    this._map = map;
-    var container = this._container = this.onAdd(map);
-    if (this.options && this.options.position) {
-      var pos = this.options.position;
-      var corner = map._controlCorners[pos];
-      container.className += ' mapboxgl-ctrl';
-      if (pos.indexOf('bottom') !== -1) {
-        corner.insertBefore(container, corner.firstChild);
-      } else {
-        corner.appendChild(container);
-      }
-    }
-
-    return this;
-  },
-
   onAdd: function onAdd(map) {
+    this._map = map;
+
     this.request = new XMLHttpRequest();
 
     this.container = this.options.container ? typeof this.options.container === 'string' ? document.getElementById(this.options.container) : this.options.container : map.getContainer();
@@ -6204,6 +6156,8 @@ Geocoder.prototype = {
     this._loadingEl.classList.add('active');
     this.fire('loading');
 
+    console.log('geocoder this', this);
+
     var options = [];
     if (this.options.proximity) options.push('proximity=' + this.options.proximity.join());
     if (this.options.bbox) options.push('bbox=' + this.options.bbox.join());
@@ -6261,7 +6215,7 @@ Geocoder.prototype = {
   _query: function _query(input) {
     if (!input) return;
     if ((typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object' && input.length) {
-      input = [mapboxgl.util.wrap(input[0], -180, 180), mapboxgl.util.wrap(input[1], -180, 180)].join();
+      input = [_utils2.default.wrap(input[0]), _utils2.default.wrap(input[1])].join();
     }
 
     this._geocode(input, function (results) {
@@ -6277,7 +6231,7 @@ Geocoder.prototype = {
   _setInput: function _setInput(input) {
     if (!input) return;
     if ((typeof input === 'undefined' ? 'undefined' : _typeof(input)) === 'object' && input.length) {
-      input = [mapboxgl.util.wrap(input[0], -180, 180), mapboxgl.util.wrap(input[1], -180, 180)].join();
+      input = [_utils2.default.wrap(input[0]), _utils2.default.wrap(input[1])].join();
     }
 
     // Set input value to passed value and clear everything else.
@@ -6369,7 +6323,7 @@ Geocoder.prototype = {
 
 module.exports = Geocoder;
 
-},{"events":2,"lodash.debounce":3,"suggestions":30,"xtend":36}],40:[function(require,module,exports){
+},{"../utils":45,"events":1,"lodash.debounce":2,"suggestions":29,"xtend":35}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6471,10 +6425,13 @@ var Inputs = function () {
       var _store$getState3 = this.store.getState(),
           geocoder = _store$getState3.geocoder;
 
+      console.log('geocoder from state', geocoder);
+
       this.originInput = new _geocoder2.default(Object.assign({}, {
         flyTo: false,
         placeholder: 'Choose a starting place',
-        container: this.container.querySelector('#mapbox-directions-origin-input')
+        container: this.container.querySelector('#mapbox-directions-origin-input'),
+        accessToken: this.accessToken
       }, geocoder));
 
       this._map.addControl(this.originInput);
@@ -6482,7 +6439,8 @@ var Inputs = function () {
       this.destinationInput = new _geocoder2.default(Object.assign({}, {
         flyTo: false,
         placeholder: 'Choose destination',
-        container: this.container.querySelector('#mapbox-directions-destination-input')
+        container: this.container.querySelector('#mapbox-directions-destination-input'),
+        accessToken: this.accessToken
       }, geocoder));
 
       this._map.addControl(this.destinationInput);
@@ -6564,7 +6522,7 @@ var Inputs = function () {
 
 exports.default = Inputs;
 
-},{"./geocoder":39,"lodash.isequal":4,"lodash.template":5,"turf-extent":34}],41:[function(require,module,exports){
+},{"./geocoder":38,"lodash.isequal":3,"lodash.template":4,"turf-extent":33}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6689,7 +6647,7 @@ var Instructions = function () {
 
 exports.default = Instructions;
 
-},{"../utils":45,"lodash.isequal":4,"lodash.template":5}],42:[function(require,module,exports){
+},{"../utils":45,"lodash.isequal":3,"lodash.template":4}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6750,6 +6708,7 @@ var Directions = function () {
 
     this.actions = (0, _redux.bindActionCreators)(actions, store.dispatch);
     this.actions.setOptions(options || {});
+    this.options = options || {};
 
     this.onDragDown = this._onDragDown.bind(this);
     this.onDragMove = this._onDragMove.bind(this);
@@ -6758,36 +6717,36 @@ var Directions = function () {
     this.onClick = this._onClick.bind(this);
   }
 
-  _createClass(Directions, [{
-    key: 'addTo',
-    value: function addTo(map) {
-      this._map = map;
-      var container = this._container = this.onAdd(map);
-      if (this.options && this.options.position) {
-        var pos = this.options.position;
-        var corner = map._controlCorners[pos];
-        container.className += ' mapboxgl-ctrl';
-        if (pos.indexOf('bottom') !== -1) {
-          corner.insertBefore(container, corner.firstChild);
-        } else {
-          corner.appendChild(container);
-        }
-      }
+  // addTo(map) {
+  //     this._map = map;
+  //     var container = this._container = this.onAdd(map);
+  //     if (this.options && this.options.position) {
+  //         var pos = this.options.position;
+  //         var corner = map._controlCorners[pos];
+  //         container.className += ' mapboxgl-ctrl';
+  //         if (pos.indexOf('bottom') !== -1) {
+  //             corner.insertBefore(container, corner.firstChild);
+  //         } else {
+  //             corner.appendChild(container);
+  //         }
+  //     }
 
-      return this;
-    }
-  }, {
+  //     return this;
+  // }
+
+  _createClass(Directions, [{
     key: 'onAdd',
     value: function onAdd(map) {
       var _this = this;
 
       this._map = map;
+      console.log(this._map);
 
       var _store$getState = store.getState(),
-          container = _store$getState.container,
           controls = _store$getState.controls;
 
-      this.container = container ? typeof container === 'string' ? document.getElementById(container) : container : this._map.getContainer();
+      var el = document.createElement('div');
+      el.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
 
       // Add controls to the page
       var inputEl = document.createElement('div');
@@ -6802,13 +6761,15 @@ var Directions = function () {
         setRouteIndex: this.actions.setRouteIndex
       }, this._map);
 
-      if (controls.inputs) this.container.appendChild(inputEl);
-      if (controls.instructions) this.container.appendChild(directionsEl);
+      if (controls.inputs) el.appendChild(inputEl);
+      if (controls.instructions) el.appendChild(directionsEl);
 
       this.subscribedActions();
       if (this._map.loaded()) this.mapState();else this._map.on('load', function () {
         return _this.mapState();
       });
+
+      return el;
     }
 
     /**
@@ -7115,6 +7076,7 @@ var Directions = function () {
     key: 'setOrigin',
     value: function setOrigin(query) {
       if (typeof query === 'string') {
+        console.log('this is a query');
         this.actions.queryOrigin(query);
       } else {
         this.actions.setOriginFromCoordinates(query);
@@ -7253,7 +7215,7 @@ var Directions = function () {
 
 exports.default = Directions;
 
-},{"./actions":37,"./controls/inputs":40,"./controls/instructions":41,"./directions_style":43,"./reducers":44,"./utils":45,"polyline":8,"redux":15,"redux-thunk":9}],43:[function(require,module,exports){
+},{"./actions":36,"./controls/inputs":39,"./controls/instructions":40,"./directions_style":42,"./reducers":44,"./utils":45,"polyline":7,"redux":14,"redux-thunk":8}],42:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7369,7 +7331,42 @@ var style = [{
 
 exports.default = style;
 
-},{}],44:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
+'use strict';
+
+var _directions = require('./directions');
+
+var _directions2 = _interopRequireDefault(_directions);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = _directions2.default; /**
+                                        * A directions component using Mapbox Directions APi
+                                        * @class mapboxgl.Directions
+                                        *
+                                        * @param {Object} options
+                                        * @param {Array} [options.styles] Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
+                                        * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
+                                        * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
+                                        * @param {String} [options.profile="driving"] Routing profile to use. Options: `driving`, `walking`, `cycling`
+                                        * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
+                                        * @param {string|Element} options.container HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
+                                        * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
+                                        * @param {Object} [options.controls]
+                                        * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.
+                                        * @param {Boolean} [options.controls.instructions=true] Hide or display the instructions control.
+                                        * @example
+                                        * var directions = new mapboxgl.Directions({
+                                        *   container: 'directions',
+                                        *   unit: 'metric',
+                                        *   profile: 'walking'
+                                        * });
+                                        *
+                                        * map.addControl(directions);
+                                        * @return {Directions} `this`
+                                        */
+
+},{"./directions":41}],44:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7514,7 +7511,7 @@ function data() {
 
 exports.default = data;
 
-},{"../constants/action_types.js":38}],45:[function(require,module,exports){
+},{"../constants/action_types.js":37}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7574,5 +7571,5 @@ var format = {
 
 exports.default = { format: format, coordinateMatch: coordinateMatch, createPoint: createPoint, validCoords: validCoords, wrap: wrap };
 
-},{}]},{},[1])(1)
+},{}]},{},[43])(43)
 });

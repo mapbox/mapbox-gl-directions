@@ -2,7 +2,7 @@
   "name": "mapbox-gl-directions",
   "version": "2.2.0",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
-  "main": "dist/mapbox-gl-directions.js",
+  "main": "./src/index.js",
   "browserify": {
     "transform": [
       "babelify",
@@ -12,7 +12,7 @@
   "scripts": {
     "prepublish": "npm run build",
     "start": "NODE_ENV=development budo example/index.js:example/bundle.js --live",
-    "build": "NODE_ENV=production browserify -s MapboxDirections lib/index.js > dist/mapbox-gl-directions.js",
+    "build": "NODE_ENV=production browserify -s MapboxDirections src/index.js > dist/mapbox-gl-directions.js",
     "test": "NODE_ENV=test npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
     "docs": "documentation build --format=md > API.md",
     "lint": "eslint --no-eslintrc -c .eslintrc src"
@@ -60,6 +60,7 @@
     "lodash.debounce": "^4.0.6",
     "lodash.isequal": "^4.2.0",
     "lodash.template": "^4.2.5",
+    "mapbox-gl-geocoder": "^2.0.0",
     "polyline": "^0.2.0",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",

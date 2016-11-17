@@ -48,12 +48,6 @@ Geocoder.prototype = {
 
     this.request = new XMLHttpRequest();
 
-    this.container = this.options.container ?
-      typeof this.options.container === 'string' ?
-      document.getElementById(this.options.container) :
-      this.options.container :
-      map.getContainer();
-
     // Template
     var el = document.createElement('div');
     el.className = 'mapboxgl-ctrl-geocoder';
@@ -112,8 +106,6 @@ Geocoder.prototype = {
     el.appendChild(input);
     el.appendChild(actions);
 
-    this.container.appendChild(el);
-
     // Override the control being added to control containers
     if (this.options.container) this.options.position = false;
 
@@ -126,8 +118,6 @@ Geocoder.prototype = {
   _geocode: function(q, callback) {
     this._loadingEl.classList.add('active');
     this.fire('loading');
-
-    console.log('geocoder this', this);
 
     var options = [];
     if (this.options.proximity) options.push('proximity=' + this.options.proximity.join());

@@ -8,7 +8,6 @@
  * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
  * @param {String} [options.profile="driving"] Routing profile to use. Options: `driving`, `walking`, `cycling`
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
- * @param {string|Element} options.container HTML element to initialize the map in (or element id as string). If no container is passed map.getContainer() is used instead.
  * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
  * @param {Object} [options.controls]
  * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.

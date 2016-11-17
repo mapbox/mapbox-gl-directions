@@ -29,26 +29,8 @@ export default class Directions {
     this.onClick = this._onClick.bind(this);
   }
 
-  // addTo(map) {
-  //     this._map = map;
-  //     var container = this._container = this.onAdd(map);
-  //     if (this.options && this.options.position) {
-  //         var pos = this.options.position;
-  //         var corner = map._controlCorners[pos];
-  //         container.className += ' mapboxgl-ctrl';
-  //         if (pos.indexOf('bottom') !== -1) {
-  //             corner.insertBefore(container, corner.firstChild);
-  //         } else {
-  //             corner.appendChild(container);
-  //         }
-  //     }
-
-  //     return this;
-  // }
-
   onAdd(map) {
     this._map = map;
-    console.log(this._map);
 
     const { controls } = store.getState();
 
@@ -69,7 +51,7 @@ export default class Directions {
     }, this._map);
 
     if (controls.inputs) el.appendChild(inputEl);
-    if (controls.instructions) el.appendChild(directionsEl);
+    el.appendChild(directionsEl);
 
     this.subscribedActions();
     if (this._map.loaded()) this.mapState()
@@ -358,7 +340,6 @@ export default class Directions {
    */
   setOrigin(query) {
     if (typeof query === 'string') {
-      console.log('this is a query');
       this.actions.queryOrigin(query);
     } else {
       this.actions.setOriginFromCoordinates(query);
