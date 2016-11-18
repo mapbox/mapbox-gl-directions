@@ -60,7 +60,6 @@
     "lodash.debounce": "^4.0.6",
     "lodash.isequal": "^4.2.0",
     "lodash.template": "^4.2.5",
-    "mapbox-gl-geocoder": "^2.0.0",
     "polyline": "^0.2.0",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0",
