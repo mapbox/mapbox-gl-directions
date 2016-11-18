@@ -61,9 +61,7 @@ function fetchDirections() {
     options.push('instructions=text');
     options.push('alternatives=true');
     options.push('steps=true');
-
-    var token = accessToken ? accessToken : mapboxgl.accessToken;
-    options.push('access_token=' + token);
+    options.push('access_token=' + accessToken);
 
     request.abort();
     request.open('GET', `${api}mapbox.${profile}/${query}.json?${options.join('&')}`, true);

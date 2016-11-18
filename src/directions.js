@@ -34,7 +34,7 @@ export default class Directions {
 
     const { controls } = store.getState();
 
-    var el = document.createElement('div');
+    var el = this.container = document.createElement('div');
     el.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
 
     // Add controls to the page
@@ -65,10 +65,18 @@ export default class Directions {
    *
    * @returns {Control} `this`
    */
-  remove() {
-      this.container.parentNode.removeChild(this.container);
-      this._map = null;
-      return this;
+  onRemove(map) {
+    this.container.parentNode.removeChild(this.container);
+    this.removeRoutes();
+    const _this = this;
+    map.off('move', _this.move);
+    map.off('mousedown', _this.mousedown);
+    map.off('mousemove', _this.mousemove);
+    map.off('touchstart', _this.touchstart);
+    map.off('touchstart', _this.touchstart);
+    this._map = null;
+    console.log('final this', this);
+    return this;
   }
 
   mapState() {
@@ -425,6 +433,17 @@ export default class Directions {
    */
   getWaypoints() {
     return store.getState().waypoints;
+  }
+
+  /**
+   * Removes all routes and waypoints from the map.
+   *
+   * @returns {Directions} this;
+   */ 
+  removeRoutes() {
+    this.actions.clearOrigin();
+    this.actions.clearDestination();
+    return this;
   }
 
   /**
