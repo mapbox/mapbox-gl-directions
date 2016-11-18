@@ -1,6 +1,6 @@
-# mapboxgl.Directions
+# MapboxDirections
 
-A directions component using Mapbox Directions APi
+A directions component using Mapbox Directions API
 
 **Parameters**
 
@@ -18,24 +18,30 @@ A directions component using Mapbox Directions APi
 **Examples**
 
 ```javascript
-var directions = new mapboxgl.Directions({
-  container: 'directions',
+var MapboxDirections = require('../src/index');
+var directions = new MapboxDirections({
+  accessToken: 'YOUR-MAPBOX-ACCESS-TOKEN',
   unit: 'metric',
-  profile: 'walking'
+  profile: 'cycling'
 });
-
+// add to your mapboxgl map
 map.addControl(directions);
 ```
 
-Returns **Directions** `this`
+Returns **[MapboxDirections](#mapboxdirections)** `this`
 
-# remove
+## onRemove
 
-Removes the control from the map it has been added to.
+Removes the control from the map it has been added to. This is called by `map.removeControl`,
+which is the recommended method to remove controls.
+
+**Parameters**
+
+-   `map`  
 
 Returns **Control** `this`
 
-# interactive
+## interactive
 
 Turn on or off interactivity
 
@@ -43,15 +49,15 @@ Turn on or off interactivity
 
 -   `state` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** sets interactivity based on a state of `true` or `false`.
 
-Returns **Directions** this
+Returns **[MapboxDirections](#mapboxdirections)** this
 
-# getOrigin
+## getOrigin
 
 Returns the origin of the current route.
 
 Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** origin
 
-# setOrigin
+## setOrigin
 
 Sets origin. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
 to have run.
@@ -60,15 +66,15 @@ to have run.
 
 -   `query` **([Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)> | [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String))** An array of coordinates [lng, lat] or location name as a string.
 
-Returns **Directions** this
+Returns **[MapboxDirections](#mapboxdirections)** this
 
-# getDestination
+## getDestination
 
 Returns the destination of the current route.
 
 Returns **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** destination
 
-# setDestination
+## setDestination
 
 Sets destination. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
 to have run.
@@ -77,15 +83,15 @@ to have run.
 
 -   `query` **([Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)> | [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String))** An array of coordinates [lng, lat] or location name as a string.
 
-Returns **Directions** this
+Returns **[MapboxDirections](#mapboxdirections)** this
 
-# reverse
+## reverse
 
 Swap the origin and destination.
 
-Returns **Directions** this
+Returns **[MapboxDirections](#mapboxdirections)** this
 
-# addWaypoint
+## addWaypoint
 
 Add a waypoint to the route. _Note:_ calling this method requires the
 [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load) to have run.
@@ -95,9 +101,9 @@ Add a waypoint to the route. _Note:_ calling this method requires the
 -   `index` **[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** position waypoint should be placed in the waypoint array
 -   `waypoint` **([Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)> | Point)** can be a GeoJSON Point Feature or [lng, lat] coordinates.
 
-Returns **Directions** this;
+Returns **[MapboxDirections](#mapboxdirections)** this;
 
-# setWaypoint
+## setWaypoint
 
 Change the waypoint at a given index in the route. _Note:_ calling this
 method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
@@ -108,9 +114,9 @@ to have run.
 -   `index` **[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** indexed position of the waypoint to update
 -   `waypoint` **([Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)> | Point)** can be a GeoJSON Point Feature or [lng, lat] coordinates.
 
-Returns **Directions** this;
+Returns **[MapboxDirections](#mapboxdirections)** this;
 
-# removeWaypoint
+## removeWaypoint
 
 Remove a waypoint from the route.
 
@@ -118,15 +124,21 @@ Remove a waypoint from the route.
 
 -   `index` **[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** position in the waypoints array.
 
-Returns **Directions** this;
+Returns **[MapboxDirections](#mapboxdirections)** this;
 
-# getWaypoints
+## getWaypoints
 
 Fetch all current waypoints in a route.
 
 Returns **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)** waypoints
 
-# on
+## removeRoutes
+
+Removes all routes and waypoints from the map.
+
+Returns **[MapboxDirections](#mapboxdirections)** this;
+
+## on
 
 Subscribe to events that happen within the plugin.
 
@@ -141,34 +153,7 @@ Subscribe to events that happen within the plugin.
     -   **error** \`{ error } Error as string
 -   `fn` **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** function that's called when the event is emitted.
 
-Returns **Directions** this;
-
-# mapboxgl.Geocoder
-
-A geocoder component using Mapbox Geocoding API
-
-**Parameters**
-
--   `options` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
-    -   `options.country` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** a comma seperated list of country codes to limit results to specified country or countries.
-    -   `options.accessToken` **\[[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)]** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
-    -   `options.container` **([string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) \| [element](https://developer.mozilla.org/en-US/docs/Web/API/Element))** The HTML element to append the Geocoder input to. if container is not specified, `map.getcontainer()` is used.
-    -   `options.proximity` **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)>** If set, search results closer to these coordinates will be given higher priority.
-    -   `options.position` **\[[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)]** A string indicating the control's position on the map. Options are `top-right`, `top-left`, `bottom-right`, `bottom-left` (optional, default `"top-right"`)
-    -   `options.zoom` **\[[Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)]** On geocoded result what zoom level should the map animate to. (optional, default `16`)
-    -   `options.flyTo` **\[[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)]** If false, animating the map to a selected result is disabled. (optional, default `true`)
-    -   `options.placeholder` **\[[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)]** Override the default placeholder attribute value. (optional, default `"Search"`)
-    -   `options.types` **[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** a comma seperated list of types that filter results to match those specified. See <https://www.mapbox.com/developers/api/geocoding/#filter-type> for available types.
-    -   `options.bbox` **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)>** Limit results to a given bounding box provided as `[minX, minY, maxX, maxY]`.
-
-**Examples**
-
-```javascript
-var geocoder = new mapboxgl.Geocoder();
-map.addControl(geocoder);
-```
-
-Returns **Geocoder** `this`
+Returns **[MapboxDirections](#mapboxdirections)** this;
 
 # getResult
 

@@ -9,26 +9,9 @@ import utils from '../utils'
 // Mapbox Geocoder version
 var API = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
 
-/**
- * A geocoder component using Mapbox Geocoding API
- * @class mapboxgl.Geocoder
- *
- * @param {Object} options
- * @param {String} [options.position="top-right"] A string indicating the control's position on the map. Options are `top-right`, `top-left`, `bottom-right`, `bottom-left`
- * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
- * @param {string|element} options.container The HTML element to append the Geocoder input to. if container is not specified, `map.getcontainer()` is used.
- * @param {Array<number>} options.proximity If set, search results closer to these coordinates will be given higher priority.
- * @param {Array<number>} options.bbox Limit results to a given bounding box provided as `[minX, minY, maxX, maxY]`.
- * @param {Number} [options.zoom=16] On geocoded result what zoom level should the map animate to.
- * @param {Boolean} [options.flyTo=true] If false, animating the map to a selected result is disabled.
- * @param {String} [options.placeholder="Search"] Override the default placeholder attribute value.
- * @param {string} options.types a comma seperated list of types that filter results to match those specified. See https://www.mapbox.com/developers/api/geocoding/#filter-type for available types.
- * @param {string} options.country a comma seperated list of country codes to limit results to specified country or countries.
- * @example
- * var geocoder = new mapboxgl.Geocoder();
- * map.addControl(geocoder);
- * @return {Geocoder} `this`
- */
+// Geocoder - this slightly mimicks the mapboxl-gl-geocoder but isn't an exact replica.
+// Once gl-js plugins can be added to custom divs, we should be able to require mapbox-gl-geocoder
+// instead of including it here
 function Geocoder(options) {
   this._ev = new EventEmitter();
   this.options = extend({}, this.options, options);
