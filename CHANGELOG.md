@@ -1,3 +1,7 @@
+## 3.0.1
+
+- [bug] CSS fix for departure/arrival icons that were not center aligned because of global line-height properties
+
 ## 3.0.0
 
 Support for the Mapbox GL JS 0.27.0 API. This is compatible with 0.27.0 and later, and not compatible with earlier versions.
