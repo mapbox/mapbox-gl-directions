@@ -7,7 +7,7 @@ mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 // var directionsDiv = document.body.appendChild(document.createElement('div'));
 // directionsDiv.id = 'directions';
 
-insertCss(fs.readFileSync('./dist/mapbox-gl-directions.css', 'utf8'));
+insertCss(fs.readFileSync('./src/mapbox-gl-directions.css', 'utf8'));
 insertCss(fs.readFileSync('./node_modules/mapbox-gl/dist/mapbox-gl.css', 'utf8'));
 var mapDiv = document.body.appendChild(document.createElement('div'));
 mapDiv.style = 'position:absolute;top:0;right:0;left:0;bottom:0;';

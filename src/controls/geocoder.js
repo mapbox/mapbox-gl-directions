@@ -1,10 +1,9 @@
 'use strict';
 
-var Typeahead = require('suggestions');
-var debounce = require('lodash.debounce');
-var extend = require('xtend');
-var EventEmitter = require('events').EventEmitter;
-
+import Typeahead from 'suggestions';
+import debounce from 'lodash.debounce';
+import extend from 'xtend';
+import { EventEmitter } from 'events';
 import utils from '../utils'
 
 // Mapbox Geocoder version
