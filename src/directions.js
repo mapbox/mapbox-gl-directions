@@ -15,11 +15,12 @@ import directionsStyle from './directions_style';
 import Inputs from './controls/inputs';
 import Instructions from './controls/instructions';
 
-export default class Directions {
+export default class MapboxDirections {
 
   constructor(options) {
     this.actions = bindActionCreators(actions, store.dispatch);
     this.actions.setOptions(options || {});
+    this.options = options || {};
 
     this.onDragDown = this._onDragDown.bind(this);
     this.onDragMove = this._onDragMove.bind(this);
@@ -28,30 +29,13 @@ export default class Directions {
     this.onClick = this._onClick.bind(this);
   }
 
-  addTo(map) {
-      this._map = map;
-      var container = this._container = this.onAdd(map);
-      if (this.options && this.options.position) {
-          var pos = this.options.position;
-          var corner = map._controlCorners[pos];
-          container.className += ' mapboxgl-ctrl';
-          if (pos.indexOf('bottom') !== -1) {
-              corner.insertBefore(container, corner.firstChild);
-          } else {
-              corner.appendChild(container);
-          }
-      }
-
-      return this;
-  }
-
   onAdd(map) {
     this._map = map;
 
-    const { container, controls } = store.getState();
+    const { controls } = store.getState();
 
-    this.container = container ? typeof container === 'string' ?
-      document.getElementById(container) : container : this._map.getContainer();
+    var el = this.container = document.createElement('div');
+    el.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
 
     // Add controls to the page
     const inputEl = document.createElement('div');
@@ -66,23 +50,32 @@ export default class Directions {
       setRouteIndex: this.actions.setRouteIndex
     }, this._map);
 
-    if (controls.inputs) this.container.appendChild(inputEl);
-    if (controls.instructions) this.container.appendChild(directionsEl);
+    if (controls.inputs) el.appendChild(inputEl);
+    el.appendChild(directionsEl);
 
     this.subscribedActions();
     if (this._map.loaded()) this.mapState()
     else this._map.on('load', () => this.mapState());
+
+    return el;
   }
 
   /**
-   * Removes the control from the map it has been added to.
+   * Removes the control from the map it has been added to. This is called by `map.removeControl`,
+   * which is the recommended method to remove controls.
    *
    * @returns {Control} `this`
    */
-  remove() {
-      this.container.parentNode.removeChild(this.container);
-      this._map = null;
-      return this;
+  onRemove(map) {
+    this.container.parentNode.removeChild(this.container);
+    this.removeRoutes();
+    map.off('mousedown', this.onDragDown);
+    map.off('mousemove', this.move);
+    map.off('touchstart', this.onDragDown);
+    map.off('touchstart', this.move);
+    map.off('click', this.onClick);
+    this._map = null;
+    return this;
   }
 
   mapState() {
@@ -316,7 +309,7 @@ export default class Directions {
   /**
    * Turn on or off interactivity
    * @param {Boolean} state sets interactivity based on a state of `true` or `false`.
-   * @returns {Directions} this
+   * @returns {MapboxDirections} this
    */
   interactive(state) {
     if (state) {
@@ -350,7 +343,7 @@ export default class Directions {
    * Sets origin. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
    * to have run.
    * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
-   * @returns {Directions} this
+   * @returns {MapboxDirections} this
    */
   setOrigin(query) {
     if (typeof query === 'string') {
@@ -374,7 +367,7 @@ export default class Directions {
    * Sets destination. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
    * to have run.
    * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
-   * @returns {Directions} this
+   * @returns {MapboxDirections} this
    */
   setDestination(query) {
     if (typeof query === 'string') {
@@ -388,7 +381,7 @@ export default class Directions {
 
   /**
    * Swap the origin and destination.
-   * @returns {Directions} this
+   * @returns {MapboxDirections} this
    */
   reverse() {
     this.actions.reverse();
@@ -400,7 +393,7 @@ export default class Directions {
    * [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load) to have run.
    * @param {Number} index position waypoint should be placed in the waypoint array
    * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or [lng, lat] coordinates.
-   * @returns {Directions} this;
+   * @returns {MapboxDirections} this;
    */
   addWaypoint(index, waypoint) {
     if (!waypoint.type) waypoint = utils.createPoint(waypoint, { id: 'waypoint' });
@@ -414,7 +407,7 @@ export default class Directions {
    * to have run.
    * @param {Number} index indexed position of the waypoint to update
    * @param {Array<number>|Point} waypoint can be a GeoJSON Point Feature or [lng, lat] coordinates.
-   * @returns {Directions} this;
+   * @returns {MapboxDirections} this;
    */
   setWaypoint(index, waypoint) {
     if (!waypoint.type) waypoint = utils.createPoint(waypoint, { id: 'waypoint' });
@@ -425,7 +418,7 @@ export default class Directions {
   /**
    * Remove a waypoint from the route.
    * @param {Number} index position in the waypoints array.
-   * @returns {Directions} this;
+   * @returns {MapboxDirections} this;
    */
   removeWaypoint(index) {
     const { waypoints } = store.getState();
@@ -442,6 +435,17 @@ export default class Directions {
   }
 
   /**
+   * Removes all routes and waypoints from the map.
+   *
+   * @returns {MapboxDirections} this;
+   */ 
+  removeRoutes() {
+    this.actions.clearOrigin();
+    this.actions.clearDestination();
+    return this;
+  }
+
+  /**
    * Subscribe to events that happen within the plugin.
    * @param {String} type name of event. Available events and the data passed into their respective event objects are:
    *
@@ -453,7 +457,7 @@ export default class Directions {
    * - __route__ `{ route } Fired when a route is updated`
    * - __error__ `{ error } Error as string
    * @param {Function} fn function that's called when the event is emitted.
-   * @returns {Directions} this;
+   * @returns {MapboxDirections} this;
    */
   on(type, fn) {
     this.actions.eventSubscribe(type, fn);

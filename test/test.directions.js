@@ -9,7 +9,8 @@ test('directions', (tt) => {
   function setup(opts) {
     container = document.createElement('div');
     map = new mapboxgl.Map({ container: container });
-    directions = new mapboxgl.Directions(opts);
+    const MapboxDirections = require('..');
+    directions = new MapboxDirections(opts);
     map.addControl(directions);
   }
 

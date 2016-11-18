@@ -2,20 +2,23 @@
   "name": "mapbox-gl-directions",
   "version": "2.2.0",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
-  "main": "dist/mapbox-gl-directions.js",
+  "main": "./src/index.js",
   "browserify": {
     "transform": [
       "babelify",
       "brfs"
     ]
   },
+  "peerDependencies": {
+    "mapbox-gl": "^0.27.0 || ^0.28.0"
+  },
   "scripts": {
     "prepublish": "npm run build",
     "start": "NODE_ENV=development budo example/index.js:example/bundle.js --live",
-    "build": "NODE_ENV=production browserify -s mapboxDirections index.js > dist/mapbox-gl-directions.js",
+    "build": "NODE_ENV=production mkdir -p dist && browserify -s MapboxDirections src/index.js > dist/mapbox-gl-directions.js && cp src/mapbox-gl-directions.css dist/ && cp -r src/icons/ dist/",
     "test": "NODE_ENV=test npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
     "docs": "documentation build --format=md > API.md",
-    "lint": "eslint --no-eslintrc -c .eslintrc index.js src"
+    "lint": "eslint --no-eslintrc -c .eslintrc src"
   },
   "repository": {
     "type": "git",
@@ -45,9 +48,10 @@
     "budo": "^8.3.0",
     "documentation": "^4.0.0-beta5",
     "eslint": "^2.13.1",
+    "insert-css": "^2.0.0",
     "json-loader": "0.5.4",
     "lodash.once": "^4.0.0",
-    "mapbox-gl": "^0.22.1",
+    "mapbox-gl": "^0.27.0",
     "smokestack": "^3.3.1",
     "tap-status": "^1.0.1",
     "tape": "^4.6.0",

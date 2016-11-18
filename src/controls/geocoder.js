@@ -1,33 +1,17 @@
 'use strict';
 
-var Typeahead = require('suggestions');
-var debounce = require('lodash.debounce');
-var extend = require('xtend');
-var EventEmitter = require('events').EventEmitter;
+import Typeahead from 'suggestions';
+import debounce from 'lodash.debounce';
+import extend from 'xtend';
+import { EventEmitter } from 'events';
+import utils from '../utils'
 
 // Mapbox Geocoder version
 var API = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
 
-/**
- * A geocoder component using Mapbox Geocoding API
- * @class mapboxgl.Geocoder
- *
- * @param {Object} options
- * @param {String} [options.position="top-right"] A string indicating the control's position on the map. Options are `top-right`, `top-left`, `bottom-right`, `bottom-left`
- * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
- * @param {string|element} options.container The HTML element to append the Geocoder input to. if container is not specified, `map.getcontainer()` is used.
- * @param {Array<number>} options.proximity If set, search results closer to these coordinates will be given higher priority.
- * @param {Array<number>} options.bbox Limit results to a given bounding box provided as `[minX, minY, maxX, maxY]`.
- * @param {Number} [options.zoom=16] On geocoded result what zoom level should the map animate to.
- * @param {Boolean} [options.flyTo=true] If false, animating the map to a selected result is disabled.
- * @param {String} [options.placeholder="Search"] Override the default placeholder attribute value.
- * @param {string} options.types a comma seperated list of types that filter results to match those specified. See https://www.mapbox.com/developers/api/geocoding/#filter-type for available types.
- * @param {string} options.country a comma seperated list of country codes to limit results to specified country or countries.
- * @example
- * var geocoder = new mapboxgl.Geocoder();
- * map.addControl(geocoder);
- * @return {Geocoder} `this`
- */
+// Geocoder - this slightly mimicks the mapboxl-gl-geocoder but isn't an exact replica.
+// Once gl-js plugins can be added to custom divs, we should be able to require mapbox-gl-geocoder
+// instead of including it here
 function Geocoder(options) {
   this._ev = new EventEmitter();
   this.options = extend({}, this.options, options);
@@ -36,37 +20,15 @@ function Geocoder(options) {
 Geocoder.prototype = {
 
   options: {
-    position: 'top-left',
     placeholder: 'Search',
     zoom: 16,
     flyTo: true
   },
 
-  addTo: function (map) {
-      this._map = map;
-      var container = this._container = this.onAdd(map);
-      if (this.options && this.options.position) {
-          var pos = this.options.position;
-          var corner = map._controlCorners[pos];
-          container.className += ' mapboxgl-ctrl';
-          if (pos.indexOf('bottom') !== -1) {
-              corner.insertBefore(container, corner.firstChild);
-          } else {
-              corner.appendChild(container);
-          }
-      }
-
-      return this;
-  },
-
   onAdd: function(map) {
-    this.request = new XMLHttpRequest();
+    this._map = map;
 
-    this.container = this.options.container ?
-      typeof this.options.container === 'string' ?
-      document.getElementById(this.options.container) :
-      this.options.container :
-      map.getContainer();
+    this.request = new XMLHttpRequest();
 
     // Template
     var el = document.createElement('div');
@@ -125,8 +87,6 @@ Geocoder.prototype = {
     el.appendChild(icon);
     el.appendChild(input);
     el.appendChild(actions);
-
-    this.container.appendChild(el);
 
     // Override the control being added to control containers
     if (this.options.container) this.options.position = false;
@@ -199,8 +159,8 @@ Geocoder.prototype = {
     if (!input) return;
     if (typeof input === 'object' && input.length) {
       input = [
-        mapboxgl.util.wrap(input[0], -180, 180),
-        mapboxgl.util.wrap(input[1], -180, 180)
+        utils.wrap(input[0]),
+        utils.wrap(input[1])
       ].join();
     }
 
@@ -218,8 +178,8 @@ Geocoder.prototype = {
     if (!input) return;
     if (typeof input === 'object' && input.length) {
       input = [
-        mapboxgl.util.wrap(input[0], -180, 180),
-        mapboxgl.util.wrap(input[1], -180, 180)
+        utils.wrap(input[0]),
+        utils.wrap(input[1])
       ].join();
     }
 

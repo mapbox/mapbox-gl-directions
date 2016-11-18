@@ -1,33 +1,52 @@
 'use strict';
-/* global mapboxgl */
-
-var Directions = require('../index');
-
+var mapboxgl = require('mapbox-gl');
+var insertCss = require('insert-css');
+var fs = require('fs');
 mapboxgl.accessToken = window.localStorage.getItem('MapboxAccessToken');
 
-var map = new mapboxgl.Map({
+// var directionsDiv = document.body.appendChild(document.createElement('div'));
+// directionsDiv.id = 'directions';
+
+insertCss(fs.readFileSync('./src/mapbox-gl-directions.css', 'utf8'));
+insertCss(fs.readFileSync('./node_modules/mapbox-gl/dist/mapbox-gl.css', 'utf8'));
+var mapDiv = document.body.appendChild(document.createElement('div'));
+mapDiv.style = 'position:absolute;top:0;right:0;left:0;bottom:0;';
+
+var map = window.map = new mapboxgl.Map({
   hash: true,
-  container: 'map',
+  container: mapDiv,
   style: 'mapbox://styles/mapbox/streets-v9',
   center: [-79.4512, 43.6568],
   zoom: 13
 });
 
-var directions = new mapboxgl.Directions({
+// remove control
+var button = document.body.appendChild(document.createElement('button'));
+button.style = 'z-index:10;position:absolute;top:10px;right:10px;';
+button.textContent = 'Remove directions control';
+
+// remove all waypoints
+var removeWaypointsButton = document.body.appendChild(document.createElement('button'));
+removeWaypointsButton.style = 'z-index:10;position:absolute;top:30px;right:10px;';
+removeWaypointsButton.textContent = 'Remove all waypoints';
+
+// directions
+var MapboxDirections = require('../src/index');
+var directions = new MapboxDirections({
+  accessToken: window.localStorage.getItem('MapboxAccessToken'),
   unit: 'metric',
-  profile: 'cycling',
-  container: 'directions'
+  profile: 'cycling'
 });
+window.directions = directions;
 
-var button = document.createElement('button');
-button.textContent = 'click me';
-
-map.getContainer().querySelector('.mapboxgl-ctrl-bottom-left').appendChild(button);
-map.addControl(directions);
+map.addControl(directions, 'top-left');
 
 map.on('load', () => {
   button.addEventListener('click', function() {
-    directions.setOrigin([-79.4512, 43.6568]);
-    directions.setDestination('Montreal Quebec');
+    map.removeControl(directions);
+  });
+
+  removeWaypointsButton.addEventListener('click', function() {
+    directions.removeRoutes();
   });
 });

@@ -63,23 +63,27 @@ export default class Inputs {
       reverse
     } = this.actions;
 
-    const { geocoder } = this.store.getState();
+    const { geocoder, accessToken } = this.store.getState();
 
     this.originInput = new Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose a starting place',
-      container: this.container.querySelector('#mapbox-directions-origin-input')
+      accessToken: accessToken
     }, geocoder));
 
-    this._map.addControl(this.originInput);
+    var originEl = this.originInput.onAdd();
+    var originContainerEl = this.container.querySelector('#mapbox-directions-origin-input');
+    originContainerEl.appendChild(originEl);
 
     this.destinationInput = new Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose destination',
-      container: this.container.querySelector('#mapbox-directions-destination-input')
+      accessToken: accessToken
     }, geocoder));
 
-    this._map.addControl(this.destinationInput);
+    var destinationEl = this.destinationInput.onAdd();
+    this.container.querySelector('#mapbox-directions-destination-input').appendChild(destinationEl);
+    
 
     this.originInput.on('result', (e) => {
       const coords = e.result.center;

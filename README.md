@@ -5,7 +5,25 @@ A full featured directions plugin for [mapbox-gl-js](https://github.com/mapbox/m
 
 ### Usage
 
-See https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-directions/
+```javascript
+var mapboxgl = require('mapbox-gl');
+var MapboxDirections = require('mapbox-gl-directions');
+
+var directions = new MapboxDirections({
+  accessToken: 'YOUR-MAPBOX-ACCESS-TOKEN',
+  unit: 'metric',
+  profile: 'cycling'
+});
+
+var map = new mapboxgl.Map({
+  container: 'map',
+  style: 'mapbox://styles/mapbox/streets-v9'
+});
+
+map.addControl(directions, 'top-left');
+```
+
+Live example: https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-directions/
 
 ### Deeper dive
 
