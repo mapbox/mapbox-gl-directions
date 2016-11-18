@@ -142,7 +142,6 @@ function setError(error) {
 }
 
 export function queryOrigin(query) {
-  console.log('querying origin');
   return {
     type: types.ORIGIN_QUERY,
     query

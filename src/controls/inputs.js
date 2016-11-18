@@ -63,12 +63,12 @@ export default class Inputs {
       reverse
     } = this.actions;
 
-    const { geocoder } = this.store.getState();
+    const { geocoder, accessToken } = this.store.getState();
 
     this.originInput = new Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose a starting place',
-      accessToken: 'pk.eyJ1IjoibWFwc2FtIiwiYSI6ImNpaWR1MXlxcDAxMTJ1M2tzYWUyeTdpY24ifQ.QG1jCTgj-WYwJa2y1W0wMw'
+      accessToken: accessToken
     }, geocoder));
 
     var originEl = this.originInput.onAdd();
@@ -78,7 +78,7 @@ export default class Inputs {
     this.destinationInput = new Geocoder(Object.assign({}, {
       flyTo: false,
       placeholder: 'Choose destination',
-      accessToken: 'pk.eyJ1IjoibWFwc2FtIiwiYSI6ImNpaWR1MXlxcDAxMTJ1M2tzYWUyeTdpY24ifQ.QG1jCTgj-WYwJa2y1W0wMw'
+      accessToken: accessToken
     }, geocoder));
 
     var destinationEl = this.destinationInput.onAdd();
