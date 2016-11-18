@@ -68,14 +68,12 @@ export default class Directions {
   onRemove(map) {
     this.container.parentNode.removeChild(this.container);
     this.removeRoutes();
-    const _this = this;
-    map.off('move', _this.move);
-    map.off('mousedown', _this.mousedown);
-    map.off('mousemove', _this.mousemove);
-    map.off('touchstart', _this.touchstart);
-    map.off('touchstart', _this.touchstart);
+    map.off('mousedown', this.onDragDown);
+    map.off('mousemove', this.move);
+    map.off('touchstart', this.onDragDown);
+    map.off('touchstart', this.move);
+    map.off('click', this.onClick);
     this._map = null;
-    console.log('final this', this);
     return this;
   }
 
