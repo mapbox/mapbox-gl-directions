@@ -1,7 +1,16 @@
+## 3.0.0
+
+Support for the Mapbox GL JS 0.27.0 API. This is compatible with 0.27.0 and later, and not compatible with earlier versions.
+
+- [breaking] `container` option removed - attaching the control outside of the map is no longer supported
+- [breaking] `position` option removed - the `addControl` method now specifies the position
+- [breaking] Now exports `MapboxDirections` rather than attaches to `mapbox.Directions`
+- [internal] no longer creates a new map control for each of the two geocoders, instead creates two internal geocoders
+- [feature] `removeRoutes` method that removes all route lines, waypoints, and instructions
+
 ## 2.2.0
 - [feature] Defer mapboxgl dependency til runtime to support webpack async loading #86 https://github.com/mapbox/mapbox-gl-directions/pull/86
 - [bug] Fix mapboxgl.GeoJSONSource deprecation in gl-js v.22 and map.load race condition
-
 
 ## 2.1.0
 
