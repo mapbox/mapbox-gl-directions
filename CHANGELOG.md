@@ -1,3 +1,7 @@
+## 3.0.2
+
+- [bug] Fixing a fix for `3.0.1`. Missed a single space.
+
 ## 3.0.1
 
 - [bug] CSS fix for departure/arrival icons that were not center aligned because of global line-height properties

@@ -204,7 +204,7 @@
   line-height:38px;
   border-radius:0 0 0 3px;
   }
-  .mapbox-form-label.directions-icon {
+  .mapbox-form-label .directions-icon {
     background-position: center;
     width: 40px;
     height: 40px;
