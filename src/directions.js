@@ -446,6 +446,55 @@ export default class MapboxDirections {
   }
 
   /**
+   * Returns a GeoJSON `FeatureCollection` representing the route (and alternatives) available.
+   * @returns {Object} geojson
+   */ 
+  getGeoJSON() {
+    const { directions, routeIndex } = store.getState();
+    const geojson = { type: 'FeatureCollection', features: [] }
+
+    if (directions.length) {
+      directions.forEach((feature, index) => {
+
+        const lineString = {
+          type: 'Feature',
+          geometry: {
+            type: 'LineString',
+            coordinates: decode(feature.geometry, 6).map((c) => {
+              return c.reverse();
+            })
+          },
+          properties: {
+            'route-index': index,
+            route: (index === routeIndex) ? 'selected' : 'alternate'
+          }
+        };
+
+        geojson.features.push(lineString);
+
+        if (index === routeIndex) {
+          // Collect any possible waypoints from steps
+          feature.steps.forEach((d) => {
+            if (d.maneuver.type === 'waypoint') {
+              geojson.features.push({
+                type: 'Feature',
+                geometry: d.maneuver.location,
+                properties: {
+                  id: 'waypoint'
+                }
+              });
+            }
+          });
+        }
+      });
+
+      return geojson;
+    } else {
+      throw new Error('There is no route to generate a GeoJSON from.');
+    }
+  }
+
+  /**
    * Subscribe to events that happen within the plugin.
    * @param {String} type name of event. Available events and the data passed into their respective event objects are:
    *

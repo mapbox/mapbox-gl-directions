@@ -23,12 +23,7 @@ var map = window.map = new mapboxgl.Map({
 // remove control
 var button = document.body.appendChild(document.createElement('button'));
 button.style = 'z-index:10;position:absolute;top:10px;right:10px;';
-button.textContent = 'Remove directions control';
-
-// remove all waypoints
-var removeWaypointsButton = document.body.appendChild(document.createElement('button'));
-removeWaypointsButton.style = 'z-index:10;position:absolute;top:30px;right:10px;';
-removeWaypointsButton.textContent = 'Remove all waypoints';
+button.textContent = 'Get geojson';
 
 // directions
 var MapboxDirections = require('../src/index');
@@ -43,10 +38,6 @@ map.addControl(directions, 'top-left');
 
 map.on('load', () => {
   button.addEventListener('click', function() {
-    map.removeControl(directions);
-  });
-
-  removeWaypointsButton.addEventListener('click', function() {
-    directions.removeRoutes();
+    console.log(directions.getGeoJSON());
   });
 });
