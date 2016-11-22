@@ -37,7 +37,10 @@ window.directions = directions;
 map.addControl(directions, 'top-left');
 
 map.on('load', () => {
-  button.addEventListener('click', function() {
-    console.log(directions.getGeoJSON());
+  directions.setOrigin([-116.95820880083824,32.807655722345544]);
+  directions.setDestination([-116.95070759690503,32.81334260625454]);
+
+  directions.on('route', function(e) {
+    console.log(e.route);
   });
 });

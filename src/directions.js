@@ -450,8 +450,11 @@ export default class MapboxDirections {
    * @returns {Object} geojson
    */ 
   getGeoJSON() {
-    const { directions, routeIndex } = store.getState();
+    const { directions, routeIndex, origin } = store.getState();
     const geojson = { type: 'FeatureCollection', features: [] }
+
+    console.log('directions: ', directions);
+    console.log('origin: ', origin);
 
     if (directions.length) {
       directions.forEach((feature, index) => {

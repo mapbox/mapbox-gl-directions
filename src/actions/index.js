@@ -32,6 +32,7 @@ function setDirections(directions) {
       type: types.DIRECTIONS,
       directions
     });
+    console.log('from the source: ', directions);
     dispatch(eventEmit('route', { route: directions }));
   };
 }
