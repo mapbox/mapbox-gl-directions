@@ -1,3 +1,7 @@
+## 3.0.3
+
+- [bug] re-enable hiding instructions panel [#101](https://github.com/mapbox/mapbox-gl-directions/issues/101)
+
 ## 3.0.2
 
 - [bug] Fixing a fix for `3.0.1`. Missed a single space.
