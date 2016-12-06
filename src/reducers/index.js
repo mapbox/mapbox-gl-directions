@@ -1,4 +1,5 @@
 import * as types from '../constants/action_types.js';
+import deepAssign from 'deep-assign';
 
 const initialState = {
   // Options set on initialization
@@ -42,7 +43,7 @@ const initialState = {
 function data(state = initialState, action) {
   switch (action.type) {
   case types.SET_OPTIONS:
-    return Object.assign({}, state, action.options);
+    return deepAssign({}, state, action.options);
 
   case types.DIRECTIONS_PROFILE:
     return Object.assign({}, state, {

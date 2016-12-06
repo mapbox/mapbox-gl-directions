@@ -43,7 +43,7 @@ export default class MapboxDirections {
     new Inputs(inputEl, store, this.actions, this._map);
 
     const directionsEl = document.createElement('div');
-    directionsEl.className = 'directions-control-directions-container';
+    directionsEl.className = 'directions-control directions-control-instructions';
 
     new Instructions(directionsEl, store, {
       hoverMarker: this.actions.hoverMarker,
@@ -51,7 +51,7 @@ export default class MapboxDirections {
     }, this._map);
 
     if (controls.inputs) el.appendChild(inputEl);
-    el.appendChild(directionsEl);
+    if (controls.instructions) el.appendChild(directionsEl);
 
     this.subscribedActions();
     if (this._map.loaded()) this.mapState()
