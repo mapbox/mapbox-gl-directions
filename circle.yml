@@ -1,3 +1,6 @@
+test:
+  override:
+    npm run lint
 machine:
   node:
     version: 4
