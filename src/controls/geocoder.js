@@ -202,10 +202,6 @@ Geocoder.prototype = {
     this.fire('clear');
   },
 
-  /**
-   * Return the input
-   * @returns {Object} input
-   */
   getResult: function() {
     return this._input;
   },
