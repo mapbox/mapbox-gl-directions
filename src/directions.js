@@ -15,6 +15,16 @@ import directionsStyle from './directions_style';
 import Inputs from './controls/inputs';
 import Instructions from './controls/instructions';
 
+/**
+ * The Directions control
+ * @class MapboxDirections
+ * @param {Object} options no currently accepted options
+ * @example
+ * var directions = new MapboxDirections({
+ *   accessToken: mapboxgl.accessToken
+ * });
+ * map.addControl(directions, 'top-left');
+ */
 export default class MapboxDirections {
 
   constructor(options) {

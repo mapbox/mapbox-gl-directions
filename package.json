@@ -17,7 +17,7 @@
     "start": "NODE_ENV=development budo example/index.js:example/bundle.js --live",
     "build": "NODE_ENV=production mkdir -p dist && browserify -s MapboxDirections src/index.js > dist/mapbox-gl-directions.js && cp src/mapbox-gl-directions.css dist/ && cp -r src/icons/ dist/",
     "test": "NODE_ENV=test npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
-    "docs": "documentation build --format=md > API.md",
+    "docs": "documentation build src/directions.js --shallow --format=md > API.md",
     "lint": "eslint --no-eslintrc -c .eslintrc src"
   },
   "repository": {
@@ -46,7 +46,7 @@
     "brfs": "^1.4.1",
     "browserify": "^13.0.1",
     "budo": "^8.3.0",
-    "documentation": "^4.0.0-beta5",
+    "documentation": "^4.0.0-beta16",
     "eslint": "^2.13.1",
     "insert-css": "^2.0.0",
     "json-loader": "0.5.4",
