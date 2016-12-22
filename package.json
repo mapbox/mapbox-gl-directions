@@ -1,5 +1,5 @@
 {
-  "name": "mapbox-gl-directions",
+  "name": "@mapbox/mapbox-gl-directions",
   "version": "3.0.3",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
   "main": "./src/index.js",
