@@ -7,7 +7,7 @@ A full featured directions plugin for [mapbox-gl-js](https://github.com/mapbox/m
 
 ```javascript
 var mapboxgl = require('mapbox-gl');
-var MapboxDirections = require('mapbox-gl-directions');
+var MapboxDirections = require('@mapbox/mapbox-gl-directions');
 
 var directions = new MapboxDirections({
   accessToken: 'YOUR-MAPBOX-ACCESS-TOKEN',
