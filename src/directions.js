@@ -100,6 +100,10 @@ export default class MapboxDirections {
     map.off('touchstart', this.onDragDown);
     map.off('touchstart', this.move);
     map.off('click', this.onClick);
+    if (this.storeUnsubscribe) {
+      this.storeUnsubscribe();
+      delete this.storeUnsubscribe;
+    }
     this._map = null;
     return this;
   }
@@ -137,7 +141,7 @@ export default class MapboxDirections {
   }
 
   subscribedActions() {
-    store.subscribe(() => {
+    this.storeUnsubscribe = store.subscribe(() => {
       const {
         origin,
         destination,
