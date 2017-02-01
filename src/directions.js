@@ -178,10 +178,9 @@ export default class MapboxDirections {
           };
 
           geojson.features.push(lineString);
-
           if (index === routeIndex) {
             // Collect any possible waypoints from steps
-            feature.steps.forEach((d) => {
+            feature.legs[0].steps.forEach((d) => {
               if (d.maneuver.type === 'waypoint') {
                 geojson.features.push({
                   type: 'Feature',

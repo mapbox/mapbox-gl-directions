@@ -58,12 +58,10 @@ function fetchDirections() {
     // Request params
     var options = [];
     options.push('geometries=polyline');
-    options.push('steps=true');
     options.push('alternatives=true');
     options.push('steps=true');
     options.push('overview=full');
     options.push('access_token=' + accessToken);
-
     request.abort();
     request.open('GET', `${api}mapbox/${profile}/${query}.json?${options.join('&')}`, true);
 
@@ -81,7 +79,7 @@ function fetchDirections() {
 
         // Revise origin / destination points
         dispatch(originPoint(data.waypoints[0].location));
-        dispatch(destinationPoint(data.waypoints[res.waypoints.length - 1].location));
+        dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
       } else {
         dispatch(setDirections([]));
         return dispatch(setError(JSON.parse(request.responseText).message));
