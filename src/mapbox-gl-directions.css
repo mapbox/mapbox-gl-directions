@@ -143,7 +143,7 @@
 /* Basics */
 .mapboxgl-ctrl-directions {
   width: 33.33333%;
-  min-width: 250px;
+  min-width: 300px;
   max-width: 300px;
 }
 .mapbox-directions-component {
@@ -259,7 +259,7 @@
     color:rgba(0,0,0,.5);
     line-height:20px;
     text-align:center;
-    width:33.3333%;
+    width: 25%;
     float:left;
     }
     .mapbox-directions-profile label:hover {
