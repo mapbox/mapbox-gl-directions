@@ -167,7 +167,7 @@ export default class MapboxDirections {
           const lineString = {
             geometry: {
               type: 'LineString',
-              coordinates: decode(feature.geometry, 6).map((c) => {
+              coordinates: decode(feature.geometry, 5).map((c) => {
                 return c.reverse();
               })
             },

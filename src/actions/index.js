@@ -61,6 +61,7 @@ function fetchDirections() {
     options.push('steps=true');
     options.push('alternatives=true');
     options.push('steps=true');
+    options.push('overview=full');
     options.push('access_token=' + accessToken);
 
     request.abort();
@@ -79,8 +80,8 @@ function fetchDirections() {
         dispatch(setDirections(data.routes));
 
         // Revise origin / destination points
-        dispatch(originPoint(data.origin.geometry.coordinates));
-        dispatch(destinationPoint(data.destination.geometry.coordinates));
+        dispatch(originPoint(data.waypoints[0].location));
+        dispatch(destinationPoint(data.waypoints[res.waypoints.length - 1].location));
       } else {
         dispatch(setDirections([]));
         return dispatch(setError(JSON.parse(request.responseText).message));
