@@ -27,7 +27,7 @@ test('directions', (tt) => {
       }
     });
 
-    directions.setOrigin('Queen Street');
+    directions.setOrigin('Queen Street NY');
     directions.setDestination([-77, 41]);
 
     directions.on('origin', function(e) {

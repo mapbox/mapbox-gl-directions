@@ -41,7 +41,7 @@ export default class Instructions {
         this.container.innerHTML = instructionsTemplate({
           routeIndex,
           routes: directions.length,
-          steps: direction.steps,
+          steps: direction.legs[0].steps, // Todo: Respect all legs,
           format: utils.format[unit],
           duration: utils.format[unit](direction.distance),
           distance: utils.format.duration(direction.duration)

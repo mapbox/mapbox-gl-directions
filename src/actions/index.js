@@ -57,14 +57,13 @@ function fetchDirections() {
 
     // Request params
     var options = [];
-    options.push('geometry=polyline');
-    options.push('instructions=text');
+    options.push('geometries=polyline');
     options.push('alternatives=true');
     options.push('steps=true');
+    options.push('overview=full');
     options.push('access_token=' + accessToken);
-
     request.abort();
-    request.open('GET', `${api}mapbox.${profile}/${query}.json?${options.join('&')}`, true);
+    request.open('GET', `${api}mapbox/${profile}/${query}.json?${options.join('&')}`, true);
 
     request.onload = () => {
       if (request.status >= 200 && request.status < 400) {
@@ -79,8 +78,8 @@ function fetchDirections() {
         dispatch(setDirections(data.routes));
 
         // Revise origin / destination points
-        dispatch(originPoint(data.origin.geometry.coordinates));
-        dispatch(destinationPoint(data.destination.geometry.coordinates));
+        dispatch(originPoint(data.waypoints[0].location));
+        dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
       } else {
         dispatch(setDirections([]));
         return dispatch(setError(JSON.parse(request.responseText).message));
@@ -105,19 +104,19 @@ function buildDirectionsQuery(state) {
   const { origin, destination, waypoints } = state();
 
   let query = [];
-  query = query.concat(origin.geometry.coordinates);
+  query.push((origin.geometry.coordinates).join(','));
   query.push(';');
 
   // Add any waypoints.
   if (waypoints.length) {
     waypoints.forEach((waypoint) => {
-      query = query.concat(waypoint.geometry.coordinates);
+      query.push((waypoint.geometry.coordinates).join(','));
       query.push(';');
     });
   }
 
-  query = query.concat(destination.geometry.coordinates);
-  return encodeURIComponent(query.join());
+  query.push((destination.geometry.coordinates).join(','));
+  return encodeURIComponent(query.join(''));
 }
 
 function normalizeWaypoint(waypoint) {

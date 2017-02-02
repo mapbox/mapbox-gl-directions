@@ -23,7 +23,7 @@ import Instructions from './controls/instructions';
  * @param {Array} [options.styles] Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
  * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
  * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
- * @param {String} [options.profile="driving"] Routing profile to use. Options: `driving`, `walking`, `cycling`
+ * @param {String} [options.profile="driving-traffic"] Routing profile to use. Options: `driving-traffic`, `driving`, `walking`, `cycling`
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
  * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
  * @param {Object} [options.controls]
@@ -167,7 +167,7 @@ export default class MapboxDirections {
           const lineString = {
             geometry: {
               type: 'LineString',
-              coordinates: decode(feature.geometry, 6).map((c) => {
+              coordinates: decode(feature.geometry, 5).map((c) => {
                 return c.reverse();
               })
             },
@@ -178,10 +178,9 @@ export default class MapboxDirections {
           };
 
           geojson.features.push(lineString);
-
           if (index === routeIndex) {
             // Collect any possible waypoints from steps
-            feature.steps.forEach((d) => {
+            feature.legs[0].steps.forEach((d) => {
               if (d.maneuver.type === 'waypoint') {
                 geojson.features.push({
                   type: 'Feature',

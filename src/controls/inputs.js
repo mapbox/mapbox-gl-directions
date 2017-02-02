@@ -105,7 +105,7 @@ export default class Inputs {
     const profiles = this.container.querySelectorAll('input[type="radio"]');
     Array.prototype.forEach.call(profiles, (el) => {
       el.addEventListener('change', () => {
-        setProfile(el.id.split('-').pop());
+        setProfile(el.id.replace('mapbox-directions-profile-', ''));
       });
     });
 
