@@ -18,7 +18,16 @@
         <% steps.forEach(function(step) { %>
           <%
             var distance = step.distance ? format(step.distance) : false;
-            var icon = step.maneuver.type.replace(/\s+/g, '-').toLowerCase();
+            var icon = step.maneuver.modifier ? (step.maneuver.modifier).replace(/\s+/g, '-').toLowerCase() : step.maneuver.type.replace(/\s+/g, '-').toLowerCase();
+
+            if (step.maneuver.type==="arrive" || step.maneuver.type === "depart"){
+              icon = step.maneuver.type
+            }
+
+            if (step.maneuver.type === "roundabout" || step.maneuver.type === "rotary"){
+              icon="roundabout"
+            }
+
             var lng = step.maneuver.location[0];
             var lat = step.maneuver.location[1];
           %>
@@ -30,9 +39,9 @@
             <div class='mapbox-directions-step-maneuver'>
               <%= step.maneuver.instruction %>
             </div>
-            <% if (step.distance) { %>
+            <% if (distance) { %>
               <div class='mapbox-directions-step-distance'>
-                <%= step.distance %>
+                <%= distance %>
               </div>
             <% } %>
           </li>
