@@ -1,3 +1,8 @@
+## 3.1.0
+
+- [internal] upgrade to v5 of the Mapbox Directions API
+- [feature] add traffic aware driving directions profile
+
 ## 3.0.3
 
 - [bug] re-enable hiding instructions panel [#101](https://github.com/mapbox/mapbox-gl-directions/issues/101)
