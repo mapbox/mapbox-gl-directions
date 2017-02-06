@@ -1,3 +1,7 @@
+## 3.1.1
+
+- [bug] Fixes css for turn instruction icons
+
 ## 3.1.0
 
 - [internal] upgrade to v5 of the Mapbox Directions API
