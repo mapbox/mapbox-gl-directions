@@ -29,4 +29,3 @@ Lastly, run the test command from the console:
 - `git tag -a vX.X.X -m 'vX.X.X'`
 - `git push --tags`
 - `npm publish`
-- Deploy packaged plugin in [mapbox-gl-js/plugins](https://github.com/mapbox/mapbox-gl-js/tree/mb-pages/plugins)
