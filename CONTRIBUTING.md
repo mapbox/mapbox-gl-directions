@@ -22,11 +22,10 @@ Lastly, run the test command from the console:
 
 ### Deploying
 
-- `npm run build && npm run docs`
-- Update the version key in [package.json](https://github.com/mapbox/mapbox-gl-directions/blob/master/package.json#L3)
-- Update [CHANGELOG.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/CHANGELOG.md)
-- Commit and push
-- `git tag -a vX.X.X -m 'vX.X.X'`
-- `git push --tags`
+- `npm test`
+- Update `[CHANGELOG.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/CHANGELOG.md)`
+- `git commit -am "Update changelog"`
+- `npm version {major|minor|patch}`
+- `git push --follow-tags`
 - `npm publish`
-- Deploy packaged plugin in [mapbox-gl-js/plugins](https://github.com/mapbox/mapbox-gl-js/tree/mb-pages/plugins)
+- update version number on [GL JS example page](https://github.com/mapbox/mapbox-gl-js/blob/mb-pages/docs/_posts/examples/3400-01-11-mapbox-gl-directions.html)
