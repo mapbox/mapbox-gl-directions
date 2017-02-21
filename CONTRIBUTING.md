@@ -28,3 +28,4 @@ Lastly, run the test command from the console:
 - `npm version {major|minor|patch}`
 - `git push --follow-tags`
 - `npm publish`
+- update version number on [GL JS example page](https://github.com/mapbox/mapbox-gl-js/blob/mb-pages/docs/_posts/examples/3400-01-11-mapbox-gl-directions.html)
