@@ -1,3 +1,6 @@
+## 3.1.2
+- [workaround] Include `/dist` directory in published NPM package
+
 ## 3.1.1
 
 - [bug] Fixes css for turn instruction icons
