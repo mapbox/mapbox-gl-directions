@@ -266,4 +266,4 @@ Geocoder.prototype = {
   }
 };
 
-module.exports = Geocoder;
+export default Geocoder;
