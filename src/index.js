@@ -1,3 +1,1 @@
-import MapboxDirections from './directions';
-
-module.exports = MapboxDirections;
+module.exports = require('./directions').default;
