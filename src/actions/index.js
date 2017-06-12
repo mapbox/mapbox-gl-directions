@@ -62,6 +62,7 @@ function fetchDirections() {
     options.push('steps=true');
     options.push('overview=full');
     options.push('access_token=' + accessToken);
+    options.push('language=en');
     request.abort();
     request.open('GET', `${api}mapbox/${profile}/${query}.json?${options.join('&')}`, true);
 
