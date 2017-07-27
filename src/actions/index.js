@@ -63,7 +63,7 @@ function fetchDirections() {
     options.push('overview=full');
     options.push('access_token=' + accessToken);
     request.abort();
-    request.open('GET', `${api}mapbox/${profile}/${query}.json?${options.join('&')}`, true);
+    request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
 
     request.onload = () => {
       if (request.status >= 200 && request.status < 400) {

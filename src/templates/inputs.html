@@ -24,28 +24,32 @@
       id='mapbox-directions-profile-driving-traffic'
       type='radio'
       name='profile'
-      <% if (profile === 'driving-traffic') { %>checked<% } %>
+      value='mapbox/driving-traffic'
+      <% if (profile === 'mapbox/driving-traffic') { %>checked<% } %>
     />
     <label for='mapbox-directions-profile-driving-traffic'>Traffic</label>
     <input
       id='mapbox-directions-profile-driving'
       type='radio'
       name='profile'
-      <% if (profile === 'driving') { %>checked<% } %>
+      value='mapbox/driving'
+      <% if (profile === 'mapbox/driving') { %>checked<% } %>
     />
     <label for='mapbox-directions-profile-driving'>Driving</label>
     <input
       id='mapbox-directions-profile-walking'
       type='radio'
       name='profile'
-      <% if (profile === 'walking') { %>checked<% } %>
+      value='mapbox/walking'
+      <% if (profile === 'mapbox/walking') { %>checked<% } %>
     />
     <label for='mapbox-directions-profile-walking'>Walking</label>
     <input
       id='mapbox-directions-profile-cycling'
       type='radio'
       name='profile'
-      <% if (profile === 'cycling') { %>checked<% } %>
+      value='mapbox/cycling'
+      <% if (profile === 'mapbox/cycling') { %>checked<% } %>
     />
     <label for='mapbox-directions-profile-cycling'>Cycling</label>
   </div>
