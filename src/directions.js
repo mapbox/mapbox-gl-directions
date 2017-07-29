@@ -24,6 +24,7 @@ import Instructions from './controls/instructions';
  * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
  * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
  * @param {String} [options.profile="driving-traffic"] Routing profile to use. Options: `driving-traffic`, `driving`, `walking`, `cycling`
+ * @param {Boolean} [options.alternatives=true] Whether to enable alternatives.
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
  * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
  * @param {Object} [options.controls]
@@ -109,7 +110,7 @@ export default class MapboxDirections {
   }
 
   mapState() {
-    const { profile, styles, interactive } = store.getState();
+    const { profile, alternatives, styles, interactive } = store.getState();
 
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });

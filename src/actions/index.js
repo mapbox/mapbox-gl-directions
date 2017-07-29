@@ -52,13 +52,13 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { api, accessToken, routeIndex, profile } = getState();
+    const { api, accessToken, routeIndex, profile, alternatives } = getState();
     const query = buildDirectionsQuery(getState);
 
     // Request params
     var options = [];
     options.push('geometries=polyline');
-    options.push('alternatives=true');
+    if (alternatives) options.push('alternatives=true');
     options.push('steps=true');
     options.push('overview=full');
     options.push('access_token=' + accessToken);
