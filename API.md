@@ -28,7 +28,8 @@ The Directions control
     -   `options.accessToken` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
     -   `options.interactive` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Enable/Disable mouse or touch interactivity from the plugin (optional, default `true`)
     -   `options.profile` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Routing profile to use. Options: `driving-traffic`, `driving`, `walking`, `cycling` (optional, default `"driving-traffic"`)
-    -   `options.alternatives` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to enable alternatives. (optional, default `true`)
+    -   `options.alternatives` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to enable alternatives. (optional, default `false`)
+    -   `options.congestion` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to enable congestion along the route line. (optional, default `false`)
     -   `options.unit` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
     -   `options.geocoder` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
     -   `options.controls` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
