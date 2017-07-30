@@ -168,27 +168,44 @@ export default class MapboxDirections {
       if (directions.length) {
         directions.forEach((feature, index) => {
 
-          const decoded = decode(feature.geometry, 5);
-          decoded.forEach((c, i) => {
-            if (i === 0) {
-              c.reverse();
-              return;
-            }
-            var segment = {
-              geometry: {
-                type: 'LineString',
-                coordinates: [decoded[i - 1], c.reverse()]
-              },
-              properties: {
-                'route-index': index,
-                route: (index === routeIndex) ? 'selected' : 'alternate'
-              }
-            };
-            if (feature.legs[0].annotation && feature.legs[0].annotation.congestion) {
-              segment.properties.congestion = feature.legs[0].annotation.congestion[i - 1];
-            }
-            geojson.features.push(segment);
+          const features = [];
+
+          const decoded = decode(feature.geometry, 5).map(function(c) {
+            return c.reverse();
           });
+
+          decoded.forEach(function(c, i) {
+            var previous = features[features.length - 1];
+            var congestion = feature.legs[0].annotation && feature.legs[0].annotation.congestion && feature.legs[0].annotation.congestion[i - 1];
+
+            if (previous && (!congestion || previous.properties.congestion === congestion)) {
+              previous.geometry.coordinates.push(c);
+            } else {
+              var segment = {
+                geometry: {
+                  type: 'LineString',
+                  coordinates: []
+                },
+                properties: {
+                  'route-index': index,
+                  route: (index === routeIndex) ? 'selected' : 'alternate',
+                }
+              };
+
+              // New segment starts with previous segment's last coordinate.
+              if (previous) segment.geometry.coordinates.push(previous.geometry.coordinates[previous.geometry.coordinates.length - 1]);
+
+              segment.geometry.coordinates.push(c);
+
+              if (congestion) {
+                segment.properties.congestion = feature.legs[0].annotation.congestion[i - 1];
+              }
+
+              features.push(segment);
+            }
+          });
+
+          geojson.features = geojson.features.concat(features);
 
           if (index === routeIndex) {
             // Collect any possible waypoints from steps
