@@ -24,6 +24,7 @@ import Instructions from './controls/instructions';
  * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
  * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
  * @param {String} [options.profile="mapbox/driving-traffic"] Routing profile to use. Options: `mapbox/driving-traffic`, `mapbox/driving`, `mapbox/walking`, `mapbox/cycling`
+ * @param {Boolean} [options.profileSwitcher=true] Whether to show the default profile switch with options for traffic, driving, walking and cycling.
  * @param {Boolean} [options.alternatives=true] Whether to enable alternatives.
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
  * @param {Function} [options.compile=null] Provide a custom function for generating instruction, compatible with osrm-text-instructions.

@@ -5,6 +5,7 @@ const initialState = {
   // Options set on initialization
   api: 'https://api.mapbox.com/directions/v5/',
   profile: 'mapbox/driving-traffic',
+  profileSwitcher: true,
   alternatives: false,
   unit: 'imperial',
   compile: null,
