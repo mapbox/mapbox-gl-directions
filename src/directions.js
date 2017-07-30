@@ -31,6 +31,7 @@ import Instructions from './controls/instructions';
  * @param {Object} [options.controls]
  * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.
  * @param {Boolean} [options.controls.instructions=true] Hide or display the instructions control.
+ * @param {Boolean} [options.controls.profileSwitcher=true] Hide or display the default profile switch with options for traffic, driving, walking and cycling.
  * @example
  * var MapboxDirections = require('../src/index');
  * var directions = new MapboxDirections({

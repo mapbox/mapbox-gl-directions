@@ -20,6 +20,7 @@
     </div>
   </div>
 
+  <% if (controls.profileSwitcher) { %>
   <div class='mapbox-directions-profile mapbox-directions-component-keyline mapbox-directions-clearfix'><input
       id='mapbox-directions-profile-driving-traffic'
       type='radio'
@@ -53,4 +54,5 @@
     />
     <label for='mapbox-directions-profile-cycling'>Cycling</label>
   </div>
+  <% } %>
 </div>

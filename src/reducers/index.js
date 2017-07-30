@@ -13,6 +13,7 @@ const initialState = {
 
   // UI controls
   controls: {
+    profileSwitcher: true,
     inputs: true,
     instructions: true
   },
