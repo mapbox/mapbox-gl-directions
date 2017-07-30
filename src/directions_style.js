@@ -16,7 +16,7 @@ const style = [{
     ['in', 'route', 'alternate']
   ]
 }, {
-  'id': 'directions-route-line',
+  'id': 'directions-route-line-casing',
   'type': 'line',
   'source': 'directions',
   'layout': {
@@ -24,8 +24,36 @@ const style = [{
     'line-join': 'round'
   },
   'paint': {
-    'line-color': '#3bb2d0',
-    'line-width': 4
+    'line-color': '#2d5f99',
+    'line-width': 12
+  },
+  'filter': [
+    'all',
+    ['in', '$type', 'LineString'],
+    ['in', 'route', 'selected']
+  ]
+}, {
+  'id': 'directions-route-line',
+  'type': 'line',
+  'source': 'directions',
+  'layout': {
+    'line-cap': 'butt',
+    'line-join': 'round'
+  },
+  'paint': {
+    'line-color': {
+      'property': 'congestion',
+      'type': 'categorical',
+      'default': '#4882c5',
+      'stops': [
+        ['unknown', '#4882c5'],
+        ['low', '#4882c5'],
+        ['moderate', '#f09a46'],
+        ['heavy', '#e34341'],
+        ['severe', '#8b2342']
+      ]
+    },
+    'line-width': 7
   },
   'filter': [
     'all',

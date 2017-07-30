@@ -24,7 +24,8 @@ import Instructions from './controls/instructions';
  * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
  * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
  * @param {String} [options.profile="mapbox/driving-traffic"] Routing profile to use. Options: `mapbox/driving-traffic`, `mapbox/driving`, `mapbox/walking`, `mapbox/cycling`
- * @param {Boolean} [options.alternatives=true] Whether to enable alternatives.
+ * @param {Boolean} [options.alternatives=false] Whether to enable alternatives.
+ * @param {Boolean} [options.congestion=false] Whether to enable congestion along the route line.
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
  * @param {Function} [options.compile=null] Provide a custom function for generating instruction, compatible with osrm-text-instructions.
  * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
@@ -112,7 +113,7 @@ export default class MapboxDirections {
   }
 
   mapState() {
-    const { profile, alternatives, styles, interactive, compile } = store.getState();
+    const { profile, alternatives, congestion, styles, interactive, compile } = store.getState();
 
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });
@@ -167,20 +168,28 @@ export default class MapboxDirections {
       if (directions.length) {
         directions.forEach((feature, index) => {
 
-          const lineString = {
-            geometry: {
-              type: 'LineString',
-              coordinates: decode(feature.geometry, 5).map((c) => {
-                return c.reverse();
-              })
-            },
-            properties: {
-              'route-index': index,
-              route: (index === routeIndex) ? 'selected' : 'alternate'
+          const decoded = decode(feature.geometry, 5);
+          decoded.forEach((c, i) => {
+            if (i === 0) {
+              c.reverse();
+              return;
             }
-          };
+            var segment = {
+              geometry: {
+                type: 'LineString',
+                coordinates: [decoded[i - 1], c.reverse()]
+              },
+              properties: {
+                'route-index': index,
+                route: (index === routeIndex) ? 'selected' : 'alternate'
+              }
+            };
+            if (feature.legs[0].annotation && feature.legs[0].annotation.congestion) {
+              segment.properties.congestion = feature.legs[0].annotation.congestion[i - 1];
+            }
+            geojson.features.push(segment);
+          });
 
-          geojson.features.push(lineString);
           if (index === routeIndex) {
             // Collect any possible waypoints from steps
             feature.legs[0].steps.forEach((d) => {
