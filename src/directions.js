@@ -26,6 +26,7 @@ import Instructions from './controls/instructions';
  * @param {String} [options.profile="mapbox/driving-traffic"] Routing profile to use. Options: `mapbox/driving-traffic`, `mapbox/driving`, `mapbox/walking`, `mapbox/cycling`
  * @param {Boolean} [options.alternatives=true] Whether to enable alternatives.
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
+ * @param {Function} [options.compile=null] Provide a custom function for generating instruction, compatible with osrm-text-instructions.
  * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
  * @param {Object} [options.controls]
  * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.
@@ -110,7 +111,7 @@ export default class MapboxDirections {
   }
 
   mapState() {
-    const { profile, alternatives, styles, interactive } = store.getState();
+    const { profile, alternatives, styles, interactive, compile } = store.getState();
 
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });

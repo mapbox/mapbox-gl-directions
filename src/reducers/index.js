@@ -7,6 +7,7 @@ const initialState = {
   profile: 'mapbox/driving-traffic',
   alternatives: false,
   unit: 'imperial',
+  compile: null,
   proximity: false,
   styles: [],
 

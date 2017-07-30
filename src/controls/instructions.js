@@ -28,7 +28,7 @@ export default class Instructions {
   render() {
     this.store.subscribe(() => {
       const { hoverMarker, setRouteIndex } = this.actions;
-      const { routeIndex, unit, directions, error } = this.store.getState();
+      const { routeIndex, unit, directions, error, compile } = this.store.getState();
       const shouldRender = !isEqual(directions[routeIndex], this.directions);
 
       if (error) {
@@ -38,6 +38,15 @@ export default class Instructions {
 
       if (directions.length && shouldRender) {
         const direction = this.directions = directions[routeIndex];
+
+        if (compile) {
+          direction.legs.forEach(function(leg) {
+            leg.steps.forEach(function(step) {
+              step.maneuver.instruction = compile('en', step);
+            });
+          });
+        }
+
         this.container.innerHTML = instructionsTemplate({
           routeIndex,
           routes: directions.length,
