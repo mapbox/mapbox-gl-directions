@@ -83,7 +83,7 @@ export default class Inputs {
 
     var destinationEl = this.destinationInput.onAdd();
     this.container.querySelector('#mapbox-directions-destination-input').appendChild(destinationEl);
-    
+
 
     this.originInput.on('result', (e) => {
       const coords = e.result.center;
@@ -105,7 +105,7 @@ export default class Inputs {
     const profiles = this.container.querySelectorAll('input[type="radio"]');
     Array.prototype.forEach.call(profiles, (el) => {
       el.addEventListener('change', () => {
-        setProfile(el.id.replace('mapbox-directions-profile-', ''));
+        setProfile(el.value);
       });
     });
 

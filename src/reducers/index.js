@@ -4,9 +4,10 @@ import deepAssign from 'deep-assign';
 const initialState = {
   // Options set on initialization
   api: 'https://api.mapbox.com/directions/v5/',
-  profile: 'driving-traffic',
+  profile: 'mapbox/driving-traffic',
   alternatives: false,
   unit: 'imperial',
+  compile: null,
   proximity: false,
   styles: [],
 
