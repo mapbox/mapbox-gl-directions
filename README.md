@@ -14,7 +14,7 @@ var MapboxDirections = require('@mapbox/mapbox-gl-directions');
 var directions = new MapboxDirections({
   accessToken: 'YOUR-MAPBOX-ACCESS-TOKEN',
   unit: 'metric',
-  profile: 'cycling'
+  profile: 'mapbox/cycling'
 });
 
 var map = new mapboxgl.Map({

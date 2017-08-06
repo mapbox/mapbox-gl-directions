@@ -35,7 +35,7 @@ var MapboxDirections = require('../src/index');
 var directions = new MapboxDirections({
   accessToken: window.localStorage.getItem('MapboxAccessToken'),
   unit: 'metric',
-  profile: 'cycling'
+  profile: 'mapbox/cycling'
 });
 window.directions = directions;
 

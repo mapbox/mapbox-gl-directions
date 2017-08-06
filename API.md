@@ -27,14 +27,16 @@ The Directions control
     -   `options.styles` **[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)?** Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
     -   `options.accessToken` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
     -   `options.interactive` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Enable/Disable mouse or touch interactivity from the plugin (optional, default `true`)
-    -   `options.profile` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Routing profile to use. Options: `driving-traffic`, `driving`, `walking`, `cycling` (optional, default `"driving-traffic"`)
+    -   `options.profile` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Routing profile to use. Options: `mapbox/driving-traffic`, `mapbox/driving`, `mapbox/walking`, `mapbox/cycling` (optional, default `"mapbox/driving-traffic"`)
     -   `options.alternatives` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to enable alternatives. (optional, default `false`)
     -   `options.congestion` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to enable congestion along the route line. (optional, default `false`)
     -   `options.unit` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
+    -   `options.compile` **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** Provide a custom function for generating instruction, compatible with osrm-text-instructions. (optional, default `null`)
     -   `options.geocoder` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
     -   `options.controls` **[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
         -   `options.controls.inputs` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the inputs control. (optional, default `true`)
         -   `options.controls.instructions` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the instructions control. (optional, default `true`)
+        -   `options.controls.profileSwitcher` **[Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the default profile switch with options for traffic, driving, walking and cycling. (optional, default `true`)
 
 **Examples**
 
@@ -43,7 +45,7 @@ var MapboxDirections = require('../src/index');
 var directions = new MapboxDirections({
   accessToken: 'YOUR-MAPBOX-ACCESS-TOKEN',
   unit: 'metric',
-  profile: 'cycling'
+  profile: 'mapbox/cycling'
 });
 // add to your mapboxgl map
 map.addControl(directions);
