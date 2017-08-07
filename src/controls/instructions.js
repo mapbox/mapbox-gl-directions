@@ -39,13 +39,76 @@ export default class Instructions {
       if (directions.length && shouldRender) {
         const direction = this.directions = directions[routeIndex];
 
-        if (compile) {
-          direction.legs.forEach(function(leg) {
-            leg.steps.forEach(function(step) {
+        direction.legs.forEach(function(leg) {
+          leg.steps.forEach(function(step) {
+            step.lanes = stepToLanes(step);
+            if (compile) {
               step.maneuver.instruction = compile('en', step);
-            });
+            }
           });
-        }
+        });
+
+	function stepToLanes(step) {
+	  var lanes = step.intersections[0].lanes;
+
+	  if (!lanes) return [];
+
+	  var maneuver = step.maneuver.modifier || '';
+
+	  return lanes.map(function(lane, index) {
+	    var classes = [];
+	    if (!lane.valid) classes.push(['invalid']);
+
+	    // check maneuver direction matches this lane one(s)
+	    var maneuverIndication = lane.indications.indexOf(maneuver);
+	    if (maneuverIndication === -1) {
+	      // check non-indicated lane to allow straight, right turn from last lane and left turn for first lane
+	      if ((lane.indications[0] === 'none' || lane.indications[0] === '') && (
+		maneuver === 'straight' ||
+		(index === 0 && maneuver.slice(-4) === 'left') ||
+		(index === (lanes.length - 1) && maneuver.slice(-5) === 'right'))) {
+		maneuverIndication = 0;
+	      } else if (maneuver.slice(0, 7) === 'slight ' ) {
+		// try to exclude 'slight' modifier
+		maneuverIndication = lane.indications.indexOf(maneuver.slice(7));
+	      }
+	    }
+	    var indication = (maneuverIndication === -1) ? lane.indications[0] : maneuver;
+
+	    var icon;
+	    switch (indication) {
+	    case 'right':
+	      icon = 'right';
+	      break;
+	    case 'sharp right':
+	      icon = 'sharp-right';
+	      break;
+	    case 'slight right':
+	      icon = 'slight-right';
+	      break;
+	    case 'left':
+	      icon = 'left';
+	      break;
+	    case 'sharp left':
+	      icon = 'sharp-left';
+	      break;
+	    case 'slight left':
+	      icon = 'slight-left';
+	      break;
+	    case 'uturn':
+	      icon = 'u-turn';
+	      break;
+	    //case 'straight':
+	    //case 'none':
+	    default:
+	      icon = 'straight';
+	      break;
+	    }
+	    classes.push('directions-icon-' + icon);
+
+	    return classes.join(' ');
+	  });
+	}
 
         this.container.innerHTML = instructionsTemplate({
           routeIndex,

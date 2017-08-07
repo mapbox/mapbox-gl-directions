@@ -35,10 +35,17 @@
             data-lat='<%= lat %>'
             data-lng='<%= lng %>'
             class='mapbox-directions-step'>
-            <span class='directions-icon directions-icon-<%= icon %>'></span>
+            <span class='directions-icon directions-maneuver-icon directions-icon-<%= icon %>'></span>
             <div class='mapbox-directions-step-maneuver'>
               <%= step.maneuver.instruction %>
             </div>
+            <% if (step.lanes) { %>
+              <div class='mapbox-directions-lanes'>
+              <% step.lanes.forEach(function(lane) { %>
+                <span class='directions-icon directions-lane-icon <%- lane %>'></span>
+              <% }); %>
+              </div>
+            <% } %>
             <% if (distance) { %>
               <div class='mapbox-directions-step-distance'>
                 <%= distance %>
