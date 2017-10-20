@@ -56,7 +56,7 @@ export default class MapboxDirections {
     this.onDragMove = this._onDragMove.bind(this);
     this.onDragUp = this._onDragUp.bind(this);
     this.move = this._move.bind(this);
-    this.onClick = this._onClick.bind(this);
+    this.onClick = this._clickHandler().bind(this);
   }
 
   onAdd(map) {
@@ -231,7 +231,26 @@ export default class MapboxDirections {
     });
   }
 
-  _onClick(e) {
+  _clickHandler() {
+    var timer = null;
+    var delay = 250;
+    return function(event) {
+      if (!timer) {
+        var singleClickHandler = this._onSingleClick.bind(this);
+
+        timer = setTimeout(function() {
+          singleClickHandler(event);
+          timer = null;
+        }, delay);
+
+      } else {
+        clearTimeout(timer);
+        this._map.zoomIn();
+      }
+    };
+  }
+
+  _onSingleClick(e) {
     const { origin } = store.getState();
     const coords = [e.lngLat.lng, e.lngLat.lat];
 
