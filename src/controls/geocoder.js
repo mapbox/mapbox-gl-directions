@@ -178,8 +178,8 @@ Geocoder.prototype = {
     if (!input) return;
     if (typeof input === 'object' && input.length) {
       input = [
-        utils.wrap(input[0]),
-        utils.wrap(input[1])
+        utils.wrap(input[0]).toFixed(5),
+        utils.wrap(input[1]).toFixed(5)
       ].join();
     }
 
