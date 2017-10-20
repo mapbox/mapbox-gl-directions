@@ -21,7 +21,7 @@ test('Directions#inputControl', tt => {
   }
 
   tt.test('profiles', (t) => {
-    setup({ profile: 'cycling' });
+    setup({ profile: 'mapbox/cycling' });
     t.plan(3);
 
     var drivingEl = container.querySelector('#mapbox-directions-profile-driving');
@@ -31,7 +31,7 @@ test('Directions#inputControl', tt => {
     t.equal(cyclingEl.checked, true, 'cycling profile is active');
 
     directions.on('profile', once((e) => {
-      t.equal(e.profile, 'driving', 'driving profile is set and event emitted');
+      t.equal(e.profile, 'mapbox/driving', 'driving profile is set and event emitted');
     }));
 
     drivingEl.dispatchEvent(changeEvent);
