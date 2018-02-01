@@ -11,6 +11,7 @@ require('./test.directions');
 // require('./test.options');
 require('./test.inputs');
 require('./test.instructions');
+require('./test.utils');
 
 // close the smokestack window once tests are complete
 test('shutdown', (t) => {
