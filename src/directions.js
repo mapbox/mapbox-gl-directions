@@ -109,6 +109,12 @@ export default class MapboxDirections {
       this.storeUnsubscribe();
       delete this.storeUnsubscribe;
     }
+    directionsStyle.forEach((layer) => {
+      if (map.getLayer(layer.id)) map.removeLayer(layer.id);
+    });
+
+    if (map.getSource('directions')) map.removeSource('directions');
+
     this._map = null;
     return this;
   }
