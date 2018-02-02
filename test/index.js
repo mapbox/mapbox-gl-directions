@@ -6,6 +6,12 @@ require('../src/index');
 
 mapboxgl.accessToken = process.env.MapboxAccessToken;
 
+if (!mapboxgl.accessToken) {
+  throw new Error('No MapboxAccessToken environment variable set. Please run `export MapboxAccessToken=<your token> && npm test`');
+  window.close();
+  process.exit(0);
+}
+
 // Tests
 require('./test.directions');
 // require('./test.options');
