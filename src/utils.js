@@ -16,6 +16,14 @@ function wrap(n) {
   return (w === -180) ? 180 : w;
 }
 
+function roundWithOriginalPrecision(input, original) {
+  let precision = 0;
+  if (Math.floor(original) !== original) {
+    precision = original.toString().split('.')[1].length;
+  }
+  return input.toFixed(Math.min(precision, 5));
+}
+
 function createPoint(coordinates, properties) {
   return {
     type: 'Feature',
@@ -54,4 +62,4 @@ const format = {
   }
 };
 
-export default { format, coordinateMatch, createPoint, validCoords, wrap };
+export default { format, coordinateMatch, createPoint, validCoords, wrap, roundWithOriginalPrecision };
