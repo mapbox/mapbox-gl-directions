@@ -4,28 +4,26 @@ import Typeahead from 'suggestions';
 import debounce from 'lodash.debounce';
 import extend from 'xtend';
 import { EventEmitter } from 'events';
-import utils from '../utils'
-
-// Mapbox Geocoder version
-var API = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
+import utils from '../utils';
 
 // Geocoder - this slightly mimicks the mapboxl-gl-geocoder but isn't an exact replica.
 // Once gl-js plugins can be added to custom divs, we should be able to require mapbox-gl-geocoder
 // instead of including it here
-function Geocoder(options) {
-  this._ev = new EventEmitter();
-  this.options = extend({}, this.options, options);
-}
 
-Geocoder.prototype = {
+export default class Geocoder {
+  constructor(options) {
+    var defaultOptions = {
+      placeholder: 'Search',
+      zoom: 16,
+      flyTo: true,
+    };
 
-  options: {
-    placeholder: 'Search',
-    zoom: 16,
-    flyTo: true
-  },
+    this._ev = new EventEmitter();
+    this.options = extend({}, defaultOptions, options);
+    this.api = options && options.api || 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
+  }
 
-  onAdd: function(map) {
+  onAdd(map) {
     this._map = map;
 
     this.request = new XMLHttpRequest();
@@ -95,9 +93,9 @@ Geocoder.prototype = {
     this._typeahead.getItemValue = function(item) { return item.place_name; };
 
     return el;
-  },
+  }
 
-  _geocode: function(q, callback) {
+  _geocode(q, callback) {
     this._loadingEl.classList.add('active');
     this.fire('loading');
 
@@ -109,9 +107,8 @@ Geocoder.prototype = {
 
     var accessToken = this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
     options.push('access_token=' + accessToken);
-
     this.request.abort();
-    this.request.open('GET', API + encodeURIComponent(q.trim()) + '.json?' + options.join('&'), true);
+    this.request.open('GET', this.api + encodeURIComponent(q.trim()) + '.json?' + options.join('&'), true);
     this.request.onload = function() {
       this._loadingEl.classList.remove('active');
       if (this.request.status >= 200 && this.request.status < 400) {
@@ -137,9 +134,9 @@ Geocoder.prototype = {
     }.bind(this);
 
     this.request.send();
-  },
+  }
 
-  _queryFromInput: function(q) {
+  _queryFromInput(q) {
     q = q.trim();
     if (!q) this._clear();
     if (q.length > 2) {
@@ -147,15 +144,15 @@ Geocoder.prototype = {
         this._results = results;
       }.bind(this));
     }
-  },
+  }
 
-  _change: function() {
+  _change() {
     var onChange = document.createEvent('HTMLEvents');
     onChange.initEvent('change', true, false);
     this._inputEl.dispatchEvent(onChange);
-  },
+  }
 
-  _query: function(input) {
+  _query(input) {
     if (!input) return;
     if (typeof input === 'object' && input.length) {
       input = [
@@ -172,9 +169,9 @@ Geocoder.prototype = {
       this._inputEl.value = result.place_name;
       this._change();
     }.bind(this));
-  },
+  }
 
-  _setInput: function(input) {
+  _setInput(input) {
     if (!input) return;
     if (typeof input === 'object' && input.length) {
       input = [
@@ -189,9 +186,9 @@ Geocoder.prototype = {
     this._typeahead.selected = null;
     this._typeahead.clear();
     this._change();
-  },
+  }
 
-  _clear: function() {
+  _clear() {
     this._input = null;
     this._inputEl.value = '';
     this._typeahead.selected = null;
@@ -200,31 +197,31 @@ Geocoder.prototype = {
     this._inputEl.focus();
     this._clearEl.classList.remove('active');
     this.fire('clear');
-  },
+  }
 
-  getResult: function() {
+  getResult() {
     return this._input;
-  },
+  }
 
   /**
    * Set & query the input
    * @param {Array|String} query An array of coordinates [lng, lat] or location name as a string.
    * @returns {Geocoder} this
    */
-  query: function(query) {
+  query(query) {
     this._query(query);
     return this;
-  },
+  }
 
   /**
    * Set input
    * @param {Array|String} value An array of coordinates [lng, lat] or location name as a string. Calling this function just sets the input and does not trigger an API request.
    * @returns {Geocoder} this
    */
-  setInput: function(value) {
+  setInput(value) {
     this._setInput(value);
     return this;
-  },
+  }
 
   /**
    * Subscribe to events that happen within the plugin.
@@ -238,10 +235,10 @@ Geocoder.prototype = {
    * @param {Function} fn function that's called when the event is emitted.
    * @returns {Geocoder} this;
    */
-  on: function(type, fn) {
+  on(type, fn) {
     this._ev.on(type, fn);
     return this;
-  },
+  }
 
   /**
    * Fire an event
@@ -249,10 +246,10 @@ Geocoder.prototype = {
    * @param {Object} data event data to pass to the function subscribed.
    * @returns {Geocoder} this
    */
-  fire: function(type, data) {
+  fire(type, data) {
     this._ev.emit(type, data);
     return this;
-  },
+  }
 
   /**
    * Remove an event
@@ -260,10 +257,8 @@ Geocoder.prototype = {
    * @param {String} type Event name.
    * @param {Function} fn Function that should unsubscribe to the event emitted.
    */
-  off: function(type, fn) {
+  off(type, fn) {
     this._ev.removeListener(type, fn);
     return this;
   }
 };
-
-module.exports = Geocoder;
