@@ -137,9 +137,12 @@ export default class MapboxDirections {
     this._map.addSource('directions', geojson);
 
     // Add direction specific styles to the map
-    directionsStyle.forEach((style) => this._map.addLayer(style));
-
     if (styles && styles.length) styles.forEach((style) => this._map.addLayer(style));
+    directionsStyle.forEach((style) => {
+      // only add the default style layer if a custom layer wasn't provided
+      if (!this._map.getLayer(style.id)) this._map.addLayer(style);
+    });
+
 
     if (interactive) {
       this._map.on('mousedown', this.onDragDown);
