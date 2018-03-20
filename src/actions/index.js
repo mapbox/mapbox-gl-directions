@@ -52,7 +52,10 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { api, accessToken, routeIndex, profile, alternatives, congestion } = getState();
+    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination } = getState();
+    // if there is no destination set, do not make request because it will fail
+    if (!(destination && destination.geometry)) return;
+
     const query = buildDirectionsQuery(getState);
 
     // Request params
