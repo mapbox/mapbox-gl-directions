@@ -10,6 +10,7 @@ function setup() {
   "version": 8,
   "sources": {
   },
+  "glyphs": "local://glyphs/{fontstack}/{range}.pbf",
   "layers": [
       {
           "id": "background", "type": "background",
@@ -64,6 +65,39 @@ test('directions', (tt) => {
 
   tt.end();
 });
+
+test('Directions with custom styles', t => {
+  var map = setup();
+  var customLayer = {
+    'id': 'directions-route-line',
+    'type': 'line',
+    'source': 'directions',
+    'filter': [
+      'all',
+      ['in', '$type', 'LineString'],
+      ['in', 'route', 'selected']
+    ],
+    'layout': {
+      'line-cap': 'round',
+      'line-join': 'round'
+    },
+    'paint': {
+      'line-color': '#3bb2d0',
+      'line-width': 4
+    }
+  };
+  var directions = new MapboxDirections({
+    styles: [customLayer]
+  });
+  t.ok(map.addControl(directions));
+  map.on('load', ()=>{
+    t.ok(map.getLayer('directions-route-line-alt'), 'adds default for unspecified custom layer');
+    t.deepEqual(map.getLayer('directions-route-line').serialize(), customLayer);
+  })
+
+  t.end();
+});
+
 
 test('Directions#onRemove', t => {
   var map = setup();
