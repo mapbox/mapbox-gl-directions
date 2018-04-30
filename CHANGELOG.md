@@ -1,3 +1,6 @@
+## 3.1.3
+- [bug] Bump package `suggestions` to support autocompletion on quick keypress.[#179](https://github.com/mapbox/mapbox-gl-directions/pull/179)
+
 ## 3.1.2
 - [workaround] Include `/dist` directory in published NPM package
 
