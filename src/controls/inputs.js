@@ -36,16 +36,18 @@ export default class Inputs {
   }
 
   animateToCoordinates(mode, coords) {
-    const { origin, destination } = this.store.getState();
+    const { origin, destination, waypoints } = this.store.getState();
 
     if (origin.geometry &&
         destination.geometry &&
         !isEqual(origin.geometry, destination.geometry)) {
 
+      const ways = waypoints.filter((waypoint) => (waypoint.geometry))
+
       // Animate map to fit bounds.
       const bb = extent({
         type: 'FeatureCollection',
-        features: [origin, destination]
+        features: [origin, destination, ...ways]
       });
 
       this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
