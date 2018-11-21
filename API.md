@@ -16,6 +16,7 @@
     -   [getWaypoints](#getwaypoints)
     -   [removeRoutes](#removeroutes)
     -   [on](#on)
+    -   [off](#off)
 
 ## MapboxDirections
 
@@ -168,7 +169,8 @@ Subscribe to events that happen within the plugin.
 
 **Parameters**
 
--   `type` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** name of event. Available events and the data passed into their respective event objects are:-   **clear** `{ type: } Type is one of 'origin' or 'destination'`
+-   `type` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** name of event. Available events and the data passed into their respective event objects are:
+    -   **clear** `{ type: } Type is one of 'origin' or 'destination'`
     -   **loading** `{ type: } Type is one of 'origin' or 'destination'`
     -   **profile** `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
     -   **origin** `{ feature } Fired when origin is set`
@@ -176,5 +178,23 @@ Subscribe to events that happen within the plugin.
     -   **route** `{ route } Fired when a route is updated`
     -   **error** \`{ error } Error as string
 -   `fn` **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** function that's called when the event is emitted.
+
+Returns **[MapboxDirections](#mapboxdirections)** this;
+
+### off
+
+Unsubscribe to events previously registered.
+
+**Parameters**
+
+-   `type` **[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)** name of event. Available events and the data passed into their respective event objects are:
+    -   **clear** `{ type: } Type is one of 'origin' or 'destination'`
+    -   **loading** `{ type: } Type is one of 'origin' or 'destination'`
+    -   **profile** `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
+    -   **origin** `{ feature } Fired when origin is set`
+    -   **destination** `{ feature } Fired when destination is set`
+    -   **route** `{ route } Fired when a route is updated`
+    -   **error** \`{ error } Error as string
+-   `fn` **[Function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function)** function used when the event was registered.
 
 Returns **[MapboxDirections](#mapboxdirections)** this;
