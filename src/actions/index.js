@@ -86,13 +86,13 @@ function fetchDirections() {
         dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
       } else {
         dispatch(setDirections([]));
-        return dispatch(setError(JSON.parse(request.responseText).message));
+        return dispatch(setError(JSON.parse(request.responseText || '{"message": "Undefined error"}').message));
       }
     };
 
     request.onerror = () => {
       dispatch(setDirections([]));
-      return dispatch(setError(JSON.parse(request.responseText).message));
+      return dispatch(setError(JSON.parse(request.responseText || '{"message": "Undefined error"}').message));
     };
 
     request.send();
