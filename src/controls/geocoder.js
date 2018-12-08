@@ -104,6 +104,7 @@ export default class Geocoder {
     if (this.options.bbox) options.push('bbox=' + this.options.bbox.join());
     if (this.options.country) options.push('country=' + this.options.country);
     if (this.options.types) options.push('types=' + this.options.types);
+    if (this.options.language) options.push('language=' + this.options.language);
 
     var accessToken = this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
     options.push('access_token=' + accessToken);
