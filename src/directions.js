@@ -29,11 +29,15 @@ import Instructions from './controls/instructions';
  * @param {Boolean} [options.congestion=false] Whether to enable congestion along the route line.
  * @param {String} [options.unit="imperial"] Measurement system to be used in navigation instructions. Options: `imperial`, `metric`
  * @param {Function} [options.compile=null] Provide a custom function for generating instruction, compatible with osrm-text-instructions.
- * @param {Object} [options.geocoder] Pass options available to mapbox-gl-geocoder as [documented here](https://github.com/mapbox/mapbox-gl-geocoder/blob/master/API.md#mapboxglgeocoder).
+ * @param {Object} [options.geocoder] Accepts an object containing the query parameters as [documented here](https://www.mapbox.com/api-documentation/#search-for-places).
  * @param {Object} [options.controls]
  * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.
  * @param {Boolean} [options.controls.instructions=true] Hide or display the instructions control.
  * @param {Boolean} [options.controls.profileSwitcher=true] Hide or display the default profile switch with options for traffic, driving, walking and cycling.
+ * @param {Number} [options.zoom=16] If no bbox exists from the geocoder result, the zoom you set here will be used in the flyTo.
+ * @param {String} [options.placeholderOrigin="Choose a starting place"] If set, this text will appear as the placeholder attribute for the origin input element.
+ * @param {String} [options.placeholderDestination="Choose destination"] If set, this text will appear as the placeholder attribute for the destination input element.
+ * @param {Boolean} [options.flyTo=true] If false, animating the map to a selected result is disabled.
  * @example
  * var MapboxDirections = require('../src/index');
  * var directions = new MapboxDirections({
