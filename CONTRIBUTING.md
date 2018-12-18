@@ -1,31 +1,25 @@
-### Dependencies
-
-- [node.js](https://nodejs.org/en/) >= 0.12
-
 ### Developing
 
     npm install & npm start & open http://localhost:9966/example/
 
 You'll need a [Mapbox access token](https://www.mapbox.com/help/create-api-access-token/) stored in localstorage. Set it via
 
-    localStorage.setItem('MapboxAccessToken', '<TOKEN HERE>');
+    localStorage.setItem('MapboxAccessToken', '<YOUR ACCESS TOKEN>');
 
 ### Testing
 
 Tests require an MapboxAccessToken env variable to be set.
 
-    export MapboxAccessToken="YOUR ACCESS TOKEN"
+    export MapboxAccessToken=<YOUR ACCESS TOKEN> && npm test
 
-Lastly, run the test command from the console:
+### Release process
 
-    npm test
-
-### Deploying
-
-- `npm test`
-- Update `[CHANGELOG.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/CHANGELOG.md)`
-- `git commit -am "Update changelog"`
-- `npm version {major|minor|patch}`
-- `git push --follow-tags`
-- `npm publish`
-- update version number on [GL JS example page](https://github.com/mapbox/mapbox-gl-js/blob/mb-pages/docs/_posts/examples/3400-01-11-mapbox-gl-directions.html)
+1. `git checkout master`
+1. `git pull --rebase --autostash` to ensure you have the latest changes.
+1. `export MapboxAccessToken=<YOUR ACCESS TOKEN> && npm test`
+1. Update [`CHANGELOG.md`](https://github.com/mapbox/mapbox-gl-directions/blob/master/CHANGELOG.md)
+1. `npm version {major|minor|patch}`
+1. Create a release branch off of master that updates `CHANGELOG.md` and increments `package.json`.
+1. `git push --follow-tags`
+1. `mbx npm publish`
+1. Update version number on [GL JS example page](https://github.com/mapbox/mapbox-gl-js/blob/mb-pages/docs/_posts/examples/3400-01-11-mapbox-gl-directions.html)
