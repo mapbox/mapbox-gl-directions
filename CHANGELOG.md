@@ -1,3 +1,10 @@
+## 4.0.0
+- [Refactor] options passed to internal Geocoder class
+  - Made options.geocoder dynamic, accepting only query parameters from the Geocoding API
+  - Removed placeholder option in favor of placeholderOrigin and placeholderDestination
+  - Added top level options flyTo, zoom, placeholderOrigin and placeholderDestination
+- [Chore] Update packages to resolve vulnerabilities in smokestack
+
 ## 3.1.3
 - [bug] Bump package `suggestions` to support autocompletion on quick keypress.[#179](https://github.com/mapbox/mapbox-gl-directions/pull/179)
 
