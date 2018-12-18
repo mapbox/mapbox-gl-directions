@@ -2,7 +2,6 @@
 
 import Typeahead from 'suggestions';
 import debounce from 'lodash.debounce';
-import extend from 'xtend';
 import { EventEmitter } from 'events';
 import utils from '../utils';
 
@@ -12,14 +11,8 @@ import utils from '../utils';
 
 export default class Geocoder {
   constructor(options) {
-    var defaultOptions = {
-      placeholder: 'Search',
-      zoom: 16,
-      flyTo: true,
-    };
-
     this._ev = new EventEmitter();
-    this.options = extend({}, defaultOptions, options);
+    this.options = options;
     this.api = options && options.api || 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
   }
 
@@ -99,11 +92,13 @@ export default class Geocoder {
     this._loadingEl.classList.add('active');
     this.fire('loading');
 
-    var options = [];
-    if (this.options.proximity) options.push('proximity=' + this.options.proximity.join());
-    if (this.options.bbox) options.push('bbox=' + this.options.bbox.join());
-    if (this.options.country) options.push('country=' + this.options.country);
-    if (this.options.types) options.push('types=' + this.options.types);
+    const geocodingOptions = this.options
+    const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken'];
+    const options = Object.keys(this.options).filter(function(key) {
+      return exclude.indexOf(key) === -1;
+    }).map(function(key) {
+      return key + '=' + geocodingOptions[key];
+    });
 
     var accessToken = this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
     options.push('access_token=' + accessToken);
