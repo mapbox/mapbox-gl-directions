@@ -172,7 +172,8 @@ Subscribe to events that happen within the plugin.
 
 **Parameters**
 
--   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of event. Available events and the data passed into their respective event objects are:-   **clear** `{ type: } Type is one of 'origin' or 'destination'`
+-   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of event. Available events and the data passed into their respective event objects are:-   
+    -   **clear** `{ type: } Type is one of 'origin' or 'destination'`
     -   **loading** `{ type: } Type is one of 'origin' or 'destination'`
     -   **profile** `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
     -   **origin** `{ feature } Fired when origin is set`
