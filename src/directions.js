@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 import thunk from 'redux-thunk';
-import { decode } from 'polyline';
+import { decode } from '@mapbox/polyline';
 import utils from './utils';
 import rootReducer from './reducers';
 
