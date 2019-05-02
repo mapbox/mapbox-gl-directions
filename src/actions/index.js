@@ -1,28 +1,28 @@
-import * as types from '../constants/action_types';
-import utils from '../utils';
+import * as types from "../constants/action_types";
+import utils from "../utils";
 const request = new XMLHttpRequest();
 
 function originPoint(coordinates) {
-  return (dispatch) => {
+  return dispatch => {
     const origin = utils.createPoint(coordinates, {
-      id: 'origin',
-      'marker-symbol': 'A'
+      id: "origin",
+      "marker-symbol": "A"
     });
 
     dispatch({ type: types.ORIGIN, origin });
-    dispatch(eventEmit('origin', { feature: origin }));
+    dispatch(eventEmit("origin", { feature: origin }));
   };
 }
 
 function destinationPoint(coordinates) {
-  return (dispatch) => {
+  return dispatch => {
     const destination = utils.createPoint(coordinates, {
-      id: 'destination',
-      'marker-symbol': 'B'
+      id: "destination",
+      "marker-symbol": "B"
     });
 
     dispatch({ type: types.DESTINATION, destination });
-    dispatch(eventEmit('destination', { feature: destination }));
+    dispatch(eventEmit("destination", { feature: destination }));
   };
 }
 
@@ -32,7 +32,7 @@ function setDirections(directions) {
       type: types.DIRECTIONS,
       directions
     });
-    dispatch(eventEmit('route', { route: directions }));
+    dispatch(eventEmit("route", { route: directions }));
   };
 }
 
@@ -52,7 +52,16 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination } = getState();
+    const {
+      api,
+      accessToken,
+      routeIndex,
+      profile,
+      alternatives,
+      congestion,
+      destination,
+      overview
+    } = getState();
     // if there is no destination set, do not make request because it will fail
     if (!(destination && destination.geometry)) return;
 
@@ -60,14 +69,22 @@ function fetchDirections() {
 
     // Request params
     var options = [];
-    options.push('geometries=polyline');
-    if (alternatives) options.push('alternatives=true');
-    if (congestion) options.push('annotations=congestion');
-    options.push('steps=true');
-    options.push('overview=full');
-    if (accessToken) options.push('access_token=' + accessToken);
+    options.push("geometries=polyline");
+    if (alternatives) options.push("alternatives=true");
+    if (congestion) options.push("annotations=congestion");
+    options.push("steps=true");
+    if (overview !== "simplified" || overview !== "full") {
+      options.push("overview=simplified");
+    } else {
+      options.push(`overview=${overview}`);
+    }
+    if (accessToken) options.push("access_token=" + accessToken);
     request.abort();
-    request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
+    request.open(
+      "GET",
+      `${api}${profile}/${query}.json?${options.join("&")}`,
+      true
+    );
 
     request.onload = () => {
       if (request.status >= 200 && request.status < 400) {
@@ -83,7 +100,9 @@ function fetchDirections() {
 
         // Revise origin / destination points
         dispatch(originPoint(data.waypoints[0].location));
-        dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
+        dispatch(
+          destinationPoint(data.waypoints[data.waypoints.length - 1].location)
+        );
       } else {
         dispatch(setDirections([]));
         return dispatch(setError(JSON.parse(request.responseText).message));
@@ -108,37 +127,37 @@ function buildDirectionsQuery(state) {
   const { origin, destination, waypoints } = state();
 
   let query = [];
-  query.push((origin.geometry.coordinates).join(','));
-  query.push(';');
+  query.push(origin.geometry.coordinates.join(","));
+  query.push(";");
 
   // Add any waypoints.
   if (waypoints.length) {
-    waypoints.forEach((waypoint) => {
-      query.push((waypoint.geometry.coordinates).join(','));
-      query.push(';');
+    waypoints.forEach(waypoint => {
+      query.push(waypoint.geometry.coordinates.join(","));
+      query.push(";");
     });
   }
 
-  query.push((destination.geometry.coordinates).join(','));
-  return encodeURIComponent(query.join(''));
+  query.push(destination.geometry.coordinates.join(","));
+  return encodeURIComponent(query.join(""));
 }
 
 function normalizeWaypoint(waypoint) {
-  const properties = { id: 'waypoint' };
+  const properties = { id: "waypoint" };
   return Object.assign(waypoint, {
-    properties: waypoint.properties ?
-      Object.assign(waypoint.properties, properties) :
-      properties
+    properties: waypoint.properties
+      ? Object.assign(waypoint.properties, properties)
+      : properties
   });
 }
 
 function setError(error) {
   return dispatch => {
     dispatch({
-      type: 'ERROR',
+      type: "ERROR",
       error
     });
-    if (error) dispatch(eventEmit('error', { error: error }));
+    if (error) dispatch(eventEmit("error", { error: error }));
   };
 }
 
@@ -175,7 +194,7 @@ export function clearOrigin() {
     dispatch({
       type: types.ORIGIN_CLEAR
     });
-    dispatch(eventEmit('clear', { type: 'origin' }));
+    dispatch(eventEmit("clear", { type: "origin" }));
     dispatch(setError(null));
   };
 }
@@ -185,7 +204,7 @@ export function clearDestination() {
     dispatch({
       type: types.DESTINATION_CLEAR
     });
-    dispatch(eventEmit('clear', { type: 'destination' }));
+    dispatch(eventEmit("clear", { type: "destination" }));
     dispatch(setError(null));
   };
 }
@@ -198,8 +217,10 @@ export function setOptions(options) {
 }
 
 export function hoverMarker(coordinates) {
-  return (dispatch) => {
-    const feature = (coordinates) ? utils.createPoint(coordinates, { id: 'hover'}) : {};
+  return dispatch => {
+    const feature = coordinates
+      ? utils.createPoint(coordinates, { id: "hover" })
+      : {};
     dispatch(setHoverMarker(feature));
   };
 }
@@ -231,7 +252,7 @@ export function setProfile(profile) {
   return (dispatch, getState) => {
     const { origin, destination } = getState();
     dispatch({ type: types.DIRECTIONS_PROFILE, profile });
-    dispatch(eventEmit('profile', { profile }));
+    dispatch(eventEmit("profile", { profile }));
     if (origin.geometry && destination.geometry) dispatch(fetchDirections());
   };
 }
@@ -239,9 +260,12 @@ export function setProfile(profile) {
 export function reverse() {
   return (dispatch, getState) => {
     const state = getState();
-    if (state.destination.geometry) dispatch(originPoint(state.destination.geometry.coordinates));
-    if (state.origin.geometry) dispatch(destinationPoint(state.origin.geometry.coordinates));
-    if (state.origin.geometry && state.destination.geometry) dispatch(fetchDirections());
+    if (state.destination.geometry)
+      dispatch(originPoint(state.destination.geometry.coordinates));
+    if (state.origin.geometry)
+      dispatch(destinationPoint(state.origin.geometry.coordinates));
+    if (state.origin.geometry && state.destination.geometry)
+      dispatch(fetchDirections());
   };
 }
 
@@ -251,9 +275,11 @@ export function reverse() {
  * @param {Array<number>} coordinates [lng, lat] array.
  */
 export function setOriginFromCoordinates(coords) {
-  return (dispatch) => {
-    if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
-    if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
+  return dispatch => {
+    if (!utils.validCoords(coords))
+      coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
+    if (isNaN(coords[0]) && isNaN(coords[1]))
+      return dispatch(setError(new Error("Coordinates are not valid")));
     dispatch(queryOriginCoordinates(coords));
     dispatch(createOrigin(coords));
   };
@@ -265,9 +291,11 @@ export function setOriginFromCoordinates(coords) {
  * @param {Array<number>} coords [lng, lat] array.
  */
 export function setDestinationFromCoordinates(coords) {
-  return (dispatch) => {
-    if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
-    if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
+  return dispatch => {
+    if (!utils.validCoords(coords))
+      coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
+    if (isNaN(coords[0]) && isNaN(coords[1]))
+      return dispatch(setError(new Error("Coordinates are not valid")));
     dispatch(createDestination(coords));
     dispatch(queryDestinationCoordinates(coords));
   };
@@ -294,12 +322,12 @@ export function setWaypoint(index, waypoint) {
 export function removeWaypoint(waypoint) {
   return (dispatch, getState) => {
     let { destination, waypoints } = getState();
-      waypoints = waypoints.filter((way) => {
-        return !utils.coordinateMatch(way, waypoint);
-      });
+    waypoints = waypoints.filter(way => {
+      return !utils.coordinateMatch(way, waypoint);
+    });
 
-      dispatch(updateWaypoints(waypoints));
-      if (destination.geometry) dispatch(fetchDirections());
+    dispatch(updateWaypoints(waypoints));
+    if (destination.geometry) dispatch(fetchDirections());
   };
 }
 
