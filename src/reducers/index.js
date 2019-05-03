@@ -1,17 +1,17 @@
-import * as types from "../constants/action_types.js";
-import deepAssign from "deep-assign";
+import * as types from '../constants/action_types.js';
+import deepAssign from 'deep-assign';
 
 const initialState = {
   // Options set on initialization
-  api: "https://api.mapbox.com/directions/v5/",
-  profile: "mapbox/driving-traffic",
+  api: 'https://api.mapbox.com/directions/v5/',
+  profile: 'mapbox/driving-traffic',
   alternatives: false,
   congestion: false,
-  overview: "simplified",
-  unit: "imperial",
+  overview: 'simplified',
+  unit: 'imperial',
   flyTo: true,
-  placeholderOrigin: "Choose a starting place",
-  placeholderDestination: "Choose destination",
+  placeholderOrigin: 'Choose a starting place',
+  placeholderDestination: 'Choose destination',
   zoom: 16,
   compile: null,
   proximity: false,
@@ -104,7 +104,7 @@ function data(state = initialState, action) {
     case types.ORIGIN_CLEAR:
       return Object.assign({}, state, {
         origin: {},
-        originQuery: "",
+        originQuery: '',
         waypoints: [],
         directions: []
       });
@@ -112,7 +112,7 @@ function data(state = initialState, action) {
     case types.DESTINATION_CLEAR:
       return Object.assign({}, state, {
         destination: {},
-        destinationQuery: "",
+        destinationQuery: '',
         waypoints: [],
         directions: []
       });
