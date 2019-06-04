@@ -1,6 +1,6 @@
 ### Developing
 
-    npm install & npm start & open http://localhost:9966/example/
+    yarn install & yarn start & open http://localhost:9966/example/
 
 You'll need a [Mapbox access token](https://www.mapbox.com/help/create-api-access-token/) stored in localstorage. Set it via
 
@@ -10,7 +10,7 @@ You'll need a [Mapbox access token](https://www.mapbox.com/help/create-api-acces
 
 Tests require an MapboxAccessToken env variable to be set.
 
-    export MapboxAccessToken=<YOUR ACCESS TOKEN> && npm test
+    export MapboxAccessToken=<YOUR ACCESS TOKEN> && yarn test
 
 ### Release process
 
