@@ -1,3 +1,8 @@
+## 4.0.1
+- Update packages to resolve polyline dependency
+- Update peerDependency for Mapbox-GL-JS to support v1.0 release
+- Switch to `yarn` to workaround `sockjs-client` dependency issue
+
 ## 4.0.0
 - [Refactor] options passed to internal Geocoder class
   - Made options.geocoder dynamic, accepting only query parameters from the Geocoding API
