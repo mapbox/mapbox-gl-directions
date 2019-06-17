@@ -92,8 +92,16 @@ export default class Geocoder {
     this._loadingEl.classList.add('active');
     this.fire('loading');
 
+    var localGeocoderRes = [];
+    if (this.options.localGeocoder) {
+      localGeocoderRes = this.options.localGeocoder(q);
+      if (!localGeocoderRes) {
+        localGeocoderRes = [];
+      }
+    }
+
     const geocodingOptions = this.options
-    const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken'];
+    const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken','localGeocoder'];
     const options = Object.keys(this.options).filter(function(key) {
       return exclude.indexOf(key) === -1;
     }).map(function(key) {
@@ -108,6 +116,10 @@ export default class Geocoder {
       this._loadingEl.classList.remove('active');
       if (this.request.status >= 200 && this.request.status < 400) {
         var data = JSON.parse(this.request.responseText);
+
+        // supplement Mapbox Geocoding API results with locally populated results
+        data.features = data.features ? localGeocoderRes.concat(data.features) : localGeocoderRes;
+
         if (data.features.length) {
           this._clearEl.classList.add('active');
         } else {
@@ -119,13 +131,40 @@ export default class Geocoder {
         this._typeahead.update(data.features);
         return callback(data.features);
       } else {
+        // in the event of an error in the Mapbox Geocoding API still display results from the localGeocoder
+        if (localGeocoderRes.length) {
+          this._clearEl.classList.add('active');
+        } else {
+          this._clearEl.classList.remove('active');
+          this._typeahead.selected = null;
+        }
+
+        this.fire('results', { results: localGeocoderRes });
+        this._typeahead.update(localGeocoderRes);
+
         this.fire('error', { error: JSON.parse(this.request.responseText).message });
+
+        return callback(localGeocoderRes);
       }
     }.bind(this);
 
     this.request.onerror = function() {
       this._loadingEl.classList.remove('active');
+
+      // in the event of an error in the Mapbox Geocoding API still display results from the localGeocoder
+      if (localGeocoderRes.length) {
+        this._clearEl.classList.add('active');
+      } else {
+        this._clearEl.classList.remove('active');
+        this._typeahead.selected = null;
+      }
+
+      this.fire('results', { results: localGeocoderRes });
+      this._typeahead.update(localGeocoderRes);
+
       this.fire('error', { error: JSON.parse(this.request.responseText).message });
+
+      return callback(localGeocoderRes);
     }.bind(this);
 
     this.request.send();
@@ -232,6 +271,11 @@ export default class Geocoder {
    */
   on(type, fn) {
     this._ev.on(type, fn);
+    return this;
+  }
+
+  once(type, fn) {
+    this._ev.once(type, fn);
     return this;
   }
 
