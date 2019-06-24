@@ -65,7 +65,7 @@ function fetchDirections() {
     if (congestion) options.push('annotations=congestion');
     options.push('steps=true');
     options.push('overview=full');
-    options.push('language='+language);
+    if (language) options.push('language='+language);
     if (accessToken) options.push('access_token=' + accessToken);
     request.abort();
     request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
