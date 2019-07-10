@@ -1,5 +1,5 @@
 ## 4.0.2
-- Adds language parameter
+- Adds language parameter to allow turn-by-turn instructions in other [supported languages](https://docs.mapbox.com/api/navigation/#instructions-languages) 
 
 ## 4.0.1
 - Update packages to resolve polyline dependency
