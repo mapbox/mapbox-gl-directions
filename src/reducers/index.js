@@ -12,6 +12,7 @@ const initialState = {
   placeholderOrigin: 'Choose a starting place',
   placeholderDestination: 'Choose destination',
   zoom: 16,
+  language: 'en',
   compile: null,
   proximity: false,
   styles: [],
