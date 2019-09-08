@@ -23,7 +23,7 @@ export default class Geocoder {
 
     // Template
     var el = document.createElement('div');
-    el.className = 'mapboxgl-ctrl-geocoder';
+    el.className = 'mapboxgl-ctrl-geocoder mapboxgl-ctrl-geocoder-directions';
 
     var icon = document.createElement('span');
     icon.className = 'geocoder-icon geocoder-icon-search';
