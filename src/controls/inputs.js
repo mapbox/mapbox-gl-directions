@@ -122,7 +122,8 @@ export default class Inputs {
         originQuery,
         destinationQuery,
         originQueryCoordinates,
-        destinationQueryCoordinates
+        destinationQueryCoordinates,
+        flyTo
       } = this.store.getState();
 
       if (originQuery) {
@@ -137,13 +138,17 @@ export default class Inputs {
 
       if (originQueryCoordinates) {
         this.originInput.setInput(originQueryCoordinates);
-        this.animateToCoordinates('origin', originQueryCoordinates);
+        if (flyTo) {
+            this.animateToCoordinates('origin', originQueryCoordinates);
+        }
         this.actions.queryOriginCoordinates(null);
       }
 
       if (destinationQueryCoordinates) {
         this.destinationInput.setInput(destinationQueryCoordinates);
-        this.animateToCoordinates('destination', destinationQueryCoordinates);
+        if (flyTo) {
+            this.animateToCoordinates('destination', destinationQueryCoordinates);
+        }
         this.actions.queryDestinationCoordinates(null);
       }
     });
