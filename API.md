@@ -42,6 +42,7 @@ The Directions control
     -   `options.placeholderOrigin` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** If set, this text will appear as the placeholder attribute for the origin input element. (optional, default `"Choose a starting place"`)
     -   `options.placeholderDestination` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** If set, this text will appear as the placeholder attribute for the destination input element. (optional, default `"Choose destination"`)
     -   `options.flyTo` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** If false, animating the map to a selected result is disabled. (optional, default `true`)
+    -   `options.exclude` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Exclude certain road types from routing. The default is to not exclude anything. Options: `ferry`, `toll`, `motorway` (optional, default `null`)
 
 **Examples**
 
