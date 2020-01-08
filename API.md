@@ -23,7 +23,7 @@ The Directions control
 
 **Parameters**
 
--   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+-   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
     -   `options.styles` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)?** Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
     -   `options.accessToken` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
     -   `options.api` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Override default routing endpoint url (optional, default `"https://api.mapbox.com/directions/v5/"`)
@@ -34,11 +34,12 @@ The Directions control
     -   `options.unit` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
     -   `options.compile` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** Provide a custom function for generating instruction, compatible with osrm-text-instructions. (optional, default `null`)
     -   `options.geocoder` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Accepts an object containing the query parameters as [documented here](https://www.mapbox.com/api-documentation/#search-for-places).
-    -   `options.controls` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
+    -   `options.controls` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?**
         -   `options.controls.inputs` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the inputs control. (optional, default `true`)
         -   `options.controls.instructions` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the instructions control. (optional, default `true`)
         -   `options.controls.profileSwitcher` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the default profile switch with options for traffic, driving, walking and cycling. (optional, default `true`)
     -   `options.zoom` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** If no bbox exists from the geocoder result, the zoom you set here will be used in the flyTo. (optional, default `16`)
+    -   `options.language` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The language of returned turn-by-turn text instructions. See supported languages : https://docs.mapbox.com/api/navigation/#instructions-languages (optional, default `"en"`)
     -   `options.placeholderOrigin` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** If set, this text will appear as the placeholder attribute for the origin input element. (optional, default `"Choose a starting place"`)
     -   `options.placeholderDestination` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** If set, this text will appear as the placeholder attribute for the destination input element. (optional, default `"Choose destination"`)
     -   `options.flyTo` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** If false, animating the map to a selected result is disabled. (optional, default `true`)
