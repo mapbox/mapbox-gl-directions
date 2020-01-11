@@ -91,8 +91,22 @@ export default class MapboxDirections {
     if (controls.instructions) el.appendChild(directionsEl);
 
     this.subscribedActions();
-    if (this._map.loaded()) this.mapState()
-    else this._map.on('load', () => this.mapState());
+    
+    /*
+     * We are subscribing to idle here instead of load as loaded() returns true if
+     * the map is loading at any time, but the load event only triggers on the first
+     * complete load. This means if we are changing style after the first load and are
+     * trying to add the component, it will not add anything subscribed to load.
+     */
+    var _this5 = this;
+    if (this._map.loaded()) {
+      this.mapState();
+    } else {
+      this._map.on('idle', function onMapIdleSetState() {
+        _this5._map.off('idle', onMapIdleSetState);
+        _this5.mapState();
+      });
+    }
 
     return el;
   }
