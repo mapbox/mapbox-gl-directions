@@ -244,6 +244,10 @@ export function reverse() {
     if (state.destination.geometry) dispatch(originPoint(state.destination.geometry.coordinates));
     if (state.origin.geometry) dispatch(destinationPoint(state.origin.geometry.coordinates));
     if (state.origin.geometry && state.destination.geometry) dispatch(fetchDirections());
+    const suggestions = document.getElementsByClassName("suggestions");
+    for (var i = 0; i < suggestions.length; i++) {
+      suggestions[i].style.visibility = "hidden";
+    };
   };
 }
 
