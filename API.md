@@ -180,7 +180,7 @@ Subscribe to events that happen within the plugin.
     -   **origin** `{ feature } Fired when origin is set`
     -   **destination** `{ feature } Fired when destination is set`
     -   **route** `{ route } Fired when a route is updated`
-    -   **error** \`{ error } Error as string
+    -   **error** `{ error } Error as string`
 -   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** function that's called when the event is emitted.
 
 Returns **[MapboxDirections](#mapboxdirections)** this;
