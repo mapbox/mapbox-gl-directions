@@ -46,6 +46,7 @@ jobs:
   prepare:
     <<: *defaults
     steps:
+      - checkout
       - restore_cache:
           keys: v1-yarn-{{ checksum "yarn.lock" }}
       - run: yarn
