@@ -46,7 +46,8 @@ const initialState = {
 
   // Directions data
   directions: [],
-  routeIndex: 0
+  routeIndex: 0, 
+  routePadding: 80
 };
 
 function data(state = initialState, action) {
