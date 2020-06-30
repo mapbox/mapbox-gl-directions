@@ -232,9 +232,11 @@ export default class Geocoder {
    */
   on(type, fn) {
     this._ev.on(type, fn);
+    this._ev.on('error', function (err) {
+      console.log(err);
+    });
     return this;
   }
-
   /**
    * Fire an event
    * @param {String} type event name.
