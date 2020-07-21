@@ -550,7 +550,7 @@ export default class MapboxDirections {
    * - __origin__ `{ feature } Fired when origin is set`
    * - __destination__ `{ feature } Fired when destination is set`
    * - __route__ `{ route } Fired when a route is updated`
-   * - __error__ `{ error } Error as string
+   * - __error__ `{ error } Error as string`
    * @param {Function} fn function that's called when the event is emitted.
    * @returns {MapboxDirections} this;
    */
