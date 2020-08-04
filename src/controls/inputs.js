@@ -109,8 +109,10 @@ export default class Inputs {
       .querySelector('.js-reverse-inputs')
       .addEventListener('click', () => {
         const { origin, destination } = this.store.getState();
-        if (origin) this.actions.queryDestination(origin.geometry.coordinates);
-        if (destination) this.actions.queryOrigin(destination.geometry.coordinates);
+        var originElement = document.getElementById('mapbox-directions-origin-input').querySelector('input').value;
+        var destinationElement = document.getElementById('mapbox-directions-destination-input').querySelector('input').value;
+        if (origin) this.originInput.setInput(destinationElement);
+        if (destination) this.destinationInput.setInput(originElement);
         reverse();
       });
   }
