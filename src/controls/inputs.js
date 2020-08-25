@@ -108,11 +108,25 @@ export default class Inputs {
     this.container
       .querySelector('.js-reverse-inputs')
       .addEventListener('click', () => {
-        const { origin, destination } = this.store.getState();
-        var originElement = document.getElementById('mapbox-directions-origin-input').querySelector('input').value;
-        var destinationElement = document.getElementById('mapbox-directions-destination-input').querySelector('input').value;
-        if (origin) this.originInput.setInput(destinationElement);
-        if (destination) this.destinationInput.setInput(originElement);
+        
+        var originValue = document.getElementById('mapbox-directions-origin-input').querySelector('input').value;
+        var destinationValue = document.getElementById('mapbox-directions-destination-input').querySelector('input').value;
+
+        //var originSuggestions = document.getElementById('mapbox-directions-origin-input').getElementsByClassName('suggestions')
+        //var destinationSuggestions = document.getElementById('mapbox-directions-destination-input').getElementsByClassName('suggestions')
+
+        if (originValue && destinationValue) {
+          this.originInput.setInput(destinationValue);
+          this.destinationInput.setInput(originValue);
+        } else if (originValue && !destinationValue) {
+          document.getElementById('mapbox-directions-origin-input').querySelector('input').value = "";
+          document.getElementById('mapbox-directions-destination-input').querySelector('input').focus()
+          this.destinationInput.setInput(originValue);
+        } else if (destinationValue && !originValue) {
+          document.getElementById('mapbox-directions-destination-input').querySelector('input').value = "";
+          document.getElementById('mapbox-directions-origin-input').querySelector('input').focus()
+          this.originInput.setInput(destinationValue);
+        }
         reverse();
       });
   }
