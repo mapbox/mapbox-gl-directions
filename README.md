@@ -27,6 +27,8 @@ map.addControl(directions, 'top-left');
 
 Live example: https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-directions/
 
+**If you are supporting older browsers, you will need a Promise polyfill.** [es6-promise](https://github.com/stefanpenner/es6-promise) is a good one, if you're uncertain.
+
 ### Deeper dive
 
 See [API.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/API.md) for complete reference.
