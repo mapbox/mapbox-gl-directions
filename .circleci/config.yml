@@ -1,0 +1,100 @@
+version: 2.1
+orbs:
+  aws-cli: circleci/aws-cli@0.1.16
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - prepare:
+          filters:
+            tags:
+              only: /.*/
+      - build:
+          requires:
+            - prepare
+          filters:
+            tags:
+              only: /.*/
+      - lint:
+          requires:
+            - prepare
+          filters:
+            tags:
+              only: /.*/
+      - test:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /.*/
+      - publish:
+          requires:
+            - build
+          filters:
+            tags:
+              only: /v[0-9]+\.[0-9]+\.[0-9]+(\-dev)?/
+            branches:
+              ignore: /.*/
+
+defaults: &defaults
+  docker:
+    - image: circleci/node:10.16-browsers
+  working_directory: ~/mapbox-gl-directions
+
+jobs:
+  prepare:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys: v1-yarn-{{ checksum "yarn.lock" }}
+      - run: yarn
+      - save_cache:
+          key: v1-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - "~/.yarn"
+            - "node_modules"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run: yarn run build
+      - store_artifacts:
+          path: "dist"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
+  lint:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          keys:
+            - v2-lint-{{ .Branch }}
+            - v2-lint
+      - run: yarn run lint
+      - save_cache:
+          key: v2-lint-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - ".eslintcache"
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run: yarn run test
+  publish:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - aws-cli/install
+      - run: aws s3 cp --recursive --acl public-read dist s3://mapbox-gl-js/plugins/mapbox-gl-directions/$CIRCLE_TAG
