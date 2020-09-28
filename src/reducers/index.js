@@ -8,6 +8,11 @@ const initialState = {
   alternatives: false,
   congestion: false,
   unit: 'imperial',
+  flyTo: true,
+  placeholderOrigin: 'Choose a starting place',
+  placeholderDestination: 'Choose destination',
+  zoom: 16,
+  language: 'en',
   compile: null,
   proximity: false,
   styles: [],
@@ -41,7 +46,8 @@ const initialState = {
 
   // Directions data
   directions: [],
-  routeIndex: 0
+  routeIndex: 0, 
+  routePadding: 80
 };
 
 function data(state = initialState, action) {

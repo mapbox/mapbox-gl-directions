@@ -1,3 +1,25 @@
+## 4.1.0
+- Adds routePadding option to MapboxDirections object [#243](https://github.com/mapbox/mapbox-gl-directions/pull/243)
+- Fixes bug that showed dropdown suggestions when reversing route [#246](https://github.com/mapbox/mapbox-gl-directions/pull/246)
+
+## 4.0.3
+- Adds exclude parameter [#233](https://github.com/mapbox/mapbox-gl-directions/pull/233)
+
+## 4.0.2
+- Adds language parameter to allow turn-by-turn instructions in other [supported languages](https://docs.mapbox.com/api/navigation/#instructions-languages)
+
+## 4.0.1
+- Update packages to resolve polyline dependency
+- Update peerDependency for Mapbox-GL-JS to support v1.0 release
+- Switch to `yarn` to workaround `sockjs-client` dependency issue
+
+## 4.0.0
+- [Refactor] options passed to internal Geocoder class
+  - Made options.geocoder dynamic, accepting only query parameters from the Geocoding API
+  - Removed placeholder option in favor of placeholderOrigin and placeholderDestination
+  - Added top level options flyTo, zoom, placeholderOrigin and placeholderDestination
+- [Chore] Update packages to resolve vulnerabilities in smokestack
+
 ## 3.1.3
 - [bug] Bump package `suggestions` to support autocompletion on quick keypress.[#179](https://github.com/mapbox/mapbox-gl-directions/pull/179)
 
