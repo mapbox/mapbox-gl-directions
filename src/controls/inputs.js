@@ -36,19 +36,18 @@ export default class Inputs {
   }
 
   animateToCoordinates(mode, coords) {
-    const { origin, destination } = this.store.getState();
-
+    const { origin, destination, routePadding } = this.store.getState();
+    
     if (origin.geometry &&
         destination.geometry &&
         !isEqual(origin.geometry, destination.geometry)) {
-
       // Animate map to fit bounds.
       const bb = extent({
         type: 'FeatureCollection',
         features: [origin, destination]
       });
 
-      this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: 80 });
+      this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], {padding: routePadding});
     } else {
       this._map.flyTo({ center: coords });
     }
@@ -64,27 +63,22 @@ export default class Inputs {
       reverse
     } = this.actions;
 
-    const { geocoder, accessToken } = this.store.getState();
+    const { geocoder, accessToken, flyTo, placeholderOrigin, placeholderDestination, zoom } = this.store.getState();
 
     this.originInput = new Geocoder(Object.assign({}, {
-      flyTo: false,
-      placeholder: 'Choose a starting place',
-      accessToken: accessToken
-    }, geocoder));
+      accessToken
+    }, geocoder, {flyTo, placeholder: placeholderOrigin, zoom}));
 
-    var originEl = this.originInput.onAdd();
-    var originContainerEl = this.container.querySelector('#mapbox-directions-origin-input');
+    const originEl = this.originInput.onAdd(this._map);
+    const originContainerEl = this.container.querySelector('#mapbox-directions-origin-input');
     originContainerEl.appendChild(originEl);
 
     this.destinationInput = new Geocoder(Object.assign({}, {
-      flyTo: false,
-      placeholder: 'Choose destination',
-      accessToken: accessToken
-    }, geocoder));
+      accessToken
+    }, geocoder, {flyTo, placeholder: placeholderDestination, zoom}));
 
-    var destinationEl = this.destinationInput.onAdd();
+    const destinationEl = this.destinationInput.onAdd(this._map);
     this.container.querySelector('#mapbox-directions-destination-input').appendChild(destinationEl);
-
 
     this.originInput.on('result', (e) => {
       const coords = e.result.center;
