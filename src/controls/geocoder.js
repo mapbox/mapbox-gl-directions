@@ -93,7 +93,7 @@ export default class Geocoder {
     this.fire('loading');
 
     const geocodingOptions = this.options
-    const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken'];
+    const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken', 'api'];
     const options = Object.keys(this.options).filter(function(key) {
       return exclude.indexOf(key) === -1;
     }).map(function(key) {
