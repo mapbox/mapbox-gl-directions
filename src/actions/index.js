@@ -88,13 +88,13 @@ function fetchDirections() {
         dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
       } else {
         dispatch(setDirections([]));
-        return dispatch(setError(JSON.parse(request.responseText).message));
+        return dispatch(setError(JSON.parse(request.responseText || '{"message": "Undefined error"}').message));
       }
     };
 
     request.onerror = () => {
       dispatch(setDirections([]));
-      return dispatch(setError(JSON.parse(request.responseText).message));
+      return dispatch(setError(JSON.parse(request.responseText || '{"message": "Undefined error"}').message));
     };
 
     request.send();
@@ -317,6 +317,34 @@ export function eventSubscribe(type, fn) {
     return {
       type: types.EVENTS,
       events
+    };
+  };
+}
+
+export function eventUnsubscribe(type, fn) {
+  return (dispatch, getState) => {
+    const { events } = getState();
+    
+    if (!events[type]) {
+      return {
+        type: types.EVENTS,
+        events
+      };
+    }
+    
+    if (fn) {
+      // Drop the event if it exists in the events object
+      const fnToDelete = events[type].indexOf(fn);
+      if (fnToDelete >= 0) {
+        events[type].splice(fnToDelete, 1);
+      }
+    } else {
+      delete events[type];
+    }
+
+    return {
+      type: types.EVENTS,
+      events: events
     };
   };
 }

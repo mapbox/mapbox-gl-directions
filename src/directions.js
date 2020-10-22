@@ -300,7 +300,6 @@ export default class MapboxDirections {
         }
       } else {
         this.actions.setDestinationFromCoordinates(coords);
-        this._map.flyTo({ center: coords });
       }
     }
   }
@@ -556,6 +555,17 @@ export default class MapboxDirections {
    */
   on(type, fn) {
     this.actions.eventSubscribe(type, fn);
+    return this;
+  }
+  
+  /**
+   * Unsubscribe to events
+   * @param {String} type name of event. Available events are outlined in `on`
+   * @param {Function} fn optional. The function that's called when the event is emitted.
+   * @returns {Directions} this;
+   */
+  off(type, fn) {
+    this.actions.eventUnsubscribe(type, fn);
     return this;
   }
 }
