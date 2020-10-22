@@ -62,4 +62,43 @@ const format = {
   }
 };
 
-export default { format, coordinateMatch, createPoint, validCoords, wrap, roundWithOriginalPrecision };
+const distance = ([x1, y1], [x2, y2]) =>
+  Math.hypot((x1 - x2), (y1 - y2));
+
+const nearest = origin =>
+  (p1, p2, index) =>
+    (distance(origin, p1) < distance(origin, p2))
+      ? p1
+      : p2.concat(index);
+
+
+const find = (route, origin) => route
+  .reduce(nearest(origin), [Infinity, Infinity, -1])[2];
+
+const compare = point =>
+  waypoint =>
+    coordinateMatch(point, waypoint);
+
+const getNextWaypoint = (getRoute, waypoints, origin) => {
+  if (waypoints.length === 0) return 0;
+  
+  const route = getRoute();
+  
+  for(let i = find(route, origin); i < route.length; i++) {
+    const index = waypoints.findIndex(compare({ geometry: { coordinates: route[i] } }));
+    if (index !== -1) {
+      return index;  
+    }
+  }
+  return waypoints.length;
+};
+
+export default { 
+  format, 
+  coordinateMatch, 
+  createPoint, 
+  validCoords, 
+  wrap, 
+  roundWithOriginalPrecision, 
+  getNextWaypoint 
+};
