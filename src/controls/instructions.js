@@ -52,8 +52,8 @@ export default class Instructions {
           routes: directions.length,
           steps: direction.legs[0].steps, // Todo: Respect all legs,
           format: utils.format[unit],
-          duration: utils.format[unit](direction.distance),
-          distance: utils.format.duration(direction.duration)
+          duration: utils.format.duration(direction.duration),
+          distance: utils.format[unit](direction.distance)
         });
 
         const steps = this.container.querySelectorAll('.mapbox-directions-step');
