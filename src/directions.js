@@ -40,6 +40,8 @@ import Instructions from './controls/instructions';
  * @param {String} [options.placeholderOrigin="Choose a starting place"] If set, this text will appear as the placeholder attribute for the origin input element.
  * @param {String} [options.placeholderDestination="Choose destination"] If set, this text will appear as the placeholder attribute for the destination input element.
  * @param {Boolean} [options.flyTo=true] If false, animating the map to a selected result is disabled.
+ * @param {String} [options.exclude=null] Exclude certain road types from routing. The default is to not exclude anything. Search for `exclude` in `optional parameters`: https://docs.mapbox.com/api/navigation/#retrieve-directions
+ * @param {number | PaddingOptions} [options.routePadding=80] Specify padding surrounding route. A single number of pixels or a [PaddingOptions](https://docs.mapbox.com/mapbox-gl-js/api/#paddingoptions) object.
  * @example
  * var MapboxDirections = require('../src/index');
  * var directions = new MapboxDirections({
@@ -549,7 +551,7 @@ export default class MapboxDirections {
    * - __origin__ `{ feature } Fired when origin is set`
    * - __destination__ `{ feature } Fired when destination is set`
    * - __route__ `{ route } Fired when a route is updated`
-   * - __error__ `{ error } Error as string
+   * - __error__ `{ error } Error as string`
    * @param {Function} fn function that's called when the event is emitted.
    * @returns {MapboxDirections} this;
    */

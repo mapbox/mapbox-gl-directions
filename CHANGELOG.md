@@ -1,5 +1,12 @@
+## 4.1.0
+- Adds routePadding option to MapboxDirections object [#243](https://github.com/mapbox/mapbox-gl-directions/pull/243)
+- Fixes bug that showed dropdown suggestions when reversing route [#246](https://github.com/mapbox/mapbox-gl-directions/pull/246)
+
+## 4.0.3
+- Adds exclude parameter [#233](https://github.com/mapbox/mapbox-gl-directions/pull/233)
+
 ## 4.0.2
-- Adds language parameter to allow turn-by-turn instructions in other [supported languages](https://docs.mapbox.com/api/navigation/#instructions-languages) 
+- Adds language parameter to allow turn-by-turn instructions in other [supported languages](https://docs.mapbox.com/api/navigation/#instructions-languages)
 
 ## 4.0.1
 - Update packages to resolve polyline dependency

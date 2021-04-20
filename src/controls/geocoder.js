@@ -101,7 +101,7 @@ export default class Geocoder {
     }
 
     const geocodingOptions = this.options
-    const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken','localGeocoder'];
+    const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken', 'api', 'localGeocoder'];
     const options = Object.keys(this.options).filter(function(key) {
       return exclude.indexOf(key) === -1;
     }).map(function(key) {
@@ -265,12 +265,15 @@ export default class Geocoder {
    * - __loading__ `Emitted when the geocoder is looking up a query`
    * - __results__ `{ results } Fired when the geocoder returns a response`
    * - __result__ `{ result } Fired when input is set`
-   * - __error__ `{ error } Error as string
+   * - __error__ `{ error } Error as string`
    * @param {Function} fn function that's called when the event is emitted.
    * @returns {Geocoder} this;
    */
   on(type, fn) {
     this._ev.on(type, fn);
+    this._ev.on('error', function (err) {
+      console.log(err);
+    });
     return this;
   }
 
