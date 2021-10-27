@@ -79,6 +79,10 @@ function fetchDirections() {
           return dispatch(setError(data.error));
         }
 
+        if (data.message === "No route found") {
+          return dispatch(setError("No route found"));
+        }
+
         dispatch(setError(null));
         if (!data.routes[routeIndex]) dispatch(setRouteIndex(0));
         dispatch(setDirections(data.routes));
@@ -93,6 +97,7 @@ function fetchDirections() {
     };
 
     request.onerror = () => {
+      console.log('on error')
       dispatch(setDirections([]));
       return dispatch(setError(JSON.parse(request.responseText).message));
     };
