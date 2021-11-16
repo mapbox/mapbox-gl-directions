@@ -10,13 +10,13 @@ workflows:
             tags:
               only: /.*/
       - install-mbx-ci:
-        requires:
-          - prepare
-        filters:
-          tags:
-            only: /.*/
-          branches:
-            ignore: '/pull\/[0-9]*/'
+          requires:
+            - prepare
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: '/pull\/[0-9]*/'
       - build:
           requires:
             - prepare
