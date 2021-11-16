@@ -71,18 +71,6 @@ jobs:
           root: .
           paths:
             - .
-  build:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: .
-      - run: yarn run build
-      - store_artifacts:
-          path: "dist"
-      - persist_to_workspace:
-          root: .
-          paths:
-            - dist
   install-mbx-ci:
     <<: *defaults
     steps:
@@ -99,6 +87,18 @@ jobs:
             - .ssh
             - .aws
             - mbx-ci
+  build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: .
+      - run: yarn run build
+      - store_artifacts:
+          path: "dist"
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
   lint:
     <<: *defaults
     steps:
