@@ -94,7 +94,7 @@ function fetchDirections() {
 
     request.onerror = () => {
       dispatch(setDirections([]));
-      return dispatch(setError(JSON.parse(request.responseText).message));
+      if (request.responseText) return dispatch(setError(JSON.parse(request.responseText).message));
     };
 
     request.send();
