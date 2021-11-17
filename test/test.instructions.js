@@ -34,7 +34,6 @@ test('Directions#instructionControl', tt => {
       t.ok(e.error, 'error is emitted');
     }));
   });
-
   tt.end();
 });
 
