@@ -21,7 +21,7 @@ test('Directions#instructionControl', tt => {
     directions.setDestination([-77, 41]);
     directions.on('route', once((e) => {
       t.ok(e.route, 'route is emitted');
-      t.ok(container.querySelector('.directions-control-directions').textContent, 'instructions are shown');
+      t.ok(container.querySelector('.directions-control').textContent, 'instructions are shown');
     }));
   });
 
