@@ -4,9 +4,6 @@ import { decode } from '@mapbox/polyline';
 import utils from './utils';
 import rootReducer from './reducers';
 
-const storeWithMiddleware = applyMiddleware(thunk)(createStore);
-const store = storeWithMiddleware(rootReducer);
-
 // State object management via redux
 import * as actions from './actions';
 import directionsStyle from './directions_style';
@@ -56,7 +53,10 @@ import Instructions from './controls/instructions';
 export default class MapboxDirections {
 
   constructor(options) {
-    this.actions = bindActionCreators(actions, store.dispatch);
+    const storeWithMiddleware = applyMiddleware(thunk)(createStore);
+    this.store = storeWithMiddleware(rootReducer);
+
+    this.actions = bindActionCreators(actions, this.store.dispatch);
     this.actions.setOptions(options || {});
     this.options = options || {};
 
@@ -70,7 +70,7 @@ export default class MapboxDirections {
   onAdd(map) {
     this._map = map;
 
-    const { controls } = store.getState();
+    const { controls } = this.store.getState();
 
     var el = this.container = document.createElement('div');
     el.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
@@ -78,12 +78,12 @@ export default class MapboxDirections {
     // Add controls to the page
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';
-    new Inputs(inputEl, store, this.actions, this._map);
+    new Inputs(inputEl, this.store, this.actions, this._map);
 
     const directionsEl = document.createElement('div');
     directionsEl.className = 'directions-control directions-control-instructions';
 
-    new Instructions(directionsEl, store, {
+    new Instructions(directionsEl, this.store, {
       hoverMarker: this.actions.hoverMarker,
       setRouteIndex: this.actions.setRouteIndex
     }, this._map);
@@ -127,7 +127,7 @@ export default class MapboxDirections {
   }
 
   mapState() {
-    const { profile, alternatives, congestion, styles, interactive, compile } = store.getState();
+    const { profile, alternatives, congestion, styles, interactive, compile } = this.store.getState();
 
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });
@@ -162,14 +162,14 @@ export default class MapboxDirections {
   }
 
   subscribedActions() {
-    this.storeUnsubscribe = store.subscribe(() => {
+    this.storeUnsubscribe = this.store.subscribe(() => {
       const {
         origin,
         destination,
         hoverMarker,
         directions,
         routeIndex
-      } = store.getState();
+      } = this.store.getState();
 
       const geojson = {
         type: 'FeatureCollection',
@@ -269,7 +269,7 @@ export default class MapboxDirections {
   }
 
   _onSingleClick(e) {
-    const { origin } = store.getState();
+    const { origin } = this.store.getState();
     const coords = [e.lngLat.lng, e.lngLat.lat];
 
     if (!origin.geometry) {
@@ -306,7 +306,7 @@ export default class MapboxDirections {
   }
 
   _move(e) {
-    const { hoverMarker } = store.getState();
+    const { hoverMarker } = this.store.getState();
 
     const features = this._map.queryRenderedFeatures(e.point, {
       layers: [
@@ -371,7 +371,7 @@ export default class MapboxDirections {
   _onDragUp() {
     if (!this.isDragging) return;
 
-    const { hoverMarker, origin, destination } = store.getState();
+    const { hoverMarker, origin, destination } = this.store.getState();
 
     switch (this.isDragging.layer.id) {
       case 'directions-origin-point':
@@ -431,7 +431,7 @@ export default class MapboxDirections {
    * @returns {Object} origin
    */
   getOrigin() {
-    return store.getState().origin;
+    return this.store.getState().origin;
   }
 
   /**
@@ -455,7 +455,7 @@ export default class MapboxDirections {
    * @returns {Object} destination
    */
   getDestination() {
-    return store.getState().destination;
+    return this.store.getState().destination;
   }
 
   /**
@@ -516,7 +516,7 @@ export default class MapboxDirections {
    * @returns {MapboxDirections} this;
    */
   removeWaypoint(index) {
-    const { waypoints } = store.getState();
+    const { waypoints } = this.store.getState();
     this.actions.removeWaypoint(waypoints[index]);
     return this;
   }
@@ -526,7 +526,7 @@ export default class MapboxDirections {
    * @returns {Array} waypoints
    */
   getWaypoints() {
-    return store.getState().waypoints;
+    return this.store.getState().waypoints;
   }
 
   /**
