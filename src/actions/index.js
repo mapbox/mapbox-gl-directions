@@ -78,6 +78,11 @@ function fetchDirections() {
           dispatch(setDirections([]));
           return dispatch(setError(data.error));
         }
+        
+        // Catch no route responses and display message to user
+        if (data.message === 'No route found') {
+          return dispatch(setError('No route found'));
+        }
 
         dispatch(setError(null));
         if (!data.routes[routeIndex]) dispatch(setRouteIndex(0));
