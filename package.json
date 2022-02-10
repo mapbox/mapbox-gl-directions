@@ -2,7 +2,9 @@
   "name": "@mapbox/mapbox-gl-directions",
   "version": "4.1.0",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
-  "main": "./src/index.js",
+  "main": "./dist/mapbox-gl-directions.js",
+  "module": "./src/index.js",
+  "jsnext:main": "./src/index.js",
   "browserify": {
     "transform": [
       "babelify",
