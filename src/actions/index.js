@@ -36,15 +36,6 @@ function setDirections(directions) {
   };
 }
 
-function setParams(params) {
-  return dispatch => {
-    dispatch({
-      type: types.ROUTE_PARAMS,
-      routeParams: params
-    })
-  }
-}
-
 function updateWaypoints(waypoints) {
   return {
     type: types.WAYPOINTS,
@@ -215,6 +206,15 @@ export function setOptions(options) {
     type: types.SET_OPTIONS,
     options: options
   };
+}
+
+export function setParams(params) {
+  return dispatch => {
+    dispatch({
+      type: types.ROUTE_PARAMS,
+      routeParams: params
+    })
+  }
 }
 
 export function hoverMarker(coordinates) {
