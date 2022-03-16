@@ -474,6 +474,12 @@ export default class MapboxDirections {
     return this;
   }
 
+  setParams(params) {
+    this.actions.setParams(params)
+
+    return this;
+  }
+
   /**
    * Swap the origin and destination.
    * @returns {MapboxDirections} this

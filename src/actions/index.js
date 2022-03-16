@@ -36,6 +36,15 @@ function setDirections(directions) {
   };
 }
 
+function setParams(params) {
+  return dispatch => {
+    dispatch({
+      type: types.ROUTE_PARAMS,
+      routeParams: params
+    })
+  }
+}
+
 function updateWaypoints(waypoints) {
   return {
     type: types.WAYPOINTS,
@@ -52,7 +61,7 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination, language, exclude } = getState();
+    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination, language, exclude, routeParams } = getState();
     // if there is no destination set, do not make request because it will fail
     if (!(destination && destination.geometry)) return;
 
@@ -68,6 +77,9 @@ function fetchDirections() {
     if (language) options.push('language='+language);
     if (exclude) options.push('exclude=' + exclude);
     if (accessToken) options.push('access_token=' + accessToken);
+    for (const [param, value] of Object.entries(routeParams)) {
+      options.push(`${param}=${value}`)
+    }
     request.abort();
     request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
 

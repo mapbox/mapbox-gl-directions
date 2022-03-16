@@ -12,5 +12,6 @@ export const ORIGIN_CLEAR = 'ORIGIN_CLEAR';
 export const ORIGIN_QUERY = 'ORIGIN_QUERY';
 export const ORIGIN_FROM_COORDINATES = 'ORIGIN_FROM_COORDINATES';
 export const ROUTE_INDEX = 'ROUTE_INDEX';
+export const ROUTE_PARAMS = 'ROUTE_PARAMS';
 export const SET_OPTIONS = 'SET_OPTIONS';
 export const WAYPOINTS = 'WAYPOINTS';

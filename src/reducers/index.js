@@ -47,6 +47,7 @@ const initialState = {
   // Directions data
   directions: [],
   routeIndex: 0, 
+  routeParams: {},
   routePadding: 80
 };
 
@@ -126,6 +127,11 @@ function data(state = initialState, action) {
   case types.ROUTE_INDEX:
     return Object.assign({}, state, {
       routeIndex: action.routeIndex
+    });
+
+  case types.ROUTE_PARAMS:
+    return Object.assign({}, state, {
+      routeParams: action.routeParams
     });
 
   case types.ERROR:
