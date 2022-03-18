@@ -72,26 +72,26 @@ function fetchDirections() {
 
     request.abort();
     request.open('GET', `${api}${profile}/${query}.json?${Object.entries(options)
-        .map(([key, v]) => {
-          var value = '';
-          if (Array.isArray(v)) {
-            if (Array.isArray(v[0])) {
-              // value is a nested array
-              value = v.map(([lng, lat]) => `${lng},${lat}`).join(';');
-            } else if (typeof v === 'object') {
-              // not an array, but an object
-              value = v.map(({lng, lat}) => `${lng},${lat}`).join(';');
-            } else {
-              // value is an array
-              value = v.join(',');
-            }
+      .map(([key, v]) => {
+        var value = '';
+        if (Array.isArray(v)) {
+          if (Array.isArray(v[0])) {
+            // value is a nested array
+            value = v.map(([lng, lat]) => `${lng},${lat}`).join(';');
+          } else if (typeof v === 'object') {
+            // not an array, but an object
+            value = v.map(({ lng, lat }) => `${lng},${lat}`).join(';');
           } else {
-            // value is likely a string
-            value = v;
+            // value is an array
+            value = v.join(',');
           }
-          return `${key}=${value}`;
-        })
-        .join('&')}`,
+        } else {
+          // value is likely a string
+          value = v;
+        }
+        return `${key}=${value}`;
+      })
+      .join('&')}`,
       true);
 
     request.onload = () => {
