@@ -52,27 +52,29 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination, language, exclude, routeParams } = getState();
+    const { api, accessToken, routeIndex, routeParams, profile, alternatives, congestion, destination, language, exclude } = getState();
     // if there is no destination set, do not make request because it will fail
     if (!(destination && destination.geometry)) return;
 
     const query = buildDirectionsQuery(getState);
 
     // Request params
-    var options = [];
-    options.push('geometries=polyline');
-    if (alternatives) options.push('alternatives=true');
-    if (congestion) options.push('annotations=congestion');
-    options.push('steps=true');
-    options.push('overview=full');
-    if (language) options.push('language='+language);
-    if (exclude) options.push('exclude=' + exclude);
-    if (accessToken) options.push('access_token=' + accessToken);
-    for (const [param, value] of Object.entries(routeParams)) {
-      options.push(`${param}=${value}`)
-    }
+    var options = {};
+    options.geometries = 'polyline';
+    if (alternatives) options.alternatives = true;
+    if (congestion) options.annotations = 'congestion';
+    options.steps = true;
+    options.overview = 'full';
+    if (language) options.language = language;
+    if (exclude) options.exclude = exclude;
+    if (accessToken) options.access_token = accessToken;
+    options = Object.assign(options, routeParams)
+
     request.abort();
-    request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
+    request.open('GET', `${api}${profile}/${query}.json?${Object.entries(options)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&')}`,
+      true);
 
     request.onload = () => {
       if (request.status >= 200 && request.status < 400) {
@@ -81,7 +83,7 @@ function fetchDirections() {
           dispatch(setDirections([]));
           return dispatch(setError(data.error));
         }
-        
+
         // Catch no route responses and display message to user
         if (data.message === 'No route found') {
           return dispatch(setError('No route found'));
@@ -219,7 +221,7 @@ export function setParams(params) {
 
 export function hoverMarker(coordinates) {
   return (dispatch) => {
-    const feature = (coordinates) ? utils.createPoint(coordinates, { id: 'hover'}) : {};
+    const feature = (coordinates) ? utils.createPoint(coordinates, { id: 'hover' }) : {};
     dispatch(setHoverMarker(feature));
   };
 }
@@ -318,12 +320,12 @@ export function setWaypoint(index, waypoint) {
 export function removeWaypoint(waypoint) {
   return (dispatch, getState) => {
     let { destination, waypoints } = getState();
-      waypoints = waypoints.filter((way) => {
-        return !utils.coordinateMatch(way, waypoint);
-      });
+    waypoints = waypoints.filter((way) => {
+      return !utils.coordinateMatch(way, waypoint);
+    });
 
-      dispatch(updateWaypoints(waypoints));
-      if (destination.geometry) dispatch(fetchDirections());
+    dispatch(updateWaypoints(waypoints));
+    if (destination.geometry) dispatch(fetchDirections());
   };
 }
 
