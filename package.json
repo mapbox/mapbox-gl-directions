@@ -5,12 +5,19 @@
   "main": "./src/index.js",
   "browserify": {
     "transform": [
-      "babelify",
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env"
+          ]
+        }
+      ],
       "brfs"
     ]
   },
   "peerDependencies": {
-    "mapbox-gl": "^0.41.0 <2.0.0"
+    "mapbox-gl": "^2.11.0"
   },
   "scripts": {
     "prepublish": "npm run build",
@@ -37,29 +44,30 @@
   },
   "homepage": "https://github.com/mapbox/mapbox-gl-directions#readme",
   "devDependencies": {
-    "babel-core": "^6.9.1",
-    "babel-eslint": "^6.0.5",
-    "babel-plugin-object-assign": "^1.2.1",
+    "@babel/core": "^7.20.5",
+    "@babel/eslint-parser": "^7.19.1",
+    "@babel/plugin-transform-object-assign": "^7.18.6",
+    "@babel/preset-env": "^7.20.2",
     "brfs": "^1.4.1",
-    "browserify": "^13.0.1",
-    "budo": "^8.3.0",
-    "documentation": "^4.0.0-beta16",
-    "eslint": "^2.13.1",
+    "browserify": "^17.0.0",
+    "budo": "^11.8.4",
+    "documentation": "^14.0.0",
+    "eslint": "^8.29.0",
     "insert-css": "^2.0.0",
     "json-loader": "0.5.4",
     "lodash.once": "^4.0.0",
-    "mapbox-gl": "^0.41.0",
+    "mapbox-gl": "^2.11.0",
     "smokestack": "^3.6.0",
     "tap-status": "^1.0.1",
     "tape": "^4.6.0",
     "transform-loader": "0.2.3",
-    "webpack": "1.13.1",
+    "webpack": "^5.75.0",
     "webworkify-webpack": "1.1.7"
   },
   "dependencies": {
     "@mapbox/polyline": "^1.0.0",
     "babel-plugin-transform-inline-environment-variables": "^6.8.0",
-    "babelify": "^7.3.0",
+    "babelify": "^10.0.0",
     "deep-assign": "^2.0.0",
     "lodash.debounce": "^4.0.6",
     "lodash.isequal": "^4.2.0",
