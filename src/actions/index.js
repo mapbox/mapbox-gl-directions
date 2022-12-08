@@ -189,6 +189,7 @@ export function clearOrigin() {
 }
 
 export function clearDestination() {
+  request.abort();
   return dispatch => {
     dispatch({
       type: types.DESTINATION_CLEAR
