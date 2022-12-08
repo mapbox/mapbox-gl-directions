@@ -1,3 +1,14 @@
+## 4.2.0
+
+- [bug] Exclude `options.api` from query params [#266](https://github.com/mapbox/mapbox-gl-directions/pull/266)
+- [bug] Catch 'No Route found' response [#278](https://github.com/mapbox/mapbox-gl-directions/pull/278)
+* [bug] Abort request after `removeRoutes()` is called [#285](https://github.com/mapbox/mapbox-gl-directions/pull/285)
+* [bug] Fix mixed duration and distance values [#271](https://github.com/mapbox/mapbox-gl-directions/pull/271)
+
+## 4.1.0
+- Adds routePadding option to MapboxDirections object [#243](https://github.com/mapbox/mapbox-gl-directions/pull/243)
+- Fixes bug that showed dropdown suggestions when reversing route [#246](https://github.com/mapbox/mapbox-gl-directions/pull/246)
+
 ## 4.1.0
 - Adds routePadding option to MapboxDirections object [#243](https://github.com/mapbox/mapbox-gl-directions/pull/243)
 - Fixes bug that showed dropdown suggestions when reversing route [#246](https://github.com/mapbox/mapbox-gl-directions/pull/246)
