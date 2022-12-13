@@ -1,4 +1,4 @@
-## 4.2.0
+## 4.1.1
 
 - [bug] Exclude `options.api` from query params [#266](https://github.com/mapbox/mapbox-gl-directions/pull/266)
 - [bug] Catch 'No Route found' response [#278](https://github.com/mapbox/mapbox-gl-directions/pull/278)
