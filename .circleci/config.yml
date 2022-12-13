@@ -71,14 +71,9 @@ jobs:
     steps:
       - run:
           name: Install mbx-ci
-          command: >
-            curl -Ls
-            https://mapbox-release-engineering.s3.amazonaws.com/mbx-ci/latest/mbx-ci-linux-amd64
-            > ~/mbx-ci &&
-
-            chmod 755 ~/mbx-ci &&
-
-            ~/mbx-ci aws setup
+          command: |
+            curl -Ls https://mapbox-release-engineering.s3.amazonaws.com/mbx-ci/latest/mbx-ci-linux-amd64 > ~/mbx-ci &&
+            chmod 755 ~/mbx-ci
       - persist_to_workspace:
           root: ~/
           paths:
@@ -128,6 +123,10 @@ jobs:
       - attach_workspace:
           at: .
       - aws-cli/install
+      - run:
+          name: Setup AWS
+          command: |
+             ~/mbx-ci aws setup
       - run: >-
           aws s3 cp --recursive --acl public-read dist
           s3://mapbox-gl-js/plugins/mapbox-gl-directions/$CIRCLE_TAG
