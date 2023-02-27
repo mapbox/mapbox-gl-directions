@@ -19,7 +19,7 @@ var directions = new MapboxDirections({
 
 var map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v9'
+  style: 'mapbox://styles/mapbox/streets-v12'
 });
 
 map.addControl(directions, 'top-left');
