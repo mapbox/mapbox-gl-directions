@@ -15,7 +15,7 @@ mapDiv.style = 'position:absolute;top:0;right:0;left:0;bottom:0;';
 var map = window.map = new mapboxgl.Map({
   hash: true,
   container: mapDiv,
-  style: 'mapbox://styles/mapbox/streets-v9',
+  style: 'mapbox://styles/mapbox/streets-v12',
   center: [-79.4512, 43.6568],
   zoom: 13
 });
