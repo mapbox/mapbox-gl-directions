@@ -7,7 +7,7 @@
 import Typeahead from 'suggestions';
 import type { Map } from 'mapbox-gl'
 import { EventEmitter } from 'events'
-import utils from '../utils.js'
+import utils, { Coordinates } from '../utils.js'
 
 const IgnoreKeys = ['Tab', 'Escape', 'ArrowLeft', 'ArrowRight', 'Enter', 'ArrowUp', 'ArrowDown']
 
@@ -174,12 +174,21 @@ export default class Geocoder {
       })
   }
 
-  _query(input?: [number, number] | string) {
+/**
+ * Set & query the input
+ */
+  query(query: Coordinates) {
+    this._query(query);
+    return this;
+  }
+
+
+  _query(input?: Coordinates) {
     if (!input) return;
 
     const geocodeInput = Array.isArray(input) ? input.map(utils.wrap).join() : input;
 
-    this._geocode(geocodeInput,(results) => {
+    this._geocode(geocodeInput, (results) => {
       if (!results.length) return;
       var result = results[0];
       this._results = results;
@@ -203,11 +212,11 @@ export default class Geocoder {
     }
   }
 
-  _setInput(input: [number, number] | string) {
+  setInput(input: Coordinates) {
     if (!input) return;
 
-    const newInputValue = Array.isArray(input) 
-      ? input.map(i => utils.roundWithOriginalPrecision(utils.wrap(i), i)).join() 
+    const newInputValue = Array.isArray(input)
+      ? input.map(i => utils.roundWithOriginalPrecision(utils.wrap(i), i)).join()
       : input;
 
     // Set input value to passed value and clear everything else.

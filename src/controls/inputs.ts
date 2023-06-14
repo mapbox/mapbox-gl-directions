@@ -1,22 +1,35 @@
-import Geocoder from './geocoder';
-import template from 'lodash.template';
-import isEqual from 'lodash.isequal';
+import type { Map, LngLatLike } from 'mapbox-gl';
 import extent from 'turf-extent';
+import isEqual from 'lodash.isequal';
+import template from 'lodash.template';
+import Geocoder from './geocoder';
+import inputTemplate from '../templates/inputs'
 
-let fs = require('fs'); // substack/brfs#39
-let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'utf8'));
+const tmpl = template(inputTemplate);
 
 /**
  * Inputs controller
  *
- * @param {HTMLElement} el Summary parent container
+ * @param el The summary parent container.
  * @param {Object} store A redux store
  * @param {Object} actions Actions an element can dispatch
  * @param {Object} map The mapboxgl instance
  * @private
  */
 export default class Inputs {
-  constructor(el, store, actions, map) {
+  container: HTMLElement;
+
+  actions: any;
+
+  store: any;
+
+  _map: Map;
+
+  originInput: Geocoder;
+
+  destinationInput: Geocoder;
+
+  constructor(el: HTMLElement, store, actions, map: Map) {
     const { originQuery, destinationQuery, profile, controls } = store.getState();
 
     el.innerHTML = tmpl({
@@ -35,19 +48,19 @@ export default class Inputs {
     this.render();
   }
 
-  animateToCoordinates(mode, coords) {
+  animateToCoordinates(mode: unknown, coords: LngLatLike) {
     const { origin, destination, routePadding } = this.store.getState();
-    
+
     if (origin.geometry &&
-        destination.geometry &&
-        !isEqual(origin.geometry, destination.geometry)) {
+      destination.geometry &&
+      !isEqual(origin.geometry, destination.geometry)) {
       // Animate map to fit bounds.
       const bb = extent({
         type: 'FeatureCollection',
         features: [origin, destination]
       });
 
-      this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], {padding: routePadding});
+      this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], { padding: routePadding });
     } else {
       this._map.flyTo({ center: coords });
     }
@@ -65,20 +78,21 @@ export default class Inputs {
 
     const { geocoder, accessToken, flyTo, placeholderOrigin, placeholderDestination, zoom } = this.store.getState();
 
-    this.originInput = new Geocoder(Object.assign({}, {
-      accessToken
-    }, geocoder, {flyTo, placeholder: placeholderOrigin, zoom}));
+    this.originInput = new Geocoder(
+      this._map,
+      Object.assign({}, { accessToken }, geocoder, { flyTo, placeholder: placeholderOrigin, zoom })
+    );
 
-    const originEl = this.originInput.onAdd(this._map);
-    const originContainerEl = this.container.querySelector('#mapbox-directions-origin-input');
-    originContainerEl.appendChild(originEl);
+    const originEl = this.originInput.onAdd();
+    this.container.querySelector('#mapbox-directions-origin-input')?.appendChild(originEl);
 
-    this.destinationInput = new Geocoder(Object.assign({}, {
-      accessToken
-    }, geocoder, {flyTo, placeholder: placeholderDestination, zoom}));
+    this.destinationInput = new Geocoder(
+      this._map,
+      Object.assign({}, { accessToken }, geocoder, { flyTo, placeholder: placeholderDestination, zoom })
+    );
 
-    const destinationEl = this.destinationInput.onAdd(this._map);
-    this.container.querySelector('#mapbox-directions-destination-input').appendChild(destinationEl);
+    const destinationEl = this.destinationInput.onAdd();
+    this.container.querySelector('#mapbox-directions-destination-input')?.appendChild(destinationEl);
 
     this.originInput.on('result', (e) => {
       const coords = e.result.center;
@@ -105,14 +119,12 @@ export default class Inputs {
     });
 
     // Reversing Origin / Destination
-    this.container
-      .querySelector('.js-reverse-inputs')
-      .addEventListener('click', () => {
-        const { origin, destination } = this.store.getState();
-        if (origin) this.actions.queryDestination(origin.geometry.coordinates);
-        if (destination) this.actions.queryOrigin(destination.geometry.coordinates);
-        reverse();
-      });
+    this.container.querySelector('.js-reverse-inputs')?.addEventListener('click', () => {
+      const { origin, destination } = this.store.getState();
+      if (origin) this.actions.queryDestination(origin.geometry.coordinates);
+      if (destination) this.actions.queryOrigin(destination.geometry.coordinates);
+      reverse();
+    });
   }
 
   render() {
