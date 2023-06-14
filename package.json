@@ -11,6 +11,7 @@
     "@mapbox/polyline": "^1.2.0",
     "@turf/meta": "^6.5.0",
     "autocompleter": "^8.0.4",
+    "deep-assign": "^3.0.0",
     "events": "^3.3.0",
     "lodash.isequal": "^4.5.0",
     "lodash.template": "^4.5.0",
@@ -21,10 +22,12 @@
     "turf-extent": "^1.0.4"
   },
   "devDependencies": {
+    "@types/deep-assign": "^0.1.1",
     "@types/events": "^3.0.0",
     "@types/lodash.isequal": "^4.5.6",
     "@types/lodash.template": "^4.5.1",
     "@types/mapbox-gl": "^2.7.11",
+    "@types/mapbox__polyline": "^1.0.2",
     "typescript": "^5.1.3"
   }
 }

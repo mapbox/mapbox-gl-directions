@@ -1,9 +1,9 @@
 import type { Map } from 'mapbox-gl';
-import utils from '../utils';
 import template from 'lodash.template';
 import isEqual from 'lodash.isequal';
-import instructionHTML from '../templates/instructions';
-import errorHTML from '../templates/error'
+import instructionHTML from '../templates/instructions.js';
+import errorHTML from '../templates/error.js'
+import utils from '../utils.js';
 
 let instructionsTemplate = template(instructionHTML)
 let errorTemplate = template(errorHTML)

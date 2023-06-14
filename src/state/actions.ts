@@ -1,4 +1,4 @@
-import utils from './utils.js';
+import utils from '../utils.js';
 import * as types from './action_types.js';
 
 function originPoint(coordinates) {

@@ -2,8 +2,8 @@ import type { Map, LngLatLike } from 'mapbox-gl';
 import extent from 'turf-extent';
 import isEqual from 'lodash.isequal';
 import template from 'lodash.template';
-import Geocoder from './geocoder';
-import inputTemplate from '../templates/inputs'
+import Geocoder from './geocoder.js';
+import inputTemplate from '../templates/inputs.js'
 
 const tmpl = template(inputTemplate);
 

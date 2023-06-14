@@ -14,6 +14,9 @@ dependencies:
   autocompleter:
     specifier: ^8.0.4
     version: 8.0.4
+  deep-assign:
+    specifier: ^3.0.0
+    version: 3.0.0
   events:
     specifier: ^3.3.0
     version: 3.3.0
@@ -40,6 +43,9 @@ dependencies:
     version: 1.0.4
 
 devDependencies:
+  '@types/deep-assign':
+    specifier: ^0.1.1
+    version: 0.1.1
   '@types/events':
     specifier: ^3.0.0
     version: 3.0.0
@@ -52,6 +58,9 @@ devDependencies:
   '@types/mapbox-gl':
     specifier: ^2.7.11
     version: 2.7.11
+  '@types/mapbox__polyline':
+    specifier: ^1.0.2
+    version: 1.0.2
   typescript:
     specifier: ^5.1.3
     version: 5.1.3
@@ -143,6 +152,10 @@ packages:
       '@turf/helpers': 6.5.0
     dev: false
 
+  /@types/deep-assign@0.1.1:
+    resolution: {integrity: sha512-88jktQ7RJ96bJ4S8I2oeRylMXGeaZt/QBG0k8PiQ5UXCIliUQm0Pzlv3zcN1ZvEIuaLBgMkP0ynr8fAkwChgOQ==}
+    dev: true
+
   /@types/events@3.0.0:
     resolution: {integrity: sha512-EaObqwIvayI5a8dCzhFrjKzVwKLxjoG9T6Ppd5CEo07LRKfQ8Yokw54r5+Wq7FaBQ+yXRvQAYPrHwya1/UFt9g==}
     dev: true
@@ -169,6 +182,12 @@ packages:
 
   /@types/mapbox-gl@2.7.11:
     resolution: {integrity: sha512-4vSwPSTQIawZTFRiTY2R74aZwAiM9gE6KGj871xdyAPpa+DmEObXxQQXqL2PsMH31/rP9nxJ2Kv0boeTVJMXVw==}
+    dependencies:
+      '@types/geojson': 7946.0.10
+    dev: true
+
+  /@types/mapbox__polyline@1.0.2:
+    resolution: {integrity: sha512-Kr/oznVL3e8uvWM0+VPlVu2rVP+jKyVW/994HE9YJFBfcAcKqB4wMvqCdgXLG0SSrxxlKc5Nqaj7zt+KRl9oCA==}
     dependencies:
       '@types/geojson': 7946.0.10
     dev: true
@@ -245,6 +264,14 @@ packages:
   /decamelize@1.2.0:
     resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /deep-assign@3.0.0:
+    resolution: {integrity: sha512-YX2i9XjJ7h5q/aQ/IM9PEwEnDqETAIYbggmdDB3HLTlSgo1CxPsj6pvhPG68rq6SVE0+p+6Ywsm5fTYNrYtBWw==}
+    engines: {node: '>=0.10.0'}
+    deprecated: Check out `lodash.merge` or `merge-options` instead.
+    dependencies:
+      is-obj: 1.0.1
     dev: false
 
   /earcut@2.2.4:
@@ -339,6 +366,11 @@ packages:
     resolution: {integrity: sha512-Q4ZuBAe2FUsKtyQJoQHlvP8OvBERxO3jEmy1I7hcRXcJBGGHFh/aJBswbXuS9sgrDH2QUO8ilkwNPHvHMd8clg==}
     dependencies:
       has: 1.0.3
+    dev: false
+
+  /is-obj@1.0.1:
+    resolution: {integrity: sha512-l4RyHgRqGN4Y3+9JHVrNqO+tN0rV5My76uW5/nuO4K1b6vw5G8d/cmFjP9tRfEsdhZNt0IFdZuK/c2Vr4Nb+Qg==}
+    engines: {node: '>=0.10.0'}
     dev: false
 
   /is-plain-obj@1.1.0:
