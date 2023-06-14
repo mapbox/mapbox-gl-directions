@@ -1,4 +1,4 @@
-import { Map, type AnyLayer, type PaddingOptions } from "mapbox-gl"
+import { Map, type AnyLayer, type PaddingOptions, type MapMouseEvent } from "mapbox-gl"
 import directionLayers from "./styles/layers"
 
 export const MapboxProfiles = [
@@ -154,6 +154,7 @@ export class MapboxDirections {
   container: HTMLElement
   _map: Map | null
   styles: AnyLayer[]
+  timer: number | undefined
 
   constructor(public options: MapboxDirectionsOptions) {
     this.container = document.createElement('div');
@@ -194,7 +195,7 @@ export class MapboxDirections {
     return this.container;
   }
 
-  /**
+ /**
   * Removes the control from the map it has been added to.
   * This is called by `map.removeControl`, which is the recommended method to remove controls.
   */
@@ -222,5 +223,162 @@ export class MapboxDirections {
     this._map = null;
 
     return this;
+  }
+
+  onDragDown() {
+    // if (!(this.isCursorOverPoint && this._map)) return;
+    // this.isDragging = this.isCursorOverPoint;
+
+    if (!this._map) return;
+    this._map.getCanvas().style.cursor = 'grab';
+
+    this._map.on('mousemove', this.onDragMove);
+    this._map.on('mouseup', this.onDragUp);
+
+    this._map.on('touchmove', this.onDragMove);
+    this._map.on('touchend', this.onDragUp);
+  }
+
+  onDragMove(event: MapMouseEvent) {
+    // if (!this.isDragging) return;
+
+    // const coords = [event.lngLat.lng, event.lngLat.lat];
+
+    // switch (this.isDragging.layer.id) {
+    //   case 'directions-origin-point':
+    //     this.actions.createOrigin(coords);
+    //     break;
+    //   case 'directions-destination-point':
+    //     this.actions.createDestination(coords);
+    //     break;
+    //   case 'directions-hover-point':
+    //     this.actions.hoverMarker(coords);
+    //     break;
+    // }
+  }
+
+  onDragUp() {
+    // if (!this.isDragging) return;
+    if (!this._map) return
+
+    // const { hoverMarker, origin, destination } = store.getState();
+
+    // switch (this.isDragging.layer.id) {
+    //   case 'directions-origin-point':
+    //     this.actions.setOriginFromCoordinates(origin.geometry.coordinates);
+    //     break;
+    //   case 'directions-destination-point':
+    //     this.actions.setDestinationFromCoordinates(destination.geometry.coordinates);
+    //     break;
+    //   case 'directions-hover-point':
+    //     // Add waypoint if a sufficent amount of dragging has occurred.
+    //     if (hoverMarker.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
+    //       this.actions.addWaypoint(0, hoverMarker);
+    //     }
+    //     break;
+    // }
+
+    // this.isDragging = false;
+    this._map.getCanvas().style.cursor = '';
+
+    this._map.off('touchmove', this.onDragMove);
+    this._map.off('touchend', this.onDragUp);
+
+    this._map.off('mousemove', this.onDragMove);
+    this._map.off('mouseup', this.onDragUp);
+  }
+
+  /**
+   * Removes all routes and waypoints from the map.
+   */
+  removeRoutes() {
+    // this.actions.clearOrigin();
+    // this.actions.clearDestination();
+    return this;
+  }
+
+
+  onClick(event: MapMouseEvent) {
+    if (!this.timer) {
+      this.timer = setTimeout(() => {
+        this._onSingleClick(event);
+        this.timer = undefined;
+      }, 250);
+    } else {
+      clearTimeout(this.timer);
+      this.timer = undefined;
+      this._map?.zoomIn();
+    }
+  }
+
+  _onSingleClick(event: MapMouseEvent) {
+    // const { origin } = store.getState();
+    // const coords = [event.lngLat.lng, event.lngLat.lat];
+
+    // if (!origin.geometry) {
+    //   this.actions.setOriginFromCoordinates(coords);
+    // } else {
+
+    //   const features = this._map.queryRenderedFeatures(event.point, {
+    //     layers: [
+    //       'directions-origin-point',
+    //       'directions-destination-point',
+    //       'directions-waypoint-point',
+    //       'directions-route-line-alt'
+    //     ]
+    //   });
+
+    //   if (features.length) {
+
+    //     // Remove any waypoints
+    //     features.forEach((f) => {
+    //       if (f.layer.id === 'directions-waypoint-point') {
+    //         this.actions.removeWaypoint(f);
+    //       }
+    //     });
+
+    //     if (features[0].properties.route === 'alternate') {
+    //       const index = features[0].properties['route-index'];
+    //       this.actions.setRouteIndex(index);
+    //     }
+    //   } else {
+    //     this.actions.setDestinationFromCoordinates(coords);
+    //     this._map.flyTo({ center: coords });
+    //   }
+    // }
+  }
+
+  move(event: MapMouseEvent) {
+    // const { hoverMarker } = store.getState();
+
+    // const features = this._map.queryRenderedFeatures(event.point, {
+    //   layers: [
+    //     'directions-route-line-alt',
+    //     'directions-route-line',
+    //     'directions-origin-point',
+    //     'directions-destination-point',
+    //     'directions-hover-point'
+    //   ]
+    // });
+
+    // this._map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+
+    // if (features.length) {
+    //   this.isCursorOverPoint = features[0];
+    //   this._map.dragPan.disable();
+
+    //   // Add a possible waypoint marker when hovering over the active route line
+    //   features.forEach((feature) => {
+    //     if (feature.layer.id === 'directions-route-line') {
+    //       this.actions.hoverMarker([event.lngLat.lng, event.lngLat.lat]);
+    //     } else if (hoverMarker.geometry) {
+    //       this.actions.hoverMarker(null);
+    //     }
+    //   });
+
+    // } else if (this.isCursorOverPoint) {
+    //   this.isCursorOverPoint = false;
+    //   this._map.dragPan.enable();
+    // }
   }
 }
