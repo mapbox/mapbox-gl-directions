@@ -7,6 +7,7 @@
 import Typeahead from 'suggestions';
 import type { Map } from 'mapbox-gl'
 import { EventEmitter } from 'events'
+import utils from '../utils.js'
 
 const IgnoreKeys = ['Tab', 'Escape', 'ArrowLeft', 'ArrowRight', 'Enter', 'ArrowUp', 'ArrowDown']
 
