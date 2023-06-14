@@ -146,37 +146,36 @@ export default class Geocoder {
 
     fetch(`${this.api}${encodeURIComponent(query)}.json?${options.join('&')}`, {
       signal: this._abortController.signal
+    }).then(async (response) => {
+      this._loadingEl.classList.remove('active');
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        this.fire('error', { error: data.message });
+        return
+      }
+
+      if (data.features.length) {
+        this._clearEl.classList.add('active');
+      } else {
+        this._clearEl.classList.remove('active');
+        this._typeahead.selected = null;
+      }
+
+      this.fire('results', { results: data.features });
+      this._typeahead.update(data.features);
+      return callback(data.features);
     })
-      .then(async (response) => {
-        this._loadingEl.classList.remove('active');
-
-        const data = await response.json()
-
-        if (!response.ok) {
-          this.fire('error', { error: data.message });
-          return
-        }
-
-        if (data.features.length) {
-          this._clearEl.classList.add('active');
-        } else {
-          this._clearEl.classList.remove('active');
-          this._typeahead.selected = null;
-        }
-
-        this.fire('results', { results: data.features });
-        this._typeahead.update(data.features);
-        return callback(data.features);
-      })
       .catch(error => {
         this._loadingEl.classList.remove('active');
         this.fire('error', { error });
       })
   }
 
-/**
- * Set & query the input
- */
+  /**
+   * Set & query the input
+   */
   query(query: Coordinates) {
     this._query(query);
     return this;
