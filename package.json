@@ -1,0 +1,22 @@
+{
+  "name": "@mapbox-ts/mapbox-gl-directions",
+  "version": "4.1.1",
+  "description": "A mapboxgl plugin for the Mapbox Directions API",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@mapbox/polyline": "^1.2.0",
+    "autocompleter": "^8.0.4",
+    "events": "^3.3.0",
+    "mapbox-gl": "^2.15.0",
+    "suggestions": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/events": "^3.0.0",
+    "@types/mapbox-gl": "^2.7.11",
+    "typescript": "^5.1.3"
+  }
+}
