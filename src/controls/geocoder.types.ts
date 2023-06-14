@@ -1,4 +1,10 @@
-export interface GeocodingResponse {
+import type { LngLatBoundsLike, LngLatLike } from "mapbox-gl"
+
+export interface GeocodingErrorResponse {
+  message: string
+}
+
+export interface GeocodingOkResponse {
   /**
    * "FeatureCollection", a GeoJSON type from the GeoJSON specification.
    */
@@ -121,14 +127,14 @@ export interface GeocodingFeature {
   /**
    * A bounding box array in the form [minX,minY,maxX,maxY].
    */
-  bbox?: number[]
+  bbox?: LngLatBoundsLike
 
   /**
    * The coordinates of the feature’s center in the form [longitude,latitude].
    * This may be the literal centroid of the feature’s geometry,
    * or the center of human activity within the feature (for example, the downtown area of a city).
    */
-  center: number[]
+  center: LngLatLike
 
   /**
    * An object describing the spatial geometry of the returned feature.
