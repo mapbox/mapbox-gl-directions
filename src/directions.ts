@@ -1,6 +1,5 @@
 import { Map, type AnyLayer, type PaddingOptions, type MapMouseEvent } from "mapbox-gl"
 import directionLayers from "./styles/layers"
-import Geocoder from "./controls/geocoder"
 import Inputs from "./controls/inputs"
 
 export const MapboxProfiles = [
@@ -179,16 +178,6 @@ export class MapboxDirections {
     if (controls.inputs || true) {
       this.container.appendChild(inputElement)
     }
-
-    const originInput = new Geocoder()
-    const originElement = originInput.onAdd(map);
-    const originContainerElement = this.container.querySelector('#mapbox-directions-origin-input');
-    originContainerElement?.appendChild(originElement);
-
-    const destinationInput = new Geocoder()
-    const destinationElement = destinationInput.onAdd(map);
-    const destinationContainerElement = this.container.querySelector('#mapbox-directions-destination-input');
-    destinationContainerElement?.appendChild(destinationElement);
 
     const directionsElement = document.createElement('div');
     directionsElement.className = 'directions-control directions-control-instructions';
