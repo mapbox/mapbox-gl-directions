@@ -1,5 +1,8 @@
-import type { Map } from 'mapbox-gl';
+import 'autocompleter/autocomplete.css'
+
+import autocomplete from 'autocompleter'
 import Typeahead from 'suggestions';
+import type { Map } from 'mapbox-gl';
 import { EventEmitter } from 'events';
 import utils, { Coordinates } from '../utils';
 import type { GeocodingOkResponse, GeocodingErrorResponse, GeocodingFeature } from './geocoder.types';
@@ -44,7 +47,7 @@ export default class Geocoder {
 
   _results: GeocodingFeature[]
 
-  _ev: EventEmitter
+  _eventEmitter: EventEmitter
 
   _el: HTMLDivElement
 
@@ -64,7 +67,7 @@ export default class Geocoder {
 
     this.api = options.api ?? 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
     this.controller = new AbortController();
-    this._ev = new EventEmitter();
+    this._eventEmitter = new EventEmitter();
 
     const icon = document.createElement('span');
     icon.className = 'geocoder-icon geocoder-icon-search';
@@ -95,13 +98,18 @@ export default class Geocoder {
     this._results = [];
     this._input = null
 
-    /**
-     * TODO: add debounce
-     */
+    let timeout: number | null = null;
+
     this._inputEl.addEventListener('input', (event) => {
+      if (timeout) clearTimeout(timeout);
+
       const target = event.target as HTMLInputElement;
+
       if (target.value) {
-        this._queryFromInput(target.value);
+        timeout = setTimeout(() => {
+          timeout = null
+          this._queryFromInput(target.value);
+        }, 200)
       } else {
         this._clearEl.classList.remove('active');
       }
@@ -135,8 +143,19 @@ export default class Geocoder {
       }
     });
 
-    this._typeahead = new Typeahead(this._inputEl, [], { filter: false });
-    this._typeahead.getItemValue = (feature: GeocodingFeature) => feature.place_name
+    autocomplete<GeocodingFeature & { label: string }>({
+      input: this._inputEl,
+      async fetch(text, update, _trigger, _cursorPos) {
+        update([ ])
+        console.log({ text })
+      },
+      onSelect(item, input) {
+        console.log({ item, input })
+      },
+    })
+
+    // this._typeahead = new Typeahead(this._inputEl, [], { filter: false });
+    // this._typeahead.getItemValue = (feature: GeocodingFeature) => feature.place_name
   }
 
   onAdd(map: Map) {
@@ -196,7 +215,6 @@ export default class Geocoder {
   }
 
   _queryFromInput(input: string) {
-    console.log({ input })
     const trimmedValue = input.trim();
 
     if (!trimmedValue) {
@@ -287,8 +305,8 @@ export default class Geocoder {
    * @param listener function that's called when the event is emitted.
    */
   on<T extends keyof GeocoderEvents>(type: T, listener: GeocoderEventCallback<T>) {
-    this._ev.on(type, listener);
-    this._ev.on('error', (err) => console.log(err));
+    this._eventEmitter.on(type, listener);
+    this._eventEmitter.on('error', (err) => console.log(err));
     return this;
   }
 
@@ -298,12 +316,12 @@ export default class Geocoder {
    * @param data The event data to pass to the function subscribed.
    */
   fire<T extends keyof GeocoderEvents>(type: T, data: GeocoderEvents[T]) {
-    this._ev.emit(type, data);
+    this._eventEmitter.emit(type, data);
     return this;
   }
 
   off<T extends keyof GeocoderEvents>(type: T, listener: GeocoderEventCallback<T>) {
-    this._ev.removeListener(type, listener)
+    this._eventEmitter.removeListener(type, listener)
     return this
   }
 };
