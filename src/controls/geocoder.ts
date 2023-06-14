@@ -1,11 +1,14 @@
 import 'autocompleter/autocomplete.css'
 
-import autocomplete from 'autocompleter'
-import Typeahead from 'suggestions';
 import type { Map } from 'mapbox-gl';
-import { EventEmitter } from 'events';
+import autocomplete from 'autocompleter'
+import { EventEmitter } from '../events';
 import utils, { Coordinates } from '../utils';
-import type { GeocodingOkResponse, GeocodingErrorResponse, GeocodingFeature } from './geocoder.types';
+import type {
+  GeocodingOkResponse,
+  GeocodingErrorResponse,
+  GeocodingFeature
+} from './geocoder.types';
 
 const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken', 'api'];
 
@@ -27,25 +30,19 @@ export interface GeocoderEvents {
   error: { error: string }
 }
 
-export type GeocoderEventCallback<T extends keyof GeocoderEvents> = (data: GeocoderEvents[T]) => void
-
 /**
  * Geocoder - this slightly mimicks the mapboxl-gl-geocoder but isn't an exact replica.
  * Once gl-js plugins can be added to custom divs,
  * we should be able to require mapbox-gl-geocoder instead of including it here.
  */
-export default class Geocoder {
+export default class Geocoder extends EventEmitter<GeocoderEvents> {
   api: string
-
-  controller: AbortController
 
   _map: Map
 
   _input: GeocodingFeature | null
 
   _results: GeocodingFeature[]
-
-  _eventEmitter: EventEmitter
 
   _el: HTMLDivElement
 
@@ -56,14 +53,14 @@ export default class Geocoder {
   _loadingEl: HTMLSpanElement
 
   constructor(public options: GeocoderOptions = {}) {
+    super()
+
     // Override the control being added to control containers
     if (options.container) options.position = false;
 
     this._map = Object.create(null);
 
     this.api = options.api ?? 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
-    this.controller = new AbortController();
-    this._eventEmitter = new EventEmitter();
 
     const icon = document.createElement('span');
     icon.className = 'geocoder-icon geocoder-icon-search';
@@ -94,59 +91,26 @@ export default class Geocoder {
     this._results = [];
     this._input = null
 
-    let timeout: number | null = null;
-
-    this._inputEl.addEventListener('input', (event) => {
-      if (timeout) clearTimeout(timeout);
-
-      const target = event.target as HTMLInputElement;
-
-      if (target.value) {
-        timeout = setTimeout(() => {
-          timeout = null
-          this._queryFromInput(target.value);
-        }, 200)
-      } else {
-        this._clearEl.classList.remove('active');
-      }
-    });
-
-    // this._inputEl.addEventListener('change', (event) => {
-    //   const target = event.target as HTMLInputElement;
-
-    //   if (target.value) {
-    //     this._clearEl.classList.add('active');
-    //   }
-
-    //   const selected: GeocodingFeature = this._typeahead.selected;
-
-    //   if (selected) {
-    //     if (this.options.flyTo) {
-    //       if (selected.bbox && selected.context && selected.context.length <= 3 ||
-    //         selected.bbox && !selected.context) {
-    //         this._map.fitBounds(selected.bbox);
-    //       } else {
-    //         this._map.flyTo({
-    //           center: selected.center,
-    //           zoom: this.options.zoom
-    //         });
-    //       }
-    //     }
-
-    //     this._input = selected;
-
-    //     this.fire('result', { result: selected });
-    //   }
-    // });
-
     autocomplete<GeocodingFeature & { label: string }>({
       input: this._inputEl,
-      async fetch(text, update, _trigger, _cursorPos) {
-        update([])
-        console.log({ text })
+      fetch: async (text, update, _trigger, _cursorPos) => {
+        const results = await this._queryFromInput(text);
+        const options = results?.map(feature => ({
+          label: feature.place_name,
+          ...feature
+        }))
+        update(options?.length ? options : false)
       },
-      onSelect(item, input) {
-        console.log({ item, input })
+      onSelect: (item, _input) => {
+        this._input = item;
+
+        if (!this.options.flyTo) return
+
+        if (item.bbox && item.context && item.context.length <= 3 || item.bbox && !item.context) {
+          this._map.fitBounds(item.bbox);
+        } else {
+          this._map.flyTo({ center: item.center, zoom: this.options.zoom ?? 16 });
+        }
       },
     })
   }
@@ -175,10 +139,7 @@ export default class Geocoder {
 
     const url = `${this.api}${encodeURIComponent(input.trim())}.json?${options.join('&')}`;
 
-    this.controller.abort()
-    this.controller = new AbortController()
-
-    const data = await fetch(url, { signal: this.controller.signal })
+    const data = await fetch(url)
       .then(async (response) => {
         if (response.ok) {
           const data: GeocodingOkResponse = await response.json()
@@ -189,10 +150,12 @@ export default class Geocoder {
         }
       })
       .catch(error => {
+        console.log({ error })
         this._loadingEl.classList.remove('active');
         this.fire('error', { error: JSON.stringify(error) });
       })
 
+    this._loadingEl.classList.remove('active');
     this._clearEl.classList[data?.features.length ? 'add' : 'remove']('active');
 
     this.fire('results', { results: data?.features ?? [] });
@@ -208,7 +171,7 @@ export default class Geocoder {
     }
 
     if (trimmedValue.length > 2) {
-      this._results = await this._geocode(trimmedValue)
+      return this._results = await this._geocode(trimmedValue)
     }
   }
 
@@ -277,32 +240,5 @@ export default class Geocoder {
   setInput(value: Coordinates) {
     this._setInput(value);
     return this;
-  }
-
-  /**
-   * Subscribe to events that happen within the plugin.
-   * @param type name of event. Available events and the data passed into their respective event objects are:
-   *
-   * @param listener function that's called when the event is emitted.
-   */
-  on<T extends keyof GeocoderEvents>(type: T, listener: GeocoderEventCallback<T>) {
-    this._eventEmitter.on(type, listener);
-    this._eventEmitter.on('error', (err) => console.log(err));
-    return this;
-  }
-
-  /**
-   * Fire an event
-   * @param type The event name.
-   * @param data The event data to pass to the function subscribed.
-   */
-  fire<T extends keyof GeocoderEvents>(type: T, data: GeocoderEvents[T]) {
-    this._eventEmitter.emit(type, data);
-    return this;
-  }
-
-  off<T extends keyof GeocoderEvents>(type: T, listener: GeocoderEventCallback<T>) {
-    this._eventEmitter.removeListener(type, listener)
-    return this
   }
 };
