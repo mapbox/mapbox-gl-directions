@@ -29,8 +29,6 @@ export interface GeocoderEvents {
 
 export type GeocoderEventCallback<T extends keyof GeocoderEvents> = (data: GeocoderEvents[T]) => void
 
-export type GeocodeCallback = (results: GeocodingFeature[]) => unknown
-
 /**
  * Geocoder - this slightly mimicks the mapboxl-gl-geocoder but isn't an exact replica.
  * Once gl-js plugins can be added to custom divs,
@@ -56,8 +54,6 @@ export default class Geocoder {
   _clearEl: HTMLButtonElement
 
   _loadingEl: HTMLSpanElement
-
-  _typeahead: Typeahead
 
   constructor(public options: GeocoderOptions = {}) {
     // Override the control being added to control containers
@@ -115,47 +111,44 @@ export default class Geocoder {
       }
     });
 
-    this._inputEl.addEventListener('change', (event) => {
-      const target = event.target as HTMLInputElement;
+    // this._inputEl.addEventListener('change', (event) => {
+    //   const target = event.target as HTMLInputElement;
 
-      if (target.value) {
-        this._clearEl.classList.add('active');
-      }
+    //   if (target.value) {
+    //     this._clearEl.classList.add('active');
+    //   }
 
-      const selected: GeocodingFeature = this._typeahead.selected;
+    //   const selected: GeocodingFeature = this._typeahead.selected;
 
-      if (selected) {
-        if (this.options.flyTo) {
-          if (selected.bbox && selected.context && selected.context.length <= 3 ||
-            selected.bbox && !selected.context) {
-            this._map.fitBounds(selected.bbox);
-          } else {
-            this._map.flyTo({
-              center: selected.center,
-              zoom: this.options.zoom
-            });
-          }
-        }
+    //   if (selected) {
+    //     if (this.options.flyTo) {
+    //       if (selected.bbox && selected.context && selected.context.length <= 3 ||
+    //         selected.bbox && !selected.context) {
+    //         this._map.fitBounds(selected.bbox);
+    //       } else {
+    //         this._map.flyTo({
+    //           center: selected.center,
+    //           zoom: this.options.zoom
+    //         });
+    //       }
+    //     }
 
-        this._input = selected;
+    //     this._input = selected;
 
-        this.fire('result', { result: selected });
-      }
-    });
+    //     this.fire('result', { result: selected });
+    //   }
+    // });
 
     autocomplete<GeocodingFeature & { label: string }>({
       input: this._inputEl,
       async fetch(text, update, _trigger, _cursorPos) {
-        update([ ])
+        update([])
         console.log({ text })
       },
       onSelect(item, input) {
         console.log({ item, input })
       },
     })
-
-    // this._typeahead = new Typeahead(this._inputEl, [], { filter: false });
-    // this._typeahead.getItemValue = (feature: GeocodingFeature) => feature.place_name
   }
 
   onAdd(map: Map) {
@@ -163,7 +156,7 @@ export default class Geocoder {
     return this._el;
   }
 
-  _geocode(input: string, callback: GeocodeCallback) {
+  async _geocode(input: string) {
     this._loadingEl.classList.add('active');
 
     this.fire('loading', undefined);
@@ -185,45 +178,37 @@ export default class Geocoder {
     this.controller.abort()
     this.controller = new AbortController()
 
-    fetch(url, { signal: this.controller.signal })
+    const data = await fetch(url, { signal: this.controller.signal })
       .then(async (response) => {
-        this._loadingEl.classList.remove('active');
-
-        if (!response.ok) {
+        if (response.ok) {
+          const data: GeocodingOkResponse = await response.json()
+          return data
+        } else {
           const data: GeocodingErrorResponse = await response.json()
           this.fire('error', { error: data.message });
-          return
         }
-
-        const data: GeocodingOkResponse = await response.json()
-
-        if (data.features.length) {
-          this._clearEl.classList.add('active');
-        } else {
-          this._clearEl.classList.remove('active');
-          this._typeahead.selected = null;
-        }
-
-        this.fire('results', { results: data.features });
-        this._typeahead.update(data.features);
-        return callback(data.features);
       })
       .catch(error => {
         this._loadingEl.classList.remove('active');
         this.fire('error', { error: JSON.stringify(error) });
       })
+
+    this._clearEl.classList[data?.features.length ? 'add' : 'remove']('active');
+
+    this.fire('results', { results: data?.features ?? [] });
+
+    return data?.features ?? []
   }
 
-  _queryFromInput(input: string) {
+  async _queryFromInput(input: string) {
     const trimmedValue = input.trim();
 
     if (!trimmedValue) {
       this._clear();
     }
+
     if (trimmedValue.length > 2) {
-      this._geocode(trimmedValue, (results) => {
-        this._results = results;
-      });
+      this._results = await this._geocode(trimmedValue)
     }
   }
 
@@ -232,19 +217,20 @@ export default class Geocoder {
     this._inputEl.dispatchEvent(changeEvent);
   }
 
-  _query(input?: Coordinates) {
-    if (!input) return;
+  async _query(input?: Coordinates) {
+    if (!input) return [];
 
     const geocodeInput = Array.isArray(input) ? input.map(utils.wrap).join() : input;
 
-    this._geocode(geocodeInput, (results) => {
-      if (!results.length) return;
-      var result = results[0];
-      this._results = results;
-      this._typeahead.selected = result;
-      this._inputEl.value = result.place_name;
-      this._change();
-    });
+    const results = await this._geocode(geocodeInput)
+
+    if (!results.length) return results;
+
+    this._results = results;
+    this._inputEl.value = results[0].place_name;
+    this._change();
+
+    return results
   }
 
   _setInput(input?: Coordinates) {
@@ -257,17 +243,12 @@ export default class Geocoder {
     // Set input value to passed value and clear everything else.
     this._inputEl.value = newInputValue;
     this._input = null;
-    this._typeahead.selected = null;
-    this._typeahead.clear();
     this._change();
   }
 
   _clear() {
     this._input = null;
     this._inputEl.value = '';
-
-    this._typeahead.selected = null;
-    this._typeahead.clear();
 
     this._change();
 
