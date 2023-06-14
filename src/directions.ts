@@ -193,10 +193,12 @@ export class MapboxDirections {
     const directionsElement = document.createElement('div');
     directionsElement.className = 'directions-control directions-control-instructions';
     directionsElement.textContent = 'Directions Element'
+
     // new Instructions(directionsEl, store, {
     //   hoverMarker: this.actions.hoverMarker,
     //   setRouteIndex: this.actions.setRouteIndex
     // }, this._map);
+
     if (controls.instructions || true) {
       this.container.appendChild(directionsElement);
     }
