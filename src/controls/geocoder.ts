@@ -1,5 +1,6 @@
 import 'autocompleter/autocomplete.css'
 
+import fuzzy from 'fuzzy'
 import type { Map } from 'mapbox-gl';
 import autocomplete from 'autocompleter'
 import { EventEmitter } from '../events';
@@ -11,6 +12,11 @@ import type {
 } from './geocoder.types';
 
 const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken', 'api'];
+
+interface GeocoderAutocompleteOption extends GeocodingFeature {
+  label?: string
+  html?: string
+}
 
 export interface GeocoderOptions {
   api?: string
@@ -91,15 +97,31 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
     this._results = [];
     this._value = null
 
-    autocomplete<GeocodingFeature & { label: string }>({
+    const autocompleteOption = document.createElement('div');
+    autocompleteOption.style.overflow = 'hidden';
+    autocompleteOption.style.textOverflow = 'ellipsis';
+    autocompleteOption.style.whiteSpace = 'nowrap';
+    autocompleteOption.style.fontFamily = 'Helvetica Neue, Arial, Helvetica, sans-serif'
+    autocompleteOption.style.fontSize = '12px'
+    autocompleteOption.style.padding = '5px 10px'
+    autocompleteOption.style.cursor = 'pointer'
+    autocompleteOption.style.fontWeight = '400'
+
+    autocomplete<GeocoderAutocompleteOption>({
       input: this._inputElement,
       fetch: async (text, update, _trigger, _cursorPos) => {
         const results = await this._queryFromInput(text);
-        const options = results?.map(feature => ({
-          label: feature.place_name,
-          ...feature
-        }))
-        update(options?.length ? options : false)
+
+        const filteredResults = fuzzy.filter(text, results ?? [], {
+          pre: '<strong style="font-weight: 700">',
+          post: '</strong>',
+          extract: (item) => item.place_name
+        }).map(result => {
+          (result.original as GeocoderAutocompleteOption).html = result.string
+          return result.original
+        })
+
+        update(filteredResults.length ? filteredResults : false)
       },
       onSelect: (item, _input) => {
         this._value = item;
@@ -112,6 +134,11 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
         } else {
           this._map.flyTo({ center: item.center, zoom: this.options.zoom ?? 16 });
         }
+      },
+      render: (item, currentValue, index) => {
+        const renderedOption = autocompleteOption.cloneNode(true) as HTMLDivElement
+        renderedOption.innerHTML = item.html ?? item.place_name
+        return renderedOption
       },
     })
   }

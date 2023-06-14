@@ -14,12 +14,12 @@ dependencies:
   events:
     specifier: ^3.3.0
     version: 3.3.0
+  fuzzy:
+    specifier: ^0.1.3
+    version: 0.1.3
   mapbox-gl:
     specifier: ^2.15.0
     version: 2.15.0
-  suggestions:
-    specifier: ^1.7.1
-    version: 1.7.1
 
 devDependencies:
   '@types/events':
@@ -825,13 +825,6 @@ packages:
       min-indent: 1.0.1
     dev: false
 
-  /suggestions@1.7.1:
-    resolution: {integrity: sha512-gl5YPAhPYl07JZ5obiD9nTZsg4SyZswAQU/NNtnYiSnFkI3+ZHuXAiEsYm7AaZ71E0LXSFaGVaulGSWN3Gd71A==}
-    dependencies:
-      fuzzy: 0.1.3
-      xtend: 4.0.2
-    dev: false
-
   /supercluster@8.0.1:
     resolution: {integrity: sha512-IiOea5kJ9iqzD2t7QJq/cREyLHTtSmUT6gQsweojg9WH2sYJqZK9SswTu6jrscO6D1G5v5vYZ9ru/eq85lXeZQ==}
     dependencies:
@@ -925,11 +918,6 @@ packages:
       '@mapbox/point-geometry': 0.1.0
       '@mapbox/vector-tile': 1.3.1
       pbf: 3.2.1
-    dev: false
-
-  /xtend@4.0.2:
-    resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
-    engines: {node: '>=0.4'}
     dev: false
 
   /yargs-parser@18.1.3:
