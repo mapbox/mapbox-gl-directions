@@ -1,4 +1,5 @@
 import { Map, type AnyLayer, type PaddingOptions } from "mapbox-gl"
+import directionLayers from "./styles/layers"
 
 export const MapboxProfiles = [
   'mapbox/driving-traffic',
@@ -150,39 +151,76 @@ export interface MapboxDirectionsOptions {
  * map.addControl(directions);
  */
 export class MapboxDirections {
+  container: HTMLElement
+  _map: Map | null
+  styles: AnyLayer[]
+
+  constructor(public options: MapboxDirectionsOptions) {
+    this.container = document.createElement('div');
+    this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
+    this._map = null;
+    this.styles = options.styles ?? directionLayers;
+  }
+
   onAdd(map: Map) {
     const controls: MapDirectionsControls = {};
 
-    const element = document.createElement('div');
-    element.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
+    // Add controls to the page
+    const inputElement = document.createElement('div');
+    inputElement.className = 'directions-control directions-control-inputs';
+    inputElement.textContent = 'Input Element'
+    // new Inputs(inputEl, store, this.actions, this._map);
 
     if (controls.inputs || true) {
-      // Add controls to the page
-      const inputElement = document.createElement('div');
-      inputElement.className = 'directions-control directions-control-inputs';
-      inputElement.textContent = 'Input Element'
-      // new Inputs(inputEl, store, this.actions, this._map);
-      element.appendChild(inputElement)
+      this.container.appendChild(inputElement)
 
     }
 
+    const directionsElement = document.createElement('div');
+    directionsElement.className = 'directions-control directions-control-instructions';
+    directionsElement.textContent = 'Directions Element'
+    // new Instructions(directionsEl, store, {
+    //   hoverMarker: this.actions.hoverMarker,
+    //   setRouteIndex: this.actions.setRouteIndex
+    // }, this._map);
     if (controls.instructions || true) {
-      const directionsElement = document.createElement('div');
-      directionsElement.className = 'directions-control directions-control-instructions';
-      directionsElement.textContent = 'Directions Element'
-      // new Instructions(directionsEl, store, {
-      //   hoverMarker: this.actions.hoverMarker,
-      //   setRouteIndex: this.actions.setRouteIndex
-      // }, this._map);
-      element.appendChild(directionsElement);
+      this.container.appendChild(directionsElement);
     }
 
     // this.subscribedActions();
     // if (map.loaded()) this.mapState()
     // else map.on('load', () => this.mapState());
 
-    return element;
+    return this.container;
   }
 
-  onRemove() { }
+  /**
+  * Removes the control from the map it has been added to.
+  * This is called by `map.removeControl`, which is the recommended method to remove controls.
+  */
+  onRemove(map: Map) {
+    this.container.parentNode?.removeChild(this.container);
+    this.removeRoutes();
+
+    map.off('mousedown', this.onDragDown);
+    map.off('mousemove', this.move);
+    map.off('touchstart', this.onDragDown);
+    map.off('touchstart', this.move);
+    map.off('click', this.onClick);
+
+    // if (this.storeUnsubscribe) {
+    //   this.storeUnsubscribe();
+    //   delete this.storeUnsubscribe;
+    // }
+
+    this.styles.forEach((layer) => {
+      if (map.getLayer(layer.id)) map.removeLayer(layer.id);
+    });
+
+    if (map.getSource('directions')) map.removeSource('directions');
+
+    this._map = null;
+
+    return this;
+  }
 }
