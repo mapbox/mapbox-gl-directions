@@ -3,26 +3,31 @@ import Geocoder from './geocoder';
 import { createInputsTemplate } from '../templates/inputs';
 
 /**
- * Inputs controller
- *
- * @param {HTMLElement} el Summary parent container
- * @param {Object} store A redux store
- * @param {Object} actions Actions an element can dispatch
- * @param {Object} map The mapboxgl instance
- * @private
+ * @internal
  */
 export default class Inputs {
+  originInput: Geocoder;
+
+  destinationInput: Geocoder;
+
+  /**
+   * Inputs controller
+   *
+   * @param container Summary parent container.
+   * @param map The mapboxgl instance.
+   */
   constructor(public container: HTMLElement, public _map: Map) {
     // const { originQuery, destinationQuery, profile, controls } = store.getState();
 
     container.innerHTML = createInputsTemplate({
-      // originQuery,
-      // destinationQuery,
       profile: 'mapbox/driving',
       controls: {
         profileSwitcher: true,
       }
     });
+
+    this.originInput = Object.create(null);
+    this.destinationInput = Object.create(null);
 
     // this.actions = actions;
     // this.store = store;
@@ -50,13 +55,13 @@ export default class Inputs {
   }
 
   onAdd(map: Map) {
-    const originInput = new Geocoder()
-    const originElement = originInput.onAdd(map);
+    this.originInput = new Geocoder()
+    const originElement = this.originInput.onAdd(map);
     const originContainerElement = this.container.querySelector('#mapbox-directions-origin-input');
     originContainerElement?.appendChild(originElement);
 
-    const destinationInput = new Geocoder()
-    const destinationElement = destinationInput.onAdd(map);
+    this.destinationInput = new Geocoder()
+    const destinationElement = this.destinationInput.onAdd(map);
     const destinationContainerElement = this.container.querySelector('#mapbox-directions-destination-input');
     destinationContainerElement?.appendChild(destinationElement);
 
@@ -86,19 +91,21 @@ export default class Inputs {
     // const destinationEl = this.destinationInput.onAdd(this._map);
     // this.container.querySelector('#mapbox-directions-destination-input').appendChild(destinationEl);
 
-    // this.originInput.on('result', (e) => {
-    //   const coords = e.result.center;
-    //   createOrigin(coords);
-    //   this.animateToCoordinates('origin', coords);
-    // });
+    this.originInput.on('result', (e) => {
+      const coords = e.result.center;
+      console.log({ e })
+      // createOrigin(coords);
+      this.animateToCoordinates('origin', coords);
+    });
 
     // this.originInput.on('clear', clearOrigin);
 
-    // this.destinationInput.on('result', (e) => {
-    //   const coords = e.result.center;
-    //   createDestination(coords);
-    //   this.animateToCoordinates('destination', coords);
-    // });
+    this.destinationInput.on('result', (e) => {
+      const coords = e.result.center;
+      console.log({ e })
+      // createDestination(coords);
+      this.animateToCoordinates('destination', coords);
+    });
 
     // this.destinationInput.on('clear', clearDestination);
 

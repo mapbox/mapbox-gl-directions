@@ -20,6 +20,9 @@ dependencies:
   events:
     specifier: ^3.3.0
     version: 3.3.0
+  geojson:
+    specifier: ^0.5.0
+    version: 0.5.0
   lodash.debounce:
     specifier: ^4.0.8
     version: 4.0.8
@@ -52,6 +55,9 @@ devDependencies:
   '@types/events':
     specifier: ^3.0.0
     version: 3.0.0
+  '@types/geojson':
+    specifier: ^7946.0.10
+    version: 7946.0.10
   '@types/lodash.isequal':
     specifier: ^4.5.6
     version: 4.5.6
@@ -555,6 +561,11 @@ packages:
 
   /geojson-vt@3.2.1:
     resolution: {integrity: sha512-EvGQQi/zPrDA6zr6BnJD/YhwAkBP8nnJ9emh3EnHQKVMfg/MRVtPbMYdgVy/IaEmn4UfagD2a6fafPDL5hbtwg==}
+    dev: false
+
+  /geojson@0.5.0:
+    resolution: {integrity: sha512-/Bx5lEn+qRF4TfQ5aLu6NH+UKtvIv7Lhc487y/c8BdludrCTpiWf9wyI0RTyqg49MFefIAvFDuEi5Dfd/zgNxQ==}
+    engines: {node: '>= 0.10'}
     dev: false
 
   /get-stream@6.0.1:

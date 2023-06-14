@@ -1,9 +1,11 @@
 'use strict';
 
+import type { GeoJSONSourceOptions, FeatureIdentifier } from 'mapbox-gl'
 import Typeahead from 'suggestions';
-import debounce from 'lodash.debounce';
 import { EventEmitter } from 'events';
 import utils from '../utils';
+
+const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken', 'api'];
 
 // Geocoder - this slightly mimicks the mapboxl-gl-geocoder but isn't an exact replica.
 // Once gl-js plugins can be added to custom divs, we should be able to require mapbox-gl-geocoder
@@ -19,7 +21,7 @@ export default class Geocoder {
   onAdd(map) {
     this._map = map;
 
-    this.request = new XMLHttpRequest();
+    // this.request = new XMLHttpRequest();
 
     // Template
     var el = document.createElement('div');
@@ -32,24 +34,37 @@ export default class Geocoder {
     input.type = 'text';
     input.placeholder = this.options.placeholder;
 
-    input.addEventListener('keydown', debounce(function(e) {
-      if (!e.target.value) return this._clearEl.classList.remove('active');
+    /**
+     * TODO: add debounce
+     */
+    input.addEventListener('keydown', (event) => {
+      const target = event.target as HTMLInputElement;
+      if (!target.value) {
+        this._clearEl.classList.remove('active');
+        return
+      }
 
       // TAB, ESC, LEFT, RIGHT, ENTER, UP, DOWN
-      if (e.metaKey || [9, 27, 37, 39, 13, 38, 40].indexOf(e.keyCode) !== -1) return;
-      this._queryFromInput(e.target.value);
-    }.bind(this)), 200);
+      if (event.metaKey || [9, 27, 37, 39, 13, 38, 40].indexOf(event.keyCode) !== -1) return;
 
-    input.addEventListener('change', function(e) {
-      if (e.target.value) this._clearEl.classList.add('active');
+      this._queryFromInput(target.value);
+    });
 
-      var selected = this._typeahead.selected;
+    input.addEventListener('change', (event) => {
+      const target = event.target as HTMLInputElement;
+
+      if (target.value) {
+        this._clearEl.classList.add('active');
+      }
+
+      const selected = this._typeahead.selected;
+
       if (selected) {
         if (this.options.flyTo) {
           if (selected.bbox && selected.context && selected.context.length <= 3 ||
-              selected.bbox && !selected.context) {
+            selected.bbox && !selected.context) {
             var bbox = selected.bbox;
-            map.fitBounds([[bbox[0], bbox[1]],[bbox[2], bbox[3]]]);
+            map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]]);
           } else {
             map.flyTo({
               center: selected.center,
@@ -57,10 +72,12 @@ export default class Geocoder {
             });
           }
         }
+
         this._input = selected;
+
         this.fire('result', { result: selected });
       }
-    }.bind(this));
+    });
 
     var actions = document.createElement('div');
     actions.classList.add('geocoder-pin-right');
@@ -88,56 +105,77 @@ export default class Geocoder {
     return el;
   }
 
-  _geocode(q, callback) {
+  _geocode(input: string, callback) {
     this._loadingEl.classList.add('active');
-    this.fire('loading');
+
+    this.fire('loading', undefined);
 
     const geocodingOptions = this.options
+
     const exclude = ['placeholder', 'zoom', 'flyTo', 'accessToken', 'api'];
-    const options = Object.keys(this.options).filter(function(key) {
-      return exclude.indexOf(key) === -1;
-    }).map(function(key) {
-      return key + '=' + geocodingOptions[key];
-    });
 
-    var accessToken = this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
-    options.push('access_token=' + accessToken);
-    this.request.abort();
-    this.request.open('GET', this.api + encodeURIComponent(q.trim()) + '.json?' + options.join('&'), true);
-    this.request.onload = function() {
-      this._loadingEl.classList.remove('active');
-      if (this.request.status >= 200 && this.request.status < 400) {
-        var data = JSON.parse(this.request.responseText);
-        if (data.features.length) {
-          this._clearEl.classList.add('active');
-        } else {
-          this._clearEl.classList.remove('active');
-          this._typeahead.selected = null;
+    var accessToken = 'pk.eyJ1IjoicGVkcmljIiwiYSI6ImNsZzE0bjk2ajB0NHEzanExZGFlbGpwazIifQ.l14rgv5vmu5wIMgOUUhUXw' // this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
+
+    const options = [`access_token=${accessToken}`]
+
+    options.push(
+      ...Object.keys(this.options)
+        .filter((key) => !exclude.includes(key))
+        .map((key) => `${key}=${geocodingOptions[key]}`)
+    )
+
+    const url = `${this.api}${encodeURIComponent(input.trim())}.json?${options.join('&')}`;
+
+    fetch(url)
+      .then(async (response) => { 
+        this._loadingEl.classList.remove('active');
+        const data = await response.json();
+        console.log({ data })
+        if (response.ok) {
         }
+      })
+      .catch(error => {
+      })
 
-        this.fire('results', { results: data.features });
-        this._typeahead.update(data.features);
-        return callback(data.features);
-      } else {
-        this.fire('error', { error: JSON.parse(this.request.responseText).message });
-      }
-    }.bind(this);
+    // this.request.abort();
+    // this.request.open('GET', this.api + encodeURIComponent(q.trim()) + '.json?' + options.join('&'), true);
+    // this.request.onload = () => {
+    //   this._loadingEl.classList.remove('active');
+    //   if (this.request.status >= 200 && this.request.status < 400) {
+    //     var data = JSON.parse(this.request.responseText);
+    //     if (data.features.length) {
+    //       this._clearEl.classList.add('active');
+    //     } else {
+    //       this._clearEl.classList.remove('active');
+    //       this._typeahead.selected = null;
+    //     }
 
-    this.request.onerror = function() {
-      this._loadingEl.classList.remove('active');
-      this.fire('error', { error: JSON.parse(this.request.responseText).message });
-    }.bind(this);
+    //     this.fire('results', { results: data.features });
+    //     this._typeahead.update(data.features);
+    //     return callback(data.features);
+    //   } else {
+    //     this.fire('error', { error: JSON.parse(this.request.responseText).message });
+    //   }
+    // };
 
-    this.request.send();
+    // this.request.onerror = () => {
+    //   this._loadingEl.classList.remove('active');
+    //   this.fire('error', { error: JSON.parse(this.request.responseText).message });
+    // };
+
+    // this.request.send();
   }
 
-  _queryFromInput(q) {
-    q = q.trim();
-    if (!q) this._clear();
-    if (q.length > 2) {
-      this._geocode(q, function(results) {
+  _queryFromInput(input: string) {
+    const trimmedValue = input.trim();
+
+    if (!trimmedValue) {
+      this._clear();
+    }
+    if (trimmedValue.length > 2) {
+      this._geocode(trimmedValue, (results) => {
         this._results = results;
-      }.bind(this));
+      });
     }
   }
 
@@ -156,14 +194,14 @@ export default class Geocoder {
       ].join();
     }
 
-    this._geocode(input, function(results) {
+    this._geocode(input, (results) => {
       if (!results.length) return;
       var result = results[0];
       this._results = results;
       this._typeahead.selected = result;
       this._inputEl.value = result.place_name;
       this._change();
-    }.bind(this));
+    });
   }
 
   _setInput(input) {
@@ -232,7 +270,7 @@ export default class Geocoder {
    */
   on(type, fn) {
     this._ev.on(type, fn);
-    this._ev.on('error', function (err) {
+    this._ev.on('error', function(err) {
       console.log(err);
     });
     return this;
@@ -250,7 +288,6 @@ export default class Geocoder {
 
   /**
    * Remove an event
-   * @returns {Geocoder} this
    * @param {String} type Event name.
    * @param {Function} fn Function that should unsubscribe to the event emitted.
    */
