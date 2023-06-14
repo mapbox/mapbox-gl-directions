@@ -40,17 +40,17 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
 
   _map: Map
 
-  _input: GeocodingFeature | null
+  _value: GeocodingFeature | null
 
   _results: GeocodingFeature[]
 
-  _el: HTMLDivElement
+  _containerElement: HTMLDivElement
 
-  _inputEl: HTMLInputElement
+  _inputElement: HTMLInputElement
 
-  _clearEl: HTMLButtonElement
+  _clearElement: HTMLButtonElement
 
-  _loadingEl: HTMLSpanElement
+  _loadingElement: HTMLSpanElement
 
   constructor(public options: GeocoderOptions = {}) {
     super()
@@ -65,34 +65,34 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
     const icon = document.createElement('span');
     icon.className = 'geocoder-icon geocoder-icon-search';
 
-    this._inputEl = document.createElement('input');
-    this._inputEl.type = 'text';
-    this._inputEl.placeholder = options.placeholder ?? 'Search';
+    this._inputElement = document.createElement('input');
+    this._inputElement.type = 'text';
+    this._inputElement.placeholder = options.placeholder ?? 'Search';
 
-    this._clearEl = document.createElement('button');
-    this._clearEl.className = 'geocoder-icon geocoder-icon-close';
-    this._clearEl.addEventListener('click', this._clear.bind(this));
+    this._clearElement = document.createElement('button');
+    this._clearElement.className = 'geocoder-icon geocoder-icon-close';
+    this._clearElement.addEventListener('click', this._clear.bind(this));
 
-    this._loadingEl = document.createElement('span');
-    this._loadingEl.className = 'geocoder-icon geocoder-icon-loading';
+    this._loadingElement = document.createElement('span');
+    this._loadingElement.className = 'geocoder-icon geocoder-icon-loading';
 
     const actions = document.createElement('div');
     actions.classList.add('geocoder-pin-right');
-    actions.appendChild(this._clearEl);
-    actions.appendChild(this._loadingEl);
+    actions.appendChild(this._clearElement);
+    actions.appendChild(this._loadingElement);
 
-    this._el = document.createElement('div');
-    this._el.className = 'mapboxgl-ctrl-geocoder';
+    this._containerElement = document.createElement('div');
+    this._containerElement.className = 'mapboxgl-ctrl-geocoder';
 
-    this._el.appendChild(icon);
-    this._el.appendChild(this._inputEl);
-    this._el.appendChild(actions);
+    this._containerElement.appendChild(icon);
+    this._containerElement.appendChild(this._inputElement);
+    this._containerElement.appendChild(actions);
 
     this._results = [];
-    this._input = null
+    this._value = null
 
     autocomplete<GeocodingFeature & { label: string }>({
-      input: this._inputEl,
+      input: this._inputElement,
       fetch: async (text, update, _trigger, _cursorPos) => {
         const results = await this._queryFromInput(text);
         const options = results?.map(feature => ({
@@ -102,7 +102,8 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
         update(options?.length ? options : false)
       },
       onSelect: (item, _input) => {
-        this._input = item;
+        this._value = item;
+        this._inputElement.value = item.place_name
 
         if (!this.options.flyTo) return
 
@@ -117,11 +118,11 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
 
   onAdd(map: Map) {
     this._map = map;
-    return this._el;
+    return this._containerElement;
   }
 
   async _geocode(input: string) {
-    this._loadingEl.classList.add('active');
+    this._loadingElement.classList.add('active');
 
     this.fire('loading', undefined);
 
@@ -151,12 +152,12 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
       })
       .catch(error => {
         console.log({ error })
-        this._loadingEl.classList.remove('active');
+        this._loadingElement.classList.remove('active');
         this.fire('error', { error: JSON.stringify(error) });
       })
 
-    this._loadingEl.classList.remove('active');
-    this._clearEl.classList[data?.features.length ? 'add' : 'remove']('active');
+    this._loadingElement.classList.remove('active');
+    this._clearElement.classList[data?.features.length ? 'add' : 'remove']('active');
 
     this.fire('results', { results: data?.features ?? [] });
 
@@ -177,7 +178,7 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
 
   _change() {
     const changeEvent = new Event('HTMLEvents', { bubbles: true, cancelable: false })
-    this._inputEl.dispatchEvent(changeEvent);
+    this._inputElement.dispatchEvent(changeEvent);
   }
 
   async _query(input?: Coordinates) {
@@ -190,7 +191,7 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
     if (!results.length) return results;
 
     this._results = results;
-    this._inputEl.value = results[0].place_name;
+    this._inputElement.value = results[0].place_name;
     this._change();
 
     return results
@@ -204,24 +205,24 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
       : input;
 
     // Set input value to passed value and clear everything else.
-    this._inputEl.value = newInputValue;
-    this._input = null;
+    this._inputElement.value = newInputValue;
+    this._value = null;
     this._change();
   }
 
   _clear() {
-    this._input = null;
-    this._inputEl.value = '';
+    this._value = null;
+    this._inputElement.value = '';
 
     this._change();
 
-    this._inputEl.focus();
-    this._clearEl.classList.remove('active');
+    this._inputElement.focus();
+    this._clearElement.classList.remove('active');
     this.fire('clear', undefined);
   }
 
   getResult() {
-    return this._input;
+    return this._value;
   }
 
   /**
