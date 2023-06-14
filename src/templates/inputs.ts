@@ -75,12 +75,19 @@ export function createInputsTemplate({ profile, controls }: CreateInputTemplateO
       ...MapboxInputs[mapboxProfile],
       checked: profile === `mapbox/${mapboxProfile}`
     })
-  ) : ''
+  ).join('') : ''
+
+  const wrappedRadioInputTemplate = radioInputsTemplate ?
+    `\
+<div class='mapbox-directions-profile mapbox-directions-component-keyline mapbox-directions-clearfix'>
+  ${radioInputsTemplate}
+</div>
+` : ''
 
   const inputsTemplate = `\
 <div class='mapbox-directions-component mapbox-directions-inputs'>
   ${staticInputsTemplate}
-  ${radioInputsTemplate}
+  ${wrappedRadioInputTemplate}
 </div>
 `
   return inputsTemplate
