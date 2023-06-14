@@ -21,7 +21,7 @@ import Instructions from './controls/instructions.js';
 export default class MapboxDirections {
   isCursorOverPoint: MapboxGeoJSONFeature | false
 
-  isDragging: Point
+  isDragging: Point | false
 
   storeUnsubscribe: Unsubscribe | undefined
 
