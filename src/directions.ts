@@ -1,5 +1,6 @@
 import { Map, type AnyLayer, type PaddingOptions, type MapMouseEvent } from "mapbox-gl"
 import directionLayers from "./styles/layers"
+import Geocoder from "./controls/geocoder"
 
 export const MapboxProfiles = [
   'mapbox/driving-traffic',
@@ -7,6 +8,8 @@ export const MapboxProfiles = [
   'mapbox/walking',
   'mapbox/cycling'
 ] as const
+
+export type MapboxProfile = typeof MapboxProfiles[number]
 
 export interface MapDirectionsControls {
   /**
@@ -100,7 +103,7 @@ export interface MapboxDirectionsOptions {
    * Routing profile to use.
    * @default 'mapbox/driving-traffic'
    */
-  profile?: typeof MapboxProfiles[number]
+  profile?: MapboxProfile
 
   /**
    * Whether to enable alternatives.
@@ -156,7 +159,7 @@ export class MapboxDirections {
   styles: AnyLayer[]
   timer: number | undefined
 
-  constructor(public options: MapboxDirectionsOptions) {
+  constructor(public options: MapboxDirectionsOptions = {}) {
     this.container = document.createElement('div');
     this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
     this._map = null;
@@ -174,8 +177,13 @@ export class MapboxDirections {
 
     if (controls.inputs || true) {
       this.container.appendChild(inputElement)
-
     }
+
+
+    const g = new Geocoder()
+    const originEl = g.onAdd(map);
+    const originContainerEl = this.container.querySelector('#mapbox-directions-origin-input');
+    originContainerEl?.appendChild(originEl);
 
     const directionsElement = document.createElement('div');
     directionsElement.className = 'directions-control directions-control-instructions';
@@ -195,10 +203,10 @@ export class MapboxDirections {
     return this.container;
   }
 
- /**
-  * Removes the control from the map it has been added to.
-  * This is called by `map.removeControl`, which is the recommended method to remove controls.
-  */
+  /**
+   * Removes the control from the map it has been added to.
+   * This is called by `map.removeControl`, which is the recommended method to remove controls.
+   */
   onRemove(map: Map) {
     this.container.parentNode?.removeChild(this.container);
     this.removeRoutes();
@@ -234,7 +242,6 @@ export class MapboxDirections {
 
     this._map.on('mousemove', this.onDragMove);
     this._map.on('mouseup', this.onDragUp);
-
     this._map.on('touchmove', this.onDragMove);
     this._map.on('touchend', this.onDragUp);
   }
@@ -283,7 +290,6 @@ export class MapboxDirections {
 
     this._map.off('touchmove', this.onDragMove);
     this._map.off('touchend', this.onDragUp);
-
     this._map.off('mousemove', this.onDragMove);
     this._map.off('mouseup', this.onDragUp);
   }
