@@ -13,7 +13,7 @@ export interface Geometry {
   coordinates: Coordinates
 }
 
-export type Coordinates = [number, number] | string
+export type Coordinates = number[] | string
 
 export interface Properties {
 }

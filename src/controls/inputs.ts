@@ -25,9 +25,9 @@ export default class Inputs {
 
   _map: Map;
 
-  originInput: Geocoder;
+  originInput: Geocoder = Object.create(null);
 
-  destinationInput: Geocoder;
+  destinationInput: Geocoder = Object.create(null);
 
   constructor(el: HTMLElement, store, actions, map: Map) {
     const { originQuery, destinationQuery, profile, controls } = store.getState();

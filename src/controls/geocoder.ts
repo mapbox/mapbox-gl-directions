@@ -32,6 +32,8 @@ export interface GeocoderEvents {
 export type GeocoderEventCallback<T extends keyof GeocoderEvents> = (data: GeocoderEvents[T]) => void
 
 export default class Geocoder {
+  _map: Map = Object.create(null)
+
   /**
    * @internal
    */
@@ -74,7 +76,7 @@ export default class Geocoder {
    */
   _abortController: AbortController
 
-  constructor(public map: Map, public options: GeocoderOptions = {}) {
+  constructor(public options: GeocoderOptions = {}) {
     this.api = options.api ?? 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
 
     this._ev = new EventEmitter()
@@ -110,7 +112,9 @@ export default class Geocoder {
     this._abortController = new AbortController()
   }
 
-  onAdd() {
+  onAdd(map: Map) {
+    this._map = map;
+
     const icon = document.createElement('span');
     icon.className = 'geocoder-icon geocoder-icon-search';
 
