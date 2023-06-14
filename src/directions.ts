@@ -173,7 +173,10 @@ export class MapboxDirections {
     const inputElement = document.createElement('div');
     inputElement.className = 'directions-control directions-control-inputs';
     inputElement.textContent = 'Input Element'
-    new Inputs(inputElement, map);
+    const inputs = new Inputs(inputElement, map);
+    inputs.onAdd(map);
+    inputs.render()
+
 
     if (controls.inputs || true) {
       this.container.appendChild(inputElement)

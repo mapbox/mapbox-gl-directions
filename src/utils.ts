@@ -1,4 +1,4 @@
-export function validCoords(coords: [number, number]) {
+export function validCoords(coords: Coordinates) {
   return coords[0] >= -180 && coords[0] <= 180 && coords[1] >= -90 && coords[1] <= 90;
 }
 
@@ -13,7 +13,7 @@ export interface Geometry {
   coordinates: Coordinates
 }
 
-export type Coordinates = number[] | string
+export type Coordinates = number[]
 
 export interface Properties {
 }

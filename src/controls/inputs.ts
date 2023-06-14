@@ -1,4 +1,4 @@
-import { Map } from 'mapbox-gl';
+import { LngLatLike, Map } from 'mapbox-gl';
 import Geocoder from './geocoder';
 import { createInputsTemplate } from '../templates/inputs';
 
@@ -17,8 +17,6 @@ export default class Inputs {
    * @param map The mapboxgl instance.
    */
   constructor(public container: HTMLElement, public _map: Map) {
-    // const { originQuery, destinationQuery, profile, controls } = store.getState();
-
     container.innerHTML = createInputsTemplate({
       profile: 'mapbox/driving',
       controls: {
@@ -28,30 +26,6 @@ export default class Inputs {
 
     this.originInput = Object.create(null);
     this.destinationInput = Object.create(null);
-
-    // this.actions = actions;
-    // this.store = store;
-
-    this.onAdd(_map);
-    this.render();
-  }
-
-  animateToCoordinates(mode, coords) {
-    // const { origin, destination, routePadding } = this.store.getState();
-    // 
-    // if (origin.geometry &&
-    //     destination.geometry &&
-    //     !isEqual(origin.geometry, destination.geometry)) {
-    //   // Animate map to fit bounds.
-    //   const bb = extent({
-    //     type: 'FeatureCollection',
-    //     features: [origin, destination]
-    //   });
-
-    //   this._map.fitBounds([[bb[0], bb[1]], [bb[2], bb[3]]], {padding: routePadding});
-    // } else {
-    //   this._map.flyTo({ center: coords });
-    // }
   }
 
   onAdd(map: Map) {
@@ -91,20 +65,16 @@ export default class Inputs {
     // const destinationEl = this.destinationInput.onAdd(this._map);
     // this.container.querySelector('#mapbox-directions-destination-input').appendChild(destinationEl);
 
-    this.originInput.on('result', (e) => {
-      const coords = e.result.center;
-      console.log({ e })
+    this.originInput.on('result', (data) => {
+      data.result.center
       // createOrigin(coords);
-      this.animateToCoordinates('origin', coords);
     });
 
     // this.originInput.on('clear', clearOrigin);
 
-    this.destinationInput.on('result', (e) => {
-      const coords = e.result.center;
-      console.log({ e })
+    this.destinationInput.on('result', (data) => {
+      data.result.center
       // createDestination(coords);
-      this.animateToCoordinates('destination', coords);
     });
 
     // this.destinationInput.on('clear', clearDestination);

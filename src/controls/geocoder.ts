@@ -126,16 +126,9 @@ export default class Geocoder extends EventEmitter<GeocoderEvents> {
       onSelect: (item, _input) => {
         this._value = item;
         this._inputElement.value = item.place_name
-
-        if (!this.options.flyTo) return
-
-        if (item.bbox && item.context && item.context.length <= 3 || item.bbox && !item.context) {
-          this._map.fitBounds(item.bbox);
-        } else {
-          this._map.flyTo({ center: item.center, zoom: this.options.zoom ?? 16 });
-        }
+        this.fire('result', { result: item });
       },
-      render: (item, currentValue, index) => {
+      render: (item, _currentValue, _index) => {
         const renderedOption = autocompleteOption.cloneNode(true) as HTMLDivElement
         renderedOption.innerHTML = item.html ?? item.place_name
         return renderedOption
