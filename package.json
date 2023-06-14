@@ -12,7 +12,8 @@
     "autocompleter": "^8.0.4",
     "events": "^3.3.0",
     "mapbox-gl": "^2.15.0",
-    "suggestions": "^1.7.1"
+    "suggestions": "^1.7.1",
+    "turf-extent": "^1.0.4"
   },
   "devDependencies": {
     "@types/events": "^3.0.0",

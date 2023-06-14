@@ -20,6 +20,9 @@ dependencies:
   suggestions:
     specifier: ^1.7.1
     version: 1.7.1
+  turf-extent:
+    specifier: ^1.0.4
+    version: 1.0.4
 
 devDependencies:
   '@types/events':
@@ -577,6 +580,17 @@ packages:
   /trim-newlines@3.0.1:
     resolution: {integrity: sha512-c1PTsA3tYrIsLGkJkzHF+w9F2EyxfXGo4UyJc4pFL++FMjnq0HJS69T3M7d//gKrFKwy429bouPescbjecU+Zw==}
     engines: {node: '>=8'}
+    dev: false
+
+  /turf-extent@1.0.4:
+    resolution: {integrity: sha512-JPQtCq6Q5YwwkzQzSU8LYe1KbFnzEVbh21s/o8kYtgs6AeON47t0Gd2q+qLuQOr6usMiJoXylMvgk5qagOzYTQ==}
+    dependencies:
+      turf-meta: 1.0.2
+    dev: false
+
+  /turf-meta@1.0.2:
+    resolution: {integrity: sha512-oR+OxR++Wlie4fr2cMLbmdVAA9rfHxnuX/H5bphCaDTc14JDmd/ixWer08vhoawnvjE98Eq6o4UOGY8AMRbexw==}
+    deprecated: 'Turf packages are now namespaced: please use @turf/meta instead'
     dev: false
 
   /type-fest@0.13.1:
