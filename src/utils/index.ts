@@ -1,3 +1,5 @@
+import mapboxgl from 'mapbox-gl'
+
 export interface Point {
   type: string
   geometry: Geometry
@@ -6,15 +8,19 @@ export interface Point {
 
 export interface Geometry {
   type: string
-  coordinates: Coordinates
+  coordinates: mapboxgl.LngLatLike
 }
-
-export type Coordinates = number[]
 
 export interface Properties {}
 
-export function validCoords(coords: Coordinates) {
-  return coords[0] >= -180 && coords[0] <= 180 && coords[1] >= -90 && coords[1] <= 90
+export function validCoordinates(coords: mapboxgl.LngLatLike) {
+  if (Array.isArray(coords)) {
+    return coords[0] >= -180 && coords[0] <= 180 && coords[1] >= -90 && coords[1] <= 90
+  } else if ('lon' in coords) {
+    return coords.lon >= -180 && coords.lon <= 180 && coords.lat >= -90 && coords.lat <= 90
+  } else {
+    return coords.lng >= -180 && coords.lng <= 180 && coords.lat >= -90 && coords.lat <= 90
+  }
 }
 
 export function coordinateMatch(a: Point, b: Point) {
@@ -38,12 +44,12 @@ export function wrap(n: number) {
   return w === -180 ? 180 : w
 }
 
-function roundWithOriginalPrecision(input: number, original: number) {
+export function roundWithOriginalPrecision(input: number, original: number) {
   const precision = +(Math.floor(original) !== original && original.toString().split('.')[1].length)
   return input.toFixed(Math.min(precision, 5))
 }
 
-export function createPoint(coordinates: Coordinates, properties: Properties = {}) {
+export function createPoint(coordinates: mapboxgl.LngLatLike, properties: Properties = {}) {
   const point: Point = {
     type: 'Feature',
     geometry: {
@@ -56,7 +62,7 @@ export function createPoint(coordinates: Coordinates, properties: Properties = {
   return point
 }
 
-const format = {
+export const format = {
   duration(s: number) {
     var m = Math.floor(s / 60),
       h = Math.floor(m / 60)
@@ -83,11 +89,12 @@ const format = {
   },
 }
 
-export default {
-  format,
-  coordinateMatch,
-  createPoint,
-  validCoords,
-  wrap,
-  roundWithOriginalPrecision,
+export function stringifyCoordinates(coordinates: mapboxgl.LngLatLike) {
+  if (Array.isArray(coordinates)) {
+    return coordinates.join(',')
+  } else if ('lon' in coordinates) {
+    return `${coordinates.lon},${coordinates.lat}`
+  } else {
+    return `${coordinates.lng},${coordinates.lat}`
+  }
 }

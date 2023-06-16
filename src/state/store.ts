@@ -1,8 +1,10 @@
 import { defu } from 'defu'
+import mapboxgl from 'mapbox-gl'
 import { createStore } from 'zustand/vanilla'
+import type { Point } from '../utils/index.js'
+import type { Route } from '../api/directions.js'
+import type { GeocodingFeature } from '../api/geocoder.js'
 import type { MapboxDirectionsOptions } from '../index.js'
-import type { Coordinates, Point } from '../utils/index.js'
-import type { GeocodingFeature } from '../controls/geocoder.js'
 
 export interface MapboxDirectionsState extends MapboxDirectionsOptions {
   // Container for client registered events
@@ -11,7 +13,7 @@ export interface MapboxDirectionsState extends MapboxDirectionsOptions {
   // Marker feature drawn on the map at any point.
   origin: Point | null
   destination: Point | null
-  hoverMarker: Coordinates | null
+  hoverMarker: mapboxgl.LngLatLike | null
   waypoints: GeocodingFeature[]
 
   // User input strings or result returned from geocoder
@@ -21,7 +23,7 @@ export interface MapboxDirectionsState extends MapboxDirectionsOptions {
   destinationQueryCoordinates: mapboxgl.LngLatLike | null
 
   // Directions data
-  directions: []
+  directions: Route[]
   routeIndex: number
   routePadding: number
 }

@@ -1,4 +1,4 @@
-import type { MapboxProfile, MapDirectionsControls } from '../directions.js'
+import type { MapboxProfile, MapDirectionsControls } from '../index.js'
 
 export interface CreateInputsTemplateOptions {
   profile: MapboxProfile

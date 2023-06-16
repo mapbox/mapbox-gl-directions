@@ -1,9 +1,10 @@
 import 'mapbox-gl/dist/mapbox-gl.css'
 import './mapbox-gl-directions.css'
 
-import { Map } from 'mapbox-gl'
 import mapboxgl from 'mapbox-gl'
-import directionLayers from './layers/index.js'
+import { initializeStore, store } from './state/store.js'
+import * as utils from './utils/index.js'
+import * as actions from './state/actions.js'
 import { Geocoder } from './controls/geocoder.js'
 import { createInputsTemplate } from './templates/input.js'
 
@@ -163,14 +164,14 @@ export interface MapboxDirectionsOptions {
 export class MapboxDirections {
   container: HTMLElement
   _map: mapboxgl.Map | null
-  styles: mapboxgl.AnyLayer[]
   timer: number | undefined
 
   constructor(public options: MapboxDirectionsOptions = {}) {
+    initializeStore(options)
+
     this.container = document.createElement('div')
     this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl'
     this._map = null
-    this.styles = options.styles ?? directionLayers
   }
 
   onAdd(map: mapboxgl.Map) {
@@ -186,17 +187,24 @@ export class MapboxDirections {
     })
 
     // Driving / Walking / Cycling profiles
-    geocoderContainer.querySelectorAll<HTMLInputElement>('input[type="radio"]').forEach((input) => {
-      console.log(input.value)
-    })
+    geocoderContainer
+      .querySelectorAll<HTMLInputElement>('input[type="radio"]')
+      .forEach((element) => {
+        element.addEventListener('change', () => {
+          const profile = element.value as MapboxProfile
+          actions.setProfile(profile)
+        })
+      })
 
     // Reversing Origin / Destination
     geocoderContainer.querySelector('.js-reverse-inputs')?.addEventListener('click', () => {
-      console.log('clicked!')
-      // const { origin, destination } = this.store.getState();
-      // if (origin) this.actions.queryDestination(origin.geometry.coordinates);
-      // if (destination) this.actions.queryOrigin(destination.geometry.coordinates);
-      // reverse();
+      actions.reverse()
+
+      const { origin, destination } = store.getState();
+
+      if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
+        actions.updateDirections()
+      }
     })
 
     const originGeocoder = new Geocoder()
@@ -205,6 +213,16 @@ export class MapboxDirections {
       '#mapbox-directions-origin-input'
     )
     originContainerElement?.appendChild(originElement)
+    originGeocoder.on('result', async (data) => {
+      const centerCoords = utils.createPoint(data.result.center)
+      actions.setOrigin(centerCoords)
+
+      const { origin, destination } = store.getState()
+      
+      if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
+        actions.updateDirections()
+      }
+    })
 
     const destinationGeocoder = new Geocoder()
     const destinationElement = destinationGeocoder.onAdd(map)
@@ -212,6 +230,16 @@ export class MapboxDirections {
       '#mapbox-directions-destination-input'
     )
     destinationContainerElement?.appendChild(destinationElement)
+    destinationGeocoder.on('result', (data) => {
+      const centerCoords = utils.createPoint(data.result.center)
+      actions.setDestination(centerCoords)
+
+      const { origin, destination } = store.getState()
+      
+      if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
+        actions.updateDirections()
+      }
+    })
 
     if (controls.inputs || true) {
       this.container.appendChild(geocoderContainer)
@@ -256,7 +284,7 @@ export class MapboxDirections {
     //   delete this.storeUnsubscribe;
     // }
 
-    this.styles.forEach((layer) => {
+    this.options.styles?.forEach((layer) => {
       if (map.getLayer(layer.id)) map.removeLayer(layer.id)
     })
 
@@ -417,7 +445,7 @@ container.style.height = '100vh'
 container.style.width = '100vw'
 document.body.appendChild(container)
 
-const map = new Map({
+const map = new mapboxgl.Map({
   container,
   accessToken,
   style: 'mapbox://styles/mapbox/streets-v9',
@@ -425,5 +453,5 @@ const map = new Map({
   zoom: 16,
 })
 
-const directions = new MapboxDirections()
+const directions = new MapboxDirections({ accessToken })
 map.addControl(directions)
