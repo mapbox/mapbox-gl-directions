@@ -1,77 +1,79 @@
-import { Map, type AnyLayer, type PaddingOptions, type MapMouseEvent } from "mapbox-gl"
-import directionLayers from "./styles/layers"
-import Inputs from "./controls/inputs"
+import { Map } from "mapbox-gl";
+import type { AnyLayer, PaddingOptions, MapMouseEvent } from "mapbox-gl";
+import directionLayers from "./layers/index.js";
+import { Geocoder } from "./controls/geocoder.js";
+import { createInputsTemplate } from "./templates/input.js";
 
 export const MapboxProfiles = [
-  'mapbox/driving-traffic',
-  'mapbox/driving',
-  'mapbox/walking',
-  'mapbox/cycling'
-] as const
+  "mapbox/driving-traffic",
+  "mapbox/driving",
+  "mapbox/walking",
+  "mapbox/cycling",
+] as const;
 
-export type MapboxProfile = typeof MapboxProfiles[number]
+export type MapboxProfile = (typeof MapboxProfiles)[number];
 
 export interface MapDirectionsControls {
   /**
    * @param Hide or display the inputs control.
    * @default true
    */
-  inputs?: boolean
+  inputs?: boolean;
 
   /**
    * Hide or display the instructions control.
    * @default true
    */
-  instructions?: boolean
+  instructions?: boolean;
 
   /**
    * Hide or display the default profile switch with options for traffic, driving, walking and cycling.
    * @default true
    */
-  profileSwitcher?: boolean
+  profileSwitcher?: boolean;
 
   /**
    * If no bbox exists from the geocoder result, the zoom you set here will be used in the flyTo.
    * @default 16
    */
-  zoom?: number
+  zoom?: number;
 
   /**
    * The language of returned turn-by-turn text instructions. See supported languages : https://docs.mapbox.com/api/navigation/#instructions-languages
    * @default 'en'
    */
-  language?: string
+  language?: string;
 
   /**
    * @param If set, this text will appear as the placeholder attribute for the origin input element.
    * @default 'Choose a starting place'
    */
-  placeholderOrigin?: string
+  placeholderOrigin?: string;
 
   /**
    * @param If set, this text will appear as the placeholder attribute for the destination input element.
    * @default 'Choose destination'
    */
-  placeholderDestination?: string
+  placeholderDestination?: string;
 
   /**
    * @param If false, animating the map to a selected result is disabled.
    * @default true
    */
-  flyTo?: boolean
+  flyTo?: boolean;
 
   /**
    * @param Exclude certain road types from routing. The default is to not exclude anything.
    * Search for `exclude` in `optional parameters`: https://docs.mapbox.com/api/navigation/#retrieve-directions
    * @default null
    */
-  exclude?: string
+  exclude?: string;
 
   /**
    * @param Specify padding surrounding route. A single number of pixels or a [PaddingOptions](https://docs.mapbox.com/mapbox-gl-js/api/#paddingoptions) object.
    * @default 80
    */
-  routePadding?: number | PaddingOptions
+  routePadding?: number | PaddingOptions;
 }
 
 export interface MapboxDirectionsOptions {
@@ -79,65 +81,65 @@ export interface MapboxDirectionsOptions {
    * Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js).
    * Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
    */
-  styles?: AnyLayer[]
+  styles?: AnyLayer[];
 
   /**
    * Required unless `mapboxgl.accessToken` is set globally.
    * @default null
    */
-  accessToken?: string
+  accessToken?: string;
 
   /**
    * Override default routing endpoint url.
    * @default 'https://api.mapbox.com/directions/v5/'
    */
-  api?: string
+  api?: string;
 
   /**
    * Enable/Disable mouse or touch interactivity from the plugin.
    * @default true
    */
-  interactive?: boolean
+  interactive?: boolean;
 
   /**
    * Routing profile to use.
    * @default 'mapbox/driving-traffic'
    */
-  profile?: MapboxProfile
+  profile?: MapboxProfile;
 
   /**
    * Whether to enable alternatives.
    * @default false
    */
-  alternatives?: boolean
+  alternatives?: boolean;
 
   /**
    * Whether to enable congestion along the route line.
    * @default false
    */
-  congestion?: boolean
+  congestion?: boolean;
 
   /**
    * Measurement system to be used in navigation instructions.
    * @default 'imperial'
    */
-  unit?: 'imperial' | 'metric'
+  unit?: "imperial" | "metric";
 
   /**
    * Provide a custom function for generating instruction, compatible with osrm-text-instructions.
    * @default null
    */
-  compile?: Function
+  compile?: Function;
 
   /**
    * Accepts an object containing the query parameters as [documented here](https://www.mapbox.com/api-documentation/#search-for-places).
    */
-  geocoder?: Object
+  geocoder?: Object;
 
   /**
    * Control the rendering.
    */
-  controls?: MapDirectionsControls
+  controls?: MapDirectionsControls;
 }
 
 /**
@@ -154,14 +156,14 @@ export interface MapboxDirectionsOptions {
  * map.addControl(directions);
  */
 export class MapboxDirections {
-  container: HTMLElement
-  _map: Map | null
-  styles: AnyLayer[]
-  timer: number | undefined
+  container: HTMLElement;
+  _map: Map | null;
+  styles: AnyLayer[];
+  timer: number | undefined;
 
   constructor(public options: MapboxDirectionsOptions = {}) {
-    this.container = document.createElement('div');
-    this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
+    this.container = document.createElement("div");
+    this.container.className = "mapboxgl-ctrl-directions mapboxgl-ctrl";
     this._map = null;
     this.styles = options.styles ?? directionLayers;
   }
@@ -169,22 +171,56 @@ export class MapboxDirections {
   onAdd(map: Map) {
     const controls: MapDirectionsControls = {};
 
-    // Add controls to the page
-    const inputElement = document.createElement('div');
-    inputElement.className = 'directions-control directions-control-inputs';
-    inputElement.textContent = 'Input Element'
-    const inputs = new Inputs(inputElement, map);
-    inputs.onAdd(map);
-    inputs.render()
+    const geocoderInputContainer = document.createElement("div");
+    geocoderInputContainer.className =
+      "directions-control directions-control-inputs";
+    geocoderInputContainer.innerHTML = createInputsTemplate({
+      profile: "mapbox/driving",
+      controls: {
+        profileSwitcher: true,
+      },
+    });
 
+    // Driving / Walking / Cycling profiles
+    geocoderInputContainer
+      .querySelectorAll<HTMLInputElement>('input[type="radio"]')
+      .forEach((input) => {
+        console.log(input.value);
+      });
+
+    // Reversing Origin / Destination
+    geocoderInputContainer
+      .querySelector(".js-reverse-inputs")
+      ?.addEventListener("click", () => {
+        console.log("clicked!");
+        // const { origin, destination } = this.store.getState();
+        // if (origin) this.actions.queryDestination(origin.geometry.coordinates);
+        // if (destination) this.actions.queryOrigin(destination.geometry.coordinates);
+        // reverse();
+      });
+
+    const originGeocoder = new Geocoder();
+    const originElement = originGeocoder.onAdd(map);
+    const originContainerElement = geocoderInputContainer.querySelector(
+      "#mapbox-directions-origin-input"
+    );
+    originContainerElement?.appendChild(originElement);
+
+    const destinationGeocoder = new Geocoder();
+    const destinationElement = destinationGeocoder.onAdd(map);
+    const destinationContainerElement = geocoderInputContainer.querySelector(
+      "#mapbox-directions-destination-input"
+    );
+    destinationContainerElement?.appendChild(destinationElement);
 
     if (controls.inputs || true) {
-      this.container.appendChild(inputElement)
+      this.container.appendChild(geocoderInputContainer);
     }
 
-    const directionsElement = document.createElement('div');
-    directionsElement.className = 'directions-control directions-control-instructions';
-    directionsElement.textContent = 'Directions Element'
+    const directionsElement = document.createElement("div");
+    directionsElement.className =
+      "directions-control directions-control-instructions";
+    directionsElement.textContent = "Directions Element";
 
     // new Instructions(directionsEl, store, {
     //   hoverMarker: this.actions.hoverMarker,
@@ -210,11 +246,11 @@ export class MapboxDirections {
     this.container.parentNode?.removeChild(this.container);
     this.removeRoutes();
 
-    map.off('mousedown', this.onDragDown);
-    map.off('mousemove', this.move);
-    map.off('touchstart', this.onDragDown);
-    map.off('touchstart', this.move);
-    map.off('click', this.onClick);
+    map.off("mousedown", this.onDragDown);
+    map.off("mousemove", this.move);
+    map.off("touchstart", this.onDragDown);
+    map.off("touchstart", this.move);
+    map.off("click", this.onClick);
 
     // if (this.storeUnsubscribe) {
     //   this.storeUnsubscribe();
@@ -225,7 +261,7 @@ export class MapboxDirections {
       if (map.getLayer(layer.id)) map.removeLayer(layer.id);
     });
 
-    if (map.getSource('directions')) map.removeSource('directions');
+    if (map.getSource("directions")) map.removeSource("directions");
 
     this._map = null;
 
@@ -237,19 +273,17 @@ export class MapboxDirections {
     // this.isDragging = this.isCursorOverPoint;
 
     if (!this._map) return;
-    this._map.getCanvas().style.cursor = 'grab';
+    this._map.getCanvas().style.cursor = "grab";
 
-    this._map.on('mousemove', this.onDragMove);
-    this._map.on('mouseup', this.onDragUp);
-    this._map.on('touchmove', this.onDragMove);
-    this._map.on('touchend', this.onDragUp);
+    this._map.on("mousemove", this.onDragMove);
+    this._map.on("mouseup", this.onDragUp);
+    this._map.on("touchmove", this.onDragMove);
+    this._map.on("touchend", this.onDragUp);
   }
 
   onDragMove(event: MapMouseEvent) {
     // if (!this.isDragging) return;
-
     // const coords = [event.lngLat.lng, event.lngLat.lat];
-
     // switch (this.isDragging.layer.id) {
     //   case 'directions-origin-point':
     //     this.actions.createOrigin(coords);
@@ -265,7 +299,7 @@ export class MapboxDirections {
 
   onDragUp() {
     // if (!this.isDragging) return;
-    if (!this._map) return
+    if (!this._map) return;
 
     // const { hoverMarker, origin, destination } = store.getState();
 
@@ -285,12 +319,12 @@ export class MapboxDirections {
     // }
 
     // this.isDragging = false;
-    this._map.getCanvas().style.cursor = '';
+    this._map.getCanvas().style.cursor = "";
 
-    this._map.off('touchmove', this.onDragMove);
-    this._map.off('touchend', this.onDragUp);
-    this._map.off('mousemove', this.onDragMove);
-    this._map.off('mouseup', this.onDragUp);
+    this._map.off("touchmove", this.onDragMove);
+    this._map.off("touchend", this.onDragUp);
+    this._map.off("mousemove", this.onDragMove);
+    this._map.off("mouseup", this.onDragUp);
   }
 
   /**
@@ -301,7 +335,6 @@ export class MapboxDirections {
     // this.actions.clearDestination();
     return this;
   }
-
 
   onClick(event: MapMouseEvent) {
     if (!this.timer) {
@@ -319,11 +352,9 @@ export class MapboxDirections {
   _onSingleClick(event: MapMouseEvent) {
     // const { origin } = store.getState();
     // const coords = [event.lngLat.lng, event.lngLat.lat];
-
     // if (!origin.geometry) {
     //   this.actions.setOriginFromCoordinates(coords);
     // } else {
-
     //   const features = this._map.queryRenderedFeatures(event.point, {
     //     layers: [
     //       'directions-origin-point',
@@ -332,16 +363,13 @@ export class MapboxDirections {
     //       'directions-route-line-alt'
     //     ]
     //   });
-
     //   if (features.length) {
-
     //     // Remove any waypoints
     //     features.forEach((f) => {
     //       if (f.layer.id === 'directions-waypoint-point') {
     //         this.actions.removeWaypoint(f);
     //       }
     //     });
-
     //     if (features[0].properties.route === 'alternate') {
     //       const index = features[0].properties['route-index'];
     //       this.actions.setRouteIndex(index);
@@ -355,7 +383,6 @@ export class MapboxDirections {
 
   move(event: MapMouseEvent) {
     // const { hoverMarker } = store.getState();
-
     // const features = this._map.queryRenderedFeatures(event.point, {
     //   layers: [
     //     'directions-route-line-alt',
@@ -365,13 +392,10 @@ export class MapboxDirections {
     //     'directions-hover-point'
     //   ]
     // });
-
     // this._map.getCanvas().style.cursor = features.length ? 'pointer' : '';
-
     // if (features.length) {
     //   this.isCursorOverPoint = features[0];
     //   this._map.dragPan.disable();
-
     //   // Add a possible waypoint marker when hovering over the active route line
     //   features.forEach((feature) => {
     //     if (feature.layer.id === 'directions-route-line') {
@@ -380,7 +404,6 @@ export class MapboxDirections {
     //       this.actions.hoverMarker(null);
     //     }
     //   });
-
     // } else if (this.isCursorOverPoint) {
     //   this.isCursorOverPoint = false;
     //   this._map.dragPan.enable();
