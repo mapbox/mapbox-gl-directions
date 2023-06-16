@@ -11,6 +11,9 @@ dependencies:
   autocompleter:
     specifier: ^8.0.4
     version: 8.0.4
+  defu:
+    specifier: ^6.1.2
+    version: 6.1.2
   fuzzy:
     specifier: ^0.1.3
     version: 0.1.3
@@ -28,6 +31,9 @@ devDependencies:
   '@types/mapbox__polyline':
     specifier: ^1.0.2
     version: 1.0.2
+  prettier:
+    specifier: ^2.8.8
+    version: 2.8.8
   typescript:
     specifier: ^5.1.3
     version: 5.1.3
@@ -393,6 +399,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: false
 
+  /defu@6.1.2:
+    resolution: {integrity: sha512-+uO4+qr7msjNNWKYPHqN/3+Dx3NFkmIzayk2L1MyZQlvgZb/J1A0fo410dpKrN2SnqFjt8n4JL8fDJE0wIgjFQ==}
+    dev: false
+
   /earcut@2.2.4:
     resolution: {integrity: sha512-/pjZsA1b4RPHbeWZQn66SWS8nZZWLQQ23oE3Eam7aroEFGEvwKAsJfZ9ytiEMycfzXWpca4FA9QIOehf7PocBQ==}
     dev: false
@@ -713,6 +723,12 @@ packages:
   /potpack@2.0.0:
     resolution: {integrity: sha512-Q+/tYsFU9r7xoOJ+y/ZTtdVQwTWfzjbiXBDMM/JKUux3+QPP02iUuIoeBQ+Ot6oEDlC+/PGjB/5A3K7KKb7hcw==}
     dev: false
+
+  /prettier@2.8.8:
+    resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+    dev: true
 
   /protocol-buffers-schema@3.6.0:
     resolution: {integrity: sha512-TdDRD+/QNdrCGCE7v8340QyuXd4kIWIgapsE2+n/SaGiSSbomYl4TjHlvIoCWRpE7wFt02EpB35VVA2ImcBVqw==}

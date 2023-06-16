@@ -5,5 +5,5 @@ export function createErrorTemplate(error: unknown) {
     ${error}
   </div>
 </div>
-`;
+`
 }

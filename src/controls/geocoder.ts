@@ -1,26 +1,26 @@
-import "autocompleter/autocomplete.css";
+import 'autocompleter/autocomplete.css'
 
-import fuzzy from "fuzzy";
-import autocomplete from "autocompleter";
-import type { Map, LngLatLike, LngLatBoundsLike } from "mapbox-gl";
-import utils, { Coordinates } from "../utils/index.js";
-import { EventEmitter } from "../state/EventEmitter.js";
+import fuzzy from 'fuzzy'
+import mapboxgl from 'mapbox-gl'
+import autocomplete from 'autocompleter'
+import utils, { Coordinates } from '../utils/index.js'
+import { EventEmitter } from '../state/EventEmitter.js'
 
 export interface GeocodingErrorResponse {
-  message: string;
+  message: string
 }
 
 export interface GeocodingOkResponse {
   /**
    * "FeatureCollection", a GeoJSON type from the GeoJSON specification.
    */
-  type: "FeatureCollection";
+  type: 'FeatureCollection'
 
   /**
    * Forward geocodes: An array of space and punctuation-separated strings from the original query.
    * Reverse geocodes: An array containing the coordinates being queried.
    */
-  query: any[];
+  query: any[]
 
   /**
    * An array of feature objects.
@@ -34,12 +34,12 @@ export interface GeocodingOkResponse {
    * Read the Search result prioritization guide to learn more
    * about how returned features are organized in the Geocoding API response.
    */
-  features: GeocodingFeature[];
+  features: GeocodingFeature[]
 
   /**
    * Attributes the results of the Mapbox Geocoding API to Mapbox.
    */
-  attribution: string;
+  attribution: string
 }
 
 export interface GeocodingFeature {
@@ -48,12 +48,12 @@ export interface GeocodingFeature {
    * where {type} is the lowest hierarchy feature in the place_type field.
    * The {id} suffix of the feature ID is unstable and may change within versions.
    */
-  id: string;
+  id: string
 
   /**
    * "Feature", a GeoJSON type from the GeoJSON specification.
    */
-  type: "Feature";
+  type: 'Feature'
 
   /**
    * An array of feature types describing the feature.
@@ -62,7 +62,7 @@ export interface GeocodingFeature {
    * all applicable types will be listed in the array.
    * (For example, Vatican City is a country, region, and place.)
    */
-  place_type: PlaceType[];
+  place_type: PlaceType[]
 
   /**
    * Indicates how well the returned feature matches the user's query on a scale from 0 to 1.
@@ -71,30 +71,30 @@ export interface GeocodingFeature {
    * You can use the relevance property to remove results that don’t fully match the query.
    * Learn more about textual relevance in the Search result prioritization guide.
    */
-  relevance: number;
+  relevance: number
 
   /**
    * Optional. The house number for the returned address feature.
    * Note that unlike the address property for poi features, this property is outside the properties object.
    */
-  address?: string;
+  address?: string
 
   /**
    * An object describing the feature. The properties object may change with data improvements.
    * Your implementation should check for the presence of these values in a response before it attempts to use them.
    */
-  properties: GeocodingProperties;
+  properties: GeocodingProperties
 
   /**
    * A string representing the feature in the requested language, if specified.
    */
-  text: string;
+  text: string
 
   /**
    * A string representing the feature in the requested language,
    * if specified, and its full result hierarchy.
    */
-  place_name: string;
+  place_name: string
 
   /**
    * Optional.
@@ -107,7 +107,7 @@ export interface GeocodingFeature {
    * For example, a query for coffee, Köln with language set to English (en)
    * would return a poi Café Reichard, but this feature will not include a matching_text field.
    */
-  matching_text?: string;
+  matching_text?: string
 
   /**
    * Optional.
@@ -123,40 +123,40 @@ export interface GeocodingFeature {
    * Café Reichard, Unter Fettenhennen 11, Köln, North Rhine-Westphalia 50667, Germany
    * instead of a matching_place_name of coffee, Unter Fettenhennen 11, Köln, North Rhine-Westphalia 50667, Germany.
    */
-  matching_place_name?: string;
+  matching_place_name?: string
 
   /**
    * Optional. A string of the IETF language tag of the query’s primary language.
    */
-  language?: string;
+  language?: string
 
   /**
    * A bounding box array in the form [minX,minY,maxX,maxY].
    */
-  bbox?: LngLatBoundsLike;
+  bbox?: mapboxgl.LngLatBoundsLike
 
   /**
    * The coordinates of the feature’s center in the form [longitude,latitude].
    * This may be the literal centroid of the feature’s geometry,
    * or the center of human activity within the feature (for example, the downtown area of a city).
    */
-  center: LngLatLike;
+  center: mapboxgl.LngLatLike
 
   /**
    * An object describing the spatial geometry of the returned feature.
    */
-  geometry: GeocodeGeometry;
+  geometry: GeocodeGeometry
 
   /**
    * An array representing the hierarchy of encompassing parent features.
    * Each parent feature may include any of the above properties.
    */
-  context?: Partial<GeocodingFeature>[];
+  context?: Partial<GeocodingFeature>[]
 
   /**
    * Optional. An object with the routable points for the feature.
    */
-  routable_points?: GeocodingPoints;
+  routable_points?: GeocodingPoints
 }
 
 export interface GeocodingProperties {
@@ -166,33 +166,33 @@ export interface GeocodingProperties {
    * Note that this list is subject to change.
    * For details on these options, see the Point accuracy for address features section.
    */
-  accuracy?: string;
+  accuracy?: string
 
   /**
    * Optional. The full street address for the returned poi feature.
    * Note that unlike the address property for address features, this property is inside the properties object.
    */
-  address?: string;
+  address?: string
 
   /**
    * Optional. Comma-separated categories for the returned poi feature.
    */
-  category?: string;
+  category?: string
 
   /**
    * Optional. The name of a suggested Maki icon to visualize a poi feature based on its category.
    */
-  maki?: string;
+  maki?: string
 
   /**
    * Optional. The Wikidata identifier for the returned feature.
    */
-  wikidata?: string;
+  wikidata?: string
 
   /**
    * Optional. The ISO 3166-1 country and ISO 3166-2 region code for the returned feature.
    */
-  short_code?: string;
+  short_code?: string
 
   /**
    * Describes whether or not the feature is in the poi.landmark data type.
@@ -200,25 +200,25 @@ export interface GeocodingProperties {
    * on all poi features for backwards compatibility reasons but will always be true.
    * @deprecated
    */
-  landmark: boolean;
+  landmark: boolean
 
   /**
    * A formatted string of the telephone number for the returned poi feature.
    * @deprecated
    */
-  tel?: string;
+  tel?: string
 }
 
 export interface GeocodeGeometry {
   /**
    * "Point", a GeoJSON type from the GeoJSON specification.
    */
-  type: "Point";
+  type: 'Point'
 
   /**
    * An array in the format [longitude,latitude] at the center of the specified bbox.
    */
-  coordinates: number[];
+  coordinates: number[]
 
   /**
    * Optional. If present, indicates that an address is interpolated along a road network.
@@ -227,13 +227,13 @@ export interface GeocodeGeometry {
    * In edge cases, interpolation may not be possible if surrounding address data is not present,
    * in which case the next fallback will be the center point of the street feature itself.
    */
-  interpolated?: boolean;
+  interpolated?: boolean
 
   /**
    * Optional. If present, indicates an out-of-parity match.
    * This occurs when an interpolated address is not in the expected range for the indicated side of the street.
    */
-  omitted?: boolean;
+  omitted?: boolean
 }
 
 export interface GeocodingPoints {
@@ -241,41 +241,42 @@ export interface GeocodingPoints {
    * Optional.
    * An array of points in the form of [{ coordinates: [lon, lat] }], or null if no points were found.
    */
-  points?: { coordinates: number[] }[] | null;
+  points?: { coordinates: number[] }[] | null
 }
 
 export type PlaceType =
-  | "country"
-  | "region"
-  | "postcode"
-  | "district"
-  | "place"
-  | "locality"
-  | "neighborhood"
-  | "address"
-  | "poi";
+  | 'country'
+  | 'region'
+  | 'postcode'
+  | 'district'
+  | 'place'
+  | 'locality'
+  | 'neighborhood'
+  | 'address'
+  | 'poi'
 
 interface GeocoderAutocompleteOption extends GeocodingFeature {
-  label?: string;
-  html?: string;
+  label?: string
+  html?: string
 }
 
 export interface GeocoderOptions {
-  api?: string;
-  accessToken?: string;
-  placeholder?: string;
-  flyTo?: boolean;
-  zoom?: number;
-  container?: HTMLElement | string;
-  position?: boolean;
+  api?: string
+  accessToken?: string
+  placeholder?: string
+  flyTo?: boolean
+  zoom?: number
+  container?: HTMLElement | string
+  position?: boolean
+  queryParams?: Record<PropertyKey, PropertyKey>
 }
 
 export interface GeocoderEvents {
-  clear: undefined;
-  loading: undefined;
-  results: { results: GeocodingFeature[] };
-  result: { result: GeocodingFeature };
-  error: { error: string };
+  clear: undefined
+  loading: undefined
+  results: { results: GeocodingFeature[] }
+  result: { result: GeocodingFeature }
+  error: { error: string }
 }
 
 /**
@@ -284,237 +285,223 @@ export interface GeocoderEvents {
  * we should be able to require mapbox-gl-geocoder instead of including it here.
  */
 export class Geocoder extends EventEmitter<GeocoderEvents> {
-  api: string;
+  api: string
 
-  _map: Map;
+  _map: mapboxgl.Map
 
-  _value: GeocodingFeature | null;
+  _value: GeocodingFeature | null
 
-  _results: GeocodingFeature[];
+  _results: GeocodingFeature[]
 
-  _containerElement: HTMLDivElement;
+  _containerElement: HTMLDivElement
 
-  _inputElement: HTMLInputElement;
+  _inputElement: HTMLInputElement
 
-  _clearElement: HTMLButtonElement;
+  _clearElement: HTMLButtonElement
 
-  _loadingElement: HTMLSpanElement;
+  _loadingElement: HTMLSpanElement
 
   constructor(public options: GeocoderOptions = {}) {
-    super();
+    super()
 
     // Override the control being added to control containers
-    if (options.container) options.position = false;
+    if (options.container) options.position = false
 
-    this._map = Object.create(null);
+    this._map = Object.create(null)
 
-    this.api =
-      options.api ?? "https://api.mapbox.com/geocoding/v5/mapbox.places/";
+    this.api = options.api ?? 'https://api.mapbox.com/geocoding/v5/mapbox.places/'
 
-    const icon = document.createElement("span");
-    icon.className = "geocoder-icon geocoder-icon-search";
+    const icon = document.createElement('span')
+    icon.className = 'geocoder-icon geocoder-icon-search'
 
-    this._inputElement = document.createElement("input");
-    this._inputElement.type = "text";
-    this._inputElement.placeholder = options.placeholder ?? "Search";
+    this._inputElement = document.createElement('input')
+    this._inputElement.type = 'text'
+    this._inputElement.placeholder = options.placeholder ?? 'Search'
 
-    this._clearElement = document.createElement("button");
-    this._clearElement.className = "geocoder-icon geocoder-icon-close";
-    this._clearElement.addEventListener("click", this._clear.bind(this));
+    this._clearElement = document.createElement('button')
+    this._clearElement.className = 'geocoder-icon geocoder-icon-close'
+    this._clearElement.addEventListener('click', this._clear.bind(this))
 
-    this._loadingElement = document.createElement("span");
-    this._loadingElement.className = "geocoder-icon geocoder-icon-loading";
+    this._loadingElement = document.createElement('span')
+    this._loadingElement.className = 'geocoder-icon geocoder-icon-loading'
 
-    const actions = document.createElement("div");
-    actions.classList.add("geocoder-pin-right");
-    actions.appendChild(this._clearElement);
-    actions.appendChild(this._loadingElement);
+    const actions = document.createElement('div')
+    actions.classList.add('geocoder-pin-right')
+    actions.appendChild(this._clearElement)
+    actions.appendChild(this._loadingElement)
 
-    this._containerElement = document.createElement("div");
-    this._containerElement.className = "mapboxgl-ctrl-geocoder";
-    this._containerElement.appendChild(icon);
-    this._containerElement.appendChild(this._inputElement);
-    this._containerElement.appendChild(actions);
+    this._containerElement = document.createElement('div')
+    this._containerElement.className = 'mapboxgl-ctrl-geocoder'
+    this._containerElement.appendChild(icon)
+    this._containerElement.appendChild(this._inputElement)
+    this._containerElement.appendChild(actions)
 
-    this._results = [];
-    this._value = null;
+    this._results = []
+    this._value = null
 
-    const autocompleteOption = document.createElement("div");
-    autocompleteOption.style.overflow = "hidden";
-    autocompleteOption.style.textOverflow = "ellipsis";
-    autocompleteOption.style.whiteSpace = "nowrap";
-    autocompleteOption.style.fontFamily =
-      "Helvetica Neue, Arial, Helvetica, sans-serif";
-    autocompleteOption.style.fontSize = "12px";
-    autocompleteOption.style.padding = "5px 10px";
-    autocompleteOption.style.cursor = "pointer";
-    autocompleteOption.style.fontWeight = "400";
+    const autocompleteOption = document.createElement('div')
+    autocompleteOption.style.overflow = 'hidden'
+    autocompleteOption.style.textOverflow = 'ellipsis'
+    autocompleteOption.style.whiteSpace = 'nowrap'
+    autocompleteOption.style.fontFamily = 'Helvetica Neue, Arial, Helvetica, sans-serif'
+    autocompleteOption.style.fontSize = '12px'
+    autocompleteOption.style.padding = '5px 10px'
+    autocompleteOption.style.cursor = 'pointer'
+    autocompleteOption.style.fontWeight = '400'
 
     autocomplete<GeocoderAutocompleteOption>({
       input: this._inputElement,
       fetch: async (text, update, _trigger, _cursorPos) => {
-        const results = await this._queryFromInput(text);
+        const results = await this._queryFromInput(text)
 
         const filteredResults = fuzzy
           .filter(text, results ?? [], {
             pre: '<strong style="font-weight: 700">',
-            post: "</strong>",
+            post: '</strong>',
             extract: (item) => item.place_name,
           })
           .map((result) => {
-            (result.original as GeocoderAutocompleteOption).html =
-              result.string;
-            return result.original;
-          });
+            ;(result.original as GeocoderAutocompleteOption).html = result.string
+            return result.original
+          })
 
-        update(filteredResults.length ? filteredResults : false);
+        update(filteredResults.length ? filteredResults : false)
       },
       onSelect: (item, _input) => {
-        this._value = item;
-        this._inputElement.value = item.place_name;
-        this.fire("result", { result: item });
+        this._value = item
+        this._inputElement.value = item.place_name
+        this.fire('result', { result: item })
       },
       render: (item, _currentValue, _index) => {
-        const renderedOption = autocompleteOption.cloneNode(
-          true
-        ) as HTMLDivElement;
-        renderedOption.innerHTML = item.html ?? item.place_name;
-        return renderedOption;
+        const renderedOption = autocompleteOption.cloneNode(true) as HTMLDivElement
+        renderedOption.innerHTML = item.html ?? item.place_name
+        return renderedOption
       },
-    });
+    })
   }
 
-  onAdd(map: Map) {
-    this._map = map;
-    return this._containerElement;
+  onAdd(map: mapboxgl.Map) {
+    this._map = map
+    return this._containerElement
   }
 
   async _geocode(input: string) {
-    this._loadingElement.classList.add("active");
+    this._loadingElement.classList.add('active')
 
-    this.fire("loading", undefined);
+    this.fire('loading', undefined)
 
-    const geocodingOptions = this.options as Record<string, string>;
+    const geocodingOptions = this.options as Record<string, string>
 
-    var accessToken =
-      "pk.eyJ1IjoicGVkcmljIiwiYSI6ImNsZzE0bjk2ajB0NHEzanExZGFlbGpwazIifQ.l14rgv5vmu5wIMgOUUhUXw"; // this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
+    // const accessToken = this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
+    const accessToken =
+      'pk.eyJ1IjoicGVkcmljIiwiYSI6ImNsZzE0bjk2ajB0NHEzanExZGFlbGpwazIifQ.l14rgv5vmu5wIMgOUUhUXw' // this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
 
-    const options = [`access_token=${accessToken}`];
+    const options = [`access_token=${accessToken}`]
 
-    const exclude = ["placeholder", "zoom", "flyTo", "accessToken", "api"];
+    if (this.options.queryParams) {
+      options.push(
+        ...Object.keys(this.options.queryParams).map((key) => `${key}=${geocodingOptions[key]}`)
+      )
+    }
 
-    options.push(
-      ...Object.keys(this.options)
-        .filter((key) => !exclude.includes(key))
-        .map((key) => `${key}=${geocodingOptions[key]}`)
-    );
-
-    const url = `${this.api}${encodeURIComponent(
-      input.trim()
-    )}.json?${options.join("&")}`;
+    const url = `${this.api}${encodeURIComponent(input.trim())}.json?${options.join('&')}`
 
     const data = await fetch(url)
       .then(async (response) => {
         if (response.ok) {
-          const data: GeocodingOkResponse = await response.json();
-          return data;
+          const data: GeocodingOkResponse = await response.json()
+          return data
         } else {
-          const data: GeocodingErrorResponse = await response.json();
-          this.fire("error", { error: data.message });
+          const data: GeocodingErrorResponse = await response.json()
+          this.fire('error', { error: data.message })
         }
       })
       .catch((error) => {
-        console.log({ error });
-        this._loadingElement.classList.remove("active");
-        this.fire("error", { error: JSON.stringify(error) });
-      });
+        console.log({ error })
+        this._loadingElement.classList.remove('active')
+        this.fire('error', { error: JSON.stringify(error) })
+      })
 
-    this._loadingElement.classList.remove("active");
-    this._clearElement.classList[data?.features.length ? "add" : "remove"](
-      "active"
-    );
+    this._loadingElement.classList.remove('active')
+    this._clearElement.classList[data?.features.length ? 'add' : 'remove']('active')
 
-    this.fire("results", { results: data?.features ?? [] });
+    this.fire('results', { results: data?.features ?? [] })
 
-    return data?.features ?? [];
+    return data?.features ?? []
   }
 
   async _queryFromInput(input: string) {
-    const trimmedValue = input.trim();
+    const trimmedValue = input.trim()
 
     if (!trimmedValue) {
-      this._clear();
+      this._clear()
     }
 
     if (trimmedValue.length > 2) {
-      return (this._results = await this._geocode(trimmedValue));
+      return (this._results = await this._geocode(trimmedValue))
     }
   }
 
   _change() {
-    const changeEvent = new Event("HTMLEvents", {
+    const changeEvent = new Event('HTMLEvents', {
       bubbles: true,
       cancelable: false,
-    });
-    this._inputElement.dispatchEvent(changeEvent);
+    })
+    this._inputElement.dispatchEvent(changeEvent)
   }
 
   async _query(input?: Coordinates) {
-    if (!input) return [];
+    if (!input) return []
 
-    const geocodeInput = Array.isArray(input)
-      ? input.map(utils.wrap).join()
-      : input;
+    const geocodeInput = Array.isArray(input) ? input.map(utils.wrap).join() : input
 
-    const results = await this._geocode(geocodeInput);
+    const results = await this._geocode(geocodeInput)
 
-    if (!results.length) return results;
+    if (!results.length) return results
 
-    this._results = results;
-    this._inputElement.value = results[0].place_name;
-    this._change();
+    this._results = results
+    this._inputElement.value = results[0].place_name
+    this._change()
 
-    return results;
+    return results
   }
 
   _setInput(input?: Coordinates) {
-    if (!input) return;
+    if (!input) return
 
     const newInputValue = Array.isArray(input)
-      ? input
-          .map((i) => utils.roundWithOriginalPrecision(utils.wrap(i), i))
-          .join()
-      : input;
+      ? input.map((i) => utils.roundWithOriginalPrecision(utils.wrap(i), i)).join()
+      : input
 
     // Set input value to passed value and clear everything else.
-    this._inputElement.value = newInputValue;
-    this._value = null;
-    this._change();
+    this._inputElement.value = newInputValue
+    this._value = null
+    this._change()
   }
 
   _clear() {
-    this._value = null;
-    this._inputElement.value = "";
+    this._value = null
+    this._inputElement.value = ''
 
-    this._change();
+    this._change()
 
-    this._inputElement.focus();
-    this._clearElement.classList.remove("active");
+    this._inputElement.focus()
+    this._clearElement.classList.remove('active')
 
-    this.fire("clear", undefined);
+    this.fire('clear', undefined)
   }
 
   getResult() {
-    return this._value;
+    return this._value
   }
 
   query(query: Coordinates) {
-    this._query(query);
-    return this;
+    this._query(query)
+    return this
   }
 
   setInput(value: Coordinates) {
-    this._setInput(value);
-    return this;
+    this._setInput(value)
+    return this
   }
 }

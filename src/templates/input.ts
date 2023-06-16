@@ -1,13 +1,11 @@
-import type { MapboxProfile, MapDirectionsControls } from "../directions.js";
+import type { MapboxProfile, MapDirectionsControls } from '../directions.js'
 
 export interface CreateInputsTemplateOptions {
-  profile: MapboxProfile;
-  controls?: MapDirectionsControls;
+  profile: MapboxProfile
+  controls?: MapDirectionsControls
 }
 
-export function createInputsTemplate(
-  options: CreateInputsTemplateOptions
-): string {
+export function createInputsTemplate(options: CreateInputsTemplateOptions): string {
   return `\
 <div class='mapbox-directions-component mapbox-directions-inputs'>
   <div class='mapbox-directions-component-keyline'>
@@ -33,14 +31,14 @@ export function createInputsTemplate(
 
   ${
     !options.controls?.profileSwitcher
-      ? ""
+      ? ''
       : `\
   <div class='mapbox-directions-profile mapbox-directions-component-keyline mapbox-directions-clearfix'><input
       id='mapbox-directions-profile-driving-traffic'
       type='radio'
       name='profile'
       value='mapbox/driving-traffic'
-      ${options.profile === "mapbox/driving-traffic" ? "checked" : ""}
+      ${options.profile === 'mapbox/driving-traffic' ? 'checked' : ''}
     />
     <label for='mapbox-directions-profile-driving-traffic'>Traffic</label>
 
@@ -49,7 +47,7 @@ export function createInputsTemplate(
       type='radio'
       name='profile'
       value='mapbox/driving'
-      ${options.profile === "mapbox/driving" ? "checked" : ""}
+      ${options.profile === 'mapbox/driving' ? 'checked' : ''}
     />
     <label for='mapbox-directions-profile-driving'>Driving</label>
 
@@ -58,7 +56,7 @@ export function createInputsTemplate(
       type='radio'
       name='profile'
       value='mapbox/walking'
-      ${options.profile === "mapbox/walking" ? "checked" : ""}
+      ${options.profile === 'mapbox/walking' ? 'checked' : ''}
     />
     <label for='mapbox-directions-profile-walking'>Walking</label>
 
@@ -67,12 +65,12 @@ export function createInputsTemplate(
       type='radio'
       name='profile'
       value='mapbox/cycling'
-      ${options.profile === "mapbox/cycling" ? "checked" : ""}
+      ${options.profile === 'mapbox/cycling' ? 'checked' : ''}
     />
     <label for='mapbox-directions-profile-cycling'>Cycling</label>
   </div>
   `
   }
 </div>
-`;
+`
 }

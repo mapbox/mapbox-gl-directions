@@ -1,91 +1,85 @@
-import type { Map } from "mapbox-gl";
-import utils from "../utils/index.js";
+import utils from '../utils/index.js'
+import { store } from '../state/store.js'
 
 /**
  * Summary/Instructions controller
  *
- * @param {HTMLElement} el Summary parent container
- * @param {Object} store A redux store
- * @param {Object} actions Actions an element can dispatch
- * @param {Object} map The mapboxgl instance
+ * @param container Summary parent container.
+ * @param map The mapboxgl instance.
  * @private
  */
 export default class Instructions {
-  constructor(
-    public container: HTMLElement,
-    public _map: Map = Object.create(null)
-  ) {}
+  constructor(public container: HTMLElement, public _map: mapboxgl.Map = Object.create(null)) {}
 
-  onAdd(map: Map) {
-    this._map = map;
-    return this.container;
+  onAdd(map: mapboxgl.Map) {
+    this._map = map
+    return this.container
   }
 
   render() {
-    this.store.subscribe(() => {
-      const { hoverMarker, setRouteIndex } = this.actions;
-      const { routeIndex, unit, directions, error, compile } =
-        this.store.getState();
-      const shouldRender = !isEqual(directions[routeIndex], this.directions);
+    store.subscribe((state, _prevState) => {
+      const { routeIndex, unit, directions, error, compile } = state
 
-      if (error) {
-        this.container.innerHTML = errorTemplate({ error });
-        return;
-      }
+      // const shouldRender = !isEqual(directions[routeIndex], this.directions);
 
-      if (directions.length && shouldRender) {
-        const direction = (this.directions = directions[routeIndex]);
+      // if (error) {
+      //   this.container.innerHTML = errorTemplate({ error });
+      //   return;
+      // }
 
-        if (compile) {
-          direction.legs.forEach(function (leg) {
-            leg.steps.forEach(function (step) {
-              step.maneuver.instruction = compile("en", step);
-            });
-          });
-        }
+      // if (directions.length && shouldRender) {
+      //   const direction = (this.directions = directions[routeIndex]);
 
-        this.container.innerHTML = instructionsTemplate({
-          routeIndex,
-          routes: directions.length,
-          steps: direction.legs[0].steps, // Todo: Respect all legs,
-          format: utils.format[unit],
-          duration: utils.format.duration(direction.duration),
-          distance: utils.format[unit](direction.distance),
-        });
+      //   if (compile) {
+      //     direction.legs.forEach(function (leg) {
+      //       leg.steps.forEach(function (step) {
+      //         step.maneuver.instruction = compile("en", step);
+      //       });
+      //     });
+      //   }
 
-        const steps = this.container.querySelectorAll(
-          ".mapbox-directions-step"
-        );
+      //   this.container.innerHTML = instructionsTemplate({
+      //     routeIndex,
+      //     routes: directions.length,
+      //     steps: direction.legs[0].steps, // Todo: Respect all legs,
+      //     format: utils.format[unit],
+      //     duration: utils.format.duration(direction.duration),
+      //     distance: utils.format[unit](direction.distance),
+      //   });
 
-        Array.prototype.forEach.call(steps, (el) => {
-          const lng = el.getAttribute("data-lng");
-          const lat = el.getAttribute("data-lat");
+      //   const steps = this.container.querySelectorAll(
+      //     ".mapbox-directions-step"
+      //   );
 
-          el.addEventListener("mouseover", () => {
-            hoverMarker([lng, lat]);
-          });
+      //   Array.prototype.forEach.call(steps, (el) => {
+      //     const lng = el.getAttribute("data-lng");
+      //     const lat = el.getAttribute("data-lat");
 
-          el.addEventListener("mouseout", () => {
-            hoverMarker(null);
-          });
+      //     el.addEventListener("mouseover", () => {
+      //       hoverMarker([lng, lat]);
+      //     });
 
-          el.addEventListener("click", () => {
-            this._map.flyTo({
-              center: [lng, lat],
-              zoom: 16,
-            });
-          });
-        });
+      //     el.addEventListener("mouseout", () => {
+      //       hoverMarker(null);
+      //     });
 
-        const routes = this.container.querySelectorAll('input[type="radio"]');
-        Array.prototype.forEach.call(routes, (el) => {
-          el.addEventListener("change", (e) => {
-            setRouteIndex(parseInt(e.target.id, 10));
-          });
-        });
-      } else if (this.container.innerHTML && shouldRender) {
-        this.container.innerHTML = "";
-      }
-    });
+      //     el.addEventListener("click", () => {
+      //       this._map.flyTo({
+      //         center: [lng, lat],
+      //         zoom: 16,
+      //       });
+      //     });
+      //   });
+
+      //   const routes = this.container.querySelectorAll('input[type="radio"]');
+      //   Array.prototype.forEach.call(routes, (el) => {
+      //     el.addEventListener("change", (e) => {
+      //       setRouteIndex(parseInt(e.target.id, 10));
+      //     });
+      //   });
+      // } else if (this.container.innerHTML && shouldRender) {
+      //   this.container.innerHTML = "";
+      // }
+    })
   }
 }

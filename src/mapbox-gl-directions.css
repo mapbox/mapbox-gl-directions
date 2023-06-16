@@ -9,7 +9,7 @@
   box-sizing: border-box;
 }
 .mapboxgl-ctrl-geocoder {
-  font: 15px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font: 15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
   position: relative;
   background-color: white;
   width: calc(100% - 360px);
@@ -22,7 +22,7 @@
   border-radius: 0 3px 0 0;
 }
 
-.mapboxgl-ctrl-geocoder input[type="text"] {
+.mapboxgl-ctrl-geocoder input[type='text'] {
   font-size: 12px;
   width: 100%;
   border: 0;
@@ -35,7 +35,7 @@
   white-space: nowrap;
   overflow: hidden;
 }
-.mapbox-directions-origin input[type="text"] {
+.mapbox-directions-origin input[type='text'] {
   box-shadow: 0 1px 0 0 #ddd;
   position: relative;
   z-index: 1;
@@ -195,7 +195,7 @@
 }
 
 .directions-control {
-  font: 15px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font: 15px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
 
 /* Layout containers */
@@ -300,11 +300,11 @@
 .mapbox-directions-profile label:hover {
   color: rgba(0, 0, 0, 0.75);
 }
-.mapbox-directions-profile input[type="radio"] {
+.mapbox-directions-profile input[type='radio'] {
   display: none;
 }
-.mapbox-directions-profile input[type="radio"]:checked + label:hover,
-.mapbox-directions-profile input[type="radio"]:checked + label {
+.mapbox-directions-profile input[type='radio']:checked + label:hover,
+.mapbox-directions-profile input[type='radio']:checked + label {
   background: #eee;
   color: rgba(0, 0, 0, 0.75);
 }
@@ -375,20 +375,20 @@
   font-size: 12px;
   float: right;
 }
-.mapbox-directions-routes input[type="radio"] {
+.mapbox-directions-routes input[type='radio'] {
   display: none;
 }
-.mapbox-directions-routes input[type="radio"]:not(:checked) + .button:before {
+.mapbox-directions-routes input[type='radio']:not(:checked) + .button:before {
   width: 0;
 }
-.mapbox-directions-routes input[type="radio"] + label {
+.mapbox-directions-routes input[type='radio'] + label {
   background-color: rgba(255, 255, 255, 0.1);
   float: left;
   padding: 0 10px;
   cursor: pointer;
 }
-.mapbox-directions-routes input[type="radio"] + label:hover,
-.mapbox-directions-routes input[type="radio"]:checked + label {
+.mapbox-directions-routes input[type='radio'] + label:hover,
+.mapbox-directions-routes input[type='radio']:checked + label {
   background-color: rgba(255, 255, 255, 0.25);
 }
 
@@ -439,7 +439,7 @@
   color: white;
 }
 .mapbox-directions-step:after {
-  content: "";
+  content: '';
   position: absolute;
   top: 45px;
   bottom: -10px;
@@ -462,7 +462,7 @@
 }
 
 .mapbox-directions-clearfix:after {
-  content: "";
+  content: '';
   display: block;
   height: 0;
   clear: both;
