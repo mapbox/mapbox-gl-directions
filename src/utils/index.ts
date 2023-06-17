@@ -1,8 +1,9 @@
 import mapboxgl from 'mapbox-gl'
+import { GeocodingFeature } from '../api/geocoder'
 
 export type Geometry = Exclude<GeoJSON.Geometry, GeoJSON.GeometryCollection>
 
-export type Feature = GeoJSON.Feature<Geometry>
+export type Feature = GeoJSON.Feature<GeoJSON.Point>
 
 export function validCoordinates(coords: mapboxgl.LngLatLike) {
   if (Array.isArray(coords)) {
@@ -14,7 +15,7 @@ export function validCoordinates(coords: mapboxgl.LngLatLike) {
   }
 }
 
-export function coordinateMatch(a: Feature, b: Feature) {
+export function coordinateMatch(a: Feature | GeocodingFeature, b: Feature) {
   const aCoordinates = a.geometry.coordinates
   const bCoordinates = b.geometry.coordinates
 

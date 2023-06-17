@@ -2,7 +2,7 @@ export type EventEmitterCallback<T> = (args: T) => unknown
 
 export type EventEmitterEvents<T> = Record<keyof T, EventEmitterCallback<any>[]>
 
-export class EventEmitter<T extends Object> {
+export class EventEmitter<T extends Object = Object> {
   constructor(public events = {} as EventEmitterEvents<T>) {}
 
   on<Key extends keyof T>(event: Key, listener: EventEmitterCallback<T[Key]>) {

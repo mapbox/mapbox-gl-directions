@@ -4,7 +4,7 @@ import { createStore, StoreApi } from 'zustand/vanilla'
 import layers from '../layers.js'
 import type { GeocodingFeature } from '../api/geocoder.js'
 import { fetchDirections, type Route } from '../api/directions.js'
-import { stringifyCoordinates, type Feature } from '../utils/index.js'
+import { stringifyCoordinates, type Feature, coordinateMatch } from '../utils/index.js'
 import type { MapboxDirectionsOptions, MapboxProfile } from '../index.js'
 
 export interface MapboxDirectionsState extends MapboxDirectionsOptions {
@@ -37,6 +37,9 @@ export interface MapboxDirectionsState extends MapboxDirectionsOptions {
   clearDestination: () => void
   reverse: () => void
   updateDirections: () => void
+  setRouteIndex: (routeIndex: number) => void
+  removeWaypoint: (feature: mapboxgl.MapboxGeoJSONFeature) => void
+  setHoverMarker: (feature: Feature) => void
 }
 
 export type DirectionsStore = StoreApi<MapboxDirectionsState>
@@ -188,6 +191,19 @@ export function createDirectionsStore(options: MapboxDirectionsOptions): Directi
         } else {
         }
       },
+      setRouteIndex: (routeIndex) => {
+        set((prevState) => ({ ...prevState, routeIndex }))
+      },
+      removeWaypoint: (waypoint) => {
+        set((prevState) => {
+          const { waypoints } = prevState
+          return { 
+            ...prevState,
+            waypoints: waypoints.filter((way) => !coordinateMatch(way, waypoint as any)) 
+          }
+        })
+      },
+      setHoverMarker: (hoverMarker) => {}
     }
 
     const state = defu(options, initialState) as MapboxDirectionsState

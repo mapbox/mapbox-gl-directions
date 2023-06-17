@@ -8,6 +8,7 @@ import { Geocoder } from './controls/geocoder.js'
 import { Instructions } from './controls/instructions.js'
 import { createInputsTemplate } from './templates/input.js'
 import { createDirectionsStore, type DirectionsStore } from './state/store.js'
+import { EventEmitter } from './state/EventEmitter'
 
 export const MapboxProfiles = [
   'mapbox/driving-traffic',
@@ -159,6 +160,10 @@ const directionsSource: mapboxgl.AnySourceData = {
   },
 }
 
+export interface MapboxDirectionsEvents {
+  profile: { profile: MapboxProfile | undefined }
+}
+
 /**
  * @example
  * const MapboxDirections = require('../src/index.js');
@@ -172,7 +177,7 @@ const directionsSource: mapboxgl.AnySourceData = {
  * // add to your mapboxgl map
  * map.addControl(directions);
  */
-export class MapboxDirections {
+export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
   container: HTMLElement
 
   _map: mapboxgl.Map
@@ -183,14 +188,23 @@ export class MapboxDirections {
 
   unsubscribe: () => void
 
+  isCursorOverPoint: mapboxgl.MapboxGeoJSONFeature | null | boolean
+
   constructor(public options: MapboxDirectionsOptions = {}) {
+    super()
+
     this.container = document.createElement('div')
     this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl'
+
     this._map = Object.create(null)
+
     this.store = createDirectionsStore(options)
+
     this.unsubscribe = () => {
       console.log('NOOP unsubscribe')
     }
+
+    this.isCursorOverPoint = null
   }
 
   onAdd(map: mapboxgl.Map) {
@@ -279,7 +293,7 @@ export class MapboxDirections {
       this.store.getState().clearDestination()
     })
 
-    if (state.controls?.inputs || true) {
+    if (state.controls?.inputs) {
       this.container.appendChild(geocoderContainer)
     }
 
@@ -290,7 +304,7 @@ export class MapboxDirections {
     instructions.onAdd(map)
     instructions.render()
 
-    if (state.controls?.instructions || true) {
+    if (state.controls?.instructions) {
       this.container.appendChild(directionsElement)
     }
 
@@ -306,10 +320,10 @@ export class MapboxDirections {
   }
 
   loadMapLayers() {
-    const { styles, interactive } = this.store.getState()
+    const { styles, interactive, profile } = this.store.getState()
 
     // Emit any default or option set config
-    // this.actions.eventEmit('profile', { profile });
+    this.fire('profile', { profile });
 
     // Add and set data theme layer/style
     this._map.addSource(directionsLayerName, directionsSource)
@@ -418,6 +432,165 @@ export class MapboxDirections {
       }
     })
   }
+
+  onClick(e: mapboxgl.MapMouseEvent) {
+    const { origin, setOrigin, setDestination, setRouteIndex, removeWaypoint } = this.store.getState();
+
+    if (!origin?.geometry) {
+      setOrigin(utils.createPoint([e.lngLat.lng, e.lngLat.lat]));
+    } else {
+      const features = this._map.queryRenderedFeatures(e.point, {
+        layers: [
+          'directions-origin-point',
+          'directions-destination-point',
+          'directions-waypoint-point',
+          'directions-route-line-alt'
+        ]
+      });
+
+      if (features.length) {
+        // Remove any waypoints
+        features.forEach((f) => {
+          if (f.layer.id === 'directions-waypoint-point') {
+            removeWaypoint(f);
+          }
+        });
+
+        if (features[0].properties?.route === 'alternate') {
+          const index = features[0].properties['route-index'];
+          setRouteIndex(index);
+        }
+      } else {
+        setDestination(utils.createPoint([e.lngLat.lng, e.lngLat.lat]));
+        this._map.flyTo({ center: [e.lngLat.lng, e.lngLat.lat] });
+      }
+    }
+  }
+
+  move(e: mapboxgl.MapMouseEvent) {
+    const { hoverMarker } = this.store.getState();
+
+    const features = this._map.queryRenderedFeatures(e.point, {
+      layers: [
+        'directions-route-line-alt',
+        'directions-route-line',
+        'directions-origin-point',
+        'directions-destination-point',
+        'directions-hover-point'
+      ]
+    });
+
+    this._map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+
+    if (features.length) {
+      this.isCursorOverPoint = features[0];
+      this._map.dragPan.disable();
+
+      // Add a possible waypoint marker when hovering over the active route line
+      features.forEach((feature) => {
+        if (feature.layer.id === 'directions-route-line') {
+          hoverMarker([e.lngLat.lng, e.lngLat.lat]);
+        } else if (hoverMarker.geometry) {
+          hoverMarker(null);
+        }
+      });
+
+    } else if (this.isCursorOverPoint) {
+      this.isCursorOverPoint = false;
+      this._map.dragPan.enable();
+    }
+  }
+
+  onDragDown() {
+    // if (!this.isCursorOverPoint) return;
+    // this.isDragging = this.isCursorOverPoint;
+    this._map.getCanvas().style.cursor = 'grab';
+
+    this._map.on('mousemove', this.onDragMove.bind(this));
+    this._map.on('mouseup', this.onDragUp.bind(this));
+
+    this._map.on('touchmove', this.onDragMove.bind(this));
+    this._map.on('touchend', this.onDragUp.bind(this));
+  }
+
+  onDragMove(event: mapboxgl.MapMouseEvent) {
+    // if (!this.isDragging) return;
+    const { setOrigin, setDestination, } = this.store.getState()
+
+    switch (this.isDragging.layer.id) {
+      case 'directions-origin-point':
+        setOrigin(utils.createPoint([event.lngLat.lng, event.lngLat.lat]))
+        break;
+      case 'directions-destination-point':
+        setDestination(utils.createPoint([event.lngLat.lng, event.lngLat.lat]));
+        break;
+      case 'directions-hover-point':
+        // this.actions.hoverMarker(coords);
+        break;
+    }
+  }
+
+  onDragUp() {
+    // if (!this.isDragging) return;
+
+    const { origin, destination, setOrigin, setDestination } = this.store.getState();
+
+    switch (this.isDragging.layer.id) {
+      case 'directions-origin-point':
+        if (origin) {
+          setOrigin(utils.createPoint([origin.geometry.coordinates[0], origin.geometry.coordinates[1]]))
+        }
+        break;
+      case 'directions-destination-point':
+        if (destination) {
+          setDestination(utils.createPoint([destination.geometry.coordinates[0], destination.geometry.coordinates[1]]));
+        }
+        break;
+      case 'directions-hover-point':
+        // Add waypoint if a sufficent amount of dragging has occurred.
+        // if (hoverMarker.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
+        //   this.actions.addWaypoint(0, hoverMarker);
+        // }
+        break;
+    }
+
+    // this.isDragging = false;
+    this._map.getCanvas().style.cursor = '';
+
+    this._map.off('touchmove', this.onDragMove.bind(this));
+    this._map.off('touchend', this.onDragUp.bind(this));
+
+    this._map.off('mousemove', this.onDragMove.bind(this));
+    this._map.off('mouseup', this.onDragUp.bind(this));
+  }
+
+  //---------------------------------------------------------------------------------
+  // API Methods
+  //---------------------------------------------------------------------------------
+
+  /**
+   * Turn on or off interactivity
+   */
+  interactive(state: boolean) {
+    if (state) {
+      this._map.on('touchstart', this.move.bind(this));
+      this._map.on('touchstart', this.onDragDown.bind(this));
+
+      this._map.on('mousedown', this.onDragDown.bind(this));
+      this._map.on('mousemove', this.move.bind(this));
+      this._map.on('click', this.onClick.bind(this));
+    } else {
+      this._map.off('touchstart', this.move.bind(this));
+      this._map.off('touchstart', this.onDragDown.bind(this));
+
+      this._map.off('mousedown', this.onDragDown.bind(this));
+      this._map.off('mousemove', this.move.bind(this));
+      this._map.off('click', this.onClick.bind(this));
+    }
+
+    return this;
+  }
+
 
   onRemove(map: mapboxgl.Map) {
     const { styles, clearOrigin, clearDestination } = this.store.getState()
