@@ -13,7 +13,7 @@ export interface MapboxDirectionsState extends MapboxDirectionsOptions {
   // Marker feature drawn on the map at any point.
   origin: Point | null
   destination: Point | null
-  hoverMarker: mapboxgl.LngLatLike | null
+  hoverMarker: Point | null
   waypoints: GeocodingFeature[]
 
   // User input strings or result returned from geocoder
@@ -221,7 +221,7 @@ export const defaultOptions = {
 /**
  * A globally shared store is created with default options.
  */
-export const store = createStore<MapboxDirectionsState>()((_set) => defaultOptions)
+export const store = createStore<MapboxDirectionsState>((_set) => defaultOptions)
 
 /**
  * Initialize the store by merging the initial settings with user options.

@@ -161,7 +161,7 @@ export interface RouteStep {
   /**
    * One step maneuver object.
    */
-  manuever: RouteStepManeuver
+  maneuver: RouteStepManeuver
 
   /**
    * The distance traveled, in meters, from the maneuver to the next route step.

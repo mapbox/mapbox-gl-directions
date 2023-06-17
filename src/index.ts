@@ -2,10 +2,12 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import './mapbox-gl-directions.css'
 
 import mapboxgl from 'mapbox-gl'
-import { initializeStore, store } from './state/store.js'
+import { decode } from '@mapbox/polyline'
 import * as utils from './utils/index.js'
 import * as actions from './state/actions.js'
 import { Geocoder } from './controls/geocoder.js'
+import { Instructions } from './controls/instructions.js'
+import { initializeStore, store } from './state/store.js'
 import { createInputsTemplate } from './templates/input.js'
 
 export const MapboxProfiles = [
@@ -175,6 +177,8 @@ export class MapboxDirections {
   }
 
   onAdd(map: mapboxgl.Map) {
+    this._map = map
+
     const controls: MapDirectionsControls = {}
 
     const geocoderContainer = document.createElement('div')
@@ -193,6 +197,12 @@ export class MapboxDirections {
         element.addEventListener('change', () => {
           const profile = element.value as MapboxProfile
           actions.setProfile(profile)
+
+          const { origin, destination } = store.getState()
+
+          if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
+            actions.updateDirections()
+          }
         })
       })
 
@@ -218,10 +228,14 @@ export class MapboxDirections {
       actions.setOrigin(centerCoords)
 
       const { origin, destination } = store.getState()
-      
+
       if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
         actions.updateDirections()
       }
+    })
+
+    originGeocoder.on('clear', () => {
+      actions.clearOrigin()
     })
 
     const destinationGeocoder = new Geocoder()
@@ -230,15 +244,20 @@ export class MapboxDirections {
       '#mapbox-directions-destination-input'
     )
     destinationContainerElement?.appendChild(destinationElement)
+
     destinationGeocoder.on('result', (data) => {
       const centerCoords = utils.createPoint(data.result.center)
       actions.setDestination(centerCoords)
 
       const { origin, destination } = store.getState()
-      
+
       if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
         actions.updateDirections()
       }
+    })
+
+    destinationGeocoder.on('clear', () => {
+      actions.clearDestination()
     })
 
     if (controls.inputs || true) {
@@ -249,18 +268,54 @@ export class MapboxDirections {
     directionsElement.className = 'directions-control directions-control-instructions'
     directionsElement.textContent = 'Directions Element'
 
-    // new Instructions(directionsEl, store, {
-    //   hoverMarker: this.actions.hoverMarker,
-    //   setRouteIndex: this.actions.setRouteIndex
-    // }, this._map);
+    const instructions = new Instructions(directionsElement);
+    instructions.onAdd(map);
+    instructions.render()
 
     if (controls.instructions || true) {
       this.container.appendChild(directionsElement)
     }
 
-    // this.subscribedActions();
-    // if (map.loaded()) this.mapState()
-    // else map.on('load', () => this.mapState());
+    this.subscribedActions()
+
+    // Add direction specific styles to the map
+    if (this._map?.loaded()) {
+      // Add and set data theme layer/style
+      this._map.addSource('directions', {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: []
+        }
+      });
+
+      const { styles } = store.getState()
+
+      if (styles?.length) {
+        styles.forEach((style) => {
+          this._map?.addLayer(style)
+        });
+      }
+    } else {
+      this._map.on('load', () => {
+
+        const { styles } = store.getState()
+        // Add and set data theme layer/style
+        this._map?.addSource('directions', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: []
+          }
+        });
+
+        if (styles?.length) {
+          styles.forEach((style) => {
+            this._map?.addLayer(style)
+          });
+        }
+      })
+    }
 
     return this.container
   }
@@ -435,6 +490,85 @@ export class MapboxDirections {
     //   this.isCursorOverPoint = false;
     //   this._map.dragPan.enable();
     // }
+  }
+  subscribedActions() {
+    store.subscribe(state => {
+      const {
+        origin,
+        destination,
+        hoverMarker,
+        directions,
+        routeIndex
+      } = store.getState();
+
+      const geojson = {
+        type: 'FeatureCollection',
+        features: [origin, destination, hoverMarker].filter((d) => d?.geometry)
+      };
+
+      if (!directions.length) return
+
+      directions.forEach((feature, index) => {
+        const features = [];
+
+        const decoded = decode(feature.geometry, 5).map((c) => c.reverse());
+
+        decoded.forEach(function(c, i) {
+          var previous = features[features.length - 1];
+          var congestion = feature.legs[0].annotation && feature.legs[0].annotation.congestion && feature.legs[0].annotation.congestion[i - 1];
+
+          if (previous && (!congestion || previous.properties.congestion === congestion)) {
+            previous.geometry.coordinates.push(c);
+          } else {
+            var segment = {
+              geometry: {
+                type: 'LineString',
+                coordinates: []
+              },
+              properties: {
+                'route-index': index,
+                route: (index === routeIndex) ? 'selected' : 'alternate',
+              }
+            };
+
+            // New segment starts with previous segment's last coordinate.
+            if (previous) {
+              segment.geometry.coordinates.push(previous.geometry.coordinates[previous.geometry.coordinates.length - 1]);
+            }
+
+            segment.geometry.coordinates.push(c);
+
+            if (congestion) {
+              segment.properties.congestion = feature.legs[0].annotation.congestion[i - 1];
+            }
+
+            features.push(segment);
+          }
+        });
+
+        geojson.features = geojson.features.concat(features);
+
+        if (index === routeIndex) {
+          // Collect any possible waypoints from steps
+          feature.legs[0].steps.forEach((d) => {
+            if (d.maneuver.type === 'waypoint') {
+              geojson.features.push({
+                type: 'Feature',
+                geometry: d.maneuver.location,
+                properties: {
+                  id: 'waypoint'
+                }
+              });
+            }
+          });
+        }
+
+        if (this._map?.style && this._map.getSource('directions')) {
+          this._map.getSource('directions').setData(geojson);
+        }
+
+      });
+    })
   }
 }
 const accessToken =

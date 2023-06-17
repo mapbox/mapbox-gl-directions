@@ -1,3 +1,4 @@
+import template from 'lodash.template'
 import type { MapboxProfile, MapDirectionsControls } from '../index.js'
 
 export interface CreateInputsTemplateOptions {
@@ -5,8 +6,7 @@ export interface CreateInputsTemplateOptions {
   controls?: MapDirectionsControls
 }
 
-export function createInputsTemplate(options: CreateInputsTemplateOptions): string {
-  return `\
+const inputsHtmlTemplate = `\
 <div class='mapbox-directions-component mapbox-directions-inputs'>
   <div class='mapbox-directions-component-keyline'>
     <div class='mapbox-directions-origin'>
@@ -29,48 +29,44 @@ export function createInputsTemplate(options: CreateInputsTemplateOptions): stri
     </div>
   </div>
 
-  ${
-    !options.controls?.profileSwitcher
-      ? ''
-      : `\
+  <% if (controls.profileSwitcher) { %>
   <div class='mapbox-directions-profile mapbox-directions-component-keyline mapbox-directions-clearfix'><input
       id='mapbox-directions-profile-driving-traffic'
       type='radio'
       name='profile'
       value='mapbox/driving-traffic'
-      ${options.profile === 'mapbox/driving-traffic' ? 'checked' : ''}
+      <% if (profile === 'mapbox/driving-traffic') { %>checked<% } %>
     />
     <label for='mapbox-directions-profile-driving-traffic'>Traffic</label>
-
     <input
       id='mapbox-directions-profile-driving'
       type='radio'
       name='profile'
       value='mapbox/driving'
-      ${options.profile === 'mapbox/driving' ? 'checked' : ''}
+      <% if (profile === 'mapbox/driving') { %>checked<% } %>
     />
     <label for='mapbox-directions-profile-driving'>Driving</label>
-
     <input
       id='mapbox-directions-profile-walking'
       type='radio'
       name='profile'
       value='mapbox/walking'
-      ${options.profile === 'mapbox/walking' ? 'checked' : ''}
+      <% if (profile === 'mapbox/walking') { %>checked<% } %>
     />
     <label for='mapbox-directions-profile-walking'>Walking</label>
-
     <input
       id='mapbox-directions-profile-cycling'
       type='radio'
       name='profile'
       value='mapbox/cycling'
-      ${options.profile === 'mapbox/cycling' ? 'checked' : ''}
+      <% if (profile === 'mapbox/cycling') { %>checked<% } %>
     />
     <label for='mapbox-directions-profile-cycling'>Cycling</label>
   </div>
-  `
-  }
+  <% } %>
 </div>
 `
+
+export function createInputsTemplate(options: CreateInputsTemplateOptions): string {
+  return template(inputsHtmlTemplate)(options)
 }

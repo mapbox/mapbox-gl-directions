@@ -1,35 +1,70 @@
 import { store } from './store.js'
 import type { MapboxProfile } from '../index.js'
-import { stringifyCoordinates, type Point } from '../utils/index.js'
 import { fetchDirections } from '../api/directions.js'
+import { stringifyCoordinates, type Point } from '../utils/index.js'
 
 export function setOrigin(origin: Point) {
   store.setState((prevState) => {
-    prevState.origin = origin
-    return prevState
+    return { ...prevState, origin }
+  })
+}
+
+export function clearOrigin() {
+  store.setState((prevState) => {
+    return { 
+      ...prevState,
+      origin: null,
+      originQuery: '',
+      waypoints: [],
+      directions: [] 
+    }
   })
 }
 
 export function setDestination(destination: Point) {
   store.setState((prevState) => {
-    prevState.destination = destination
-    return prevState
+    return { ...prevState, destination }
+  })
+}
+
+export function clearDestination() {
+  store.setState((prevState) => {
+    return { 
+      ...prevState,
+      destination: null,
+      destinationQuery: '',
+      waypoints: [],
+      directions: [] 
+    }
   })
 }
 
 export function setProfile(profile: MapboxProfile) {
   store.setState((prevState) => {
-    prevState.profile = profile
-    return prevState
+    return { ...prevState, profile }
   })
 }
 
 export function reverse() {
   store.setState((prevState) => {
-    const { origin, destination } = prevState
-    prevState.origin = destination
-    prevState.destination = origin
-    return prevState
+    const { 
+      origin,
+      originQuery,
+      originQueryCoordinates,
+      destination,
+      destinationQuery,
+      destinationQueryCoordinates 
+    } = prevState
+
+    return { 
+      ...prevState,
+      origin: destination,
+      originQuery: destinationQuery,
+      originQueryCoordinates: destinationQueryCoordinates,
+      destination: origin,
+      destinationQuery: originQuery,
+      destinationQueryCoordinates: originQueryCoordinates,
+    }
   })
 }
 
@@ -77,8 +112,7 @@ export async function updateDirections() {
 
   if ('routes' in directions) {
     store.setState((prevState) => {
-      prevState.directions = directions.routes
-      return prevState
+      return { ...prevState, directions: directions.routes }
     })
   } else {
   }
