@@ -6,9 +6,11 @@ import { createInstructionsTemplate } from '../templates/instructions.js'
 
 /**
  * Summary/Instructions controller
-   * @private
+ * @private
  */
 export class Instructions {
+  unsubscribe?: () => void
+
   /**
    * @param container Summary parent container.
    * @param map The mapboxgl instance.
@@ -16,9 +18,8 @@ export class Instructions {
   constructor(
     public container: HTMLElement,
     public store: DirectionsStore,
-    public _map: mapboxgl.Map = Object.create(null),
-    public unsubscribe = () => { console.log('NOOP unsubscribe') }
-  ) { }
+    public _map: mapboxgl.Map = Object.create(null)
+  ) {}
 
   onAdd(map: mapboxgl.Map) {
     this._map = map
@@ -39,8 +40,8 @@ export class Instructions {
       if (directions.length && shouldRender) {
         const direction = directions[routeIndex]
         if (compile) {
-          direction.legs.forEach(function(leg) {
-            leg.steps.forEach(function(step) {
+          direction.legs.forEach(function (leg) {
+            leg.steps.forEach(function (step) {
               step.maneuver.instruction = compile('en', step)
             })
           })
@@ -60,11 +61,11 @@ export class Instructions {
           const lat = el.getAttribute('data-lat') ?? 0
 
           el.addEventListener('mouseover', () => {
-            setHoverMarker([+lng, +lat]);
+            setHoverMarker([+lng, +lat])
           })
 
           el.addEventListener('mouseout', () => {
-            setHoverMarker(null);
+            setHoverMarker(null)
           })
 
           el.addEventListener('click', () => {
@@ -79,7 +80,7 @@ export class Instructions {
           el.addEventListener('change', (e) => {
             const target = e.target as HTMLInputElement
             const { setRouteIndex } = this.store.getState()
-            setRouteIndex(parseInt(target.id, 10));
+            setRouteIndex(parseInt(target.id, 10))
           })
         })
       } else if (this.container.innerHTML && shouldRender) {
@@ -88,6 +89,7 @@ export class Instructions {
     })
   }
   onRemove() {
-    this.unsubscribe()
+    this.unsubscribe?.()
+    this.unsubscribe = undefined
   }
 }

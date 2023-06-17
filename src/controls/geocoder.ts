@@ -243,4 +243,6 @@ export class Geocoder extends EventEmitter<GeocoderEvents> {
     this._setInput(value)
     return this
   }
+
+  onRemove() {}
 }
