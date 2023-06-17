@@ -7,7 +7,7 @@
     "declaration": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "verbatimModuleSyntax": true,
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "Node",
+    "verbatimModuleSyntax": true
   }
 }

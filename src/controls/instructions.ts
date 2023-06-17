@@ -6,26 +6,29 @@ import { createInstructionsTemplate } from '../templates/instructions.js'
 
 /**
  * Summary/Instructions controller
- *
- * @param container Summary parent container.
- * @param map The mapboxgl instance.
- * @private
+   * @private
  */
 export class Instructions {
+  /**
+   * @param container Summary parent container.
+   * @param map The mapboxgl instance.
+   */
   constructor(
     public container: HTMLElement,
     public store: DirectionsStore,
-    public _map: mapboxgl.Map = Object.create(null)
-  ) {}
+    public _map: mapboxgl.Map = Object.create(null),
+    public unsubscribe = () => { console.log('NOOP unsubscribe') }
+  ) { }
 
   onAdd(map: mapboxgl.Map) {
     this._map = map
+    this.subscribe()
     return this.container
   }
 
-  render() {
-    this.store.subscribe((state) => {
-      const { routeIndex, unit, directions, error, compile } = state
+  subscribe() {
+    this.unsubscribe = this.store.subscribe((state) => {
+      const { routeIndex, unit, directions, error, compile, setHoverMarker } = state
       const shouldRender = true // !isEqual(directions[routeIndex], this.directions);
 
       if (error) {
@@ -36,8 +39,8 @@ export class Instructions {
       if (directions.length && shouldRender) {
         const direction = directions[routeIndex]
         if (compile) {
-          direction.legs.forEach(function (leg) {
-            leg.steps.forEach(function (step) {
+          direction.legs.forEach(function(leg) {
+            leg.steps.forEach(function(step) {
               step.maneuver.instruction = compile('en', step)
             })
           })
@@ -57,11 +60,11 @@ export class Instructions {
           const lat = el.getAttribute('data-lat') ?? 0
 
           el.addEventListener('mouseover', () => {
-            // hoverMarker([lng, lat]);
+            setHoverMarker([+lng, +lat]);
           })
 
           el.addEventListener('mouseout', () => {
-            // hoverMarker(null);
+            setHoverMarker(null);
           })
 
           el.addEventListener('click', () => {
@@ -74,12 +77,17 @@ export class Instructions {
 
         this.container.querySelectorAll('input[type="radio"]').forEach((el) => {
           el.addEventListener('change', (e) => {
-            // setRouteIndex(parseInt(e.target.id, 10));
+            const target = e.target as HTMLInputElement
+            const { setRouteIndex } = this.store.getState()
+            setRouteIndex(parseInt(target.id, 10));
           })
         })
       } else if (this.container.innerHTML && shouldRender) {
         this.container.innerHTML = ''
       }
     })
+  }
+  onRemove() {
+    this.unsubscribe()
   }
 }

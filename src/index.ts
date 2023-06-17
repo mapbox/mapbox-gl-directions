@@ -192,25 +192,17 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
 
   store: DirectionsStore
 
-  unsubscribe: () => void
+  unsubscribe?: () => void
 
   constructor(public options: MapboxDirectionsOptions = {}) {
     super()
-
-    this.container = document.createElement('div')
-    this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl'
 
     this._map = Object.create(null)
     this.isCursorOverPoint = null
     this.isDragging = null
     this.store = createDirectionsStore(options)
-    this.unsubscribe = () => {
-      console.log('NOOP unsubscribe')
-    }
-  }
-
-  onAdd(map: mapboxgl.Map) {
-    this._map = map
+    this.container = document.createElement('div')
+    this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl'
 
     const state = this.store.getState()
 
@@ -304,13 +296,17 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
 
     const instructions = new Instructions(directionsElement, this.store)
     instructions.onAdd(map)
-    instructions.render()
 
     if (state.controls?.instructions) {
       this.container.appendChild(directionsElement)
     }
 
-    this.unsubscribe = this.subscribe()
+  }
+
+  onAdd(map: mapboxgl.Map) {
+    this._map = map
+
+    this.subscribe()
 
     if (this._map.loaded()) {
       this.loadMapLayers()
@@ -332,22 +328,18 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
 
     styles?.forEach((style) => this._map.addLayer(style))
 
-    const noop = () => {
-      console.log('TODO')
-    }
-
     if (interactive) {
-      this._map.on('mousedown', noop) // this.onDragDown);
-      this._map.on('mousemove', noop) // this.move);
-      this._map.on('click', noop) // this.onClick);
+      this._map.on('mousedown', this.onDragDown.bind(this));
+      this._map.on('mousemove', this.move.bind(this));
+      this._map.on('click', this.onClick.bind(this));
 
-      this._map.on('touchstart', noop) // this.move);
-      this._map.on('touchstart', noop) // this.onDragDown);
+      this._map.on('touchstart', this.move.bind(this));
+      this._map.on('touchstart', this.onDragDown.bind(this));
     }
   }
 
   subscribe() {
-    return this.store.subscribe((state) => {
+    this.unsubscribe = this.store.subscribe((state) => {
       const { origin, destination, hoverMarker, directions, routeIndex } = state
 
       const features = directions.flatMap((feature, index) =>
@@ -584,7 +576,7 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
         break
       case 'directions-hover-point':
         // Add waypoint if a sufficent amount of dragging has occurred.
-        if ( hoverMarker?.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
+        if (hoverMarker?.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
           addWaypoint(0, hoverMarker);
         }
         break
@@ -641,10 +633,8 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
     map.off('touchstart', this.move.bind(this));
     map.off('click', this.onClick.bind(this));
 
-    this.unsubscribe()
-    this.unsubscribe = () => {
-      console.log('NOOP unsubscribe')
-    }
+    this.unsubscribe?.()
+    this.unsubscribe = undefined
 
     styles?.forEach((layer) => {
       if (map.getLayer(layer.id)) {
