@@ -2,9 +2,8 @@ import { defu } from 'defu'
 import mapboxgl from 'mapbox-gl'
 import { createStore, StoreApi } from 'zustand/vanilla'
 import layers from '../layers.js'
-import type { GeocodingFeature } from '../api/geocoder.js'
 import { fetchDirections, type Route } from '../api/directions.js'
-import { stringifyCoordinates, type Feature, coordinateMatch } from '../utils/index.js'
+import { stringifyCoordinates, type Feature, coordinateMatch, createPoint } from '../utils/index.js'
 import type { MapboxDirectionsOptions, MapboxProfile } from '../index.js'
 
 export interface MapboxDirectionsState extends MapboxDirectionsOptions {
@@ -17,7 +16,7 @@ export interface MapboxDirectionsState extends MapboxDirectionsOptions {
   origin: Feature | null
   destination: Feature | null
   hoverMarker: Feature | null
-  waypoints: GeocodingFeature[]
+  waypoints: Feature[]
 
   // User input strings or result returned from geocoder
   originQuery: string
@@ -38,8 +37,9 @@ export interface MapboxDirectionsState extends MapboxDirectionsOptions {
   reverse: () => void
   updateDirections: () => void
   setRouteIndex: (routeIndex: number) => void
+  addWaypoint: (index: number, waypoint: Feature) => void
   removeWaypoint: (feature: mapboxgl.MapboxGeoJSONFeature) => void
-  setHoverMarker: (feature: Feature) => void
+  setHoverMarker: (coordinates: mapboxgl.LngLatLike | null) => void
 }
 
 export type DirectionsStore = StoreApi<MapboxDirectionsState>
@@ -194,16 +194,29 @@ export function createDirectionsStore(options: MapboxDirectionsOptions): Directi
       setRouteIndex: (routeIndex) => {
         set((prevState) => ({ ...prevState, routeIndex }))
       },
+      addWaypoint(index, waypoint) {
+        const { waypoints } = get()
+        waypoints.splice(index, 0, {
+          ...waypoint,
+          properties: { id: 'waypoint', ...waypoint.properties }
+        })
+        set((prevState) => ({ ...prevState, waypoints }))
+      },
       removeWaypoint: (waypoint) => {
         set((prevState) => {
           const { waypoints } = prevState
-          return { 
+          return {
             ...prevState,
-            waypoints: waypoints.filter((way) => !coordinateMatch(way, waypoint as any)) 
+            waypoints: waypoints.filter((way) => !coordinateMatch(way, waypoint)),
           }
         })
       },
-      setHoverMarker: (hoverMarker) => {}
+      setHoverMarker: (coordinates) => {
+        set((prevState) => ({
+          ...prevState,
+          hoverMarker: coordinates ? createPoint(coordinates, { id: 'hover' }) : null
+        }))
+      },
     }
 
     const state = defu(options, initialState) as MapboxDirectionsState
@@ -211,7 +224,7 @@ export function createDirectionsStore(options: MapboxDirectionsOptions): Directi
     const customStyles = options.styles ?? []
     state.styles = [
       ...customStyles,
-      ...layers.filter(layer => !customStyles.some(customLayer => customLayer.id === layer.id))
+      ...layers.filter((layer) => !customStyles.some((customLayer) => customLayer.id === layer.id)),
     ]
 
     return state

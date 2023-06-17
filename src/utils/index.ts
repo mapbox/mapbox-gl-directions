@@ -15,7 +15,14 @@ export function validCoordinates(coords: mapboxgl.LngLatLike) {
   }
 }
 
-export function coordinateMatch(a: Feature | GeocodingFeature, b: Feature) {
+export function coordinateMatch(
+  a: Feature | GeocodingFeature | mapboxgl.MapboxGeoJSONFeature,
+  b: Feature | mapboxgl.MapboxGeoJSONFeature
+) {
+  if (a.geometry.type === 'GeometryCollection' || b.geometry.type === 'GeometryCollection') {
+    return false
+  }
+
   const aCoordinates = a.geometry.coordinates
   const bCoordinates = b.geometry.coordinates
 

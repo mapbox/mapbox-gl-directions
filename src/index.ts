@@ -5,10 +5,10 @@ import mapboxgl from 'mapbox-gl'
 import { decode } from '@mapbox/polyline'
 import * as utils from './utils/index.js'
 import { Geocoder } from './controls/geocoder.js'
+import { EventEmitter } from './state/EventEmitter.js'
 import { Instructions } from './controls/instructions.js'
 import { createInputsTemplate } from './templates/input.js'
 import { createDirectionsStore, type DirectionsStore } from './state/store.js'
-import { EventEmitter } from './state/EventEmitter'
 
 export const MapboxProfiles = [
   'mapbox/driving-traffic',
@@ -166,6 +166,7 @@ export interface MapboxDirectionsEvents {
 
 /**
  * @example
+ * ```ts
  * const MapboxDirections = require('../src/index.js');
  *
  * const directions = new MapboxDirections({
@@ -176,6 +177,7 @@ export interface MapboxDirectionsEvents {
  *
  * // add to your mapboxgl map
  * map.addControl(directions);
+ * ```
  */
 export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
   container: HTMLElement
@@ -184,11 +186,13 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
 
   timer: number | undefined
 
+  isCursorOverPoint: mapboxgl.MapboxGeoJSONFeature | null | boolean
+
+  isDragging: mapboxgl.MapboxGeoJSONFeature | null | boolean
+
   store: DirectionsStore
 
   unsubscribe: () => void
-
-  isCursorOverPoint: mapboxgl.MapboxGeoJSONFeature | null | boolean
 
   constructor(public options: MapboxDirectionsOptions = {}) {
     super()
@@ -197,20 +201,18 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
     this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl'
 
     this._map = Object.create(null)
-
+    this.isCursorOverPoint = null
+    this.isDragging = null
     this.store = createDirectionsStore(options)
-
     this.unsubscribe = () => {
       console.log('NOOP unsubscribe')
     }
-
-    this.isCursorOverPoint = null
   }
 
   onAdd(map: mapboxgl.Map) {
-    const state = this.store.getState()
-
     this._map = map
+
+    const state = this.store.getState()
 
     const geocoderContainer = document.createElement('div')
     geocoderContainer.className = 'directions-control directions-control-inputs'
@@ -313,7 +315,7 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
     if (this._map.loaded()) {
       this.loadMapLayers()
     } else {
-      this._map.on('load', () => this.loadMapLayers());
+      this._map.on('load', () => this.loadMapLayers())
     }
 
     return this.container
@@ -323,7 +325,7 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
     const { styles, interactive, profile } = this.store.getState()
 
     // Emit any default or option set config
-    this.fire('profile', { profile });
+    this.fire('profile', { profile })
 
     // Add and set data theme layer/style
     this._map.addSource(directionsLayerName, directionsSource)
@@ -404,8 +406,8 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
                         coordinates: [d.maneuver.location],
                       },
                       properties: {
-                        id: 'waypoint'
-                      }
+                        id: 'waypoint',
+                      },
                     }
                     return waypointFeature
                   })
@@ -418,7 +420,7 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
 
       const geojson: GeoJSON.FeatureCollection = {
         type: 'FeatureCollection',
-        features
+        features,
       }
 
       if (origin?.geometry) geojson.features.push(origin)
@@ -426,7 +428,6 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
       if (hoverMarker?.geometry) geojson.features.push(hoverMarker)
 
       const loadedDirectionsSource = this._map.getSource('directions')
-      console.log('loadedDirectionsSource', loadedDirectionsSource)
       if (loadedDirectionsSource && loadedDirectionsSource.type === 'geojson') {
         loadedDirectionsSource.setData(geojson)
       }
@@ -434,41 +435,62 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
   }
 
   onClick(e: mapboxgl.MapMouseEvent) {
-    const { origin, setOrigin, setDestination, setRouteIndex, removeWaypoint } = this.store.getState();
+    const delay = 250
+
+    if (this.timer == null) {
+      this.timer = setTimeout(() => {
+        this.onSingleClick(e);
+        this.timer = undefined;
+      }, delay);
+    } else {
+      clearTimeout(this.timer);
+      this.timer = undefined;
+      this._map.zoomIn();
+    }
+  }
+
+  onSingleClick(e: mapboxgl.MapMouseEvent) {
+    const {
+      origin,
+      setOrigin,
+      setRouteIndex,
+      removeWaypoint,
+      setDestination,
+    } = this.store.getState()
 
     if (!origin?.geometry) {
-      setOrigin(utils.createPoint([e.lngLat.lng, e.lngLat.lat]));
+      setOrigin(utils.createPoint([e.lngLat.lng, e.lngLat.lat]))
     } else {
       const features = this._map.queryRenderedFeatures(e.point, {
         layers: [
           'directions-origin-point',
           'directions-destination-point',
           'directions-waypoint-point',
-          'directions-route-line-alt'
-        ]
-      });
+          'directions-route-line-alt',
+        ],
+      })
 
       if (features.length) {
         // Remove any waypoints
-        features.forEach((f) => {
-          if (f.layer.id === 'directions-waypoint-point') {
-            removeWaypoint(f);
+        features.forEach((feature) => {
+          if (feature.layer.id === 'directions-waypoint-point') {
+            removeWaypoint(feature)
           }
-        });
+        })
 
         if (features[0].properties?.route === 'alternate') {
-          const index = features[0].properties['route-index'];
-          setRouteIndex(index);
+          const index = features[0].properties['route-index']
+          setRouteIndex(index)
         }
       } else {
-        setDestination(utils.createPoint([e.lngLat.lng, e.lngLat.lat]));
-        this._map.flyTo({ center: [e.lngLat.lng, e.lngLat.lat] });
+        setDestination(utils.createPoint([e.lngLat.lng, e.lngLat.lat]))
+        this._map.flyTo({ center: [e.lngLat.lng, e.lngLat.lat] })
       }
     }
   }
 
   move(e: mapboxgl.MapMouseEvent) {
-    const { hoverMarker } = this.store.getState();
+    const { hoverMarker, setHoverMarker } = this.store.getState()
 
     const features = this._map.queryRenderedFeatures(e.point, {
       layers: [
@@ -476,92 +498,106 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
         'directions-route-line',
         'directions-origin-point',
         'directions-destination-point',
-        'directions-hover-point'
-      ]
-    });
+        'directions-hover-point',
+      ],
+    })
 
-    this._map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+    this._map.getCanvas().style.cursor = features.length ? 'pointer' : ''
 
     if (features.length) {
-      this.isCursorOverPoint = features[0];
-      this._map.dragPan.disable();
+      this.isCursorOverPoint = features[0]
+      this._map.dragPan.disable()
 
       // Add a possible waypoint marker when hovering over the active route line
       features.forEach((feature) => {
         if (feature.layer.id === 'directions-route-line') {
-          hoverMarker([e.lngLat.lng, e.lngLat.lat]);
-        } else if (hoverMarker.geometry) {
-          hoverMarker(null);
+          setHoverMarker([e.lngLat.lng, e.lngLat.lat])
+        } else if (hoverMarker?.geometry) {
+          setHoverMarker(null)
         }
-      });
-
+      })
     } else if (this.isCursorOverPoint) {
-      this.isCursorOverPoint = false;
-      this._map.dragPan.enable();
+      this.isCursorOverPoint = false
+      this._map.dragPan.enable()
     }
   }
 
   onDragDown() {
-    // if (!this.isCursorOverPoint) return;
-    // this.isDragging = this.isCursorOverPoint;
-    this._map.getCanvas().style.cursor = 'grab';
+    if (!this.isCursorOverPoint) return;
+    this.isDragging = this.isCursorOverPoint;
+    this._map.getCanvas().style.cursor = 'grab'
 
-    this._map.on('mousemove', this.onDragMove.bind(this));
-    this._map.on('mouseup', this.onDragUp.bind(this));
+    this._map.on('mousemove', this.onDragMove.bind(this))
+    this._map.on('mouseup', this.onDragUp.bind(this))
 
-    this._map.on('touchmove', this.onDragMove.bind(this));
-    this._map.on('touchend', this.onDragUp.bind(this));
+    this._map.on('touchmove', this.onDragMove.bind(this))
+    this._map.on('touchend', this.onDragUp.bind(this))
   }
 
   onDragMove(event: mapboxgl.MapMouseEvent) {
-    // if (!this.isDragging) return;
-    const { setOrigin, setDestination, } = this.store.getState()
+    if (!(this.isDragging && typeof this.isDragging === 'object')) return;
 
-    switch (this.isDragging.layer.id) {
+    const { setOrigin, setDestination, setHoverMarker } = this.store.getState()
+
+    switch (this.isDragging?.layer?.id) {
       case 'directions-origin-point':
         setOrigin(utils.createPoint([event.lngLat.lng, event.lngLat.lat]))
-        break;
+        break
       case 'directions-destination-point':
-        setDestination(utils.createPoint([event.lngLat.lng, event.lngLat.lat]));
-        break;
+        setDestination(utils.createPoint([event.lngLat.lng, event.lngLat.lat]))
+        break
       case 'directions-hover-point':
-        // this.actions.hoverMarker(coords);
-        break;
+        setHoverMarker([event.lngLat.lng, event.lngLat.lat]);
+        break
     }
   }
 
   onDragUp() {
-    // if (!this.isDragging) return;
+    if (!(this.isDragging && typeof this.isDragging === 'object')) return;
 
-    const { origin, destination, setOrigin, setDestination } = this.store.getState();
+    const {
+      origin,
+      destination,
+      setOrigin,
+      setDestination,
+      hoverMarker,
+      addWaypoint,
+    } = this.store.getState()
 
     switch (this.isDragging.layer.id) {
       case 'directions-origin-point':
         if (origin) {
-          setOrigin(utils.createPoint([origin.geometry.coordinates[0], origin.geometry.coordinates[1]]))
+          setOrigin(
+            utils.createPoint([origin.geometry.coordinates[0], origin.geometry.coordinates[1]])
+          )
         }
-        break;
+        break
       case 'directions-destination-point':
         if (destination) {
-          setDestination(utils.createPoint([destination.geometry.coordinates[0], destination.geometry.coordinates[1]]));
+          setDestination(
+            utils.createPoint([
+              destination.geometry.coordinates[0],
+              destination.geometry.coordinates[1],
+            ])
+          )
         }
-        break;
+        break
       case 'directions-hover-point':
         // Add waypoint if a sufficent amount of dragging has occurred.
-        // if (hoverMarker.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
-        //   this.actions.addWaypoint(0, hoverMarker);
-        // }
-        break;
+        if ( hoverMarker?.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
+          addWaypoint(0, hoverMarker);
+        }
+        break
     }
 
-    // this.isDragging = false;
-    this._map.getCanvas().style.cursor = '';
+    this.isDragging = false;
+    this._map.getCanvas().style.cursor = ''
 
-    this._map.off('touchmove', this.onDragMove.bind(this));
-    this._map.off('touchend', this.onDragUp.bind(this));
+    this._map.off('touchmove', this.onDragMove.bind(this))
+    this._map.off('touchend', this.onDragUp.bind(this))
 
-    this._map.off('mousemove', this.onDragMove.bind(this));
-    this._map.off('mouseup', this.onDragUp.bind(this));
+    this._map.off('mousemove', this.onDragMove.bind(this))
+    this._map.off('mouseup', this.onDragUp.bind(this))
   }
 
   //---------------------------------------------------------------------------------
@@ -573,24 +609,23 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
    */
   interactive(state: boolean) {
     if (state) {
-      this._map.on('touchstart', this.move.bind(this));
-      this._map.on('touchstart', this.onDragDown.bind(this));
+      this._map.on('touchstart', this.move.bind(this))
+      this._map.on('touchstart', this.onDragDown.bind(this))
 
-      this._map.on('mousedown', this.onDragDown.bind(this));
-      this._map.on('mousemove', this.move.bind(this));
-      this._map.on('click', this.onClick.bind(this));
+      this._map.on('mousedown', this.onDragDown.bind(this))
+      this._map.on('mousemove', this.move.bind(this))
+      this._map.on('click', this.onClick.bind(this))
     } else {
-      this._map.off('touchstart', this.move.bind(this));
-      this._map.off('touchstart', this.onDragDown.bind(this));
+      this._map.off('touchstart', this.move.bind(this))
+      this._map.off('touchstart', this.onDragDown.bind(this))
 
-      this._map.off('mousedown', this.onDragDown.bind(this));
-      this._map.off('mousemove', this.move.bind(this));
-      this._map.off('click', this.onClick.bind(this));
+      this._map.off('mousedown', this.onDragDown.bind(this))
+      this._map.off('mousemove', this.move.bind(this))
+      this._map.off('click', this.onClick.bind(this))
     }
 
-    return this;
+    return this
   }
-
 
   onRemove(map: mapboxgl.Map) {
     const { styles, clearOrigin, clearDestination } = this.store.getState()
@@ -600,11 +635,11 @@ export class MapboxDirections extends EventEmitter<MapboxDirectionsEvents> {
     clearOrigin()
     clearDestination()
 
-    // map.off('mousedown', this.onDragDown);
-    // map.off('mousemove', this.move);
-    // map.off('touchstart', this.onDragDown);
-    // map.off('touchstart', this.move);
-    // map.off('click', this.onClick);
+    map.off('mousedown', this.onDragDown.bind(this));
+    map.off('mousemove', this.move.bind(this));
+    map.off('touchstart', this.onDragDown.bind(this));
+    map.off('touchstart', this.move.bind(this));
+    map.off('click', this.onClick.bind(this));
 
     this.unsubscribe()
     this.unsubscribe = () => {
