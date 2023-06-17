@@ -101,7 +101,7 @@ export class Geocoder extends EventEmitter<GeocoderEvents> {
     autocompleteOption.style.textOverflow = 'ellipsis'
     autocompleteOption.style.fontFamily = 'Helvetica Neue, Arial, Helvetica, sans-serif'
 
-    autocomplete<GeocoderAutocompleteOption>({
+    autocomplete.default<GeocoderAutocompleteOption>({
       input: this._inputElement,
       fetch: async (text, update, _trigger, _cursorPos) => {
         const results = await this._queryFromInput(text)

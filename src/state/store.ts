@@ -1,6 +1,6 @@
 import { defu } from 'defu'
 import mapboxgl from 'mapbox-gl'
-import { createStore, StoreApi } from 'zustand/vanilla'
+import { createStore, type StoreApi } from 'zustand/vanilla'
 import layers from '../layers.js'
 import { fetchDirections, type Route } from '../api/directions.js'
 import { stringifyCoordinates, type Feature, coordinateMatch, createPoint } from '../utils/index.js'

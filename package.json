@@ -2,6 +2,7 @@
   "name": "@mapbox-ts/mapbox-gl-directions",
   "version": "4.1.1",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
+  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {

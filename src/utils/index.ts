@@ -1,5 +1,5 @@
 import mapboxgl from 'mapbox-gl'
-import { GeocodingFeature } from '../api/geocoder'
+import type { GeocodingFeature } from '../api/geocoder.js'
 
 export type Geometry = Exclude<GeoJSON.Geometry, GeoJSON.GeometryCollection>
 
