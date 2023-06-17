@@ -8,7 +8,6 @@ import { Geocoder } from './controls/geocoder.js'
 import { Instructions } from './controls/instructions.js'
 import { createInputsTemplate } from './templates/input.js'
 import { createDirectionsStore, type DirectionsStore } from './state/store.js'
-import { Feature } from './utils/index.js'
 
 export const MapboxProfiles = [
   'mapbox/driving-traffic',
@@ -295,6 +294,14 @@ export class MapboxDirections {
       this.container.appendChild(directionsElement)
     }
 
+    this.unsubscribe = this.subscribe()
+
+    if (this._map.loaded()) {
+      this.loadMapLayers()
+    } else {
+      this._map.on('load', () => this.loadMapLayers());
+    }
+
     return this.container
   }
 
@@ -324,7 +331,7 @@ export class MapboxDirections {
   }
 
   subscribe() {
-    this.unsubscribe = this.store.subscribe((state) => {
+    return this.store.subscribe((state) => {
       const { origin, destination, hoverMarker, directions, routeIndex } = state
 
       const features = directions.flatMap((feature, index) =>
@@ -405,6 +412,7 @@ export class MapboxDirections {
       if (hoverMarker?.geometry) geojson.features.push(hoverMarker)
 
       const loadedDirectionsSource = this._map.getSource('directions')
+      console.log('loadedDirectionsSource', loadedDirectionsSource)
       if (loadedDirectionsSource && loadedDirectionsSource.type === 'geojson') {
         loadedDirectionsSource.setData(geojson)
       }
