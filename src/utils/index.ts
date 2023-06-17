@@ -1,17 +1,8 @@
 import mapboxgl from 'mapbox-gl'
 
-export interface Point {
-  type: string
-  geometry: Geometry
-  properties: Properties
-}
+export type Geometry = Exclude<GeoJSON.Geometry, GeoJSON.GeometryCollection>
 
-export interface Geometry {
-  type: string
-  coordinates: mapboxgl.LngLatLike
-}
-
-export interface Properties {}
+export type Feature = GeoJSON.Feature<Geometry>
 
 export function validCoordinates(coords: mapboxgl.LngLatLike) {
   if (Array.isArray(coords)) {
@@ -23,16 +14,23 @@ export function validCoordinates(coords: mapboxgl.LngLatLike) {
   }
 }
 
-export function coordinateMatch(a: Point, b: Point) {
+export function coordinateMatch(a: Feature, b: Feature) {
   const aCoordinates = a.geometry.coordinates
   const bCoordinates = b.geometry.coordinates
 
+  /**
+   * Bruh.
+   */
   return (
     (typeof aCoordinates === 'string' &&
       typeof bCoordinates === 'string' &&
       aCoordinates === bCoordinates) ||
     (Array.isArray(aCoordinates) &&
       Array.isArray(bCoordinates) &&
+      typeof aCoordinates[0] === 'number' &&
+      typeof bCoordinates[0] === 'number' &&
+      typeof aCoordinates[1] === 'number' &&
+      typeof bCoordinates[1] === 'number' &&
       aCoordinates[0].toFixed(3) === bCoordinates[0].toFixed(3) &&
       aCoordinates[1].toFixed(3) === bCoordinates[1].toFixed(3))
   )
@@ -49,12 +47,15 @@ export function roundWithOriginalPrecision(input: number, original: number) {
   return input.toFixed(Math.min(precision, 5))
 }
 
-export function createPoint(coordinates: mapboxgl.LngLatLike, properties: Properties = {}) {
-  const point: Point = {
+export function createPoint(
+  coordinates: mapboxgl.LngLatLike,
+  properties: Feature['properties'] = {}
+) {
+  const point: Feature = {
     type: 'Feature',
     geometry: {
       type: 'Point',
-      coordinates: coordinates,
+      coordinates: coordinates as GeoJSON.Position,
     },
     properties,
   }
@@ -89,12 +90,8 @@ export const format = {
   },
 }
 
-export function stringifyCoordinates(coordinates: mapboxgl.LngLatLike) {
-  if (Array.isArray(coordinates)) {
-    return coordinates.join(',')
-  } else if ('lon' in coordinates) {
-    return `${coordinates.lon},${coordinates.lat}`
-  } else {
-    return `${coordinates.lng},${coordinates.lat}`
-  }
+export function stringifyCoordinates(coordinates: Geometry['coordinates']) {
+  return coordinates.join(',')
 }
+
+export const notNull = <T>(value: T): value is NonNullable<T> => value != null

@@ -1,19 +1,21 @@
 import { defu } from 'defu'
 import mapboxgl from 'mapbox-gl'
-import { createStore } from 'zustand/vanilla'
+import { createStore, StoreApi } from 'zustand/vanilla'
 import type { GeocodingFeature } from '../api/geocoder.js'
-import type { MapboxDirectionsOptions } from '../index.js'
 import { fetchDirections, type Route } from '../api/directions.js'
-import { stringifyCoordinates, type Point } from '../utils/index.js'
+import { stringifyCoordinates, type Feature } from '../utils/index.js'
+import type { MapboxDirectionsOptions, MapboxProfile } from '../index.js'
 
 export interface MapboxDirectionsState extends MapboxDirectionsOptions {
+  error: unknown
+
   // Container for client registered events
   events: {}
 
   // Marker feature drawn on the map at any point.
-  origin: Point | null
-  destination: Point | null
-  hoverMarker: Point | null
+  origin: Feature | null
+  destination: Feature | null
+  hoverMarker: Feature | null
   waypoints: GeocodingFeature[]
 
   // User input strings or result returned from geocoder
@@ -27,17 +29,22 @@ export interface MapboxDirectionsState extends MapboxDirectionsOptions {
   routeIndex: number
   routePadding: number
 
-  setOrigin: (origin: Point) => void
+  setProfile: (profile: MapboxProfile) => void
+  setOrigin: (origin: Feature) => void
   clearOrigin: () => void
-  setDestination: (destination: Point) => void
+  setDestination: (destination: Feature) => void
   clearDestination: () => void
   reverse: () => void
   updateDirections: () => void
 }
 
-export function createDirectionsStore(options: MapboxDirectionsOptions) {
+export type DirectionsStore = StoreApi<MapboxDirectionsState>
+
+export function createDirectionsStore(options: MapboxDirectionsOptions): DirectionsStore {
   const directionsStore = createStore<MapboxDirectionsState>((set, get) => {
     const initialState: MapboxDirectionsState = {
+      error: null,
+
       // Options set on initialization
       api: 'https://api.mapbox.com/directions/v5/',
       profile: 'mapbox/driving-traffic',
@@ -226,28 +233,31 @@ export function createDirectionsStore(options: MapboxDirectionsOptions) {
       routeIndex: 0,
       routePadding: 80,
 
-      setOrigin: (origin: Point) => {
-        set(prevState => ({ ...prevState, origin }))
+      setProfile: (profile) => {
+        set((prevState) => ({ ...prevState, profile }))
+      },
+      setOrigin: (origin: Feature) => {
+        set((prevState) => ({ ...prevState, origin }))
       },
       clearOrigin: () => {
-        set(prevState => ({
+        set((prevState) => ({
           ...prevState,
           origin: null,
           originQuery: '',
           waypoints: [],
-          directions: []
+          directions: [],
         }))
       },
-      setDestination: (destination: Point) => {
-        set(prevState => ({ ...prevState, destination }))
+      setDestination: (destination: Feature) => {
+        set((prevState) => ({ ...prevState, destination }))
       },
       clearDestination: () => {
-        set(prevState => ({
+        set((prevState) => ({
           ...prevState,
           destination: null,
           destinationQuery: '',
           waypoints: [],
-          directions: []
+          directions: [],
         }))
       },
       reverse: () => {
@@ -258,7 +268,7 @@ export function createDirectionsStore(options: MapboxDirectionsOptions) {
             originQueryCoordinates,
             destination,
             destinationQuery,
-            destinationQueryCoordinates
+            destinationQueryCoordinates,
           } = prevState
 
           return {
@@ -282,18 +292,16 @@ export function createDirectionsStore(options: MapboxDirectionsOptions) {
           alternatives,
           congestion,
           controls,
-          accessToken
+          accessToken,
         } = get()
 
-        if (!(
-          origin?.geometry.coordinates && destination?.geometry.coordinates && profile
-        )) return
+        if (!(origin?.geometry.coordinates && destination?.geometry.coordinates && profile)) return
 
         const queryArray = [
           stringifyCoordinates(origin.geometry.coordinates),
           ';',
           ...waypoints.flatMap((waypoint) => [
-            stringifyCoordinates(waypoint.geometry.coordinates as [number, number]),
+            stringifyCoordinates(waypoint.geometry.coordinates),
             ';',
           ]),
           stringifyCoordinates(destination.geometry.coordinates),
@@ -320,7 +328,7 @@ export function createDirectionsStore(options: MapboxDirectionsOptions) {
           })
         } else {
         }
-      }
+      },
     }
 
     return defu(options, initialState) as MapboxDirectionsState

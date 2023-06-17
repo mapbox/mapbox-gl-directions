@@ -92,14 +92,14 @@ export class Geocoder extends EventEmitter<GeocoderEvents> {
     this._value = null
 
     const autocompleteOption = document.createElement('div')
-    autocompleteOption.style.overflow = 'hidden'
-    autocompleteOption.style.textOverflow = 'ellipsis'
-    autocompleteOption.style.whiteSpace = 'nowrap'
-    autocompleteOption.style.fontFamily = 'Helvetica Neue, Arial, Helvetica, sans-serif'
+    autocompleteOption.style.padding = '8px'
     autocompleteOption.style.fontSize = '12px'
-    autocompleteOption.style.padding = '5px 10px'
-    autocompleteOption.style.cursor = 'pointer'
     autocompleteOption.style.fontWeight = '400'
+    autocompleteOption.style.cursor = 'pointer'
+    autocompleteOption.style.overflow = 'hidden'
+    autocompleteOption.style.whiteSpace = 'nowrap'
+    autocompleteOption.style.textOverflow = 'ellipsis'
+    autocompleteOption.style.fontFamily = 'Helvetica Neue, Arial, Helvetica, sans-serif'
 
     autocomplete<GeocoderAutocompleteOption>({
       input: this._inputElement,
@@ -122,6 +122,18 @@ export class Geocoder extends EventEmitter<GeocoderEvents> {
       onSelect: (item, _input) => {
         this._value = item
         this._inputElement.value = item.place_name
+
+        if (options.flyTo) {
+          if (
+            (item.bbox && item.context && item.context.length <= 3) ||
+            (item.bbox && !item.context)
+          ) {
+            this._map.fitBounds(item.bbox)
+          } else {
+            this._map.flyTo({ center: item.center, zoom: this.options.zoom })
+          }
+        }
+
         this.fire('result', { result: item })
       },
       render: (item, _currentValue, _index) => {
@@ -142,12 +154,8 @@ export class Geocoder extends EventEmitter<GeocoderEvents> {
 
     this.fire('loading', undefined)
 
-    // const accessToken = this.options.accessToken ? this.options.accessToken : mapboxgl.accessToken;
-    const accessToken =
-      'pk.eyJ1IjoicGVkcmljIiwiYSI6ImNsZzE0bjk2ajB0NHEzanExZGFlbGpwazIifQ.l14rgv5vmu5wIMgOUUhUXw'
-
     this.options.queryParams ??= {}
-    this.options.queryParams.access_token = accessToken
+    this.options.queryParams.access_token = this.options.accessToken ?? mapboxgl.accessToken
 
     const data = await fetchGeocoder(this.api, input, this.options.queryParams)
 
@@ -177,10 +185,7 @@ export class Geocoder extends EventEmitter<GeocoderEvents> {
   }
 
   _change() {
-    const changeEvent = new Event('HTMLEvents', {
-      bubbles: true,
-      cancelable: false,
-    })
+    const changeEvent = new Event('HTMLEvents', { bubbles: true, cancelable: false })
     this._inputElement.dispatchEvent(changeEvent)
   }
 

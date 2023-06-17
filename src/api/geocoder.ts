@@ -261,7 +261,7 @@ export async function fetchGeocoder(
   const data = await fetch(url)
     .then(async (response) => {
       const data = await response.json()
-      return response.ok ? data as GeocodingOkResponse : data as GeocodingErrorResponse
+      return response.ok ? (data as GeocodingOkResponse) : (data as GeocodingErrorResponse)
     })
     .catch((error) => {
       console.log({ error })

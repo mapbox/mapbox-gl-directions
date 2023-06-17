@@ -1,4 +1,4 @@
-import template from 'lodash.template';
+import template from 'lodash.template'
 
 export interface CreateInstructionsTemplateOptions {
   steps: any[]
@@ -65,5 +65,5 @@ const instructionsHtmlTemplate = `\
 `
 
 export function createInstructionsTemplate(options: CreateInstructionsTemplateOptions): string {
-  return template(instructionsHtmlTemplate)(options);
+  return template(instructionsHtmlTemplate)(options)
 }

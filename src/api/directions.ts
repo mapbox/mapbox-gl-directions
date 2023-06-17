@@ -1,4 +1,4 @@
-import mapboxgl from "mapbox-gl"
+import mapboxgl from 'mapbox-gl'
 
 export interface DirectionsErrorResponse {
   message?: string
@@ -45,8 +45,7 @@ export interface Waypoint {
   metadata?: ChargingWaypointMetadata | null
 }
 
-export interface ChargingWaypointMetadata {
-}
+export interface ChargingWaypointMetadata {}
 
 export interface Route {
   /**
@@ -268,7 +267,7 @@ export interface RouteStepManeuver {
   /**
    * The coordinates of the maneuver as [longitude, latitude].
    */
-  location: mapboxgl.LngLatLike
+  location: number[]
 
   /**
    * Optional. The direction change of the maneuver. The meaning of each modifier depends on the type property.
@@ -342,8 +341,7 @@ export interface AdminBoundary {
 /**
  * TODO
  */
-export interface RouteIncident {
-}
+export interface RouteIncident {}
 
 export interface RouteClosure {
   /**
@@ -440,7 +438,7 @@ export async function fetchDirections(
 
       return data as DirectionsOkResponse
     })
-    .catch(error => {
+    .catch((error) => {
       return { message: error } as DirectionsErrorResponse
     })
 

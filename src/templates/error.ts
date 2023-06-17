@@ -1,4 +1,4 @@
-import template from "lodash.template"
+import template from 'lodash.template'
 
 const errorHtmlTemplate = `\
 <div class='directions-control directions-control-directions'>

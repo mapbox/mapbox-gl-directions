@@ -4,11 +4,11 @@ import './mapbox-gl-directions.css'
 import mapboxgl from 'mapbox-gl'
 import { decode } from '@mapbox/polyline'
 import * as utils from './utils/index.js'
-import * as actions from './state/actions.js'
 import { Geocoder } from './controls/geocoder.js'
 import { Instructions } from './controls/instructions.js'
-import { initializeStore, store } from './state/store.js'
 import { createInputsTemplate } from './templates/input.js'
+import { createDirectionsStore, type DirectionsStore } from './state/store.js'
+import { Feature } from './utils/index.js'
 
 export const MapboxProfiles = [
   'mapbox/driving-traffic',
@@ -150,6 +150,16 @@ export interface MapboxDirectionsOptions {
   controls?: MapDirectionsControls
 }
 
+const directionsLayerName = 'directions'
+
+const directionsSource: mapboxgl.AnySourceData = {
+  type: 'geojson',
+  data: {
+    type: 'FeatureCollection',
+    features: [],
+  },
+}
+
 /**
  * @example
  * const MapboxDirections = require('../src/index.js');
@@ -165,21 +175,29 @@ export interface MapboxDirectionsOptions {
  */
 export class MapboxDirections {
   container: HTMLElement
-  _map: mapboxgl.Map | null
+
+  _map: mapboxgl.Map
+
   timer: number | undefined
 
-  constructor(public options: MapboxDirectionsOptions = {}) {
-    initializeStore(options)
+  store: DirectionsStore
 
+  unsubscribe: () => void
+
+  constructor(public options: MapboxDirectionsOptions = {}) {
     this.container = document.createElement('div')
     this.container.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl'
-    this._map = null
+    this._map = Object.create(null)
+    this.store = createDirectionsStore(options)
+    this.unsubscribe = () => {
+      console.log('NOOP unsubscribe')
+    }
   }
 
   onAdd(map: mapboxgl.Map) {
-    this._map = map
+    const state = this.store.getState()
 
-    const controls: MapDirectionsControls = {}
+    this._map = map
 
     const geocoderContainer = document.createElement('div')
     geocoderContainer.className = 'directions-control directions-control-inputs'
@@ -195,385 +213,239 @@ export class MapboxDirections {
       .querySelectorAll<HTMLInputElement>('input[type="radio"]')
       .forEach((element) => {
         element.addEventListener('change', () => {
-          const profile = element.value as MapboxProfile
-          actions.setProfile(profile)
+          const { origin, destination, setProfile, updateDirections } = this.store.getState()
 
-          const { origin, destination } = store.getState()
+          setProfile(element.value as MapboxProfile)
 
           if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
-            actions.updateDirections()
+            updateDirections()
           }
         })
       })
 
     // Reversing Origin / Destination
     geocoderContainer.querySelector('.js-reverse-inputs')?.addEventListener('click', () => {
-      actions.reverse()
+      const { reverse, origin, destination, updateDirections } = this.store.getState()
 
-      const { origin, destination } = store.getState();
+      reverse()
 
       if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
-        actions.updateDirections()
+        updateDirections()
       }
     })
 
-    const originGeocoder = new Geocoder()
-    const originElement = originGeocoder.onAdd(map)
-    const originContainerElement = geocoderContainer.querySelector(
-      '#mapbox-directions-origin-input'
-    )
-    originContainerElement?.appendChild(originElement)
-    originGeocoder.on('result', async (data) => {
-      const centerCoords = utils.createPoint(data.result.center)
-      actions.setOrigin(centerCoords)
+    const geocoderOptions = { ...state, ...state.controls, api: undefined }
 
-      const { origin, destination } = store.getState()
+    const originGeocoder = new Geocoder(geocoderOptions)
+    const originElement = originGeocoder.onAdd(map)
+    const originContainer = geocoderContainer.querySelector('#mapbox-directions-origin-input')
+    originContainer?.appendChild(originElement)
+
+    originGeocoder.on('result', async (data) => {
+      const { setOrigin, updateDirections } = this.store.getState()
+
+      setOrigin(utils.createPoint(data.result.center))
+
+      const { origin, destination } = this.store.getState()
 
       if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
-        actions.updateDirections()
+        updateDirections()
       }
     })
 
     originGeocoder.on('clear', () => {
-      actions.clearOrigin()
+      this.store.getState().clearOrigin()
     })
 
-    const destinationGeocoder = new Geocoder()
+    const destinationGeocoder = new Geocoder(geocoderOptions)
     const destinationElement = destinationGeocoder.onAdd(map)
-    const destinationContainerElement = geocoderContainer.querySelector(
+    const destinationContainer = geocoderContainer.querySelector(
       '#mapbox-directions-destination-input'
     )
-    destinationContainerElement?.appendChild(destinationElement)
+    destinationContainer?.appendChild(destinationElement)
 
     destinationGeocoder.on('result', (data) => {
-      const centerCoords = utils.createPoint(data.result.center)
-      actions.setDestination(centerCoords)
+      const { setDestination, updateDirections } = this.store.getState()
 
-      const { origin, destination } = store.getState()
+      setDestination(utils.createPoint(data.result.center))
+
+      const { origin, destination } = this.store.getState()
 
       if (origin?.geometry.coordinates && destination?.geometry.coordinates) {
-        actions.updateDirections()
+        updateDirections()
       }
     })
 
     destinationGeocoder.on('clear', () => {
-      actions.clearDestination()
+      this.store.getState().clearDestination()
     })
 
-    if (controls.inputs || true) {
+    if (state.controls?.inputs || true) {
       this.container.appendChild(geocoderContainer)
     }
 
     const directionsElement = document.createElement('div')
     directionsElement.className = 'directions-control directions-control-instructions'
-    directionsElement.textContent = 'Directions Element'
 
-    const instructions = new Instructions(directionsElement);
-    instructions.onAdd(map);
+    const instructions = new Instructions(directionsElement, this.store)
+    instructions.onAdd(map)
     instructions.render()
 
-    if (controls.instructions || true) {
+    if (state.controls?.instructions || true) {
       this.container.appendChild(directionsElement)
-    }
-
-    this.subscribedActions()
-
-    // Add direction specific styles to the map
-    if (this._map?.loaded()) {
-      // Add and set data theme layer/style
-      this._map.addSource('directions', {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: []
-        }
-      });
-
-      const { styles } = store.getState()
-
-      if (styles?.length) {
-        styles.forEach((style) => {
-          this._map?.addLayer(style)
-        });
-      }
-    } else {
-      this._map.on('load', () => {
-
-        const { styles } = store.getState()
-        // Add and set data theme layer/style
-        this._map?.addSource('directions', {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: []
-          }
-        });
-
-        if (styles?.length) {
-          styles.forEach((style) => {
-            this._map?.addLayer(style)
-          });
-        }
-      })
     }
 
     return this.container
   }
 
-  /**
-   * Removes the control from the map it has been added to.
-   * This is called by `map.removeControl`, which is the recommended method to remove controls.
-   */
-  onRemove(map: mapboxgl.Map) {
-    this.container.parentNode?.removeChild(this.container)
-    this.removeRoutes()
+  loadMapLayers() {
+    const { styles, interactive } = this.store.getState()
 
-    map.off('mousedown', this.onDragDown)
-    map.off('mousemove', this.move)
-    map.off('touchstart', this.onDragDown)
-    map.off('touchstart', this.move)
-    map.off('click', this.onClick)
+    // Emit any default or option set config
+    // this.actions.eventEmit('profile', { profile });
 
-    // if (this.storeUnsubscribe) {
-    //   this.storeUnsubscribe();
-    //   delete this.storeUnsubscribe;
-    // }
+    // Add and set data theme layer/style
+    this._map.addSource(directionsLayerName, directionsSource)
 
-    this.options.styles?.forEach((layer) => {
-      if (map.getLayer(layer.id)) map.removeLayer(layer.id)
-    })
+    styles?.forEach((style) => this._map.addLayer(style))
 
-    if (map.getSource('directions')) map.removeSource('directions')
+    const noop = () => {
+      console.log('TODO')
+    }
 
-    this._map = null
+    if (interactive) {
+      this._map.on('mousedown', noop) // this.onDragDown);
+      this._map.on('mousemove', noop) // this.move);
+      this._map.on('click', noop) // this.onClick);
 
-    return this
-  }
-
-  onDragDown() {
-    // if (!(this.isCursorOverPoint && this._map)) return;
-    // this.isDragging = this.isCursorOverPoint;
-
-    if (!this._map) return
-    this._map.getCanvas().style.cursor = 'grab'
-
-    this._map.on('mousemove', this.onDragMove)
-    this._map.on('mouseup', this.onDragUp)
-    this._map.on('touchmove', this.onDragMove)
-    this._map.on('touchend', this.onDragUp)
-  }
-
-  onDragMove(event: mapboxgl.MapMouseEvent) {
-    // if (!this.isDragging) return;
-    // const coords = [event.lngLat.lng, event.lngLat.lat];
-    // switch (this.isDragging.layer.id) {
-    //   case 'directions-origin-point':
-    //     this.actions.createOrigin(coords);
-    //     break;
-    //   case 'directions-destination-point':
-    //     this.actions.createDestination(coords);
-    //     break;
-    //   case 'directions-hover-point':
-    //     this.actions.hoverMarker(coords);
-    //     break;
-    // }
-  }
-
-  onDragUp() {
-    // if (!this.isDragging) return;
-    if (!this._map) return
-
-    // const { hoverMarker, origin, destination } = store.getState();
-
-    // switch (this.isDragging.layer.id) {
-    //   case 'directions-origin-point':
-    //     this.actions.setOriginFromCoordinates(origin.geometry.coordinates);
-    //     break;
-    //   case 'directions-destination-point':
-    //     this.actions.setDestinationFromCoordinates(destination.geometry.coordinates);
-    //     break;
-    //   case 'directions-hover-point':
-    //     // Add waypoint if a sufficent amount of dragging has occurred.
-    //     if (hoverMarker.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
-    //       this.actions.addWaypoint(0, hoverMarker);
-    //     }
-    //     break;
-    // }
-
-    // this.isDragging = false;
-    this._map.getCanvas().style.cursor = ''
-
-    this._map.off('touchmove', this.onDragMove)
-    this._map.off('touchend', this.onDragUp)
-    this._map.off('mousemove', this.onDragMove)
-    this._map.off('mouseup', this.onDragUp)
-  }
-
-  /**
-   * Removes all routes and waypoints from the map.
-   */
-  removeRoutes() {
-    // this.actions.clearOrigin();
-    // this.actions.clearDestination();
-    return this
-  }
-
-  onClick(event: mapboxgl.MapMouseEvent) {
-    if (!this.timer) {
-      this.timer = setTimeout(() => {
-        this._onSingleClick(event)
-        this.timer = undefined
-      }, 250)
-    } else {
-      clearTimeout(this.timer)
-      this.timer = undefined
-      this._map?.zoomIn()
+      this._map.on('touchstart', noop) // this.move);
+      this._map.on('touchstart', noop) // this.onDragDown);
     }
   }
 
-  _onSingleClick(event: mapboxgl.MapMouseEvent) {
-    // const { origin } = store.getState();
-    // const coords = [event.lngLat.lng, event.lngLat.lat];
-    // if (!origin.geometry) {
-    //   this.actions.setOriginFromCoordinates(coords);
-    // } else {
-    //   const features = this._map.queryRenderedFeatures(event.point, {
-    //     layers: [
-    //       'directions-origin-point',
-    //       'directions-destination-point',
-    //       'directions-waypoint-point',
-    //       'directions-route-line-alt'
-    //     ]
-    //   });
-    //   if (features.length) {
-    //     // Remove any waypoints
-    //     features.forEach((f) => {
-    //       if (f.layer.id === 'directions-waypoint-point') {
-    //         this.actions.removeWaypoint(f);
-    //       }
-    //     });
-    //     if (features[0].properties.route === 'alternate') {
-    //       const index = features[0].properties['route-index'];
-    //       this.actions.setRouteIndex(index);
-    //     }
-    //   } else {
-    //     this.actions.setDestinationFromCoordinates(coords);
-    //     this._map.flyTo({ center: coords });
-    //   }
-    // }
-  }
+  subscribe() {
+    this.unsubscribe = this.store.subscribe((state) => {
+      const { origin, destination, hoverMarker, directions, routeIndex } = state
 
-  move(event: mapboxgl.MapMouseEvent) {
-    // const { hoverMarker } = store.getState();
-    // const features = this._map.queryRenderedFeatures(event.point, {
-    //   layers: [
-    //     'directions-route-line-alt',
-    //     'directions-route-line',
-    //     'directions-origin-point',
-    //     'directions-destination-point',
-    //     'directions-hover-point'
-    //   ]
-    // });
-    // this._map.getCanvas().style.cursor = features.length ? 'pointer' : '';
-    // if (features.length) {
-    //   this.isCursorOverPoint = features[0];
-    //   this._map.dragPan.disable();
-    //   // Add a possible waypoint marker when hovering over the active route line
-    //   features.forEach((feature) => {
-    //     if (feature.layer.id === 'directions-route-line') {
-    //       this.actions.hoverMarker([event.lngLat.lng, event.lngLat.lat]);
-    //     } else if (hoverMarker.geometry) {
-    //       this.actions.hoverMarker(null);
-    //     }
-    //   });
-    // } else if (this.isCursorOverPoint) {
-    //   this.isCursorOverPoint = false;
-    //   this._map.dragPan.enable();
-    // }
-  }
-  subscribedActions() {
-    store.subscribe(state => {
-      const {
-        origin,
-        destination,
-        hoverMarker,
-        directions,
-        routeIndex
-      } = store.getState();
+      const features = directions.flatMap((feature, index) =>
+        decode(feature.geometry, 5)
+          .map((coordinates) => coordinates.reverse())
+          .reduce((features, coordinates, i) => {
+            const previous = features[features.length - 1]
 
-      const geojson = {
-        type: 'FeatureCollection',
-        features: [origin, destination, hoverMarker].filter((d) => d?.geometry)
-      };
+            const congestion =
+              feature.legs[0].annotation &&
+              feature.legs[0].annotation.congestion &&
+              feature.legs[0].annotation.congestion[i - 1]
 
-      if (!directions.length) return
+            if (previous && (!congestion || previous.properties?.congestion === congestion)) {
+              previous.geometry.coordinates.push(coordinates)
+              return features
+            }
 
-      directions.forEach((feature, index) => {
-        const features = [];
-
-        const decoded = decode(feature.geometry, 5).map((c) => c.reverse());
-
-        decoded.forEach(function(c, i) {
-          var previous = features[features.length - 1];
-          var congestion = feature.legs[0].annotation && feature.legs[0].annotation.congestion && feature.legs[0].annotation.congestion[i - 1];
-
-          if (previous && (!congestion || previous.properties.congestion === congestion)) {
-            previous.geometry.coordinates.push(c);
-          } else {
-            var segment = {
+            const segment: GeoJSON.Feature<GeoJSON.LineString> = {
+              type: 'Feature',
               geometry: {
                 type: 'LineString',
-                coordinates: []
+                coordinates: [],
               },
               properties: {
                 'route-index': index,
-                route: (index === routeIndex) ? 'selected' : 'alternate',
-              }
-            };
+                route: index === routeIndex ? 'selected' : 'alternate',
+              },
+            }
 
             // New segment starts with previous segment's last coordinate.
             if (previous) {
-              segment.geometry.coordinates.push(previous.geometry.coordinates[previous.geometry.coordinates.length - 1]);
+              segment.geometry.coordinates.push(
+                previous.geometry.coordinates[previous.geometry.coordinates.length - 1]
+              )
             }
 
-            segment.geometry.coordinates.push(c);
+            segment.geometry.coordinates.push(coordinates)
 
-            if (congestion) {
-              segment.properties.congestion = feature.legs[0].annotation.congestion[i - 1];
+            if (congestion && segment.properties?.congestion) {
+              segment.properties.congestion = feature.legs[0].annotation.congestion[i - 1]
             }
 
-            features.push(segment);
-          }
-        });
+            features.push(segment)
 
-        geojson.features = geojson.features.concat(features);
-
-        if (index === routeIndex) {
-          // Collect any possible waypoints from steps
-          feature.legs[0].steps.forEach((d) => {
-            if (d.maneuver.type === 'waypoint') {
-              geojson.features.push({
-                type: 'Feature',
-                geometry: d.maneuver.location,
-                properties: {
-                  id: 'waypoint'
-                }
-              });
+            if (index === routeIndex) {
+              // Collect any possible waypoints from steps
+              features.push(
+                ...feature.legs[0].steps
+                  .filter((d) => d.maneuver.type === 'waypoint')
+                  .flatMap((d) => {
+                    const waypointFeature: GeoJSON.Feature<GeoJSON.LineString> = {
+                      type: 'Feature',
+                      geometry: {
+                        type: 'LineString',
+                        coordinates: [d.maneuver.location],
+                      },
+                      properties: {
+                        id: 'waypoint'
+                      }
+                    }
+                    return waypointFeature
+                  })
+              )
             }
-          });
-        }
 
-        if (this._map?.style && this._map.getSource('directions')) {
-          this._map.getSource('directions').setData(geojson);
-        }
+            return features
+          }, [] as GeoJSON.Feature<GeoJSON.LineString>[])
+      )
 
-      });
+      const geojson: GeoJSON.FeatureCollection = {
+        type: 'FeatureCollection',
+        features
+      }
+
+      if (origin?.geometry) geojson.features.push(origin)
+      if (destination?.geometry) geojson.features.push(destination)
+      if (hoverMarker?.geometry) geojson.features.push(hoverMarker)
+
+      const loadedDirectionsSource = this._map.getSource('directions')
+      if (loadedDirectionsSource && loadedDirectionsSource.type === 'geojson') {
+        loadedDirectionsSource.setData(geojson)
+      }
     })
   }
+
+  onRemove(map: mapboxgl.Map) {
+    const { styles, clearOrigin, clearDestination } = this.store.getState()
+
+    this.container.parentNode?.removeChild(this.container)
+
+    clearOrigin()
+    clearDestination()
+
+    // map.off('mousedown', this.onDragDown);
+    // map.off('mousemove', this.move);
+    // map.off('touchstart', this.onDragDown);
+    // map.off('touchstart', this.move);
+    // map.off('click', this.onClick);
+
+    this.unsubscribe()
+    this.unsubscribe = () => {
+      console.log('NOOP unsubscribe')
+    }
+
+    styles?.forEach((layer) => {
+      if (map.getLayer(layer.id)) {
+        map.removeLayer(layer.id)
+      }
+    })
+
+    if (map.getSource('directions')) {
+      map.removeSource('directions')
+    }
+
+    this._map = Object.create(null)
+  }
 }
+
 const accessToken =
   'pk.eyJ1IjoicGVkcmljIiwiYSI6ImNsZzE0bjk2ajB0NHEzanExZGFlbGpwazIifQ.l14rgv5vmu5wIMgOUUhUXw'
-
 const container = document.createElement('div')
 container.style.height = '100vh'
 container.style.width = '100vw'
