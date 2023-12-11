@@ -1,3 +1,7 @@
+## 4.1.2
+
+- [chore] Update mapbox-gl peer dependency version [#298](https://github.com/mapbox/mapbox-gl-directions/pull/298)
+
 ## 4.1.1
 
 - [bug] Exclude `options.api` from query params [#266](https://github.com/mapbox/mapbox-gl-directions/pull/266)
