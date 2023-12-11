@@ -1,0 +1,35 @@
+// Add GeoJSON source with stop coordinates
+  map.addSource(`stops-${i}`, {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: coordinates.map((coord) => {
+        return {
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: coord
+          }
+        };
+      })
+    }
+  });
+
+  map.loadImage(
+    'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+    function (error, image) {
+      if (error) throw error;
+      map.addImage('marker-15', image);
+    }
+  );
+
+  // Add symbol layer with markers for each stop coordinate
+  map.addLayer({
+    id: `markers-${i}`,
+    type: 'symbol',
+    source: `stops-${i}`,
+    layout: {
+      'icon-image': 'marker-15', // Use a Mapbox provided icon for the markers
+      'icon-size': 1
+    }
+  });

@@ -1,3 +1,50 @@
+/*markers*/
+.marker {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: #098;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+
+#search-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  background-color: white;
+  z-index: 1;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+#search-input {
+  width: 100%;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+#search-button {
+  width: 100%;
+  background-color: #098;
+  color: white;
+  border: none;
+  padding: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+
+
 /* Mapboxgl Geocoder */
 /* Basics */
 .mapboxgl-ctrl-geocoder,
