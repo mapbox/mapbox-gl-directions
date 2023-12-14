@@ -118,3 +118,28 @@ test('Directions#onRemove', t => {
     t.end();
   }));
 });
+
+test('multiple MapboxDirection instances should not share state', t => {
+  var map = setup();
+  var map2 = setup();
+  var directions = new MapboxDirections({
+    geocoder: {
+      proximity: [-79.45, 43.65]
+    }
+  });
+  var directions2 = new MapboxDirections({
+    geocoder: {
+      proximity: [-79.45, 43.65]
+    }
+  });
+  map.addControl(directions);
+  map2.addControl(directions2);
+
+  directions.setOrigin('Queen Street NY');
+  directions.setDestination([-77, 41]);
+  directions.on('route', once(() => {
+    t.equal(map.getSource('directions').serialize().data.features.length, 2)
+    t.equal(map2.getSource('directions').serialize().data.features.length, 0)
+    t.end();
+  }));
+})
