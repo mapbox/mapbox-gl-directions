@@ -328,6 +328,34 @@ export function eventSubscribe(type, fn) {
   };
 }
 
+export function eventUnsubscribe(type, fn) {
+  return (dispatch, getState) => {
+    const { events } = getState();
+    
+    if (!events[type]) {
+      return {
+        type: types.EVENTS,
+        events
+      };
+    }
+    
+    if (fn) {
+      // Drop the event if it exists in the events object
+      const fnToDelete = events[type].indexOf(fn);
+      if (fnToDelete >= 0) {
+        events[type].splice(fnToDelete, 1);
+      }
+    } else {
+      delete events[type];
+    }
+
+    return {
+      type: types.EVENTS,
+      events: events
+    };
+  };
+}
+
 export function eventEmit(type, data) {
   return (dispatch, getState) => {
     const { events } = getState();

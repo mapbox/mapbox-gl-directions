@@ -105,7 +105,9 @@ export default class MapboxDirections {
    * @returns {Control} `this`
    */
   onRemove(map) {
-    this.container.parentNode.removeChild(this.container);
+    if (this.container.parentNode !== null) {
+      this.container.parentNode.removeChild(this.container);
+    }
     this.removeRoutes();
     map.off('mousedown', this.onDragDown);
     map.off('mousemove', this.move);
@@ -300,7 +302,6 @@ export default class MapboxDirections {
         }
       } else {
         this.actions.setDestinationFromCoordinates(coords);
-        this._map.flyTo({ center: coords });
       }
     }
   }
@@ -371,7 +372,7 @@ export default class MapboxDirections {
   _onDragUp() {
     if (!this.isDragging) return;
 
-    const { hoverMarker, origin, destination } = store.getState();
+    const { hoverMarker, origin, destination, waypoints } = store.getState();
 
     switch (this.isDragging.layer.id) {
       case 'directions-origin-point':
@@ -383,7 +384,9 @@ export default class MapboxDirections {
       case 'directions-hover-point':
         // Add waypoint if a sufficent amount of dragging has occurred.
         if (hoverMarker.geometry && !utils.coordinateMatch(this.isDragging, hoverMarker)) {
-          this.actions.addWaypoint(0, hoverMarker);
+          const click = this.isDragging.geometry.coordinates;
+          const index = utils.getNextWaypoint(this.getRoute.bind(this), waypoints, click);
+          this.actions.addWaypoint(index, hoverMarker);
         }
       break;
     }
@@ -528,7 +531,22 @@ export default class MapboxDirections {
   getWaypoints() {
     return store.getState().waypoints;
   }
-
+  
+  /**
+   * Fetch all current points in a route.
+   * @returns {Array} route points
+   */
+  getRoute() {
+    return this
+      ._map
+      .getSource('directions')
+      ._data
+      .features
+      .find(({geometry}) => geometry.type === 'LineString')
+      .geometry
+      .coordinates;
+  }
+  
   /**
    * Removes all routes and waypoints from the map.
    *
@@ -556,6 +574,17 @@ export default class MapboxDirections {
    */
   on(type, fn) {
     this.actions.eventSubscribe(type, fn);
+    return this;
+  }
+  
+  /**
+   * Unsubscribe to events
+   * @param {String} type name of event. Available events are outlined in `on`
+   * @param {Function} fn optional. The function that's called when the event is emitted.
+   * @returns {Directions} this;
+   */
+  off(type, fn) {
+    this.actions.eventUnsubscribe(type, fn);
     return this;
   }
 }
