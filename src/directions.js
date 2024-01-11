@@ -191,6 +191,15 @@ export default class MapboxDirections {
             return c.reverse();
           });
 
+          const allSteps = feature.legs.reduce((steps, leg, idx) => {
+            if (idx > 0) {
+              steps[steps.length - 1].maneuver.type = 'waypoint';
+              leg.steps[0].maneuver.type = '';
+            }
+  
+            return steps.concat(leg.steps)
+          }, []); 
+
           decoded.forEach(function(c, i) {
             var previous = features[features.length - 1];
             var congestion = feature.legs[0].annotation && feature.legs[0].annotation.congestion && feature.legs[0].annotation.congestion[i - 1];
@@ -226,11 +235,14 @@ export default class MapboxDirections {
 
           if (index === routeIndex) {
             // Collect any possible waypoints from steps
-            feature.legs[0].steps.forEach((d) => {
+            allSteps.forEach((d) => {
               if (d.maneuver.type === 'waypoint') {
                 geojson.features.push({
                   type: 'Feature',
-                  geometry: d.maneuver.location,
+                  geometry: {
+                    type: 'Point',
+                    coordinates: d.maneuver.location,
+                  },
                   properties: {
                     id: 'waypoint'
                   }

@@ -20,12 +20,12 @@
             var distance = step.distance ? format(step.distance) : false;
             var icon = step.maneuver.modifier ? step.maneuver.modifier.replace(/\s+/g, '-').toLowerCase() : step.maneuver.type.replace(/\s+/g, '-').toLowerCase();
 
-            if (step.maneuver.type === 'arrive' || step.maneuver.type === 'depart') {
+            if (['arrive', 'depart', 'waypoint'].includes(step.maneuver.type)) {
               icon = step.maneuver.type;
             }
 
             if (step.maneuver.type === 'roundabout' || step.maneuver.type === 'rotary') {
-              icon= 'roundabout';
+              icon = 'roundabout';
             }
 
             var lng = step.maneuver.location[0];

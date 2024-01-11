@@ -38,6 +38,14 @@ export default class Instructions {
 
       if (directions.length && shouldRender) {
         const direction = this.directions = directions[routeIndex];
+        const allSteps = direction.legs.reduce((steps, leg, idx) => {
+          if (idx > 0) {
+            steps[steps.length - 1].maneuver.type = 'waypoint';
+            leg.steps[0].maneuver.type = '';
+          }
+
+          return steps.concat(leg.steps)
+        }, []);
 
         if (compile) {
           direction.legs.forEach(function(leg) {
@@ -50,7 +58,7 @@ export default class Instructions {
         this.container.innerHTML = instructionsTemplate({
           routeIndex,
           routes: directions.length,
-          steps: direction.legs[0].steps, // Todo: Respect all legs,
+          steps: allSteps,
           format: utils.format[unit],
           duration: utils.format.duration(direction.duration),
           distance: utils.format[unit](direction.distance)
