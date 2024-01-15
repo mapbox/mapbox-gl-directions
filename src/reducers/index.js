@@ -1,5 +1,5 @@
 import * as types from '../constants/action_types.js';
-import deepAssign from 'deep-assign';
+import merge from 'lodash.merge';
 
 const initialState = {
   // Options set on initialization
@@ -46,14 +46,16 @@ const initialState = {
 
   // Directions data
   directions: [],
+  fetchDirectionsRequest: null,
   routeIndex: 0, 
   routePadding: 80
 };
 
 function data(state = initialState, action) {
   switch (action.type) {
-  case types.SET_OPTIONS:
-    return deepAssign({}, state, action.options);
+  case types.SET_OPTIONS: {
+    return merge({}, state, action.options);
+  }
 
   case types.DIRECTIONS_PROFILE:
     return Object.assign({}, state, {
@@ -117,10 +119,15 @@ function data(state = initialState, action) {
       waypoints: [],
       directions: []
     });
-
+  
+  case types.DIRECTIONS_REQUEST_START:
+    return Object.assign({}, state, {
+      fetchDirectionsRequest: action.request
+    });
   case types.DIRECTIONS:
     return Object.assign({}, state, {
-      directions: action.directions
+      directions: action.directions,
+      fetchDirectionsRequest: null
     });
 
   case types.ROUTE_INDEX:

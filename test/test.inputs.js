@@ -3,25 +3,17 @@
 const once = require('lodash.once');
 const test = require('tape');
 
-test('Directions#inputControl', tt => {
-  let container, map, directions;
+const setup = require('./utils/setup');
 
+test('Directions#inputControl', tt => {
   const changeEvent = document.createEvent('HTMLEvents');
   changeEvent.initEvent('change', true, false);
 
   const clickEvent = document.createEvent('HTMLEvents');
   clickEvent.initEvent('click', true, false);
 
-  function setup(opts) {
-    container = document.createElement('div');
-    map = new mapboxgl.Map({ container: container });
-    var MapboxDirections = require('..');
-    directions = new MapboxDirections(opts);
-    map.addControl(directions);
-  }
-
   tt.test('profiles', (t) => {
-    setup({ profile: 'mapbox/cycling' });
+    const { container, directions } = setup({ profile: 'mapbox/cycling' });
     t.plan(3);
 
     var drivingEl = container.querySelector('#mapbox-directions-profile-driving');

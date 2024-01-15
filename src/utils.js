@@ -35,6 +35,17 @@ function createPoint(coordinates, properties) {
   };
 }
 
+function getAllSteps(feature) {
+  return feature.legs.reduce((steps, leg, idx) => {
+    if (idx > 0) {
+      steps[steps.length - 1].maneuver.type = 'waypoint';
+      leg.steps[0].maneuver.type = '';
+    }
+
+    return steps.concat(leg.steps)
+  }, []);
+}
+
 const format = {
   duration(s) {
     var m = Math.floor(s / 60),
@@ -62,4 +73,4 @@ const format = {
   }
 };
 
-export default { format, coordinateMatch, createPoint, validCoords, wrap, roundWithOriginalPrecision };
+export default { format, coordinateMatch, createPoint, validCoords, wrap, roundWithOriginalPrecision, getAllSteps };

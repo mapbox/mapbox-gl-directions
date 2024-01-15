@@ -38,14 +38,7 @@ export default class Instructions {
 
       if (directions.length && shouldRender) {
         const direction = this.directions = directions[routeIndex];
-        const allSteps = direction.legs.reduce((steps, leg, idx) => {
-          if (idx > 0) {
-            steps[steps.length - 1].maneuver.type = 'waypoint';
-            leg.steps[0].maneuver.type = '';
-          }
-
-          return steps.concat(leg.steps)
-        }, []);
+        const allSteps = utils.getAllSteps(direction);
 
         if (compile) {
           direction.legs.forEach(function(leg) {
