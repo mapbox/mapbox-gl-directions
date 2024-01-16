@@ -1,3 +1,9 @@
+## 4.2.0
+
+- [feature] Display waypoints-related instructions [#310](https://github.com/mapbox/mapbox-gl-directions/pull/310)
+- [chore] Update mapbox-gl peer dependency to support version 3 [#310](https://github.com/mapbox/mapbox-gl-directions/pull/310)
+- [chore] Fixed launching of tests [#310](https://github.com/mapbox/mapbox-gl-directions/pull/310)
+
 ## 4.1.2
 
 - [chore] Update mapbox-gl peer dependency version [#298](https://github.com/mapbox/mapbox-gl-directions/pull/298)
