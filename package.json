@@ -68,11 +68,10 @@
   },
   "dependencies": {
     "@mapbox/polyline": "^1.1.1",
-    "deep-assign": "^3.0.0",
     "lodash.debounce": "^4.0.6",
     "lodash.isequal": "^4.2.0",
-    "lodash.merge": "^4.6.2",
     "lodash.template": "^4.2.5",
+    "merge-options": "^3.0.4",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.2",
     "suggestions": "^1.7.1",

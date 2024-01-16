@@ -1,7 +1,7 @@
 import * as types from '../constants/action_types.js';
-import merge from 'lodash.merge';
+import merge from 'merge-options';
 
-const initialState = {
+const getInitialState = () => ({
   // Options set on initialization
   api: 'https://api.mapbox.com/directions/v5/',
   profile: 'mapbox/driving-traffic',
@@ -49,9 +49,9 @@ const initialState = {
   fetchDirectionsRequest: null,
   routeIndex: 0, 
   routePadding: 80
-};
+});
 
-function data(state = initialState, action) {
+function data(state = getInitialState(), action) {
   switch (action.type) {
   case types.SET_OPTIONS: {
     return merge({}, state, action.options);
