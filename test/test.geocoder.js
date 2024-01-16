@@ -1,6 +1,7 @@
 'use strict';
 
 const test = require('tape');
+
 import Geocoder from '../src/controls/geocoder';
 
 test('Geocoder#constructor', t =>{

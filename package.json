@@ -17,7 +17,7 @@
     ]
   },
   "peerDependencies": {
-    "mapbox-gl": "^1 || ^2"
+    "mapbox-gl": "^1 || ^2 || ^3"
   },
   "scripts": {
     "prepublish": "npm run build",
@@ -58,7 +58,7 @@
     "insert-css": "^2.0.0",
     "json-loader": "^0.5.7",
     "lodash.once": "^4.0.0",
-    "mapbox-gl": "^0.41.0",
+    "mapbox-gl": "^3.0.1",
     "smokestack": "^3.6.0",
     "tap-status": "^1.0.1",
     "tape": "^4.6.0",
@@ -71,6 +71,7 @@
     "deep-assign": "^3.0.0",
     "lodash.debounce": "^4.0.6",
     "lodash.isequal": "^4.2.0",
+    "lodash.merge": "^4.6.2",
     "lodash.template": "^4.2.5",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.2",
