@@ -24,6 +24,10 @@ const getInitialState = () => ({
     instructions: true
   },
 
+  instructions: {
+    showWaypointInstructions: true
+  },
+
   // Optional setting to pass options available to mapbox-gl-geocoder
   geocoder: {},
 
