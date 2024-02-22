@@ -1,3 +1,7 @@
+## 4.3.0
+
+- [feature] Added option `instructions.showWaypointInstructions` to control displaying of waypoint instructions [#313](https://github.com/mapbox/mapbox-gl-directions/pull/313)
+
 ## 4.2.0
 
 - [feature] Display waypoints-related instructions [#310](https://github.com/mapbox/mapbox-gl-directions/pull/310)
