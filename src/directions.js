@@ -31,6 +31,8 @@ import Instructions from './controls/instructions';
  * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.
  * @param {Boolean} [options.controls.instructions=true] Hide or display the instructions control.
  * @param {Boolean} [options.controls.profileSwitcher=true] Hide or display the default profile switch with options for traffic, driving, walking and cycling.
+ * @param {Object} [options.instructions]
+ * @param {Boolean} [options.instructions.showWaypointInstructions=true] Hide or display instructions for waypoints in the route
  * @param {Number} [options.zoom=16] If no bbox exists from the geocoder result, the zoom you set here will be used in the flyTo.
  * @param {String} [options.language="en"] The language of returned turn-by-turn text instructions. See supported languages : https://docs.mapbox.com/api/navigation/#instructions-languages
  * @param {String} [options.placeholderOrigin="Choose a starting place"] If set, this text will appear as the placeholder attribute for the origin input element.

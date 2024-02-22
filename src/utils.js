@@ -35,14 +35,20 @@ function createPoint(coordinates, properties) {
   };
 }
 
-function getAllSteps(feature) {
+function getAllSteps(feature, filterBy) {
   return feature.legs.reduce((steps, leg, idx) => {
     if (idx > 0) {
       steps[steps.length - 1].maneuver.type = 'waypoint';
       leg.steps[0].maneuver.type = '';
     }
 
-    return steps.concat(leg.steps)
+    const allSteps = steps.concat(leg.steps);
+
+    if (filterBy) {
+      return allSteps.filter(filterBy);
+    } else {
+      return allSteps;
+    }
   }, []);
 }
 
