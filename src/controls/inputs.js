@@ -17,13 +17,13 @@ let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'ut
  */
 export default class Inputs {
   constructor(el, store, actions, map) {
-    const { originQuery, destinationQuery, profile, controls } = store.getState();
+    const { originQuery, destinationQuery, profile, controls, language } = store.getState();
 
     el.innerHTML = tmpl({
       originQuery,
       destinationQuery,
       profile,
-      controls
+      controls,language
     });
 
     this.container = el;
