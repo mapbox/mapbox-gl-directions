@@ -63,7 +63,7 @@ const style = [{
 }, {
   'id': 'directions-hover-point-casing',
   'type': 'circle',
-  'source': 'directions',
+  'source': 'directions:markers',
   'paint': {
     'circle-radius': 8,
     'circle-color': '#fff'
@@ -76,7 +76,7 @@ const style = [{
 }, {
   'id': 'directions-hover-point',
   'type': 'circle',
-  'source': 'directions',
+  'source': 'directions:markers',
   'paint': {
     'circle-radius': 6,
     'circle-color': '#3bb2d0'
@@ -89,7 +89,7 @@ const style = [{
 }, {
   'id': 'directions-waypoint-point-casing',
   'type': 'circle',
-  'source': 'directions',
+  'source': 'directions:markers',
   'paint': {
     'circle-radius': 8,
     'circle-color': '#fff'
@@ -102,7 +102,7 @@ const style = [{
 }, {
   'id': 'directions-waypoint-point',
   'type': 'circle',
-  'source': 'directions',
+  'source': 'directions:markers',
   'paint': {
     'circle-radius': 6,
     'circle-color': '#8a8bc9'
@@ -115,7 +115,7 @@ const style = [{
 }, {
   'id': 'directions-origin-point',
   'type': 'circle',
-  'source': 'directions',
+  'source': 'directions:markers',
   'paint': {
     'circle-radius': 18,
     'circle-color': '#3bb2d0'
@@ -128,7 +128,7 @@ const style = [{
 }, {
   'id': 'directions-origin-label',
   'type': 'symbol',
-  'source': 'directions',
+  'source': 'directions:markers',
   'layout': {
     'text-field': 'A',
     'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
@@ -145,7 +145,7 @@ const style = [{
 }, {
   'id': 'directions-destination-point',
   'type': 'circle',
-  'source': 'directions',
+  'source': 'directions:markers',
   'paint': {
     'circle-radius': 18,
     'circle-color': '#8a8bc9'
@@ -158,7 +158,7 @@ const style = [{
 }, {
   'id': 'directions-destination-label',
   'type': 'symbol',
-  'source': 'directions',
+  'source': 'directions:markers',
   'layout': {
     'text-field': 'B',
     'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
