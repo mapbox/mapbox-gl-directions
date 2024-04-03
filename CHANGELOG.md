@@ -1,3 +1,7 @@
+## 4.3.1
+
+- [internal] Improve performance of marker dragging [#316](https://github.com/mapbox/mapbox-gl-directions/pull/316)
+
 ## 4.3.0
 
 - [feature] Added option `instructions.showWaypointInstructions` to control displaying of waypoint instructions [#313](https://github.com/mapbox/mapbox-gl-directions/pull/313)
