@@ -17,7 +17,7 @@ import Instructions from './controls/instructions';
  * @class MapboxDirections
  *
  * @param {Object} options
- * @param {Array} [options.styles] Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
+ * @param {Array} [options.styles] Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/main/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
  * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
  * @param {String} [options.api="https://api.mapbox.com/directions/v5/"] Override default routing endpoint url
  * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
