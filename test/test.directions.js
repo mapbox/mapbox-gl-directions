@@ -84,8 +84,10 @@ test('Directions#onRemove', t => {
   map.on('load', () => {
     directions.on('route', once(()=>{
       t.true(!!map.getSource('directions'), 'directions source is added');
+      t.true(!!map.getSource('directions:markers'), 'directions markers source is added');
       map.removeControl(directions);
       t.false(!!map.getSource('directions'), 'directions source is removed');
+      t.false(!!map.getSource('directions:markers'), 'directions markers source is removed');
       t.end();
     }));
     directions.setOrigin('Queen Street NY');

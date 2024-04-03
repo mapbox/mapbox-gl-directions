@@ -54,7 +54,10 @@ import Instructions from './controls/instructions';
  */
 export default class MapboxDirections {
 
+
   constructor(options) {
+    this._directions = null;
+    this._stateSnapshot = null;
     this._store = this._initStore();
 
     this.actions = bindActionCreators(actions, this._store.dispatch);
@@ -122,6 +125,7 @@ export default class MapboxDirections {
     });
 
     if (map.getSource('directions')) map.removeSource('directions');
+    if (map.getSource('directions:markers')) map.removeSource('directions:markers');
 
     this._map = null;
     return this;
@@ -143,6 +147,7 @@ export default class MapboxDirections {
 
     // Add and set data theme layer/style
     this._map.addSource('directions', geojson);
+    this._map.addSource('directions:markers', geojson);
 
     // Add direction specific styles to the map
     if (styles && styles.length) styles.forEach((style) => this._map.addLayer(style));
@@ -162,25 +167,59 @@ export default class MapboxDirections {
     }
   }
 
+  _areMarkersChangedOnly(state) {
+    const changedSubscriptionFields = [];
+
+    if (!this._stateSnapshot) {
+      return false;
+    }
+
+    MapboxDirections.SUBSCRIPTION_FIELDS.forEach(field => {
+      if (this._stateSnapshot[field] !== state[field]) {
+        changedSubscriptionFields.push(field);
+      }
+    });
+
+    return changedSubscriptionFields.length <= MapboxDirections.MARKER_FIELDS.length && changedSubscriptionFields.every(field => {
+      return MapboxDirections.MARKER_FIELDS.includes(field);
+    });
+  }
+
   subscribedActions() {
     this.storeUnsubscribe = this._store.subscribe(() => {
+      const state = this._store.getState();
       const {
         origin,
         destination,
         hoverMarker,
         directions,
         routeIndex
-      } = this._store.getState();
+      } = state;
 
-      const geojson = {
+      const markersChangedOnly = this._areMarkersChangedOnly(state);
+
+      this._stateSnapshot = state;
+
+      const markersGeojson = {
         type: 'FeatureCollection',
         features: [
           origin,
           destination,
           hoverMarker
-        ].filter((d) => {
-          return d.geometry;
-        })
+        ].filter(d => d.geometry)
+      }
+
+      if (this._map.style && this._map.getSource('directions:markers')) {
+        this._map.getSource('directions:markers').setData(markersGeojson);
+      }
+
+      if (markersChangedOnly) {
+        return;
+      }
+
+      const geojson = {
+        type: 'FeatureCollection',
+        features: []
       };
 
       if (directions.length) {
@@ -570,3 +609,6 @@ export default class MapboxDirections {
     return this;
   }
 }
+
+MapboxDirections.MARKER_FIELDS = ['origin', 'destination', 'hoverMarker'];
+MapboxDirections.SUBSCRIPTION_FIELDS = ['origin', 'destination', 'hovedMarker', 'directions', 'routeIndex'];
