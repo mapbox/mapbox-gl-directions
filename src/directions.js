@@ -350,7 +350,6 @@ export default class MapboxDirections {
         }
       } else {
         this.actions.setDestinationFromCoordinates(coords);
-        this._map.flyTo({ center: coords });
       }
     }
   }
