@@ -108,9 +108,25 @@ export default class Inputs {
     this.container
       .querySelector('.js-reverse-inputs')
       .addEventListener('click', () => {
-        const { origin, destination } = this.store.getState();
-        if (origin) this.actions.queryDestination(origin.geometry.coordinates);
-        if (destination) this.actions.queryOrigin(destination.geometry.coordinates);
+        
+        var originValue = document.getElementById('mapbox-directions-origin-input').querySelector('input').value;
+        var destinationValue = document.getElementById('mapbox-directions-destination-input').querySelector('input').value;
+
+        //var originSuggestions = document.getElementById('mapbox-directions-origin-input').getElementsByClassName('suggestions')
+        //var destinationSuggestions = document.getElementById('mapbox-directions-destination-input').getElementsByClassName('suggestions')
+
+        if (originValue && destinationValue) {
+          this.originInput.setInput(destinationValue);
+          this.destinationInput.setInput(originValue);
+        } else if (originValue && !destinationValue) {
+          document.getElementById('mapbox-directions-origin-input').querySelector('input').value = "";
+          document.getElementById('mapbox-directions-destination-input').querySelector('input').focus()
+          this.destinationInput.setInput(originValue);
+        } else if (destinationValue && !originValue) {
+          document.getElementById('mapbox-directions-destination-input').querySelector('input').value = "";
+          document.getElementById('mapbox-directions-origin-input').querySelector('input').focus()
+          this.originInput.setInput(destinationValue);
+        }
         reverse();
       });
   }
