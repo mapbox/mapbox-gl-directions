@@ -23,6 +23,45 @@ test('Geocoder#constructor', t =>{
     t.end();
   });
 
+  t.test('options.localGeocoder', function(t) {
+    //t.plan(3);
+    const geocoder = new Geocoder({
+      flyTo: false,
+      limit: 6,
+      localGeocoder: function(q) {
+        return [{place_name: q}];
+      }
+    });
+
+    geocoder.onAdd();
+    new Promise((resolve, reject) => {
+      geocoder.query('-30,150');
+      geocoder.once('results', function(e) {
+        t.equal(e.results.length, 1, 'Local geocoder used');
+        resolve();
+      });
+      geocoder.once('error', function(e) {});
+    }).then(function(result) {
+      return new Promise((resolve, reject) => {
+        geocoder.query('London');
+        geocoder.once('results', function(e) {
+          t.equal(e.results.length, 7, 'Local geocoder supplement remote response');
+          resolve();
+        });
+      });
+    }).then(function(result) {
+      return new Promise((resolve, reject) => {
+        geocoder.query('London');
+        geocoder.once('results', function(e) {
+          t.equal(e.results[0].place_name, 'London', 'Local geocoder results above remote response');
+          resolve();
+        });
+      });
+    }).then(function(result) {
+      t.end();
+    });
+  });
+
   // TODO test to confirm the query parameters actually get passed.
   /*
   t.test('query parameters passed are added to the request', t =>{
