@@ -26,6 +26,8 @@ map.addControl(directions, 'top-left');
 
 Live example: https://www.mapbox.com/mapbox-gl-js/example/mapbox-gl-directions/
 
+**If you are supporting older browsers, you will need to use a polyfill.** We recommend working with [@babel/polyfill](https://babeljs.io/docs/en/babel-polyfill).
+
 ### Deeper dive
 
 See [API.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/API.md) for complete reference.
