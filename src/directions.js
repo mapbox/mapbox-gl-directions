@@ -4,9 +4,6 @@ import { decode } from '@mapbox/polyline';
 import utils from './utils';
 import rootReducer from './reducers';
 
-const storeWithMiddleware = applyMiddleware(thunk)(createStore);
-const store = storeWithMiddleware(rootReducer);
-
 // State object management via redux
 import * as actions from './actions';
 import directionsStyle from './directions_style';
@@ -20,7 +17,7 @@ import Instructions from './controls/instructions';
  * @class MapboxDirections
  *
  * @param {Object} options
- * @param {Array} [options.styles] Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/master/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
+ * @param {Array} [options.styles] Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/main/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
  * @param {String} [options.accessToken=null] Required unless `mapboxgl.accessToken` is set globally
  * @param {String} [options.api="https://api.mapbox.com/directions/v5/"] Override default routing endpoint url
  * @param {Boolean} [options.interactive=true] Enable/Disable mouse or touch interactivity from the plugin
@@ -34,6 +31,8 @@ import Instructions from './controls/instructions';
  * @param {Boolean} [options.controls.inputs=true] Hide or display the inputs control.
  * @param {Boolean} [options.controls.instructions=true] Hide or display the instructions control.
  * @param {Boolean} [options.controls.profileSwitcher=true] Hide or display the default profile switch with options for traffic, driving, walking and cycling.
+ * @param {Object} [options.instructions]
+ * @param {Boolean} [options.instructions.showWaypointInstructions=true] Hide or display instructions for waypoints in the route
  * @param {Number} [options.zoom=16] If no bbox exists from the geocoder result, the zoom you set here will be used in the flyTo.
  * @param {String} [options.language="en"] The language of returned turn-by-turn text instructions. See supported languages : https://docs.mapbox.com/api/navigation/#instructions-languages
  * @param {String} [options.placeholderOrigin="Choose a starting place"] If set, this text will appear as the placeholder attribute for the origin input element.
@@ -55,8 +54,13 @@ import Instructions from './controls/instructions';
  */
 export default class MapboxDirections {
 
+
   constructor(options) {
-    this.actions = bindActionCreators(actions, store.dispatch);
+    this._directions = null;
+    this._stateSnapshot = null;
+    this._store = this._initStore();
+
+    this.actions = bindActionCreators(actions, this._store.dispatch);
     this.actions.setOptions(options || {});
     this.options = options || {};
 
@@ -70,7 +74,7 @@ export default class MapboxDirections {
   onAdd(map) {
     this._map = map;
 
-    const { controls } = store.getState();
+    const { controls } = this._store.getState();
 
     var el = this.container = document.createElement('div');
     el.className = 'mapboxgl-ctrl-directions mapboxgl-ctrl';
@@ -78,12 +82,12 @@ export default class MapboxDirections {
     // Add controls to the page
     const inputEl = document.createElement('div');
     inputEl.className = 'directions-control directions-control-inputs';
-    new Inputs(inputEl, store, this.actions, this._map);
+    new Inputs(inputEl, this._store, this.actions, this._map);
 
     const directionsEl = document.createElement('div');
     directionsEl.className = 'directions-control directions-control-instructions';
 
-    new Instructions(directionsEl, store, {
+    new Instructions(directionsEl, this._store, {
       hoverMarker: this.actions.hoverMarker,
       setRouteIndex: this.actions.setRouteIndex
     }, this._map);
@@ -121,13 +125,14 @@ export default class MapboxDirections {
     });
 
     if (map.getSource('directions')) map.removeSource('directions');
+    if (map.getSource('directions:markers')) map.removeSource('directions:markers');
 
     this._map = null;
     return this;
   }
 
   mapState() {
-    const { profile, alternatives, congestion, styles, interactive, compile } = store.getState();
+    const { profile, alternatives, congestion, styles, interactive, compile } = this._store.getState();
 
     // Emit any default or option set config
     this.actions.eventEmit('profile', { profile });
@@ -142,6 +147,7 @@ export default class MapboxDirections {
 
     // Add and set data theme layer/style
     this._map.addSource('directions', geojson);
+    this._map.addSource('directions:markers', geojson);
 
     // Add direction specific styles to the map
     if (styles && styles.length) styles.forEach((style) => this._map.addLayer(style));
@@ -161,25 +167,59 @@ export default class MapboxDirections {
     }
   }
 
+  _areMarkersChangedOnly(state) {
+    const changedSubscriptionFields = [];
+
+    if (!this._stateSnapshot) {
+      return false;
+    }
+
+    MapboxDirections.SUBSCRIPTION_FIELDS.forEach(field => {
+      if (this._stateSnapshot[field] !== state[field]) {
+        changedSubscriptionFields.push(field);
+      }
+    });
+
+    return changedSubscriptionFields.length <= MapboxDirections.MARKER_FIELDS.length && changedSubscriptionFields.every(field => {
+      return MapboxDirections.MARKER_FIELDS.includes(field);
+    });
+  }
+
   subscribedActions() {
-    this.storeUnsubscribe = store.subscribe(() => {
+    this.storeUnsubscribe = this._store.subscribe(() => {
+      const state = this._store.getState();
       const {
         origin,
         destination,
         hoverMarker,
         directions,
         routeIndex
-      } = store.getState();
+      } = state;
 
-      const geojson = {
+      const markersChangedOnly = this._areMarkersChangedOnly(state);
+
+      this._stateSnapshot = state;
+
+      const markersGeojson = {
         type: 'FeatureCollection',
         features: [
           origin,
           destination,
           hoverMarker
-        ].filter((d) => {
-          return d.geometry;
-        })
+        ].filter(d => d.geometry)
+      }
+
+      if (this._map.style && this._map.getSource('directions:markers')) {
+        this._map.getSource('directions:markers').setData(markersGeojson);
+      }
+
+      if (markersChangedOnly) {
+        return;
+      }
+
+      const geojson = {
+        type: 'FeatureCollection',
+        features: []
       };
 
       if (directions.length) {
@@ -190,6 +230,8 @@ export default class MapboxDirections {
           const decoded = decode(feature.geometry, 5).map(function(c) {
             return c.reverse();
           });
+
+          const allSteps = utils.getAllSteps(feature);
 
           decoded.forEach(function(c, i) {
             var previous = features[features.length - 1];
@@ -226,11 +268,14 @@ export default class MapboxDirections {
 
           if (index === routeIndex) {
             // Collect any possible waypoints from steps
-            feature.legs[0].steps.forEach((d) => {
+            allSteps.forEach((d) => {
               if (d.maneuver.type === 'waypoint') {
                 geojson.features.push({
                   type: 'Feature',
-                  geometry: d.maneuver.location,
+                  geometry: {
+                    type: 'Point',
+                    coordinates: d.maneuver.location,
+                  },
                   properties: {
                     id: 'waypoint'
                   }
@@ -246,6 +291,11 @@ export default class MapboxDirections {
         this._map.getSource('directions').setData(geojson);
       }
     });
+  }
+
+  _initStore() {
+    const storeWithMiddleware = applyMiddleware(thunk)(createStore);
+    return storeWithMiddleware(rootReducer);
   }
 
   _clickHandler() {
@@ -269,7 +319,7 @@ export default class MapboxDirections {
   }
 
   _onSingleClick(e) {
-    const { origin } = store.getState();
+    const { origin } = this._store.getState();
     const coords = [e.lngLat.lng, e.lngLat.lat];
 
     if (!origin.geometry) {
@@ -306,7 +356,7 @@ export default class MapboxDirections {
   }
 
   _move(e) {
-    const { hoverMarker } = store.getState();
+    const { hoverMarker } = this._store.getState();
 
     const features = this._map.queryRenderedFeatures(e.point, {
       layers: [
@@ -371,7 +421,7 @@ export default class MapboxDirections {
   _onDragUp() {
     if (!this.isDragging) return;
 
-    const { hoverMarker, origin, destination } = store.getState();
+    const { hoverMarker, origin, destination } = this._store.getState();
 
     switch (this.isDragging.layer.id) {
       case 'directions-origin-point':
@@ -431,7 +481,7 @@ export default class MapboxDirections {
    * @returns {Object} origin
    */
   getOrigin() {
-    return store.getState().origin;
+    return this._store.getState().origin;
   }
 
   /**
@@ -455,7 +505,7 @@ export default class MapboxDirections {
    * @returns {Object} destination
    */
   getDestination() {
-    return store.getState().destination;
+    return this._store.getState().destination;
   }
 
   /**
@@ -516,7 +566,7 @@ export default class MapboxDirections {
    * @returns {MapboxDirections} this;
    */
   removeWaypoint(index) {
-    const { waypoints } = store.getState();
+    const { waypoints } = this._store.getState();
     this.actions.removeWaypoint(waypoints[index]);
     return this;
   }
@@ -526,7 +576,7 @@ export default class MapboxDirections {
    * @returns {Array} waypoints
    */
   getWaypoints() {
-    return store.getState().waypoints;
+    return this._store.getState().waypoints;
   }
 
   /**
@@ -559,3 +609,6 @@ export default class MapboxDirections {
     return this;
   }
 }
+
+MapboxDirections.MARKER_FIELDS = ['origin', 'destination', 'hoverMarker'];
+MapboxDirections.SUBSCRIPTION_FIELDS = ['origin', 'destination', 'hovedMarker', 'directions', 'routeIndex'];

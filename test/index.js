@@ -2,7 +2,6 @@
 
 const test = require('tape');
 window.mapboxgl = require('mapbox-gl');
-require('../src/index');
 
 mapboxgl.accessToken = process.env.MapboxAccessToken;
 
@@ -14,7 +13,7 @@ if (!mapboxgl.accessToken) {
 
 // Tests
 require('./test.directions');
-// require('./test.options');
+require('./test.options');
 require('./test.inputs');
 require('./test.instructions');
 require('./test.geocoder');

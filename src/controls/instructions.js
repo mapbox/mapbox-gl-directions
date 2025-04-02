@@ -28,7 +28,7 @@ export default class Instructions {
   render() {
     this.store.subscribe(() => {
       const { hoverMarker, setRouteIndex } = this.actions;
-      const { routeIndex, unit, directions, error, compile } = this.store.getState();
+      const { routeIndex, unit, directions, error, compile, instructions: instructionsOptions } = this.store.getState();
       const shouldRender = !isEqual(directions[routeIndex], this.directions);
 
       if (error) {
@@ -36,8 +36,13 @@ export default class Instructions {
         return;
       }
 
+      const filterStepsBy = instructionsOptions.showWaypointInstructions 
+        ? undefined 
+        : (step) => step.maneuver.type !== 'waypoint';
+
       if (directions.length && shouldRender) {
         const direction = this.directions = directions[routeIndex];
+        const allSteps = utils.getAllSteps(direction, filterStepsBy);
 
         if (compile) {
           direction.legs.forEach(function(leg) {
@@ -50,7 +55,7 @@ export default class Instructions {
         this.container.innerHTML = instructionsTemplate({
           routeIndex,
           routes: directions.length,
-          steps: direction.legs[0].steps, // Todo: Respect all legs,
+          steps: allSteps,
           format: utils.format[unit],
           duration: utils.format.duration(direction.duration),
           distance: utils.format[unit](direction.distance)

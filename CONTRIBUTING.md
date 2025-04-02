@@ -14,10 +14,10 @@ Tests require an MapboxAccessToken env variable to be set.
 
 ### Release process
 
-1. `git checkout master`
+1. `git checkout main`
 1. `git pull --rebase --autostash` to ensure you have the latest changes.
 1. `export MapboxAccessToken=<YOUR ACCESS TOKEN> && npm test`
-1. Update [`CHANGELOG.md`](https://github.com/mapbox/mapbox-gl-directions/blob/master/CHANGELOG.md)
+1. Update [`CHANGELOG.md`](https://github.com/mapbox/mapbox-gl-directions/blob/main/CHANGELOG.md)
 1. `npm version {major|minor|patch}`
 1. Create a release branch off of master that updates `CHANGELOG.md` and increments `package.json`.
 1. `git push --follow-tags`

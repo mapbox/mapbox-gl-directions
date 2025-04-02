@@ -2,46 +2,23 @@
 
 const test = require('tape');
 const once = require('lodash.once');
-const MapboxDirections = require('..');
 
-function setup() {
-  var container = document.createElement('div');
-  var map = new mapboxgl.Map({ container: container, style: {
-  "version": 8,
-  "sources": {
-  },
-  "glyphs": "local://glyphs/{fontstack}/{range}.pbf",
-  "layers": [
-      {
-          "id": "background", "type": "background",
-          "paint": {
-              "background-color": "#fff"
-          }
-      }] }});
-
-  return map;
-}
+const setup = require('./utils/setup');
 
 test('directions', (tt) => {
   tt.test('initialized', t => {
-    var map = setup();
-    var directions = new MapboxDirections();
-    map.addControl(directions);
+    const { map, directions } = setup();
 
     t.ok(directions, 'directions is initialized');
     t.end();
   });
 
   tt.test('set/get inputs', t => {
-    var map = setup();
-
-    var directions = new MapboxDirections({
+    const { map, directions } = setup({
       geocoder: {
         proximity: [-79.45, 43.65]
       }
     });
-    map.addControl(directions);
-
 
     directions.setOrigin('Queen Street NY');
     directions.setDestination([-77, 41]);
@@ -67,7 +44,6 @@ test('directions', (tt) => {
 });
 
 test('Directions with custom styles', t => {
-  var map = setup();
   var customLayer = {
     'id': 'directions-route-line',
     'type': 'line',
@@ -86,35 +62,35 @@ test('Directions with custom styles', t => {
       'line-width': 4
     }
   };
-  var directions = new MapboxDirections({
+
+  const { map, directions } = setup({
     styles: [customLayer]
   });
-  t.ok(map.addControl(directions));
-  map.on('load', ()=>{
+
+  map.on('load', () => {
     t.ok(map.getLayer('directions-route-line-alt'), 'adds default for unspecified custom layer');
     t.deepEqual(map.getLayer('directions-route-line').serialize(), customLayer);
+    t.end();
   })
-
-  t.end();
 });
 
-
 test('Directions#onRemove', t => {
-  var map = setup();
-  var directions = new MapboxDirections({
+  const { map, directions } = setup({
     geocoder: {
       proximity: [-79.45, 43.65]
     }
   });
-  map.addControl(directions);
 
-
-  directions.setOrigin('Queen Street NY');
-  directions.setDestination([-77, 41]);
-  directions.on('route', once(()=>{
-    t.true(!!map.getSource('directions'), 'directions source is added');
-    map.removeControl(directions);
-    t.false(!!map.getSource('directions'), 'directions source is removed');
-    t.end();
-  }));
+  map.on('load', () => {
+    directions.on('route', once(()=>{
+      t.true(!!map.getSource('directions'), 'directions source is added');
+      t.true(!!map.getSource('directions:markers'), 'directions markers source is added');
+      map.removeControl(directions);
+      t.false(!!map.getSource('directions'), 'directions source is removed');
+      t.false(!!map.getSource('directions:markers'), 'directions markers source is removed');
+      t.end();
+    }));
+    directions.setOrigin('Queen Street NY');
+    directions.setDestination([-77, 41]);
+  });
 });

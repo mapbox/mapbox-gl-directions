@@ -1,3 +1,21 @@
+## 4.3.1
+
+- [internal] Improve performance of marker dragging [#316](https://github.com/mapbox/mapbox-gl-directions/pull/316)
+
+## 4.3.0
+
+- [feature] Added option `instructions.showWaypointInstructions` to control displaying of waypoint instructions [#313](https://github.com/mapbox/mapbox-gl-directions/pull/313)
+
+## 4.2.0
+
+- [feature] Display waypoints-related instructions [#310](https://github.com/mapbox/mapbox-gl-directions/pull/310)
+- [chore] Update mapbox-gl peer dependency to support version 3 [#310](https://github.com/mapbox/mapbox-gl-directions/pull/310)
+- [chore] Fixed launching of tests [#310](https://github.com/mapbox/mapbox-gl-directions/pull/310)
+
+## 4.1.2
+
+- [chore] Update mapbox-gl peer dependency version [#298](https://github.com/mapbox/mapbox-gl-directions/pull/298)
+
 ## 4.1.1
 
 - [bug] Exclude `options.api` from query params [#266](https://github.com/mapbox/mapbox-gl-directions/pull/266)

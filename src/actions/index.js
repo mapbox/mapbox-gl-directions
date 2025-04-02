@@ -1,6 +1,5 @@
 import * as types from '../constants/action_types';
 import utils from '../utils';
-const request = new XMLHttpRequest();
 
 function originPoint(coordinates) {
   return (dispatch) => {
@@ -24,6 +23,15 @@ function destinationPoint(coordinates) {
     dispatch({ type: types.DESTINATION, destination });
     dispatch(eventEmit('destination', { feature: destination }));
   };
+}
+
+function directionsRequestStart(request) {
+  return dispatch => {
+    dispatch({
+      type: types.DIRECTIONS_REQUEST_START,
+      request
+    })
+  }
 }
 
 function setDirections(directions) {
@@ -52,9 +60,14 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination, language, exclude } = getState();
+    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination, language, exclude, fetchDirectionsRequest } = getState();
     // if there is no destination set, do not make request because it will fail
     if (!(destination && destination.geometry)) return;
+
+    if (fetchDirectionsRequest) {
+      fetchDirectionsRequest.abort();
+    }
+
 
     const query = buildDirectionsQuery(getState);
 
@@ -68,8 +81,11 @@ function fetchDirections() {
     if (language) options.push('language='+language);
     if (exclude) options.push('exclude=' + exclude);
     if (accessToken) options.push('access_token=' + accessToken);
-    request.abort();
+
+    const request = new XMLHttpRequest();
     request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
+
+    dispatch(directionsRequestStart(request))
 
     request.onload = () => {
       if (request.status >= 200 && request.status < 400) {
@@ -189,8 +205,13 @@ export function clearOrigin() {
 }
 
 export function clearDestination() {
-  request.abort();
-  return dispatch => {
+  return (dispatch, getState) => {
+    const { fetchDirectionsRequest } = getState();
+
+    if (fetchDirectionsRequest) {
+      fetchDirectionsRequest.abort();
+    }
+
     dispatch({
       type: types.DESTINATION_CLEAR
     });

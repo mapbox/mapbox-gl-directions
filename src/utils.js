@@ -35,6 +35,23 @@ function createPoint(coordinates, properties) {
   };
 }
 
+function getAllSteps(feature, filterBy) {
+  return feature.legs.reduce((steps, leg, idx) => {
+    if (idx > 0) {
+      steps[steps.length - 1].maneuver.type = 'waypoint';
+      leg.steps[0].maneuver.type = '';
+    }
+
+    const allSteps = steps.concat(leg.steps);
+
+    if (filterBy) {
+      return allSteps.filter(filterBy);
+    } else {
+      return allSteps;
+    }
+  }, []);
+}
+
 const format = {
   duration(s) {
     var m = Math.floor(s / 60),
@@ -62,4 +79,4 @@ const format = {
   }
 };
 
-export default { format, coordinateMatch, createPoint, validCoords, wrap, roundWithOriginalPrecision };
+export default { format, coordinateMatch, createPoint, validCoords, wrap, roundWithOriginalPrecision, getAllSteps };

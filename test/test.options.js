@@ -3,20 +3,11 @@
 const once = require('lodash.once');
 const test = require('tape');
 
+const setup = require('./utils/setup');
+
 test('Directions#option', tt => {
-  let container, map, directions;
-
-  function setup(opts) {
-    container = document.createElement('div');
-    map = new mapboxgl.Map({ container: container });
-    var MapboxDirections = require('..');
-    directions = new MapboxDirections(opts);
-    map.addControl(directions);
-  }
-
   tt.test('option.styles', t => {
-    t.plan(1);
-    setup({
+    const { directions, map } = setup({
       styles: [{
         'id': 'foo',
         'type': 'circle',
@@ -32,9 +23,12 @@ test('Directions#option', tt => {
       }]
     });
 
-    directions.setOrigin([-77, 41]);
-    directions.on('origin', once(() => {
-      t.ok(map.getLayer('foo'), 'Custom layer is present');
+    map.on('load', once(() => {
+      directions.on('origin', once(() => {
+        t.ok(map.getLayer('foo'), 'Custom layer is present');
+        t.end();
+      }));
+      directions.setOrigin([-77, 41]);
     }));
   });
 
