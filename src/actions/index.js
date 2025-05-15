@@ -60,7 +60,7 @@ function setHoverMarker(feature) {
 
 function fetchDirections() {
   return (dispatch, getState) => {
-    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination, language, exclude, fetchDirectionsRequest } = getState();
+    const { api, accessToken, routeIndex, profile, alternatives, congestion, destination, language, exclude, custom_options, fetchDirectionsRequest } = getState();
     // if there is no destination set, do not make request because it will fail
     if (!(destination && destination.geometry)) return;
 
@@ -81,6 +81,7 @@ function fetchDirections() {
     if (language) options.push('language='+language);
     if (exclude) options.push('exclude=' + exclude);
     if (accessToken) options.push('access_token=' + accessToken);
+    if (custom_options) options.push(custom_options);
 
     const request = new XMLHttpRequest();
     request.open('GET', `${api}${profile}/${query}.json?${options.join('&')}`, true);
