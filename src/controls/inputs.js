@@ -1,10 +1,11 @@
 import Geocoder from './geocoder';
-import template from 'lodash.template';
-import isEqual from 'lodash.isequal';
+import { Eta } from 'eta';
 import extent from 'turf-extent';
+import utils from '../utils';
 
 let fs = require('fs'); // substack/brfs#39
-let tmpl = template(fs.readFileSync(__dirname + '/../templates/inputs.html', 'utf8'));
+const eta = new Eta({ useWith: true });
+let tmpl = eta.compile(fs.readFileSync(__dirname + '/../templates/inputs.html', 'utf8'));
 
 /**
  * Inputs controller
@@ -19,7 +20,7 @@ export default class Inputs {
   constructor(el, store, actions, map) {
     const { originQuery, destinationQuery, profile, controls } = store.getState();
 
-    el.innerHTML = tmpl({
+    el.innerHTML = eta.render(tmpl, {
       originQuery,
       destinationQuery,
       profile,
@@ -40,7 +41,7 @@ export default class Inputs {
     
     if (origin.geometry &&
         destination.geometry &&
-        !isEqual(origin.geometry, destination.geometry)) {
+        !utils.coordinateMatch(origin, destination)) {
       // Animate map to fit bounds.
       const bb = extent({
         type: 'FeatureCollection',

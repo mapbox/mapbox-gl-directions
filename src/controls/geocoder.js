@@ -1,7 +1,6 @@
 'use strict';
 
 import Typeahead from 'suggestions';
-import debounce from 'lodash.debounce';
 import { EventEmitter } from 'events';
 import utils from '../utils';
 
@@ -32,13 +31,17 @@ export default class Geocoder {
     input.type = 'text';
     input.placeholder = this.options.placeholder;
 
-    input.addEventListener('keydown', debounce(function(e) {
+    let debounceTimer = null;
+    input.addEventListener('keydown', function(e) {
+      if (debounceTimer) clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(function() {
       if (!e.target.value) return this._clearEl.classList.remove('active');
 
       // TAB, ESC, LEFT, RIGHT, ENTER, UP, DOWN
       if (e.metaKey || [9, 27, 37, 39, 13, 38, 40].indexOf(e.keyCode) !== -1) return;
       this._queryFromInput(e.target.value);
-    }.bind(this)), 200);
+      }.bind(this), 200);
+    }.bind(this));
 
     input.addEventListener('change', function(e) {
       if (e.target.value) this._clearEl.classList.add('active');

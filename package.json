@@ -1,8 +1,8 @@
 {
-  "name": "@mapbox/mapbox-gl-directions",
-  "version": "4.3.1",
+  "name": "@g9t3n/mapbox-gl-directions",
+  "version": "4.4.7",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
-  "main": "./src/index.js",
+  "main": "./dist/mapbox-gl-directions.js",
   "browserify": {
     "transform": [
       [
@@ -16,20 +16,23 @@
       "brfs"
     ]
   },
+  "browser": {
+    "eta": "eta/dist/browser.umd.js"
+  },
   "peerDependencies": {
     "mapbox-gl": "^1 || ^2 || ^3"
   },
   "scripts": {
     "prepublish": "npm run build",
-    "start": "NODE_ENV=development budo example/index.js:example/bundle.js --live",
-    "build": "NODE_ENV=production mkdir -p dist && browserify -s MapboxDirections src/index.js > dist/mapbox-gl-directions.js && cp src/mapbox-gl-directions.css dist",
-    "test": "NODE_ENV=test npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
+    "start": "cross-env NODE_ENV=development budo example/index.js:example/bundle.js --live",
+    "build": "cross-env NODE_ENV=production shx mkdir -p dist && browserify -s MapboxDirections src/index.js > dist/mapbox-gl-directions.js && shx cp src/mapbox-gl-directions.css dist",
+    "test": "cross-env NODE_ENV=test npm run lint && browserify test/index.js | smokestack -b firefox | tap-status",
     "docs": "documentation build src/directions.js --shallow --format=md > API.md",
     "lint": "eslint --no-eslintrc -c .eslintrc src"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/mapbox/mapbox-gl-directions.git"
+    "url": "git+ssh://git@github.com/wael-amrany/mapbox-gl-directions.git"
   },
   "keywords": [
     "directions",
@@ -37,12 +40,12 @@
     "osm",
     "gl"
   ],
-  "author": "Mapbox",
+  "author": "G9t3n",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/mapbox/mapbox-gl-directions/issues"
+    "url": "https://github.com/wael-amrany/mapbox-gl-directions/issues"
   },
-  "homepage": "https://github.com/mapbox/mapbox-gl-directions#readme",
+  "homepage": "https://github.com/wael-amrany/mapbox-gl-directions#readme",
   "devDependencies": {
     "@babel/core": "^7.20.5",
     "@babel/eslint-parser": "^7.19.1",
@@ -50,6 +53,7 @@
     "@babel/preset-env": "^7.20.2",
     "babel-plugin-transform-inline-environment-variables": "^6.8.0",
     "babelify": "^10.0.0",
+    "aliasify": "^2.1.0",
     "brfs": "^2.0.2",
     "browserify": "^17.0.0",
     "budo": "^11.8.4",
@@ -58,19 +62,19 @@
     "insert-css": "^2.0.0",
     "json-loader": "^0.5.7",
     "lodash.once": "^4.0.0",
-    "mapbox-gl": "^3.2.0",
+    "mapbox-gl": "^3.14.0",
     "smokestack": "^3.6.0",
     "tap-status": "^1.0.1",
     "tape": "^4.6.0",
     "transform-loader": "^0.2.4",
-    "webpack": "^5.75.0",
-    "webworkify-webpack": "^2.1.5"
+    "webpack": "^5.101.0",
+    "webworkify-webpack": "^2.1.5",
+    "cross-env": "^10.0.0",
+    "shx": "^0.4.0"
   },
   "dependencies": {
     "@mapbox/polyline": "^1.1.1",
-    "lodash.debounce": "^4.0.6",
-    "lodash.isequal": "^4.2.0",
-    "lodash.template": "^4.2.5",
+    "eta": "^3.2.0",
     "merge-options": "^3.0.4",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.2",
