@@ -1,6 +1,6 @@
 {
   "name": "@mapbox/mapbox-gl-directions",
-  "version": "4.3.1",
+  "version": "4.3.2",
   "description": "A mapboxgl plugin for the Mapbox Directions API",
   "main": "./src/index.js",
   "browserify": {
@@ -76,5 +76,8 @@
     "redux-thunk": "^2.4.2",
     "suggestions": "^1.7.1",
     "turf-extent": "^1.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
