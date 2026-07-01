@@ -2,8 +2,13 @@
 
 const once = require('lodash.once');
 const test = require('tape');
+const template = require('lodash.template');
+const fs = require('fs');
 
 const setup = require('./utils/setup');
+
+const instructionsTemplate = template(fs.readFileSync(__dirname + '/../src/templates/instructions.html', 'utf8'));
+const errorTemplate = template(fs.readFileSync(__dirname + '/../src/templates/error.html', 'utf8'));
 
 test('Directions#instructionControl', tt => {
   tt.test('displayed', t => {
@@ -84,6 +89,38 @@ test('Directions#instructionControl', tt => {
     }));
     directions.setOrigin('Montreal Quebec');
     directions.setDestination('Toledo Spain');
+  });
+
+  tt.test('escapes HTML in step maneuver instructions', t => {
+    const payload = '<img src=x onerror=alert(1)>';
+    const html = instructionsTemplate({
+      routeIndex: 0,
+      routes: 1,
+      steps: [{
+        distance: false,
+        maneuver: {
+          type: 'turn',
+          instruction: payload,
+          location: [0, 0]
+        }
+      }],
+      format: () => '',
+      duration: '1 min',
+      distance: '1 km'
+    });
+
+    t.false(html.includes('<img src=x onerror=alert(1)>'), 'raw payload is not present in rendered HTML');
+    t.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'), 'payload is HTML-escaped');
+    t.end();
+  });
+
+  tt.test('escapes HTML in error messages', t => {
+    const payload = '<img src=x onerror=alert(1)>';
+    const html = errorTemplate({ error: payload });
+
+    t.false(html.includes('<img src=x onerror=alert(1)>'), 'raw payload is not present in rendered HTML');
+    t.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'), 'payload is HTML-escaped');
+    t.end();
   });
 
   tt.end();
