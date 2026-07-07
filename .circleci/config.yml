@@ -1,42 +1,35 @@
 version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@3.1.4
-  browser-tools: circleci/browser-tools@1.5.3
 
+# Build/lint/test now run on GitHub Actions (.github/workflows/ci.yml).
+# This config only handles publishing tagged releases to S3.
 workflows:
   version: 2
-  default:
+  publish:
     jobs:
       - prepare:
           filters:
             tags:
-              only: /.*/
+              only: '/v[0-9]+\.[0-9]+\.[0-9]+(\-dev)?/'
+            branches:
+              ignore: /.*/
       - install-mbx-ci:
           requires:
             - prepare
           filters:
             tags:
-              only: /.*/
+              only: '/v[0-9]+\.[0-9]+\.[0-9]+(\-dev)?/'
             branches:
-              ignore: '/pull\/[0-9]*/'
+              ignore: /.*/
       - build:
           requires:
             - prepare
           filters:
             tags:
-              only: /.*/
-      - lint:
-          requires:
-            - prepare
-          filters:
-            tags:
-              only: /.*/
-      - test:
-          requires:
-            - build
-          filters:
-            tags:
-              only: /.*/
+              only: '/v[0-9]+\.[0-9]+\.[0-9]+(\-dev)?/'
+            branches:
+              ignore: /.*/
       - publish:
           requires:
             - build
@@ -97,29 +90,6 @@ jobs:
           root: ~/
           paths:
             - mapbox-gl-directions/dist
-
-  lint:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/
-      - restore_cache:
-          keys:
-            - 'v2-lint-{{ .Branch }}'
-            - v2-lint
-      - run: npm run lint
-      - save_cache:
-          key: 'v2-lint-{{ .Branch }}-{{ .Revision }}'
-          paths:
-            - .eslintcache
-
-  test:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/
-      - browser-tools/install-firefox
-      - run: npm run test
 
   publish:
     <<: *defaults
