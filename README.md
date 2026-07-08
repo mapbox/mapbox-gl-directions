@@ -33,3 +33,25 @@ See [API.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/API.md) 
 ### Contributing
 
 See [CONTRIBUTING.md](https://github.com/mapbox/mapbox-gl-directions/blob/master/CONTRIBUTING.md).
+
+## Publishing
+To GitHub and NPM:
+
+```
+npm version (major|minor|patch)
+git push --tags
+git push
+npm publish
+```
+
+To CDN:
+
+```
+# make sure you are authenticated for AWS
+git checkout v{x.y.z}
+npm ci
+npm run prepublish
+aws s3 cp --recursive --acl public-read dist s3://mapbox-gl-js/plugins/mapbox-gl-directions/v{x.y.z}
+```
+
+Update the version number in the [GL JS example](https://docs.mapbox.com/mapbox-gl-js/example/mapbox-gl-directions/).
