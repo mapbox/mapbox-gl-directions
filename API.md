@@ -2,53 +2,66 @@
 
 ### Table of Contents
 
--   [MapboxDirections](#mapboxdirections)
-    -   [onRemove](#onremove)
-    -   [interactive](#interactive)
-    -   [getOrigin](#getorigin)
-    -   [setOrigin](#setorigin)
-    -   [getDestination](#getdestination)
-    -   [setDestination](#setdestination)
-    -   [reverse](#reverse)
-    -   [addWaypoint](#addwaypoint)
-    -   [setWaypoint](#setwaypoint)
-    -   [removeWaypoint](#removewaypoint)
-    -   [getWaypoints](#getwaypoints)
-    -   [removeRoutes](#removeroutes)
-    -   [on](#on)
+*   [MapboxDirections][1]
+    *   [Parameters][2]
+    *   [Examples][3]
+    *   [onRemove][4]
+        *   [Parameters][5]
+    *   [interactive][6]
+        *   [Parameters][7]
+    *   [getOrigin][8]
+    *   [setOrigin][9]
+        *   [Parameters][10]
+    *   [getDestination][11]
+    *   [setDestination][12]
+        *   [Parameters][13]
+    *   [reverse][14]
+    *   [addWaypoint][15]
+        *   [Parameters][16]
+    *   [setWaypoint][17]
+        *   [Parameters][18]
+    *   [removeWaypoint][19]
+        *   [Parameters][20]
+    *   [getWaypoints][21]
+    *   [removeRoutes][22]
+    *   [on][23]
+        *   [Parameters][24]
 
 ## MapboxDirections
 
 The Directions control
 
-**Parameters**
+### Parameters
 
--   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
-    -   `options.styles` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)?** Override default layer properties of the [directions source](https://github.com/mapbox/mapbox-gl-directions/blob/main/src/directions_style.js). Documentation for each property are specified in the [Mapbox GL Style Reference](https://www.mapbox.com/mapbox-gl-style-spec/).
-    -   `options.accessToken` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
-    -   `options.api` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Override default routing endpoint url (optional, default `"https://api.mapbox.com/directions/v5/"`)
-    -   `options.interactive` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Enable/Disable mouse or touch interactivity from the plugin (optional, default `true`)
-    -   `options.profile` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Routing profile to use. Options: `mapbox/driving-traffic`, `mapbox/driving`, `mapbox/walking`, `mapbox/cycling` (optional, default `"mapbox/driving-traffic"`)
-    -   `options.alternatives` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to enable alternatives. (optional, default `false`)
-    -   `options.congestion` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether to enable congestion along the route line. (optional, default `false`)
-    -   `options.unit` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
-    -   `options.compile` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** Provide a custom function for generating instruction, compatible with osrm-text-instructions. (optional, default `null`)
-    -   `options.geocoder` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Accepts an object containing the query parameters as [documented here](https://www.mapbox.com/api-documentation/#search-for-places).
-    -   `options.controls` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
-        -   `options.controls.inputs` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the inputs control. (optional, default `true`)
-        -   `options.controls.instructions` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the instructions control. (optional, default `true`)
-        -   `options.controls.profileSwitcher` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display the default profile switch with options for traffic, driving, walking and cycling. (optional, default `true`)
-    -   `options.instructions` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** 
-        -   `options.instructions.showWaypointInstructions` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Hide or display instructions for waypoints in the route. (optional, default `true`)
-    -   `options.zoom` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** If no bbox exists from the geocoder result, the zoom you set here will be used in the flyTo. (optional, default `16`)
-    -   `options.language` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The language of returned turn-by-turn text instructions. See supported languages : <https://docs.mapbox.com/api/navigation/#instructions-languages> (optional, default `"en"`)
-    -   `options.placeholderOrigin` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** If set, this text will appear as the placeholder attribute for the origin input element. (optional, default `"Choose a starting place"`)
-    -   `options.placeholderDestination` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** If set, this text will appear as the placeholder attribute for the destination input element. (optional, default `"Choose destination"`)
-    -   `options.flyTo` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** If false, animating the map to a selected result is disabled. (optional, default `true`)
-    -   `options.exclude` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Exclude certain road types from routing. The default is to not exclude anything. Search for `exclude` in `optional parameters`: <https://docs.mapbox.com/api/navigation/#retrieve-directions> (optional, default `null`)
-    -   `options.routePadding` **([number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number) | PaddingOptions)** Specify padding surrounding route. A single number of pixels or a [PaddingOptions](https://docs.mapbox.com/mapbox-gl-js/api/#paddingoptions) object. (optional, default `80`)
+*   `options` **[Object][25]**&#x20;
 
-**Examples**
+    *   `options.styles` **[Array][26]?** Override default layer properties of the [directions source][27]. Documentation for each property are specified in the [Mapbox GL Style Reference][28].
+    *   `options.accessToken` **[String][29]** Required unless `mapboxgl.accessToken` is set globally (optional, default `null`)
+    *   `options.api` **[String][29]** Override default routing endpoint url (optional, default `"https://api.mapbox.com/directions/v5/"`)
+    *   `options.interactive` **[Boolean][30]** Enable/Disable mouse or touch interactivity from the plugin (optional, default `true`)
+    *   `options.profile` **[String][29]** Routing profile to use. Options: `mapbox/driving-traffic`, `mapbox/driving`, `mapbox/walking`, `mapbox/cycling` (optional, default `"mapbox/driving-traffic"`)
+    *   `options.alternatives` **[Boolean][30]** Whether to enable alternatives. (optional, default `false`)
+    *   `options.congestion` **[Boolean][30]** Whether to enable congestion along the route line. (optional, default `false`)
+    *   `options.unit` **[String][29]** Measurement system to be used in navigation instructions. Options: `imperial`, `metric` (optional, default `"imperial"`)
+    *   `options.compile` **[Function][31]** Provide a custom function for generating instruction, compatible with osrm-text-instructions. (optional, default `null`)
+    *   `options.geocoder` **[Object][25]?** Accepts an object containing the query parameters as [documented here][32].
+    *   `options.controls` **[Object][25]?**&#x20;
+
+        *   `options.controls.inputs` **[Boolean][30]** Hide or display the inputs control. (optional, default `true`)
+        *   `options.controls.instructions` **[Boolean][30]** Hide or display the instructions control. (optional, default `true`)
+        *   `options.controls.profileSwitcher` **[Boolean][30]** Hide or display the default profile switch with options for traffic, driving, walking and cycling. (optional, default `true`)
+    *   `options.instructions` **[Object][25]?**&#x20;
+
+        *   `options.instructions.showWaypointInstructions` **[Boolean][30]** Hide or display instructions for waypoints in the route (optional, default `true`)
+    *   `options.zoom` **[Number][33]** If no bbox exists from the geocoder result, the zoom you set here will be used in the flyTo. (optional, default `16`)
+    *   `options.language` **[String][29]** The language of returned turn-by-turn text instructions. See supported languages : [https://docs.mapbox.com/api/navigation/#instructions-languages][34] (optional, default `"en"`)
+    *   `options.placeholderOrigin` **[String][29]** If set, this text will appear as the placeholder attribute for the origin input element. (optional, default `"Choose a starting place"`)
+    *   `options.placeholderDestination` **[String][29]** If set, this text will appear as the placeholder attribute for the destination input element. (optional, default `"Choose destination"`)
+    *   `options.flyTo` **[Boolean][30]** If false, animating the map to a selected result is disabled. (optional, default `true`)
+    *   `options.exclude` **[String][29]** Exclude certain road types from routing. The default is to not exclude anything. Search for `exclude` in `optional parameters`: [https://docs.mapbox.com/api/navigation/#retrieve-directions][35] (optional, default `null`)
+    *   `options.routePadding` **([number][33] | PaddingOptions)** Specify padding surrounding route. A single number of pixels or a [PaddingOptions][36] object. (optional, default `80`)
+
+### Examples
 
 ```javascript
 var MapboxDirections = require('../src/index');
@@ -61,16 +74,16 @@ var directions = new MapboxDirections({
 map.addControl(directions);
 ```
 
-Returns **[MapboxDirections](#mapboxdirections)** `this`
+Returns **[MapboxDirections][1]** `this`
 
 ### onRemove
 
 Removes the control from the map it has been added to. This is called by `map.removeControl`,
 which is the recommended method to remove controls.
 
-**Parameters**
+#### Parameters
 
--   `map`  
+*   `map` &#x20;
 
 Returns **Control** `this`
 
@@ -78,112 +91,186 @@ Returns **Control** `this`
 
 Turn on or off interactivity
 
-**Parameters**
+#### Parameters
 
--   `state` **[Boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** sets interactivity based on a state of `true` or `false`.
+*   `state` **[Boolean][30]** sets interactivity based on a state of `true` or `false`.
 
-Returns **[MapboxDirections](#mapboxdirections)** this
+Returns **[MapboxDirections][1]** this
 
 ### getOrigin
 
 Returns the origin of the current route.
 
-Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** origin
+Returns **[Object][25]** origin
 
 ### setOrigin
 
-Sets origin. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+Sets origin. *Note:* calling this method requires the [map load event][37]
 to have run.
 
-**Parameters**
+#### Parameters
 
--   `query` **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)> | [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))** An array of coordinates [lng, lat] or location name as a string.
+*   `query` **([Array][26]<[number][33]> | [String][29])** An array of coordinates \[lng, lat] or location name as a string.
 
-Returns **[MapboxDirections](#mapboxdirections)** this
+Returns **[MapboxDirections][1]** this
 
 ### getDestination
 
 Returns the destination of the current route.
 
-Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** destination
+Returns **[Object][25]** destination
 
 ### setDestination
 
-Sets destination. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+Sets destination. *Note:* calling this method requires the [map load event][37]
 to have run.
 
-**Parameters**
+#### Parameters
 
--   `query` **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)> | [String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))** An array of coordinates [lng, lat] or location name as a string.
+*   `query` **([Array][26]<[number][33]> | [String][29])** An array of coordinates \[lng, lat] or location name as a string.
 
-Returns **[MapboxDirections](#mapboxdirections)** this
+Returns **[MapboxDirections][1]** this
 
 ### reverse
 
 Swap the origin and destination.
 
-Returns **[MapboxDirections](#mapboxdirections)** this
+Returns **[MapboxDirections][1]** this
 
 ### addWaypoint
 
-Add a waypoint to the route. _Note:_ calling this method requires the
-[map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load) to have run.
+Add a waypoint to the route. *Note:* calling this method requires the
+[map load event][37] to have run.
 
-**Parameters**
+#### Parameters
 
--   `index` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** position waypoint should be placed in the waypoint array
--   `waypoint` **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)> | Point)** can be a GeoJSON Point Feature or [lng, lat] coordinates.
+*   `index` **[Number][33]** position waypoint should be placed in the waypoint array
+*   `waypoint` **([Array][26]<[number][33]> | Point)** can be a GeoJSON Point Feature or \[lng, lat] coordinates.
 
-Returns **[MapboxDirections](#mapboxdirections)** this;
+Returns **[MapboxDirections][1]** this;
 
 ### setWaypoint
 
-Change the waypoint at a given index in the route. _Note:_ calling this
-method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+Change the waypoint at a given index in the route. *Note:* calling this
+method requires the [map load event][37]
 to have run.
 
-**Parameters**
+#### Parameters
 
--   `index` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** indexed position of the waypoint to update
--   `waypoint` **([Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)> | Point)** can be a GeoJSON Point Feature or [lng, lat] coordinates.
+*   `index` **[Number][33]** indexed position of the waypoint to update
+*   `waypoint` **([Array][26]<[number][33]> | Point)** can be a GeoJSON Point Feature or \[lng, lat] coordinates.
 
-Returns **[MapboxDirections](#mapboxdirections)** this;
+Returns **[MapboxDirections][1]** this;
 
 ### removeWaypoint
 
 Remove a waypoint from the route.
 
-**Parameters**
+#### Parameters
 
--   `index` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** position in the waypoints array.
+*   `index` **[Number][33]** position in the waypoints array.
 
-Returns **[MapboxDirections](#mapboxdirections)** this;
+Returns **[MapboxDirections][1]** this;
 
 ### getWaypoints
 
 Fetch all current waypoints in a route.
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** waypoints
+Returns **[Array][26]** waypoints
 
 ### removeRoutes
 
 Removes all routes and waypoints from the map.
 
-Returns **[MapboxDirections](#mapboxdirections)** this;
+Returns **[MapboxDirections][1]** this;
 
 ### on
 
 Subscribe to events that happen within the plugin.
 
-**Parameters**
+#### Parameters
 
--   `type` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** name of event. Available events and the data passed into their respective event objects are:-   **clear** `{ type: } Type is one of 'origin' or 'destination'`
-    -   **loading** `{ type: } Type is one of 'origin' or 'destination'`
-    -   **profile** `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
-    -   **origin** `{ feature } Fired when origin is set`
-    -   **destination** `{ feature } Fired when destination is set`
-    -   **route** `{ route } Fired when a route is updated`
-    -   **error** `{ error } Error as string`
--   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** function that's called when the event is emitted.
+*   `type` **[String][29]** name of event. Available events and the data passed into their respective event objects are:*   **clear** `{ type: } Type is one of 'origin' or 'destination'`
+    *   **loading** `{ type: } Type is one of 'origin' or 'destination'`
+    *   **profile** `{ profile } Profile is one of 'driving', 'walking', or 'cycling'`
+    *   **origin** `{ feature } Fired when origin is set`
+    *   **destination** `{ feature } Fired when destination is set`
+    *   **route** `{ route } Fired when a route is updated`
+    *   **error** `{ error } Error as string`
+*   `fn` **[Function][31]** function that's called when the event is emitted.
 
-Returns **[MapboxDirections](#mapboxdirections)** this;
+Returns **[MapboxDirections][1]** this;
+
+[1]: #mapboxdirections
+
+[2]: #parameters
+
+[3]: #examples
+
+[4]: #onremove
+
+[5]: #parameters-1
+
+[6]: #interactive
+
+[7]: #parameters-2
+
+[8]: #getorigin
+
+[9]: #setorigin
+
+[10]: #parameters-3
+
+[11]: #getdestination
+
+[12]: #setdestination
+
+[13]: #parameters-4
+
+[14]: #reverse
+
+[15]: #addwaypoint
+
+[16]: #parameters-5
+
+[17]: #setwaypoint
+
+[18]: #parameters-6
+
+[19]: #removewaypoint
+
+[20]: #parameters-7
+
+[21]: #getwaypoints
+
+[22]: #removeroutes
+
+[23]: #on
+
+[24]: #parameters-8
+
+[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+[27]: https://github.com/mapbox/mapbox-gl-directions/blob/main/src/directions_style.js
+
+[28]: https://www.mapbox.com/mapbox-gl-style-spec/
+
+[29]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[30]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+
+[31]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+
+[32]: https://www.mapbox.com/api-documentation/#search-for-places
+
+[33]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+
+[34]: https://docs.mapbox.com/api/navigation/#instructions-languages
+
+[35]: https://docs.mapbox.com/api/navigation/#retrieve-directions
+
+[36]: https://docs.mapbox.com/mapbox-gl-js/api/#paddingoptions
+
+[37]: https://www.mapbox.com/mapbox-gl-js/api/#Map.load
