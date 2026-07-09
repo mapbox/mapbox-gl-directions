@@ -1,3 +1,6 @@
+## 4.3.2
+- [bug] Fix lodash vulnerabilities
+
 ## 4.3.1
 
 - [internal] Improve performance of marker dragging [#316](https://github.com/mapbox/mapbox-gl-directions/pull/316)
