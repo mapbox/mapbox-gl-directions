@@ -46,5 +46,28 @@ test('Geocoder#constructor', t =>{
     t.end();
   });
 
+  t.test('typeahead render escapes place_name to prevent stored XSS', t => {
+    const geocoder = new Geocoder({});
+    geocoder.onAdd();
+
+    const malicious = { place_name: '<img src=x onerror=alert(1)>' };
+    const rendered = geocoder._typeahead.render(malicious);
+
+    t.equal(rendered, '&lt;img src=x onerror=alert(1)&gt;');
+    t.ok(rendered.indexOf('<img') === -1, 'raw HTML tag is not present in rendered output');
+    t.end();
+  });
+
+  t.test('typeahead render still bolds the matched query substring', t => {
+    const geocoder = new Geocoder({});
+    geocoder.onAdd();
+
+    geocoder._typeahead.query = 'main';
+    const rendered = geocoder._typeahead.render({ place_name: '123 Main St' });
+
+    t.equal(rendered, '123 <strong>Main</strong> St');
+    t.end();
+  });
+
   t.end();
 })

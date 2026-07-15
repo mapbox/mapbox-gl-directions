@@ -1,3 +1,6 @@
+## 4.3.3
+- [bug] Fix unsanitized `place_name` rendering
+
 ## 4.3.2
 - [bug] Fix lodash vulnerabilities
 

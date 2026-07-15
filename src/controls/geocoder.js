@@ -9,6 +9,16 @@ import utils from '../utils';
 // Once gl-js plugins can be added to custom divs, we should be able to require mapbox-gl-geocoder
 // instead of including it here
 
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export default class Geocoder {
   constructor(options) {
     this._ev = new EventEmitter();
@@ -83,6 +93,14 @@ export default class Geocoder {
     if (this.options.container) this.options.position = false;
 
     this._typeahead = new Typeahead(input, [], { filter: false });
+    
+    // Escape place_name before it reaches the library's default render,
+    // since geocoding results are unsanitized and can carry arbitrary HTML.
+    var defaultRender = this._typeahead.render;
+    this._typeahead.render = function(item) {
+      return defaultRender(Object.assign({}, item, { place_name: escapeHtml(item.place_name) }));
+    };
+    
     this._typeahead.getItemValue = function(item) { return item.place_name; };
 
     return el;
