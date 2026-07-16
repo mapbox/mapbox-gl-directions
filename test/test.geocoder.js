@@ -50,6 +50,7 @@ test('Geocoder#constructor', t =>{
     const geocoder = new Geocoder({});
     geocoder.onAdd();
 
+    geocoder._typeahead.query = 'no-match';
     const malicious = { place_name: '<img src=x onerror=alert(1)>' };
     const rendered = geocoder._typeahead.render(malicious);
 
