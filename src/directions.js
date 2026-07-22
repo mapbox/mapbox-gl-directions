@@ -501,6 +501,27 @@ export default class MapboxDirections {
   }
 
   /**
+   * Sets profile. _Note:_ calling this method requires the [map load event](https://www.mapbox.com/mapbox-gl-js/api/#Map.load)
+   * to have run.
+   * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
+   * @returns {MapboxDirections} this
+   */
+  setProfile(query) {
+    console.log(query);
+    if (typeof query === 'string') {
+      if (query === `mapbox/driving-traffic` ||
+          query === `mapbox/driving` ||
+          query === `mapbox/walking` ||
+          query === `mapbox/cycling`) {
+        this.actions.setProfile(query);
+        this.actions.eventEmit('profile', { query });
+      }
+    }
+
+    return this;
+  }
+
+  /**
    * Returns the destination of the current route.
    * @returns {Object} destination
    */
