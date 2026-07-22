@@ -29,7 +29,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/mapbox/mapbox-gl-directions.git"
+    "url": "git+https://github.com/mapbox/mapbox-gl-directions.git"
   },
   "keywords": [
     "directions",
