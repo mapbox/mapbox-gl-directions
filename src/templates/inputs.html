@@ -36,7 +36,12 @@
       value='mapbox/driving'
       <% if (profile === 'mapbox/driving') { %>checked<% } %>
     />
-    <label for='mapbox-directions-profile-driving'>Driving</label>
+    <% if (language === 'vi') { %>
+    <label for='mapbox-directions-profile-driving' >Test</label>
+    <% } %>
+    <% else { %>
+      <label for='mapbox-directions-profile-driving' >Driving</label>
+      <% } %>
     <input
       id='mapbox-directions-profile-walking'
       type='radio'
